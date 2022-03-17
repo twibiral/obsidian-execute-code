@@ -1,4 +1,14 @@
-/* Sets all the text color to red! */
-body {
-    color: red;
+button.run-code-button {
+    display: none;
+    color: var(--text-muted);
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 5px;
+    padding: 5px 20px 5px 20px;
 }
+
+pre:hover .run-code-button {
+display: block;
+}
+
