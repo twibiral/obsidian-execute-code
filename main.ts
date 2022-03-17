@@ -2,6 +2,8 @@ import { ChildProcess } from 'child_process';
 import { V4MAPPED } from 'dns';
 import { App, Editor, MarkdownView, Modal, Notice, parseFrontMatterAliases, Plugin, Workspace, WorkspaceParent, WorkspaceSidedock} from 'obsidian';
 import { Context, createContext, Script } from 'vm';
+import * as fs from "fs";
+import * as child_process from "child_process";
 
 
 const supportedLanguages = ["js"];
@@ -91,9 +93,9 @@ export default class ExecuteCodePlugin extends Plugin {
 			})
 	}
 
-	runJavaScript(codeBlockContent: string) {
+	runJavaScript2(codeBlockContent: string) {
 		new Notice("Running...")
-				
+
 		const sandbox = {__history__: new Array<string>()};
 		const newCons = "var console = {};console.log=(x)=>__history__.push(x);"
 
@@ -102,9 +104,33 @@ export default class ExecuteCodePlugin extends Plugin {
 			script.runInNewContext(sandbox, vmContextOptions);
 
 		} catch(err) {
+			sandbox.__history__.push(err.toString());
 			console.log(err);
 		}
 
 		console.log(sandbox);
+		sandbox.__history__.forEach(x => console.log(x + "\n"));
+	}
+
+	runJavaScript(codeBlockContent: string) {
+		new Notice("Running...");
+		let tempFileName = 'temp_' + Date.now() + '.js';
+
+		fs.writeFile(tempFileName, codeBlockContent, (err => {
+			if(err) {
+				console.log("Something gone wrong.\n" + err)
+				return;
+			}
+
+			child_process.execFile("node",  [tempFileName], (err, stdout, stderr) => {
+				if(err) {
+					console.log("Something gone wrong.\n" + err)
+					return;
+				}
+
+				console.log(stdout);
+				console.log(stderr);
+			})
+		}));
 	}
 }
