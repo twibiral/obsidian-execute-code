@@ -1,7 +1,4 @@
-import { ChildProcess } from 'child_process';
-import { V4MAPPED } from 'dns';
-import { App, Editor, MarkdownView, Modal, Notice, parseFrontMatterAliases, Plugin, Workspace, WorkspaceParent, WorkspaceSidedock} from 'obsidian';
-import { Context, createContext, Script } from 'vm';
+import {Notice, Plugin} from 'obsidian';
 import * as fs from "fs";
 import * as child_process from "child_process";
 
@@ -17,8 +14,8 @@ export default class ExecuteCodePlugin extends Plugin {
 	async onload() {
 		console.log("loading plugin: Execute Code");
 
-		this.injectButtons();
-		this.registerInterval(window.setInterval(this.injectButtons.bind(this), 2000));
+		this.addRunButtons();
+		this.registerInterval(window.setInterval(this.addRunButtons.bind(this), 1500));
 	}
 
 	onunload() {
@@ -29,24 +26,23 @@ export default class ExecuteCodePlugin extends Plugin {
 				const parent = pre.parentElement as HTMLDivElement;
 
 				if(parent.hasClass(hasButtonClass)){
-					// remove existing button
 					parent.removeClass(hasButtonClass);
 				}
 			});
 
 		document
-			.querySelectorAll("pre button")
-			.forEach((button: HTMLButtonElement) => {		
-				if(button.classList.contains(runButtonClass)) {
-					button.remove();
-				}
-			})
+			.querySelectorAll("." + runButtonClass)
+			.forEach((button: HTMLButtonElement) => button.remove());
+
+		document
+			.querySelectorAll(".clear-button")
+			.forEach((button: HTMLButtonElement) => button.remove());
+
+		document
+			.querySelectorAll(".language-output")
+			.forEach((out: HTMLElement) => out.remove());
 
 		console.log("unloaded plugin: Execute Code");
-	}
-
-	injectButtons() {
-		this.addRunButtons();
 	}
 
 	addRunButtons() {
@@ -57,15 +53,11 @@ export default class ExecuteCodePlugin extends Plugin {
 				const parent = pre.parentElement as HTMLDivElement;
 				const language = pre.className.toLowerCase();
 
-				if(! supportedLanguages.some(
-					(lang) =>pre.classList.contains(`language-${lang}`)
-				)) {
-					// Unsupported language
+				if(! supportedLanguages.some((lang) =>pre.classList.contains(`language-${lang}`))) { // unsupported language
 					return 0;
 				}
 
-				if(parent.hasClass(hasButtonClass)){
-					// Already has a button
+				if(parent.classList.contains(hasButtonClass)){ // Already has a button
 					return 0;
 				}
 
@@ -87,7 +79,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	}
 
 	runJavaScript(codeBlockContent: string, outputter: Outputter) {
-		new Notice("Running with child process...");
+		new Notice("Running...");
 		const tempFileName = 'temp_' + Date.now() + '.js';
 
 		fs.writeFile(tempFileName, codeBlockContent, (err => {
@@ -102,14 +94,11 @@ export default class ExecuteCodePlugin extends Plugin {
 					// return;
 				}
 
-				console.log("To stdout: " + stdout);
-				console.log("To stderr: " + stderr);
-
 				outputter.clear();
 				outputter.write(stdout);
 				if(stderr) {
 					const splitted = stderr.split("\n");
-					outputter.write(splitted[0] + "\n" + splitted[1]);
+					outputter.writeErr(splitted[0] + "\n" + splitted[1] + "\n" + splitted[2]);
 				}
 			})
 		}));
@@ -140,9 +129,13 @@ class Outputter {
 	}
 
 	delete() {
-		if(this.outputElement) {
-			console.log("Delete")
-		}
+		if(this.outputElement)
+			this.outputElement.style.display = "none";
+		
+		if(this.clearButton)
+			this.clearButton.style.display = "none";
+
+		this.clear()
 	}
 
 	write(text: string) {
@@ -150,19 +143,54 @@ class Outputter {
 			const parentEl = this.codeBlockElement.parentElement as HTMLDivElement;
 			
 			this.outputElement = document.createElement("code");
-			this.outputElement.addClass("language-output");
+			this.outputElement.classList.add("language-output");
 
 			parentEl.appendChild(this.outputElement);
-			
-			// add clear button:
-			const button = document.createElement("button");
-			button.className = "clear-button";
-			button.setText("Clear");
-			button.addEventListener("click", () => this.delete());
-
-			parentEl.appendChild(button);
 		}
 
-		this.outputElement.innerText += text + "\n";
+		if(! this.clearButton) {
+			const parentEl = this.codeBlockElement.parentElement as HTMLDivElement;
+
+			this.clearButton = document.createElement("button");
+			this.clearButton.className = "clear-button";
+			this.clearButton.setText("Clear");
+			this.clearButton.addEventListener("click", () => this.delete());
+
+			parentEl.appendChild(this.clearButton);
+		}
+
+		// make visible again:
+		this.outputElement.style.display = "block";
+		this.clearButton.style.display = "block";
+
+		this.outputElement.innerHTML += text + "\n";
+	}
+
+	writeErr(text: string) {
+		if(! this.outputElement) {
+			const parentEl = this.codeBlockElement.parentElement as HTMLDivElement;
+			
+			this.outputElement = document.createElement("code");
+			this.outputElement.classList.add("language-output");
+
+			parentEl.appendChild(this.outputElement);
+		}
+
+		if(! this.clearButton) {
+			const parentEl = this.codeBlockElement.parentElement as HTMLDivElement;
+
+			this.clearButton = document.createElement("button");
+			this.clearButton.className = "clear-button";
+			this.clearButton.setText("Clear");
+			this.clearButton.addEventListener("click", () => this.delete());
+
+			parentEl.appendChild(this.clearButton);
+		}
+
+		// make visible again:
+		this.outputElement.style.display = "block";
+		this.clearButton.style.display = "block";
+
+		this.outputElement.innerHTML += '<font color="red">' + text + '</font>\n';
 	}
 }

@@ -9,15 +9,19 @@ button.run-code-button {
 }
 
 button.clear-button {
+    display: none;
     color: var(--text-muted);
+    position: absolute;
+    bottom: 0;
+    left: 0;
     margin: 5px;
     padding: 5px 20px 5px 20px;
 }
 
 pre:hover .run-code-button {
-display: block;
+    display: block;
 }
 
-.invisible {
-    display: none;
+pre:hover .clear-button {
+    display: block;
 }
