@@ -8,7 +8,16 @@ button.run-code-button {
     padding: 5px 20px 5px 20px;
 }
 
+button.clear-button {
+    color: var(--text-muted);
+    margin: 5px;
+    padding: 5px 20px 5px 20px;
+}
+
 pre:hover .run-code-button {
 display: block;
 }
 
+.invisible {
+    display: none;
+}

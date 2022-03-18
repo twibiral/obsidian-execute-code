@@ -7,15 +7,6 @@ import * as child_process from "child_process";
 
 
 const supportedLanguages = ["js"];
-const vmContextOptions = {
-	filename: 'obsidian-note.js', // filename for stack traces
-	lineOffset: 1, // line number offset to be used for stack traces
-	columnOffset: 1, // column number offset to be used for stack traces
-	displayErrors: true,
-	timeout: 1000, // ms
-	require: require,
-	console: console
-}
 
 const buttonText = "Run";
 
@@ -88,49 +79,90 @@ export default class ExecuteCodePlugin extends Plugin {
 					button.setText(buttonText);
 
 					pre.appendChild(button);
-					button.addEventListener("click", () => this.runJavaScript(codeBlock.innerText));
+
+					const out = new Outputter(codeBlock);
+					button.addEventListener("click", () => this.runJavaScript(codeBlock.innerText, out));
 				}
 			})
 	}
 
-	runJavaScript2(codeBlockContent: string) {
-		new Notice("Running...")
-
-		const sandbox = {__history__: new Array<string>()};
-		const newCons = "var console = {};console.log=(x)=>__history__.push(x);"
-
-		try {
-			const script = new Script(newCons + codeBlockContent);
-			script.runInNewContext(sandbox, vmContextOptions);
-
-		} catch(err) {
-			sandbox.__history__.push(err.toString());
-			console.log(err);
-		}
-
-		console.log(sandbox);
-		sandbox.__history__.forEach(x => console.log(x + "\n"));
-	}
-
-	runJavaScript(codeBlockContent: string) {
-		new Notice("Running...");
-		let tempFileName = 'temp_' + Date.now() + '.js';
+	runJavaScript(codeBlockContent: string, outputter: Outputter) {
+		new Notice("Running with child process...");
+		const tempFileName = 'temp_' + Date.now() + '.js';
 
 		fs.writeFile(tempFileName, codeBlockContent, (err => {
 			if(err) {
-				console.log("Something gone wrong.\n" + err)
+				console.log("Something gone wrong while writing to file.\n" + err)
 				return;
 			}
 
 			child_process.execFile("node",  [tempFileName], (err, stdout, stderr) => {
 				if(err) {
-					console.log("Something gone wrong.\n" + err)
-					return;
+					console.log("Something gone wrong while executing.\n" + err)
+					// return;
 				}
 
-				console.log(stdout);
-				console.log(stderr);
+				console.log("To stdout: " + stdout);
+				console.log("To stderr: " + stderr);
+
+				outputter.clear();
+				outputter.write(stdout);
+				if(stderr) {
+					const splitted = stderr.split("\n");
+					outputter.write(splitted[0] + "\n" + splitted[1]);
+				}
 			})
 		}));
+
+		fs.rm(tempFileName, (err => {
+			if(err){
+				console.log("Couldn't delete file! \n" + err)
+			}
+		}))
+	}
+}
+
+
+class Outputter {
+	codeBlockElement: HTMLElement;
+	outputElement: HTMLElement;
+	clearButton: HTMLButtonElement;
+	textContent: string;
+
+	constructor (codeBlock: HTMLElement) {
+		this.codeBlockElement = codeBlock;
+		this.textContent = "";
+	}
+
+	clear() {
+		if(this.outputElement) 
+			this.outputElement.innerText = "";
+	}
+
+	delete() {
+		if(this.outputElement) {
+			console.log("Delete")
+		}
+	}
+
+	write(text: string) {
+		if(! this.outputElement) {
+			const parentEl = this.codeBlockElement.parentElement as HTMLDivElement;
+			
+			this.outputElement = document.createElement("code");
+			this.outputElement.addClass("language-output");
+
+			parentEl.appendChild(this.outputElement);
+			
+			// add clear button:
+			const button = document.createElement("button");
+			button.className = "clear-button";
+			button.setText("Clear");
+			button.addEventListener("click", () => this.delete());
+
+			parentEl.appendChild(button);
+		}
+
+		this.outputElement.innerText += text + "\n";
 	}
 }
