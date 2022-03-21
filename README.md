@@ -1,10 +1,12 @@
 # Obsidian Execute Code Plugin
 
-This plugin allows you to execute code snippets in code blocks in your notes.
+This plugin allows you to execute code snippets in code blocks in your notes. The plugin adds a 'run' button for code blocks in supported languages. Clicking them results in the code of the block being executed. After the execution the result of the execution is showed. 
+
+The result is shown only after the execution is finished. It is not possible to enter text on the command line into the executed programm now.
 
 ## Supported programming languages
 
-- [x] JavaScript
+- [x] JavaScript (Requirement: Node.js is installed)
 
 Support for the following is planned:
 - [ ] Python
