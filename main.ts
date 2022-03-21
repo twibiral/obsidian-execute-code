@@ -1,9 +1,19 @@
-import {Notice, Plugin} from 'obsidian';
+import {App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting} from 'obsidian';
 import * as fs from "fs";
 import * as child_process from "child_process";
 
 
 const supportedLanguages = ["js"];
+
+interface ExecutorSettings {
+	nodePath: string;
+	timeout: number;
+}
+
+const DEFAULT_SETTINGS: ExecutorSettings = {
+	nodePath: "node",
+	timeout: 10000
+}
 
 const buttonText = "Run";
 
@@ -11,7 +21,12 @@ const runButtonClass = "run-code-button";
 const hasButtonClass = "has-run-code-button";
 
 export default class ExecuteCodePlugin extends Plugin {
+	settings: ExecutorSettings;
+
 	async onload() {
+		this.loadSettings();
+		this.addSettingTab(new SettingsTab(this.app, this));
+
 		console.log("loading plugin: Execute Code");
 
 		this.addRunButtons();
@@ -88,7 +103,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				return;
 			}
 
-			child_process.execFile("node",  [tempFileName], (err, stdout, stderr) => {
+			child_process.execFile("node",  [tempFileName], {timeout: this.settings.timeout}, (err, stdout, stderr) => {
 				if(err) {
 					console.log("Something gone wrong while executing.\n" + err)
 					// return;
@@ -108,6 +123,14 @@ export default class ExecuteCodePlugin extends Plugin {
 				console.log("Couldn't delete file! \n" + err)
 			}
 		}))
+	}
+
+	async loadSettings() {
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+	}
+
+	async saveSettings() {
+		await this.saveData(this.settings);
 	}
 }
 
@@ -192,5 +215,47 @@ class Outputter {
 		this.clearButton.style.display = "block";
 
 		this.outputElement.innerHTML += '<font color="red">' + text + '</font>\n';
+	}
+}
+
+
+class SettingsTab extends PluginSettingTab {
+	plugin: ExecuteCodePlugin;
+
+	constructor(app: App, plugin: ExecuteCodePlugin) {
+		super(app, plugin);
+		this.plugin = plugin;
+	}
+
+	display() {
+		const {containerEl} = this;
+		containerEl.empty();
+		
+		containerEl.createEl('h2', {text: 'Settings for the Cde Execution Plugin.'});
+		
+		new Setting(containerEl)
+			.setName('Node path')
+			.setDesc('The path to your node installation.')
+			.addText(text => text
+				.setPlaceholder(this.plugin.settings.nodePath)
+				.setValue(this.plugin.settings.nodePath)
+				.onChange(async (value) => {
+					console.log('Node path set to: ' + value);
+					this.plugin.settings.nodePath = value;
+					// await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName('Timeout (in seconds)')
+			.setDesc('The time after which a program gets shut down automatically. This is to prevent infinite loops. ')
+			.addText(slider => slider
+				.setPlaceholder("" + this.plugin.settings.timeout/1000)
+				.onChange(async (value) => {
+					if( Number(value) * 1000){
+						console.log('Timeout set to: ' + value);
+						this.plugin.settings.timeout = Number(value) * 1000;
+					}
+					await this.plugin.saveSettings();
+				}));
 	}
 }
