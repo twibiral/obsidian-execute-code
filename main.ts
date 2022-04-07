@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as child_process from "child_process";
 
 
-const supportedLanguages = ["js"];
+const supportedLanguages = ["js", "javascript"];
 
 interface ExecutorSettings {
 	nodePath: string;
@@ -77,7 +77,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				}
 
 				// Add button:
-				if(language.contains("language-js")) {
+				if(language.contains("language-js") || language.contains("language-javascript")) {
 					parent.classList.add(hasButtonClass);
 					console.log("Add run button");
 
@@ -231,8 +231,21 @@ class SettingsTab extends PluginSettingTab {
 		const {containerEl} = this;
 		containerEl.empty();
 		
-		containerEl.createEl('h2', {text: 'Settings for the Cde Execution Plugin.'});
+		containerEl.createEl('h2', {text: 'Settings for the Code Execution Plugin.'});
 		
+		new Setting(containerEl)
+		.setName('Timeout (in seconds)')
+		.setDesc('The time after which a program gets shut down automatically. This is to prevent infinite loops. ')
+		.addText(slider => slider
+			.setPlaceholder("" + this.plugin.settings.timeout/1000)
+			.onChange(async (value) => {
+				if( Number(value) * 1000){
+					console.log('Timeout set to: ' + value);
+					this.plugin.settings.timeout = Number(value) * 1000;
+				}
+				await this.plugin.saveSettings();
+			}));
+
 		new Setting(containerEl)
 			.setName('Node path')
 			.setDesc('The path to your node installation.')
@@ -244,18 +257,5 @@ class SettingsTab extends PluginSettingTab {
 					this.plugin.settings.nodePath = value;
 					// await this.plugin.saveSettings();
 				}));
-
-		new Setting(containerEl)
-			.setName('Timeout (in seconds)')
-			.setDesc('The time after which a program gets shut down automatically. This is to prevent infinite loops. ')
-			.addText(slider => slider
-				.setPlaceholder("" + this.plugin.settings.timeout/1000)
-				.onChange(async (value) => {
-					if( Number(value) * 1000){
-						console.log('Timeout set to: ' + value);
-						this.plugin.settings.timeout = Number(value) * 1000;
-					}
-					await this.plugin.saveSettings();
-				}));
-	}
+		}
 }
