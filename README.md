@@ -20,4 +20,5 @@ Open for suggestions.
 Do not execute code from sources you don't know or code you don't understand. Executing code can cause irrepairable damage.
 
 ## Future Work
-- Find better way to show that the program is running (for example loading sign)
+- Find better way to show that the program is running (for example a loading sign).
+- Insert run buttons on focus instead of time intervall.
