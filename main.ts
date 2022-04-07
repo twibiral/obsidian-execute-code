@@ -1,4 +1,4 @@
-import {App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting} from 'obsidian';
+import {App, Notice, Plugin, PluginSettingTab, Setting} from 'obsidian';
 import * as fs from "fs";
 import * as child_process from "child_process";
 
