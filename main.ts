@@ -18,6 +18,7 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 const buttonText = "Run";
 
 const runButtonClass = "run-code-button";
+const runButtonDisabledClass = "run-button-disabled";
 const hasButtonClass = "has-run-code-button";
 
 export default class ExecuteCodePlugin extends Plugin {
@@ -47,6 +48,10 @@ export default class ExecuteCodePlugin extends Plugin {
 
 		document
 			.querySelectorAll("." + runButtonClass)
+			.forEach((button: HTMLButtonElement) => button.remove());
+		
+		document
+			.querySelectorAll("." + runButtonDisabledClass)
 			.forEach((button: HTMLButtonElement) => button.remove());
 
 		document
@@ -82,39 +87,54 @@ export default class ExecuteCodePlugin extends Plugin {
 					console.log("Add run button");
 
 					const button = document.createElement("button");
-					button.className = runButtonClass;
+					button.classList.add(runButtonClass);
 					button.setText(buttonText);
 
+					const loadingSign = document.createElement("button");
+					loadingSign.className = runButtonDisabledClass;
+					loadingSign.setText("Running...");
+
 					pre.appendChild(button);
+					// pre.appendChild(loadingSign);
 
 					const out = new Outputter(codeBlock);
-					button.addEventListener("click", () => this.runJavaScript(codeBlock.innerText, out));
+					button.addEventListener("click", () => {
+						button.className = runButtonDisabledClass;
+						this.runJavaScript(codeBlock.innerText, out, button);
+					});
 				}
 			})
 	}
 
-	runJavaScript(codeBlockContent: string, outputter: Outputter) {
+	runJavaScript(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
 		new Notice("Running...");
 		const tempFileName = 'temp_' + Date.now() + '.js';
 
 		fs.writeFile(tempFileName, codeBlockContent, (err => {
 			if(err) {
-				console.log("Something gone wrong while writing to file.\n" + err)
+				console.log("Something gone wrong while writing to file.\n" + err);
+				button.className = runButtonClass;
 				return;
 			}
 
 			child_process.execFile(this.settings.nodePath,  [tempFileName], {timeout: this.settings.timeout}, (err, stdout, stderr) => {
+				outputter.clear();
+
 				if(err) {
-					console.log("Something gone wrong while executing.\n" + err)
-					// return;
+					console.log("Something gone wrong while executing.\n" + err);
+					if(err.killed)
+						outputter.writeErr("Execution was killed!");
+					else
+						outputter.writeErr("Execution failed! " +  err.message);
 				}
 
-				outputter.clear();
 				outputter.write(stdout);
 				if(stderr) {
 					const splitted = stderr.split("\n");
 					outputter.writeErr(splitted[0] + "\n" + splitted[1] + "\n" + splitted[2]);
 				}
+
+				button.className = runButtonClass;
 			})
 		}));
 

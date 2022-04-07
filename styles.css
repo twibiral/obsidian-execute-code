@@ -25,3 +25,15 @@ pre:hover .run-code-button {
 pre:hover .clear-button {
     display: block;
 }
+
+.run-button-disabled {
+    display: none;
+}
+
+pre:hover .run-button-disabled {
+    display: none;
+}
+
+.language-output {
+    color: var(--text-muted);
+}

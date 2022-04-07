@@ -6,12 +6,18 @@ The result is shown only after the execution is finished. It is not possible to 
 
 ## Supported programming languages
 
-- [x] JavaScript (Requirement: Node.js is installed)
+- [x] JavaScript 
+    - Requirements: Node.js is installed
+    - Problems: Sometimes Node.js throws a random exception. Click runa again and it works.
 
 Support for the following is planned:
-- [ ] Python
+- [ ] Python3
+- [ ] Python2
 - [ ] Java
 Open for suggestions.
 
 ## Warning
 Do not execute code from sources you don't know or code you don't understand. Executing code can cause irrepairable damage.
+
+## Future Work
+- Find better way to show that the program is running (for example loading sign)
