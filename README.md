@@ -4,6 +4,8 @@ This plugin allows you to execute code snippets in code blocks in your notes. Th
 
 The result is shown only after the execution is finished. It is not possible to enter text on the command line into the executed programm now.
 
+![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/execute%20code%20example.gif)
+
 ## Supported programming languages
 
 - [x] JavaScript 
