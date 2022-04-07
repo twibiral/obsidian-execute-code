@@ -8,7 +8,7 @@ The result is shown only after the execution is finished. It is not possible to 
 
 - [x] JavaScript 
     - Requirements: Node.js is installed
-    - Problems: Sometimes Node.js throws a random exception. Click runa again and it works.
+    - Problems: Sometimes Node.js throws a random exception. Click run again and it works.
 
 Support for the following is planned:
 - [ ] Python3
