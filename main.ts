@@ -103,7 +103,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				return;
 			}
 
-			child_process.execFile("node",  [tempFileName], {timeout: this.settings.timeout}, (err, stdout, stderr) => {
+			child_process.execFile(this.settings.nodePath,  [tempFileName], {timeout: this.settings.timeout}, (err, stdout, stderr) => {
 				if(err) {
 					console.log("Something gone wrong while executing.\n" + err)
 					// return;
