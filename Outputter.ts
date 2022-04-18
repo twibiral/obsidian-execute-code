@@ -2,16 +2,24 @@ export class Outputter {
 	codeBlockElement: HTMLElement;
 	outputElement: HTMLElement;
 	clearButton: HTMLButtonElement;
-	textContent: string;
+	stdoutElem: HTMLSpanElement;
+	stderrElem: HTMLSpanElement;
+	stdoutText: string;
+	stderrText: string;
 
 	constructor (codeBlock: HTMLElement) {
 		this.codeBlockElement = codeBlock;
-		this.textContent = "";
+		this.stdoutText = "";
+		this.stderrText = "";
 	}
 
 	clear() {
-		if(this.outputElement)
-			this.outputElement.innerText = "";
+		if(this.outputElement) {
+			this.stdoutElem.setText("");
+			this.stderrElem.setText("");
+		}
+		this.stdoutText = "";
+		this.stderrText = "";
 	}
 
 	delete() {
@@ -26,57 +34,67 @@ export class Outputter {
 
 	write(text: string) {
 		if(! this.outputElement) {
-			const parentEl = this.codeBlockElement.parentElement as HTMLDivElement;
-
-			this.outputElement = document.createElement("code");
-			this.outputElement.classList.add("language-output");
-
-			parentEl.appendChild(this.outputElement);
+			this.addOutputElement();
 		}
 
 		if(! this.clearButton) {
-			const parentEl = this.codeBlockElement.parentElement as HTMLDivElement;
-
-			this.clearButton = document.createElement("button");
-			this.clearButton.className = "clear-button";
-			this.clearButton.setText("Clear");
-			this.clearButton.addEventListener("click", () => this.delete());
-
-			parentEl.appendChild(this.clearButton);
+			this.addClearButton();
 		}
+
+		this.stdoutText += text;
+		this.stdoutElem.setText(this.stdoutText);
 
 		// make visible again:
 		this.outputElement.style.display = "block";
 		this.clearButton.style.display = "block";
-
-		this.outputElement.innerHTML += text;
 	}
 
 	writeErr(text: string) {
 		if(! this.outputElement) {
-			const parentEl = this.codeBlockElement.parentElement as HTMLDivElement;
-
-			this.outputElement = document.createElement("code");
-			this.outputElement.classList.add("language-output");
-
-			parentEl.appendChild(this.outputElement);
+			this.addOutputElement();
 		}
 
 		if(! this.clearButton) {
-			const parentEl = this.codeBlockElement.parentElement as HTMLDivElement;
-
-			this.clearButton = document.createElement("button");
-			this.clearButton.className = "clear-button";
-			this.clearButton.setText("Clear");
-			this.clearButton.addEventListener("click", () => this.delete());
-
-			parentEl.appendChild(this.clearButton);
+			this.addClearButton();
 		}
+
+		this.stderrText += text;
+		this.stderrElem.setText(this.stderrText);
 
 		// make visible again:
 		this.outputElement.style.display = "block";
 		this.clearButton.style.display = "block";
+	}
 
-		this.outputElement.innerHTML += '<font color="red">' + text + '</font>';
+	private getParentElement() {
+		return this.codeBlockElement.parentElement as HTMLDivElement;
+	}
+
+	private addClearButton() {
+		const parentEl = this.getParentElement();
+
+		this.clearButton = document.createElement("button");
+		this.clearButton.className = "clear-button";
+		this.clearButton.setText("Clear");
+		this.clearButton.addEventListener("click", () => this.delete());
+
+		parentEl.appendChild(this.clearButton);
+	}
+
+	private addOutputElement() {
+		const parentEl = this.getParentElement();
+
+		this.outputElement = document.createElement("code");
+		this.outputElement.classList.add("language-output");
+
+		this.stdoutElem = document.createElement("span");
+		this.stdoutElem.addClass("stdout");
+
+		this.stderrElem = document.createElement("span");
+		this.stderrElem.addClass("stderr");
+
+		this.outputElement.appendChild(this.stdoutElem);
+		this.outputElement.appendChild(this.stderrElem);
+		parentEl.appendChild(this.outputElement);
 	}
 }

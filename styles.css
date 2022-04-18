@@ -35,6 +35,13 @@ pre:hover .run-button-disabled {
 }
 
 code.language-output {
-    color: var(--text-muted);
 	padding-bottom: 2em;
+}
+
+code.language-output span.stdout {
+	color: var(--text-muted);
+}
+
+code.language-output span.stderr {
+	color: red;
 }

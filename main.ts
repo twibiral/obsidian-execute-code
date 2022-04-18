@@ -59,7 +59,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			.querySelectorAll(".language-output")
 			.forEach((out: HTMLElement) => out.remove());
 
-		console.log("unloaded plugin: Execute Code");
+		console.log("Unloaded plugin: Execute Code");
 	}
 
 	addRunButtons() {
@@ -87,16 +87,12 @@ export default class ExecuteCodePlugin extends Plugin {
 					button.classList.add(runButtonClass);
 					button.setText(buttonText);
 
-					const loadingSign = document.createElement("button");
-					loadingSign.className = runButtonDisabledClass;
-					loadingSign.setText("Running...");
-
 					pre.appendChild(button);
 
 					const out = new Outputter(codeBlock);
 					button.addEventListener("click", () => {
 						button.className = runButtonDisabledClass;
-						this.runJavaScript(codeBlock.innerText, out, button);
+						this.runJavaScript(codeBlock.getText(), out, button);
 					});
 				}
 			})
