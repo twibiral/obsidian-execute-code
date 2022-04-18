@@ -95,7 +95,6 @@ export default class ExecuteCodePlugin extends Plugin {
 					loadingSign.setText("Running...");
 
 					pre.appendChild(button);
-					// pre.appendChild(loadingSign);
 
 					const out = new Outputter(codeBlock);
 					button.addEventListener("click", () => {
@@ -275,7 +274,6 @@ class SettingsTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					console.log('Node path set to: ' + value);
 					this.plugin.settings.nodePath = value;
-					// await this.plugin.saveSettings();
 				}));
 		}
 }
