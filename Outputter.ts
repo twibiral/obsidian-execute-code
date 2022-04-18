@@ -42,6 +42,8 @@ export class Outputter {
 		}
 
 		this.stdoutText += text;
+		if(!this.stderrText && !this.stdoutText) return;
+
 		this.stdoutElem.setText(this.stdoutText);
 
 		// make visible again:
@@ -59,6 +61,8 @@ export class Outputter {
 		}
 
 		this.stderrText += text;
+		if(!this.stderrText && !this.stdoutText) return;
+
 		this.stderrElem.setText(this.stderrText);
 
 		// make visible again:
