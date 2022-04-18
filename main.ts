@@ -25,10 +25,44 @@ export default class ExecuteCodePlugin extends Plugin {
 		await this.loadSettings();
 		this.addSettingTab(new SettingsTab(this.app, this));
 
-		console.log("loading plugin: Execute Code");
+		this.registerMarkdownPostProcessor((element, _context) => {
+			element.querySelectorAll("code")
+				.forEach((codeBlock: HTMLElement) => {
+					console.log("code block: "+ codeBlock.tagName);
 
-		this.addRunButtons();
-		this.registerMarkdownPostProcessor(this.addRunButtons);
+					const pre = codeBlock.parentElement as HTMLPreElement;
+					const parent = pre.parentElement as HTMLDivElement;
+					const language = codeBlock.className.toLowerCase();
+
+					if(supportedLanguages.some((lang) => language.contains(`language-${lang}`))
+						&& !parent.classList.contains(hasButtonClass)) { // unsupported language
+
+						parent.classList.add(hasButtonClass);
+						const button = this.createRunButton();
+						pre.appendChild(button);
+
+						const out = new Outputter(codeBlock);
+
+						// Add button:
+						if(language.contains("language-js") || language.contains("language-javascript")) {
+							button.addEventListener("click", () => {
+								button.className = runButtonDisabledClass;
+								this.runJavaScript(codeBlock.getText(), out, button);
+							});
+						}
+					}
+
+				})
+
+		});
+	}
+
+	private createRunButton() {
+		console.log("Add run button");
+		const button = document.createElement("button");
+		button.classList.add(runButtonClass);
+		button.setText(buttonText);
+		return button;
 	}
 
 	onunload() {
@@ -46,7 +80,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		document
 			.querySelectorAll("." + runButtonClass)
 			.forEach((button: HTMLButtonElement) => button.remove());
-		
+
 		document
 			.querySelectorAll("." + runButtonDisabledClass)
 			.forEach((button: HTMLButtonElement) => button.remove());
@@ -60,42 +94,6 @@ export default class ExecuteCodePlugin extends Plugin {
 			.forEach((out: HTMLElement) => out.remove());
 
 		console.log("Unloaded plugin: Execute Code");
-	}
-
-	addRunButtons() {
-		document
-			.querySelectorAll("pre > code")
-			.forEach((codeBlock: HTMLElement) => {
-				const pre = codeBlock.parentElement as HTMLPreElement;
-				const parent = pre.parentElement as HTMLDivElement;
-				const language = pre.className.toLowerCase();
-
-				if(! supportedLanguages.some((lang) =>pre.classList.contains(`language-${lang}`))) { // unsupported language
-					return 0;
-				}
-
-				if(parent.classList.contains(hasButtonClass)){ // Already has a button
-					return 0;
-				}
-
-				// Add button:
-				if(language.contains("language-js") || language.contains("language-javascript")) {
-					parent.classList.add(hasButtonClass);
-					console.log("Add run button");
-
-					const button = document.createElement("button");
-					button.classList.add(runButtonClass);
-					button.setText(buttonText);
-
-					pre.appendChild(button);
-
-					const out = new Outputter(codeBlock);
-					button.addEventListener("click", () => {
-						button.className = runButtonDisabledClass;
-						this.runJavaScript(codeBlock.getText(), out, button);
-					});
-				}
-			})
 	}
 
 	runJavaScript(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
