@@ -1,4 +1,4 @@
-import {App, Notice, Plugin, PluginSettingTab, Setting} from 'obsidian';
+import {Notice, Plugin} from 'obsidian';
 import * as fs from "fs";
 import * as child_process from "child_process";
 import {Outputter} from "./Outputter";
