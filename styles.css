@@ -34,6 +34,7 @@ pre:hover .run-button-disabled {
     display: none;
 }
 
-.language-output {
+code.language-output {
     color: var(--text-muted);
+	padding-bottom: 2em;
 }

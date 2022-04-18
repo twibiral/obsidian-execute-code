@@ -25,7 +25,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	settings: ExecutorSettings;
 
 	async onload() {
-		this.loadSettings();
+		await this.loadSettings();
 		this.addSettingTab(new SettingsTab(this.app, this));
 
 		console.log("loading plugin: Execute Code");
@@ -109,39 +109,36 @@ export default class ExecuteCodePlugin extends Plugin {
 		new Notice("Running...");
 		const tempFileName = 'temp_' + Date.now() + '.js';
 
-		fs.writeFile(tempFileName, codeBlockContent, (err => {
-			if(err) {
-				console.log("Something gone wrong while writing to file.\n" + err);
-				button.className = runButtonClass;
-				return;
-			}
+		fs.promises.writeFile(tempFileName, codeBlockContent)
+			.then(() => {
+				const child = child_process.spawn(this.settings.nodePath, [tempFileName]);
 
-			child_process.execFile(this.settings.nodePath,  [tempFileName], {timeout: this.settings.timeout}, (err, stdout, stderr) => {
 				outputter.clear();
 
-				if(err) {
-					console.log("Something gone wrong while executing.\n" + err);
-					if(err.killed)
-						outputter.writeErr("Execution was killed!");
-					else
-						outputter.writeErr("Execution failed! " +  err.message);
-				}
+				child.stdout.on('data', (data) => {
+					outputter.write(data.toString());
+				});
+				child.stderr.on('data', (data) => {
+					outputter.writeErr(data.toString());
+				});
 
-				outputter.write(stdout);
-				if(stderr) {
-					const splitted = stderr.split("\n");
-					outputter.writeErr(splitted[0] + "\n" + splitted[1] + "\n" + splitted[2]);
-				}
-
-				button.className = runButtonClass;
+				child.on('close', (code) => {
+					button.className = runButtonClass;
+					if(code === 0) {
+						new Notice("Done!");
+					} else {
+						new Notice("Error!");
+					}
+				});
 			})
-		}));
+			.catch((err) => {
+				console.log("Error in 'Obsidian Execute Code' Plugin" + err);
+			});
 
-		fs.rm(tempFileName, (err => {
-			if(err){
-				console.log("Couldn't delete file! \n" + err)
-			}
-		}))
+		fs.promises.rm(tempFileName)
+			.catch((err) => {
+				console.log("Error in 'Obsidian Execute Code' Plugin" + err);
+			});
 	}
 
 	async loadSettings() {
@@ -205,7 +202,7 @@ class Outputter {
 		this.outputElement.style.display = "block";
 		this.clearButton.style.display = "block";
 
-		this.outputElement.innerHTML += text + "\n";
+		this.outputElement.innerHTML += text;
 	}
 
 	writeErr(text: string) {
@@ -233,7 +230,7 @@ class Outputter {
 		this.outputElement.style.display = "block";
 		this.clearButton.style.display = "block";
 
-		this.outputElement.innerHTML += '<font color="red">' + text + '</font>\n';
+		this.outputElement.innerHTML += '<font color="red">' + text + '</font>';
 	}
 }
 
