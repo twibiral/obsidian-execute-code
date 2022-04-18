@@ -84,6 +84,8 @@ export class Outputter {
 	private addOutputElement() {
 		const parentEl = this.getParentElement();
 
+		let hr = document.createElement("hr");
+
 		this.outputElement = document.createElement("code");
 		this.outputElement.classList.add("language-output");
 
@@ -93,6 +95,7 @@ export class Outputter {
 		this.stderrElem = document.createElement("span");
 		this.stderrElem.addClass("stderr");
 
+		this.outputElement.appendChild(hr);
 		this.outputElement.appendChild(this.stdoutElem);
 		this.outputElement.appendChild(this.stderrElem);
 		parentEl.appendChild(this.outputElement);

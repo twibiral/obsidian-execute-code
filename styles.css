@@ -35,7 +35,7 @@ pre:hover .run-button-disabled {
 }
 
 code.language-output {
-	padding-bottom: 2em;
+	padding-bottom: 2.5em;
 }
 
 code.language-output span.stdout {
@@ -44,4 +44,8 @@ code.language-output span.stdout {
 
 code.language-output span.stderr {
 	color: red;
+}
+
+code.language-output hr {
+	margin: 0 0 1em;
 }
