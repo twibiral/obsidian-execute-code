@@ -31,7 +31,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		console.log("loading plugin: Execute Code");
 
 		this.addRunButtons();
-		this.registerInterval(window.setInterval(this.addRunButtons.bind(this), 1500));
+		this.registerMarkdownPostProcessor(this.addRunButtons);
 	}
 
 	onunload() {
