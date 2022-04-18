@@ -22,6 +22,8 @@
 		"typescript": "^4.4.4"
 	},
 	"dependencies": {
+		"g": "^2.0.1",
+		"moment": "^2.29.3",
 		"original-fs": "^1.1.0"
 	}
 }
