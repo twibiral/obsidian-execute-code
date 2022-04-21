@@ -5,7 +5,7 @@ import {Outputter} from "./Outputter";
 import {SettingsTab, ExecutorSettings} from "./SettingsTab";
 
 
-const supportedLanguages = ["js", "javascript"];
+const supportedLanguages = ["js", "javascript", "matlab"];
 
 const buttonText = "Run";
 
@@ -14,8 +14,9 @@ const runButtonDisabledClass = "run-button-disabled";
 const hasButtonClass = "has-run-code-button";
 
 const DEFAULT_SETTINGS: ExecutorSettings = {
+	timeout: 10000,
 	nodePath: "node",
-	timeout: 10000
+	matlabPath: "matlab",
 }
 
 export default class ExecuteCodePlugin extends Plugin {
@@ -48,6 +49,12 @@ export default class ExecuteCodePlugin extends Plugin {
 							button.addEventListener("click", () => {
 								button.className = runButtonDisabledClass;
 								this.runJavaScript(codeBlock.getText(), out, button);
+							});
+
+						} else if (language.contains("language-matlab")) {
+							button.addEventListener("click", () => {
+								button.className = runButtonDisabledClass;
+								this.runMatlab(codeBlock.getText(), out, button);
 							});
 						}
 					}
@@ -99,6 +106,42 @@ export default class ExecuteCodePlugin extends Plugin {
 	runJavaScript(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
 		new Notice("Running...");
 		const tempFileName = 'temp_' + Date.now() + '.js';
+
+		fs.promises.writeFile(tempFileName, codeBlockContent)
+			.then(() => {
+				const child = child_process.spawn(this.settings.nodePath, [tempFileName]);
+
+				outputter.clear();
+
+				child.stdout.on('data', (data) => {
+					outputter.write(data.toString());
+				});
+				child.stderr.on('data', (data) => {
+					outputter.writeErr(data.toString());
+				});
+
+				child.on('close', (code) => {
+					button.className = runButtonClass;
+					if(code === 0) {
+						new Notice("Done!");
+					} else {
+						new Notice("Error!");
+					}
+				});
+			})
+			.catch((err) => {
+				console.log("Error in 'Obsidian Execute Code' Plugin" + err);
+			});
+
+		fs.promises.rm(tempFileName)
+			.catch((err) => {
+				console.log("Error in 'Obsidian Execute Code' Plugin" + err);
+			});
+	}
+
+	runMatlab(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
+		new Notice("Running...");
+		const tempFileName = 'temp_' + Date.now() + '.m';
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {

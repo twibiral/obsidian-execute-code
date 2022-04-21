@@ -2,8 +2,9 @@ import {App, PluginSettingTab, Setting} from "obsidian";
 import ExecuteCodePlugin from "./main";
 
 export interface ExecutorSettings {
-	nodePath: string;
 	timeout: number;
+	nodePath: string;
+	matlabPath: string;
 }
 
 export class SettingsTab extends PluginSettingTab {
@@ -40,8 +41,19 @@ export class SettingsTab extends PluginSettingTab {
 				.setPlaceholder(this.plugin.settings.nodePath)
 				.setValue(this.plugin.settings.nodePath)
 				.onChange(async (value) => {
-					console.log('Node path set to: ' + value);
 					this.plugin.settings.nodePath = value;
+					console.log('Node path set to: ' + value);
+				}));
+
+		new Setting(containerEl)
+			.setName('Matlab path')
+			.setDesc('The path to your matlab installation.')
+			.addText(text => text
+				.setPlaceholder(this.plugin.settings.matlabPath)
+				.setValue(this.plugin.settings.matlabPath)
+				.onChange(async (value) => {
+					this.plugin.settings.matlabPath = value;
+					console.log('Matlab path set to: ' + value);
 				}));
 	}
 }
