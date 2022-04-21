@@ -111,23 +111,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			.then(() => {
 				const child = child_process.spawn(this.settings.nodePath, [tempFileName]);
 
-				outputter.clear();
-
-				child.stdout.on('data', (data) => {
-					outputter.write(data.toString());
-				});
-				child.stderr.on('data', (data) => {
-					outputter.writeErr(data.toString());
-				});
-
-				child.on('close', (code) => {
-					button.className = runButtonClass;
-					if(code === 0) {
-						new Notice("Done!");
-					} else {
-						new Notice("Error!");
-					}
-				});
+				this.handleChildOutput(child, outputter, button);
 			})
 			.catch((err) => {
 				console.log("Error in 'Obsidian Execute Code' Plugin" + err);
@@ -145,25 +129,9 @@ export default class ExecuteCodePlugin extends Plugin {
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
-				const child = child_process.spawn(this.settings.nodePath, [tempFileName]);
+				const child = child_process.spawn(this.settings.matlabPath,  ["-batch", "run("+tempFileName+");exit;"]);
 
-				outputter.clear();
-
-				child.stdout.on('data', (data) => {
-					outputter.write(data.toString());
-				});
-				child.stderr.on('data', (data) => {
-					outputter.writeErr(data.toString());
-				});
-
-				child.on('close', (code) => {
-					button.className = runButtonClass;
-					if(code === 0) {
-						new Notice("Done!");
-					} else {
-						new Notice("Error!");
-					}
-				});
+				this.handleChildOutput(child, outputter, button);
 			})
 			.catch((err) => {
 				console.log("Error in 'Obsidian Execute Code' Plugin" + err);
@@ -181,5 +149,25 @@ export default class ExecuteCodePlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	private handleChildOutput(child: child_process.ChildProcessWithoutNullStreams, outputter: Outputter, button: HTMLButtonElement) {
+		outputter.clear();
+
+		child.stdout.on('data', (data) => {
+			outputter.write(data.toString());
+		});
+		child.stderr.on('data', (data) => {
+			outputter.writeErr(data.toString());
+		});
+
+		child.on('close', (code) => {
+			button.className = runButtonClass;
+			if(code === 0) {
+				new Notice("Done!");
+			} else {
+				new Notice("Error!");
+			}
+		});
 	}
 }
