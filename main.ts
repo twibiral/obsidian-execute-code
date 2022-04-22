@@ -26,42 +26,47 @@ export default class ExecuteCodePlugin extends Plugin {
 		await this.loadSettings();
 		this.addSettingTab(new SettingsTab(this.app, this));
 
+		this.addRunButtons(document.body);
 		this.registerMarkdownPostProcessor((element, _context) => {
-			element.querySelectorAll("code")
-				.forEach((codeBlock: HTMLElement) => {
-					console.log("code block: "+ codeBlock.tagName);
-
-					const pre = codeBlock.parentElement as HTMLPreElement;
-					const parent = pre.parentElement as HTMLDivElement;
-					const language = codeBlock.className.toLowerCase();
-
-					if(supportedLanguages.some((lang) => language.contains(`language-${lang}`))
-						&& !parent.classList.contains(hasButtonClass)) { // unsupported language
-
-						parent.classList.add(hasButtonClass);
-						const button = this.createRunButton();
-						pre.appendChild(button);
-
-						const out = new Outputter(codeBlock);
-
-						// Add button:
-						if(language.contains("language-js") || language.contains("language-javascript")) {
-							button.addEventListener("click", () => {
-								button.className = runButtonDisabledClass;
-								this.runJavaScript(codeBlock.getText(), out, button);
-							});
-
-						} else if (language.contains("language-matlab")) {
-							button.addEventListener("click", () => {
-								button.className = runButtonDisabledClass;
-								this.runMatlab(codeBlock.getText(), out, button);
-							});
-						}
-					}
-
-				})
+			this.addRunButtons(element);
 
 		});
+	}
+
+	private addRunButtons(element: HTMLElement) {
+		element.querySelectorAll("code")
+			.forEach((codeBlock: HTMLElement) => {
+				console.log("code block: " + codeBlock.tagName);
+
+				const pre = codeBlock.parentElement as HTMLPreElement;
+				const parent = pre.parentElement as HTMLDivElement;
+				const language = codeBlock.className.toLowerCase();
+
+				if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
+					&& !parent.classList.contains(hasButtonClass)) { // unsupported language
+
+					parent.classList.add(hasButtonClass);
+					const button = this.createRunButton();
+					pre.appendChild(button);
+
+					const out = new Outputter(codeBlock);
+
+					// Add button:
+					if (language.contains("language-js") || language.contains("language-javascript")) {
+						button.addEventListener("click", () => {
+							button.className = runButtonDisabledClass;
+							this.runJavaScript(codeBlock.getText(), out, button);
+						});
+
+					} else if (language.contains("language-matlab")) {
+						button.addEventListener("click", () => {
+							button.className = runButtonDisabledClass;
+							this.runMatlab(codeBlock.getText(), out, button);
+						});
+					}
+				}
+
+			})
 	}
 
 	private createRunButton() {
@@ -105,41 +110,33 @@ export default class ExecuteCodePlugin extends Plugin {
 
 	runJavaScript(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
 		new Notice("Running...");
-		const tempFileName = 'temp_' + Date.now() + '.js';
+		const tempFileName = `temp_${Date.now()}.js`;
+		console.log(tempFileName);
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
+				console.log(`Execute ${this.settings.nodePath} ${tempFileName}`);
 				const child = child_process.spawn(this.settings.nodePath, [tempFileName]);
 
-				this.handleChildOutput(child, outputter, button);
+				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
 			.catch((err) => {
-				console.log("Error in 'Obsidian Execute Code' Plugin" + err);
-			});
-
-		fs.promises.rm(tempFileName)
-			.catch((err) => {
-				console.log("Error in 'Obsidian Execute Code' Plugin" + err);
+				console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
 			});
 	}
 
 	runMatlab(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
 		new Notice("Running...");
-		const tempFileName = 'temp_' + Date.now() + '.m';
+		const tempFileName = `temp_${Date.now()}.m`;
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
 				const child = child_process.spawn(this.settings.matlabPath,  ["-batch", "run("+tempFileName+");exit;"]);
 
-				this.handleChildOutput(child, outputter, button);
+				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
 			.catch((err) => {
-				console.log("Error in 'Obsidian Execute Code' Plugin" + err);
-			});
-
-		fs.promises.rm(tempFileName)
-			.catch((err) => {
-				console.log("Error in 'Obsidian Execute Code' Plugin" + err);
+				console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
 			});
 	}
 
@@ -151,7 +148,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	private handleChildOutput(child: child_process.ChildProcessWithoutNullStreams, outputter: Outputter, button: HTMLButtonElement) {
+	private handleChildOutput(child: child_process.ChildProcessWithoutNullStreams, outputter: Outputter, button: HTMLButtonElement, fileName: string) {
 		outputter.clear();
 
 		child.stdout.on('data', (data) => {
@@ -168,6 +165,11 @@ export default class ExecuteCodePlugin extends Plugin {
 			} else {
 				new Notice("Error!");
 			}
+
+			fs.promises.rm(fileName)
+				.catch((err) => {
+					console.log("Error in 'Obsidian Execute Code' Plugin while removing file: " + err);
+				});
 		});
 	}
 }
