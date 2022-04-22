@@ -131,7 +131,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
-				const child = child_process.spawn(this.settings.matlabPath,  ["-batch", "run("+tempFileName+");exit;"]);
+				const child = child_process.spawn(this.settings.matlabPath,  ["-wait", "-nodesktop", "-nosplash", "-nojvm", "-nodisplay", "-minimize", "-automation", "-bash", "-r", `${codeBlockContent} \nexit;`]);
 
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
