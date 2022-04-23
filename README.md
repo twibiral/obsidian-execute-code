@@ -9,13 +9,14 @@ The result is shown only after the execution is finished. It is not possible to 
 ## Supported programming languages
 
 - [x] JavaScript 
-    - Requirements: Node.js is installed
-    - Problems: Sometimes Node.js throws a random exception. Click run again and it works.
+    - Requirements: Node.js is installed and the correct path is set in the settings.
+- [x] Python     
+	- Requirements: Python is installed and the correct path is set in the settings.
+
 
 Support for the following is planned:
-- [ ] Python3
-- [ ] Python2
 - [ ] Java
+- [ ] Matlab
 
 Open for suggestions.
 
@@ -24,4 +25,3 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 
 ## Future Work
 - Find better way to show that the program is running (for example a loading sign).
-- Insert run buttons on focus instead of time intervall.
