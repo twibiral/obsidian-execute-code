@@ -5,7 +5,7 @@ import {Outputter} from "./Outputter";
 import {SettingsTab, ExecutorSettings} from "./SettingsTab";
 
 
-const supportedLanguages = ["js", "javascript", "matlab"];
+const supportedLanguages = ["js", "javascript"];
 
 const buttonText = "Run";
 
@@ -58,12 +58,16 @@ export default class ExecuteCodePlugin extends Plugin {
 							this.runJavaScript(codeBlock.getText(), out, button);
 						});
 
-					} else if (language.contains("language-matlab")) {
-						button.addEventListener("click", () => {
-							button.className = runButtonDisabledClass;
-							this.runMatlab(codeBlock.getText(), out, button);
-						});
 					}
+
+
+
+					// else if (language.contains("language-matlab")) {
+					// 	button.addEventListener("click", () => {
+					// 		button.className = runButtonDisabledClass;
+					// 		this.runMatlab(codeBlock.getText(), out, button);
+					// 	});
+					// }
 				}
 
 			})
@@ -131,7 +135,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
-				const child = child_process.spawn(this.settings.matlabPath,  ["-wait", "-nodesktop", "-nosplash", "-nojvm", "-nodisplay", "-minimize", "-automation", "-bash", "-r", `${codeBlockContent} \nexit;`]);
+				const child = child_process.spawn(this.settings.matlabPath,  ["-wait", "-nodesktop", "-nosplash", "-nojvm", "-nodisplay", "-minimize", "-automation", "-bash", "-r", `${codeBlockContent} \nexit;`, "> C:\\result.txt."]);
 
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
