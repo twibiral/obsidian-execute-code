@@ -5,7 +5,7 @@ import {Outputter} from "./Outputter";
 import {SettingsTab, ExecutorSettings} from "./SettingsTab";
 
 
-const supportedLanguages = ["js", "javascript"];
+const supportedLanguages = ["js", "javascript", "python"];
 
 const buttonText = "Run";
 
@@ -14,8 +14,11 @@ const runButtonDisabledClass = "run-button-disabled";
 const hasButtonClass = "has-run-code-button";
 
 const DEFAULT_SETTINGS: ExecutorSettings = {
+	timeout: 10000,
 	nodePath: "node",
-	timeout: 10000
+	nodeArgs: "",
+	pythonPath: "python",
+	pythonArgs: "",
 }
 
 export default class ExecuteCodePlugin extends Plugin {
@@ -25,36 +28,47 @@ export default class ExecuteCodePlugin extends Plugin {
 		await this.loadSettings();
 		this.addSettingTab(new SettingsTab(this.app, this));
 
+		this.addRunButtons(document.body);
 		this.registerMarkdownPostProcessor((element, _context) => {
-			element.querySelectorAll("code")
-				.forEach((codeBlock: HTMLElement) => {
-					console.log("code block: "+ codeBlock.tagName);
-
-					const pre = codeBlock.parentElement as HTMLPreElement;
-					const parent = pre.parentElement as HTMLDivElement;
-					const language = codeBlock.className.toLowerCase();
-
-					if(supportedLanguages.some((lang) => language.contains(`language-${lang}`))
-						&& !parent.classList.contains(hasButtonClass)) { // unsupported language
-
-						parent.classList.add(hasButtonClass);
-						const button = this.createRunButton();
-						pre.appendChild(button);
-
-						const out = new Outputter(codeBlock);
-
-						// Add button:
-						if(language.contains("language-js") || language.contains("language-javascript")) {
-							button.addEventListener("click", () => {
-								button.className = runButtonDisabledClass;
-								this.runJavaScript(codeBlock.getText(), out, button);
-							});
-						}
-					}
-
-				})
+			this.addRunButtons(element);
 
 		});
+	}
+
+	private addRunButtons(element: HTMLElement) {
+		element.querySelectorAll("code")
+			.forEach((codeBlock: HTMLElement) => {
+				console.log("code block: " + codeBlock.tagName);
+
+				const pre = codeBlock.parentElement as HTMLPreElement;
+				const parent = pre.parentElement as HTMLDivElement;
+				const language = codeBlock.className.toLowerCase();
+
+				if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
+					&& !parent.classList.contains(hasButtonClass)) { // unsupported language
+
+					parent.classList.add(hasButtonClass);
+					const button = this.createRunButton();
+					pre.appendChild(button);
+
+					const out = new Outputter(codeBlock);
+
+					// Add button:
+					if (language.contains("language-js") || language.contains("language-javascript")) {
+						button.addEventListener("click", () => {
+							button.className = runButtonDisabledClass;
+							this.runJavaScript(codeBlock.getText(), out, button);
+						});
+
+					} else if (language.contains("language-python")) {
+						button.addEventListener("click", () => {
+							button.className = runButtonDisabledClass;
+							this.runPython(codeBlock.getText(), out, button);
+						});
+					}
+				}
+
+			})
 	}
 
 	private createRunButton() {
@@ -98,37 +112,51 @@ export default class ExecuteCodePlugin extends Plugin {
 
 	runJavaScript(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
 		new Notice("Running...");
-		const tempFileName = 'temp_' + Date.now() + '.js';
+		const tempFileName = `temp_${Date.now()}.js`;
+		console.log(tempFileName);
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
-				const child = child_process.spawn(this.settings.nodePath, [tempFileName]);
+				console.log(`Execute ${this.settings.nodePath} ${tempFileName}`);
+				const args = this.settings.nodeArgs ? this.settings.nodeArgs.split(" ") : [];
+				args.push(tempFileName);
+				const child = child_process.spawn(this.settings.nodePath, args);
 
-				outputter.clear();
-
-				child.stdout.on('data', (data) => {
-					outputter.write(data.toString());
-				});
-				child.stderr.on('data', (data) => {
-					outputter.writeErr(data.toString());
-				});
-
-				child.on('close', (code) => {
-					button.className = runButtonClass;
-					if(code === 0) {
-						new Notice("Done!");
-					} else {
-						new Notice("Error!");
-					}
-				});
+				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
 			.catch((err) => {
-				console.log("Error in 'Obsidian Execute Code' Plugin" + err);
+				console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
 			});
+	}
+	//
+	// runMatlab(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
+	// 	new Notice("Running...");
+	// 	const tempFileName = `temp_${Date.now()}.m`;
+	//
+	// 	fs.promises.writeFile(tempFileName, codeBlockContent)
+	// 		.then(() => {
+	// 			const child = child_process.spawn(this.settings.matlabPath,  ["-wait", "-nodesktop", "-nosplash", "-nojvm", "-nodisplay", "-minimize", "-automation", "-bash", "-r", `${codeBlockContent} \nexit;`, "> C:\\result.txt."]);
+	//
+	// 			this.handleChildOutput(child, outputter, button, tempFileName);
+	// 		})
+	// 		.catch((err) => {
+	// 			console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
+	// 		});
+	// }
 
-		fs.promises.rm(tempFileName)
+	runPython(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
+		new Notice("Running...");
+		const tempFileName = `temp_${Date.now()}.py`;
+
+		fs.promises.writeFile(tempFileName, codeBlockContent)
+			.then(() => {
+				const args = this.settings.pythonArgs ? this.settings.pythonArgs.split(" ") : [];
+				args.push(tempFileName);
+				const child = child_process.spawn("python",  args)
+				this.handleChildOutput(child, outputter, button, tempFileName);
+			})
 			.catch((err) => {
-				console.log("Error in 'Obsidian Execute Code' Plugin" + err);
+				console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
 			});
 	}
 
@@ -138,5 +166,30 @@ export default class ExecuteCodePlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	private handleChildOutput(child: child_process.ChildProcessWithoutNullStreams, outputter: Outputter, button: HTMLButtonElement, fileName: string) {
+		outputter.clear();
+
+		child.stdout.on('data', (data) => {
+			outputter.write(data.toString());
+		});
+		child.stderr.on('data', (data) => {
+			outputter.writeErr(data.toString());
+		});
+
+		child.on('close', (code) => {
+			button.className = runButtonClass;
+			if(code === 0) {
+				new Notice("Done!");
+			} else {
+				new Notice("Error!");
+			}
+
+			fs.promises.rm(fileName)
+				.catch((err) => {
+					console.log("Error in 'Obsidian Execute Code' Plugin while removing file: " + err);
+				});
+		});
 	}
 }
