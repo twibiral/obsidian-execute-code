@@ -5,7 +5,7 @@ import {Outputter} from "./Outputter";
 import {SettingsTab, ExecutorSettings} from "./SettingsTab";
 
 
-const supportedLanguages = ["js", "javascript"];
+const supportedLanguages = ["js", "javascript", "python"];
 
 const buttonText = "Run";
 
@@ -16,7 +16,9 @@ const hasButtonClass = "has-run-code-button";
 const DEFAULT_SETTINGS: ExecutorSettings = {
 	timeout: 10000,
 	nodePath: "node",
-	matlabPath: "matlab",
+	nodeArgs: "",
+	pythonPath: "python",
+	pythonArgs: "",
 }
 
 export default class ExecuteCodePlugin extends Plugin {
@@ -58,16 +60,12 @@ export default class ExecuteCodePlugin extends Plugin {
 							this.runJavaScript(codeBlock.getText(), out, button);
 						});
 
+					} else if (language.contains("language-python")) {
+						button.addEventListener("click", () => {
+							button.className = runButtonDisabledClass;
+							this.runPython(codeBlock.getText(), out, button);
+						});
 					}
-
-
-
-					// else if (language.contains("language-matlab")) {
-					// 	button.addEventListener("click", () => {
-					// 		button.className = runButtonDisabledClass;
-					// 		this.runMatlab(codeBlock.getText(), out, button);
-					// 	});
-					// }
 				}
 
 			})
@@ -120,7 +118,9 @@ export default class ExecuteCodePlugin extends Plugin {
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
 				console.log(`Execute ${this.settings.nodePath} ${tempFileName}`);
-				const child = child_process.spawn(this.settings.nodePath, [tempFileName]);
+				const args = this.settings.nodeArgs ? this.settings.nodeArgs.split(" ") : [];
+				args.push(tempFileName);
+				const child = child_process.spawn(this.settings.nodePath, args);
 
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
@@ -128,15 +128,31 @@ export default class ExecuteCodePlugin extends Plugin {
 				console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
 			});
 	}
+	//
+	// runMatlab(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
+	// 	new Notice("Running...");
+	// 	const tempFileName = `temp_${Date.now()}.m`;
+	//
+	// 	fs.promises.writeFile(tempFileName, codeBlockContent)
+	// 		.then(() => {
+	// 			const child = child_process.spawn(this.settings.matlabPath,  ["-wait", "-nodesktop", "-nosplash", "-nojvm", "-nodisplay", "-minimize", "-automation", "-bash", "-r", `${codeBlockContent} \nexit;`, "> C:\\result.txt."]);
+	//
+	// 			this.handleChildOutput(child, outputter, button, tempFileName);
+	// 		})
+	// 		.catch((err) => {
+	// 			console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
+	// 		});
+	// }
 
-	runMatlab(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
+	runPython(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
 		new Notice("Running...");
-		const tempFileName = `temp_${Date.now()}.m`;
+		const tempFileName = `temp_${Date.now()}.py`;
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
-				const child = child_process.spawn(this.settings.matlabPath,  ["-wait", "-nodesktop", "-nosplash", "-nojvm", "-nodisplay", "-minimize", "-automation", "-bash", "-r", `${codeBlockContent} \nexit;`, "> C:\\result.txt."]);
-
+				const args = this.settings.pythonArgs ? this.settings.pythonArgs.split(" ") : [];
+				args.push(tempFileName);
+				const child = child_process.spawn("python",  args)
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
 			.catch((err) => {

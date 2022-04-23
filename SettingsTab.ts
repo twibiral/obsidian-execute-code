@@ -4,7 +4,9 @@ import ExecuteCodePlugin from "./main";
 export interface ExecutorSettings {
 	timeout: number;
 	nodePath: string;
-	matlabPath: string;
+	nodeArgs: string;
+	pythonPath: string;
+	pythonArgs: string;
 }
 
 export class SettingsTab extends PluginSettingTab {
@@ -25,7 +27,7 @@ export class SettingsTab extends PluginSettingTab {
 			.setName('Timeout (in seconds)')
 			.setDesc('The time after which a program gets shut down automatically. This is to prevent infinite loops. ')
 			.addText(slider => slider
-				.setPlaceholder("" + this.plugin.settings.timeout/1000)
+				.setValue("" + this.plugin.settings.timeout/1000)
 				.onChange(async (value) => {
 					if( Number(value) * 1000){
 						console.log('Timeout set to: ' + value);
@@ -36,24 +38,37 @@ export class SettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Node path')
-			.setDesc('The path to your node installation.')
 			.addText(text => text
-				.setPlaceholder(this.plugin.settings.nodePath)
 				.setValue(this.plugin.settings.nodePath)
 				.onChange(async (value) => {
 					this.plugin.settings.nodePath = value;
 					console.log('Node path set to: ' + value);
 				}));
+		new Setting(containerEl)
+			.setName('Node arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.nodeArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.nodeArgs = value;
+					console.log('Node path set to: ' + value);
+				}));
 
 		new Setting(containerEl)
-			.setName('Matlab path')
-			.setDesc('The path to your matlab installation.')
+			.setName('Python path')
+			.setDesc('The path to your Python installation.')
 			.addText(text => text
-				.setPlaceholder(this.plugin.settings.matlabPath)
-				.setValue(this.plugin.settings.matlabPath)
+				.setValue(this.plugin.settings.pythonPath)
 				.onChange(async (value) => {
-					this.plugin.settings.matlabPath = value;
-					console.log('Matlab path set to: ' + value);
+					this.plugin.settings.pythonPath = value;
+					console.log('Python path set to: ' + value);
+				}));
+		new Setting(containerEl)
+			.setName('Python arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.pythonArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.pythonArgs = value;
+					console.log('Node path set to: ' + value);
 				}));
 	}
 }
