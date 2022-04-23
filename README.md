@@ -8,15 +8,15 @@ The result is shown only after the execution is finished. It is not possible to 
 
 ## Supported programming languages
 
-- [x] JavaScript 
+- JavaScript 
     - Requirements: Node.js is installed and the correct path is set in the settings.
-- [x] Python     
+- Python     
 	- Requirements: Python is installed and the correct path is set in the settings.
 
 
 Support for the following is planned:
-- [ ] Java
-- [ ] Matlab
+- Java
+- Matlab
 
 Open for suggestions.
 
