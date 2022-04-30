@@ -3,9 +3,9 @@ import * as fs from "fs";
 import * as child_process from "child_process";
 import {Outputter} from "./Outputter";
 import {SettingsTab, ExecutorSettings} from "./SettingsTab";
+import * as JSCPP from "JSCPP";
 
-
-const supportedLanguages = ["js", "javascript", "python"];
+const supportedLanguages = ["js", "javascript", "python", "cpp"];
 
 const buttonText = "Run";
 
@@ -65,6 +65,21 @@ export default class ExecuteCodePlugin extends Plugin {
 							button.className = runButtonDisabledClass;
 							this.runPython(codeBlock.getText(), out, button);
 						});
+
+					} else if (language.contains("language-cpp")) {
+						button.addEventListener("click", () => {
+							button.className = runButtonDisabledClass;
+							const cppCode = codeBlock.getText();
+							const config = {
+								stdio: {
+									write: (s: string) => out.write(s)
+								},
+								unsigned_overflow: "warn", // can be "error"(default), "warn" or "ignore"
+								maxTimeout: this.settings.timeout,
+							};
+							const exitCode = JSCPP.run(cppCode, "", config);
+							out.write("Exit code: " + exitCode);
+						})
 					}
 				}
 
