@@ -11,8 +11,10 @@ The result is shown only after the execution is finished. It is not possible to 
 - JavaScript 
     - Requirements: Node.js is installed and the correct path is set in the settings.
 - Python     
-	- Requirements: Python is installed and the correct path is set in the settings.
-
+    - Requirements: Python is installed and the correct path is set in the settings.
+- CPP
+    - Requirements: NO requirements, works with [JSCPP](https://github.com/felixhao28/JSCPP).
+    - Problems: No error handling implemented yet and JSCPP doesn't support all language features.
 
 Support for the following is planned:
 - Java
