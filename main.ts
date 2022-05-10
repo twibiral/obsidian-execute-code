@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as child_process from "child_process";
 import {Outputter} from "./Outputter";
 import {SettingsTab, ExecutorSettings} from "./SettingsTab";
+// @ts-ignore
 import * as JSCPP from "JSCPP";
 
 const supportedLanguages = ["js", "javascript", "python", "cpp"];
@@ -38,8 +39,6 @@ export default class ExecuteCodePlugin extends Plugin {
 	private addRunButtons(element: HTMLElement) {
 		element.querySelectorAll("code")
 			.forEach((codeBlock: HTMLElement) => {
-				console.log("code block: " + codeBlock.tagName);
-
 				const pre = codeBlock.parentElement as HTMLPreElement;
 				const parent = pre.parentElement as HTMLDivElement;
 				const language = codeBlock.className.toLowerCase();
@@ -77,8 +76,9 @@ export default class ExecuteCodePlugin extends Plugin {
 								unsigned_overflow: "warn", // can be "error"(default), "warn" or "ignore"
 								maxTimeout: this.settings.timeout,
 							};
-							const exitCode = JSCPP.run(cppCode, "", config);
-							out.write("Exit code: " + exitCode);
+							const exitCode = JSCPP.run(cppCode, 0, config);
+							console.log("C++ exit code: " + exitCode);
+							out.write("program stopped with exit code " + exitCode);
 						})
 					}
 				}
