@@ -5,8 +5,10 @@ import {Outputter} from "./Outputter";
 import {SettingsTab, ExecutorSettings} from "./SettingsTab";
 // @ts-ignore
 import * as JSCPP from "JSCPP";
+// @ts-ignore
+import * as prolog from "tau-prolog";
 
-const supportedLanguages = ["js", "javascript", "python", "cpp"];
+const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog"];
 
 const buttonText = "Run";
 
@@ -68,6 +70,8 @@ export default class ExecuteCodePlugin extends Plugin {
 					} else if (language.contains("language-cpp")) {
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
+							out.clear();
+
 							const cppCode = codeBlock.getText();
 							const config = {
 								stdio: {
@@ -79,7 +83,67 @@ export default class ExecuteCodePlugin extends Plugin {
 							const exitCode = JSCPP.run(cppCode, 0, config);
 							console.log("C++ exit code: " + exitCode);
 							out.write("program stopped with exit code " + exitCode);
+							button.className = runButtonClass;
 						})
+
+					} else if (language.contains("language-prolog")) {
+						button.addEventListener("click", () => {
+							button.className = runButtonDisabledClass;
+							out.clear();
+
+							const prologCode = codeBlock.getText().split(/\n+%+\s*query\n+/);
+							if(prologCode.length < 2) return;
+
+							const session = prolog.create();
+							session.consult(prologCode[0]
+								, {
+									success: () => {
+										out.write("Successfully parsed the facts.\n");
+										session.query(prologCode[1]
+											, {
+												success: async (goal: any) => {
+													console.log(goal)
+													let answersLeft = true;
+													let counter = 0;
+
+													while (answersLeft) {
+														await session.answer({
+															success: function (answer: any) {
+																console.log(session.format_answer(answer));
+																out.write(session.format_answer(answer) + "\n");
+															},
+															fail: function () {
+																/* No more answers */
+																answersLeft = false;
+															},
+															error: function (err: any) {
+																console.error(err);
+																answersLeft = false;
+															},
+															limit: function () {
+																answersLeft = false;
+															}
+														});
+														counter++;
+													}
+												},
+												error: (err: any) => {
+													out.writeErr("Query failed.\n")
+													out.writeErr(err.toString());
+												}
+											}
+										)
+									},
+									error: (err: any) => {
+										out.writeErr("Adding facts failed.\n")
+										out.writeErr(err.toString());
+									}
+								}
+							);
+
+							button.className = runButtonClass;
+						})
+
 					}
 				}
 
