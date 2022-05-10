@@ -15,10 +15,22 @@ The result is shown only after the execution is finished. It is not possible to 
 - CPP
     - Requirements: NO requirements, works with [JSCPP](https://github.com/felixhao28/JSCPP).
     - Problems: No error handling implemented yet and JSCPP doesn't support all language features.
-
+- Prolog
+    - Requirements: NO requirements, works with [Tau-Prolog](https://github.com/tau-prolog/tau-prolog).
+    - Important: Add your queries after a line "`% query`" in the code block like in the following example:
+  ```prolog
+  likes(john, pizza).
+  likes(john, cheese).
+  likes(jane, beer).
+  
+  % query
+  likes(john, X).
+  ```
+  
 Support for the following is planned:
 - Java
 - Matlab
+- Julia Lang
 
 Open for suggestions.
 
