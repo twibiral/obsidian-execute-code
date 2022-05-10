@@ -7,6 +7,7 @@ export interface ExecutorSettings {
 	nodeArgs: string;
 	pythonPath: string;
 	pythonArgs: string;
+	maxPrologAnswers: number;
 }
 
 export class SettingsTab extends PluginSettingTab {
@@ -26,7 +27,7 @@ export class SettingsTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName('Timeout (in seconds)')
 			.setDesc('The time after which a program gets shut down automatically. This is to prevent infinite loops. ')
-			.addText(slider => slider
+			.addText(text => text
 				.setValue("" + this.plugin.settings.timeout/1000)
 				.onChange(async (value) => {
 					if( Number(value) * 1000){
@@ -69,6 +70,19 @@ export class SettingsTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.pythonArgs = value;
 					console.log('Node path set to: ' + value);
+				}));
+
+		new Setting(containerEl)
+			.setName('Prolog Answer Limit')
+			.setDesc('Maximal number of answers to be returned by the Prolog engine. This is to prevent creating too huge texts in the notebook.')
+			.addText(text => text
+				.setValue("" + this.plugin.settings.maxPrologAnswers)
+				.onChange(async (value) => {
+					if( Number(value) * 1000){
+						console.log('Answer limit set to: ' + value);
+						this.plugin.settings.maxPrologAnswers = Number(value);
+					}
+					await this.plugin.saveSettings();
 				}));
 	}
 }

@@ -22,6 +22,7 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	nodeArgs: "",
 	pythonPath: "python",
 	pythonArgs: "",
+	maxPrologAnswers: 15,
 }
 
 export default class ExecuteCodePlugin extends Plugin {
