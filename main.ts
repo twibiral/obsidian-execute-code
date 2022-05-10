@@ -95,52 +95,7 @@ export default class ExecuteCodePlugin extends Plugin {
 							const prologCode = codeBlock.getText().split(/\n+%+\s*query\n+/);
 							if(prologCode.length < 2) return;
 
-							const session = prolog.create();
-							session.consult(prologCode[0]
-								, {
-									success: () => {
-										out.write("Successfully parsed the facts.\n");
-										session.query(prologCode[1]
-											, {
-												success: async (goal: any) => {
-													console.log(goal)
-													let answersLeft = true;
-													let counter = 0;
-
-													while (answersLeft) {
-														await session.answer({
-															success: function (answer: any) {
-																console.log(session.format_answer(answer));
-																out.write(session.format_answer(answer) + "\n");
-															},
-															fail: function () {
-																/* No more answers */
-																answersLeft = false;
-															},
-															error: function (err: any) {
-																console.error(err);
-																answersLeft = false;
-															},
-															limit: function () {
-																answersLeft = false;
-															}
-														});
-														counter++;
-													}
-												},
-												error: (err: any) => {
-													out.writeErr("Query failed.\n")
-													out.writeErr(err.toString());
-												}
-											}
-										)
-									},
-									error: (err: any) => {
-										out.writeErr("Adding facts failed.\n")
-										out.writeErr(err.toString());
-									}
-								}
-							);
+							this.runPrologCode(prologCode, out);
 
 							button.className = runButtonClass;
 						})
@@ -190,7 +145,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		console.log("Unloaded plugin: Execute Code");
 	}
 
-	runJavaScript(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
+	private runJavaScript(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
 		new Notice("Running...");
 		const tempFileName = `temp_${Date.now()}.js`;
 		console.log(tempFileName);
@@ -208,7 +163,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
 			});
 	}
-	//
+
 	// runMatlab(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
 	// 	new Notice("Running...");
 	// 	const tempFileName = `temp_${Date.now()}.m`;
@@ -224,7 +179,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	// 		});
 	// }
 
-	runPython(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
+	private runPython(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
 		new Notice("Running...");
 		const tempFileName = `temp_${Date.now()}.py`;
 
@@ -238,6 +193,54 @@ export default class ExecuteCodePlugin extends Plugin {
 			.catch((err) => {
 				console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
 			});
+	}
+
+	private runPrologCode(prologCode: string[], out: Outputter) {
+		const session = prolog.create();
+		session.consult(prologCode[0]
+			, {
+				success: () => {
+					session.query(prologCode[1]
+						, {
+							success: async (goal: any) => {
+								console.log(goal)
+								let answersLeft = true;
+								let counter = 0;
+
+								while (answersLeft && counter < this.settings.maxPrologAnswers) {
+									await session.answer({
+										success: function (answer: any) {
+											console.log(session.format_answer(answer));
+											out.write(session.format_answer(answer) + "\n");
+										},
+										fail: function () {
+											/* No more answers */
+											answersLeft = false;
+										},
+										error: function (err: any) {
+											console.error(err);
+											answersLeft = false;
+										},
+										limit: function () {
+											answersLeft = false;
+										}
+									});
+									counter++;
+								}
+							},
+							error: (err: any) => {
+								out.writeErr("Query failed.\n")
+								out.writeErr(err.toString());
+							}
+						}
+					)
+				},
+				error: (err: any) => {
+					out.writeErr("Adding facts failed.\n")
+					out.writeErr(err.toString());
+				}
+			}
+		);
 	}
 
 	async loadSettings() {
