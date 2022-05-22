@@ -187,7 +187,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			.then(() => {
 				const args = this.settings.pythonArgs ? this.settings.pythonArgs.split(" ") : [];
 				args.push(tempFileName);
-				const child = child_process.spawn("python",  args)
+				const child = child_process.spawn(this.settings.pythonPath,  args)
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
 			.catch((err) => {
