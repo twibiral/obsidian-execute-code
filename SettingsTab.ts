@@ -5,6 +5,7 @@ export interface ExecutorSettings {
 	timeout: number;
 	nodePath: string;
 	nodeArgs: string;
+	npmArgs: string;
 	pythonPath: string;
 	pythonArgs: string;
 	maxPrologAnswers: number;
@@ -51,7 +52,15 @@ export class SettingsTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.nodeArgs)
 				.onChange(async (value) => {
 					this.plugin.settings.nodeArgs = value;
-					console.log('Node path set to: ' + value);
+					console.log('Node args set to: ' + value);
+				}));
+		new Setting(containerEl)
+			.setName('npm arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.nodeArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.npmArgs = value;
+					console.log('npm args set to: ' + value);
 				}));
 
 		new Setting(containerEl)
@@ -69,7 +78,7 @@ export class SettingsTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.pythonArgs)
 				.onChange(async (value) => {
 					this.plugin.settings.pythonArgs = value;
-					console.log('Node path set to: ' + value);
+					console.log('Python args set to: ' + value);
 				}));
 
 		new Setting(containerEl)
@@ -79,7 +88,7 @@ export class SettingsTab extends PluginSettingTab {
 				.setValue("" + this.plugin.settings.maxPrologAnswers)
 				.onChange(async (value) => {
 					if( Number(value) * 1000){
-						console.log('Answer limit set to: ' + value);
+						console.log('Prolog answer limit set to: ' + value);
 						this.plugin.settings.maxPrologAnswers = Number(value);
 					}
 					await this.plugin.saveSettings();
