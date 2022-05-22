@@ -62,6 +62,13 @@ Support for the following is planned:
 
 Open for suggestions.
 
+## Installation
+In your vault go to Settings > Community plugins > Browse and search for "Execute Code". Select the plugin, install it and activate it.
+
+or
+
+Follow [this link](https://obsidian.md/plugins?search=execute%20code#) and click "Open in Obsidian".
+
 ## Warning
 Do not execute code from sources you don't know or code you don't understand. Executing code can cause irrepairable damage.
 
