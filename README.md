@@ -77,6 +77,10 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 - Find better way to show that the program is running (for example a loading sign).
 - Notebook Mode similar to Jupyter
 - Global Declarations that make method and variable definitions available to subsequent code blocks
+- Key combination to execute all code blocks in a file
+- Overwrite python "plt.show()" to show the generated plot in the note (-> issue #13)
+- Shortcuts to insert current path etc into the code block -> "@vault" / "@file" / "@file_name"
+- Shortcut that can be used in a code blockto show any image or video in the note.
 
 ## Contribution
 All contributions are welcome. Just create a merge request or send me an email to : tim.wibiral(at)uni-ulm.de
