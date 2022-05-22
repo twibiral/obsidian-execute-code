@@ -10,14 +10,41 @@ The result is shown only after the execution is finished. It is not possible to 
 
 - JavaScript 
     - Requirements: Node.js is installed and the correct path is set in the settings.
+	```javascript
+	function hello(name){
+		console.log(`Hello ${name}!`);
+	}
+	
+	hello("Bob")
+	```
 - Python     
     - Requirements: Python is installed and the correct path is set in the settings.
+	 ```python
+	def hello(name):
+		print(name)
+
+	if __name__ == "__main__":
+		hello("Eve")
+	```
 - CPP
     - Requirements: NO requirements, works with [JSCPP](https://github.com/felixhao28/JSCPP).
     - Problems: No error handling implemented yet and JSCPP doesn't support all language features.
+	```cpp
+	#include <iostream>
+	using namespace std;
+
+	void hello(char name[]) {
+		cout << "Hello " << name << "!\n";
+	}
+
+	int main() {
+		hello("Alice");
+		return 0;
+	}
+	```
 - Prolog
     - Requirements: NO requirements, works with [Tau-Prolog](https://github.com/tau-prolog/tau-prolog).
-    - Important: Add your queries after a line "`% query`" in the code block like in the following example:
+    - Important: Add your queries after a line "`% query`" in the code block like in the following 
   ```prolog
   likes(john, pizza).
   likes(john, cheese).
