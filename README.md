@@ -59,6 +59,7 @@ Support for the following is planned:
 - Matlab
 - Julia Lang
 - R
+- Bash / Shell
 
 Open for suggestions.
 
