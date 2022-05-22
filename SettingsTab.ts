@@ -44,6 +44,7 @@ export class SettingsTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.nodePath = value;
 					console.log('Node path set to: ' + value);
+					await this.plugin.saveSettings();
 				}));
 		new Setting(containerEl)
 			.setName('Node arguments')
@@ -52,6 +53,7 @@ export class SettingsTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.nodeArgs = value;
 					console.log('Node path set to: ' + value);
+					await this.plugin.saveSettings();
 				}));
 
 		new Setting(containerEl)
@@ -62,6 +64,7 @@ export class SettingsTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.pythonPath = value;
 					console.log('Python path set to: ' + value);
+					await this.plugin.saveSettings();
 				}));
 		new Setting(containerEl)
 			.setName('Python arguments')
@@ -70,6 +73,7 @@ export class SettingsTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.pythonArgs = value;
 					console.log('Node path set to: ' + value);
+					await this.plugin.saveSettings();
 				}));
 
 		new Setting(containerEl)
