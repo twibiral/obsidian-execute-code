@@ -80,7 +80,7 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 - Key combination to execute all code blocks in a file
 - Overwrite python "plt.show()" to show the generated plot in the note (-> issue #13)
 - Shortcuts to insert current path etc into the code block -> "@vault" / "@file" / "@file_name"
-- Shortcut that can be used in a code blockto show any image or video in the note.
+- Shortcut that can be used in a code blockto show any image or video in the note -> "@show(img)"
 
 ## Contribution
 All contributions are welcome. Just create a merge request or send me an email to : tim.wibiral(at)uni-ulm.de
