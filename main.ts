@@ -1,4 +1,4 @@
-import {normalizePath, Notice, Plugin} from 'obsidian';
+import {Notice, Plugin} from 'obsidian';
 import * as fs from "fs";
 import * as os from "os"
 import * as child_process from "child_process";
@@ -75,18 +75,7 @@ export default class ExecuteCodePlugin extends Plugin {
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
 							out.clear();
-
-							const cppCode = codeBlock.getText();
-							const config = {
-								stdio: {
-									write: (s: string) => out.write(s)
-								},
-								unsigned_overflow: "warn", // can be "error"(default), "warn" or "ignore"
-								maxTimeout: this.settings.timeout,
-							};
-							const exitCode = JSCPP.run(cppCode, 0, config);
-							console.log("C++ exit code: " + exitCode);
-							out.write("program stopped with exit code " + exitCode);
+							this.runCpp(codeBlock.getText(), out);
 							button.className = runButtonClass;
 						})
 
@@ -96,7 +85,7 @@ export default class ExecuteCodePlugin extends Plugin {
 							out.clear();
 
 							const prologCode = codeBlock.getText().split(/\n+%+\s*query\n+/);
-							if(prologCode.length < 2) return;
+							if(prologCode.length < 2) return;	// no query found
 
 							this.runPrologCode(prologCode, out);
 
@@ -107,6 +96,21 @@ export default class ExecuteCodePlugin extends Plugin {
 				}
 
 			})
+	}
+
+	private runCpp(cppCode: string, out: Outputter) {
+		new Notice("Running...");
+		const config = {
+			stdio: {
+				write: (s: string) => out.write(s)
+			},
+			unsigned_overflow: "warn", // can be "error"(default), "warn" or "ignore"
+			maxTimeout: this.settings.timeout,
+		};
+		const exitCode = JSCPP.run(cppCode, 0, config);
+		console.log("C++ exit code: " + exitCode);
+		out.write("\nprogram stopped with exit code " + exitCode);
+		new Notice(exitCode === 0 ? "Done" : "Error");
 	}
 
 	private createRunButton() {
@@ -173,21 +177,6 @@ export default class ExecuteCodePlugin extends Plugin {
 			});
 	}
 
-	// runMatlab(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
-	// 	new Notice("Running...");
-	// 	const tempFileName = `temp_${Date.now()}.m`;
-	//
-	// 	fs.promises.writeFile(tempFileName, codeBlockContent)
-	// 		.then(() => {
-	// 			const child = child_process.spawn(this.settings.matlabPath,  ["-wait", "-nodesktop", "-nosplash", "-nojvm", "-nodisplay", "-minimize", "-automation", "-bash", "-r", `${codeBlockContent} \nexit;`, "> C:\\result.txt."]);
-	//
-	// 			this.handleChildOutput(child, outputter, button, tempFileName);
-	// 		})
-	// 		.catch((err) => {
-	// 			console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
-	// 		});
-	// }
-
 	private runPython(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
 		new Notice("Running...");
 		const tempFileName = this.getTempFile('js')
@@ -205,6 +194,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	}
 
 	private runPrologCode(prologCode: string[], out: Outputter) {
+		new Notice("Running...");
 		const session = prolog.create();
 		session.consult(prologCode[0]
 			, {
@@ -219,6 +209,7 @@ export default class ExecuteCodePlugin extends Plugin {
 								while (answersLeft && counter < this.settings.maxPrologAnswers) {
 									await session.answer({
 										success: function (answer: any) {
+											new Notice("Done!");
 											console.log(session.format_answer(answer));
 											out.write(session.format_answer(answer) + "\n");
 										},
@@ -227,6 +218,7 @@ export default class ExecuteCodePlugin extends Plugin {
 											answersLeft = false;
 										},
 										error: function (err: any) {
+											new Notice("Error!");
 											console.error(err);
 											answersLeft = false;
 										},
@@ -238,6 +230,7 @@ export default class ExecuteCodePlugin extends Plugin {
 								}
 							},
 							error: (err: any) => {
+								new Notice("Error!");
 								out.writeErr("Query failed.\n")
 								out.writeErr(err.toString());
 							}
@@ -272,11 +265,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 		child.on('close', (code) => {
 			button.className = runButtonClass;
-			if(code === 0) {
-				new Notice("Done!");
-			} else {
-				new Notice("Error!");
-			}
+			new Notice(code === 0 ? "Done!" : "Error!");
 
 			fs.promises.rm(fileName)
 				.catch((err) => {
