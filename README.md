@@ -58,6 +58,7 @@ Support for the following is planned:
 - Java
 - Matlab
 - Julia Lang
+- R
 
 Open for suggestions.
 
@@ -66,3 +67,8 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 
 ## Future Work
 - Find better way to show that the program is running (for example a loading sign).
+- Notebook Mode similar to Jupyter
+- Global Declarations that make method and variable definitions available to subsequent code blocks
+
+## Contribution
+All contributions are welcome. Just create a merge request or send me an email to : tim.wibiral(at)uni-ulm.de
