@@ -1,5 +1,6 @@
-import {Notice, Plugin} from 'obsidian';
+import {normalizePath, Notice, Plugin} from 'obsidian';
 import * as fs from "fs";
+import * as os from "os"
 import * as child_process from "child_process";
 import {Outputter} from "./Outputter";
 import {SettingsTab, ExecutorSettings} from "./SettingsTab";
@@ -24,6 +25,8 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	pythonArgs: "",
 	maxPrologAnswers: 15,
 }
+
+
 
 export default class ExecuteCodePlugin extends Plugin {
 	settings: ExecutorSettings;
@@ -145,16 +148,22 @@ export default class ExecuteCodePlugin extends Plugin {
 		console.log("Unloaded plugin: Execute Code");
 	}
 
+	private getTempFile(ext: string) {
+		return `${os.tmpdir()}/temp_${Date.now()}.${ext}`
+	}
+
 	private runJavaScript(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
 		new Notice("Running...");
-		const tempFileName = `temp_${Date.now()}.js`;
-		console.log(tempFileName);
+		const tempFileName = this.getTempFile('js')
+		console.log(`${tempFileName}`);
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
 				console.log(`Execute ${this.settings.nodePath} ${tempFileName}`);
 				const args = this.settings.nodeArgs ? this.settings.nodeArgs.split(" ") : [];
 				args.push(tempFileName);
+				console.log(this.settings.nodePath)
+				console.log(args)
 				const child = child_process.spawn(this.settings.nodePath, args);
 
 				this.handleChildOutput(child, outputter, button, tempFileName);
@@ -181,7 +190,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 	private runPython(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
 		new Notice("Running...");
-		const tempFileName = `temp_${Date.now()}.py`;
+		const tempFileName = this.getTempFile('js')
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
