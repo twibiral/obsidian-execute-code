@@ -8,7 +8,7 @@ import * as JSCPP from "JSCPP";
 // @ts-ignore
 import * as prolog from "tau-prolog";
 
-const supportedLanguages = ["js", "javascript", "ts", "typescript", "python", "cpp", "prolog"];
+const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog"];
 
 const buttonText = "Run";
 
@@ -20,7 +20,6 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	timeout: 10000,
 	nodePath: "node",
 	nodeArgs: "",
-	npmArgs: "",
 	pythonPath: "python",
 	pythonArgs: "",
 	maxPrologAnswers: 15,
@@ -38,37 +37,6 @@ export default class ExecuteCodePlugin extends Plugin {
 			this.addRunButtons(element);
 
 		});
-	}
-
-	onunload() {
-		document
-			.querySelectorAll("pre > code")
-			.forEach((codeBlock: HTMLElement) => {
-				const pre = codeBlock.parentElement as HTMLPreElement;
-				const parent = pre.parentElement as HTMLDivElement;
-
-				if(parent.hasClass(hasButtonClass)){
-					parent.removeClass(hasButtonClass);
-				}
-			});
-
-		document
-			.querySelectorAll("." + runButtonClass)
-			.forEach((button: HTMLButtonElement) => button.remove());
-
-		document
-			.querySelectorAll("." + runButtonDisabledClass)
-			.forEach((button: HTMLButtonElement) => button.remove());
-
-		document
-			.querySelectorAll(".clear-button")
-			.forEach((button: HTMLButtonElement) => button.remove());
-
-		document
-			.querySelectorAll(".language-output")
-			.forEach((out: HTMLElement) => out.remove());
-
-		console.log("Unloaded plugin: Execute Code");
 	}
 
 	private addRunButtons(element: HTMLElement) {
@@ -92,12 +60,6 @@ export default class ExecuteCodePlugin extends Plugin {
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
 							this.runJavaScript(codeBlock.getText(), out, button);
-						});
-
-					} else if (language.contains("language-ts") || language.contains("language-typescript")) {
-						button.addEventListener("click", () => {
-							button.className = runButtonDisabledClass;
-							this.runTypeScript(codeBlock.getText(), out, button)
 						});
 
 					} else if (language.contains("language-python")) {
@@ -152,9 +114,41 @@ export default class ExecuteCodePlugin extends Plugin {
 		return button;
 	}
 
+	onunload() {
+		document
+			.querySelectorAll("pre > code")
+			.forEach((codeBlock: HTMLElement) => {
+				const pre = codeBlock.parentElement as HTMLPreElement;
+				const parent = pre.parentElement as HTMLDivElement;
+
+				if(parent.hasClass(hasButtonClass)){
+					parent.removeClass(hasButtonClass);
+				}
+			});
+
+		document
+			.querySelectorAll("." + runButtonClass)
+			.forEach((button: HTMLButtonElement) => button.remove());
+
+		document
+			.querySelectorAll("." + runButtonDisabledClass)
+			.forEach((button: HTMLButtonElement) => button.remove());
+
+		document
+			.querySelectorAll(".clear-button")
+			.forEach((button: HTMLButtonElement) => button.remove());
+
+		document
+			.querySelectorAll(".language-output")
+			.forEach((out: HTMLElement) => out.remove());
+
+		console.log("Unloaded plugin: Execute Code");
+	}
+
 	private runJavaScript(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
 		new Notice("Running...");
 		const tempFileName = `temp_${Date.now()}.js`;
+		console.log(tempFileName);
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
@@ -164,46 +158,6 @@ export default class ExecuteCodePlugin extends Plugin {
 				const child = child_process.spawn(this.settings.nodePath, args);
 
 				this.handleChildOutput(child, outputter, button, tempFileName);
-			})
-			.catch((err) => {
-				console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
-			});
-	}
-
-	private runTypeScript(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
-		new Notice("Running...");
-		const base = `temp_${Date.now()}`
-		const tsFileName = base + ".ts";
-		const compiledFile = base + ".js";
-		console.log(tsFileName + "\t" + compiledFile);
-
-		fs.promises.writeFile(tsFileName, codeBlockContent)
-			.then(() => {
-				console.log(`Compile ${tsFileName}...`);
-				const args = this.settings.npmArgs ? this.settings.npmArgs.split(" ") : [];
-				args.push(tsFileName);
-				const child = child_process.spawn("npm run build", args);
-				child.stdout.on('data', (data) => console.log(data));
-				child.stderr.on('data', (data) => console.error(data));
-
-				child.on('close', (code) => {
-					button.className = runButtonClass;
-					console.log(`Closed child with code ${code}`);
-
-					fs.promises.rm(tsFileName)
-						.catch((err) => {
-							console.log("Error in 'Obsidian Execute Code' Plugin while removing file: " + err);
-						});
-
-					// Execute JavaScript
-					console.log(`Execute ${this.settings.nodePath} ${compiledFile}`);
-					const args2 = this.settings.nodeArgs ? this.settings.nodeArgs.split(" ") : [];
-					args.push(compiledFile);
-					const child2 = child_process.spawn(this.settings.nodePath, args2);
-
-					this.handleChildOutput(child2, outputter, button, compiledFile);
-				});
-
 			})
 			.catch((err) => {
 				console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
