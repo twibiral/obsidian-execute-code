@@ -7,6 +7,8 @@ export interface ExecutorSettings {
 	nodeArgs: string;
 	pythonPath: string;
 	pythonArgs: string;
+	bashPath: string;
+	bashArgs: string;
 	maxPrologAnswers: number;
 }
 
@@ -52,7 +54,7 @@ export class SettingsTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.nodeArgs)
 				.onChange(async (value) => {
 					this.plugin.settings.nodeArgs = value;
-					console.log('Node path set to: ' + value);
+					console.log('Node args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
 
@@ -72,10 +74,28 @@ export class SettingsTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.pythonArgs)
 				.onChange(async (value) => {
 					this.plugin.settings.pythonArgs = value;
-					console.log('Node path set to: ' + value);
+					console.log('Python args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
-
+		new Setting(containerEl)
+				.setName('Bash path')
+				.setDesc('The path to bash.')
+				.addText(text => text
+					.setValue(this.plugin.settings.bashPath)
+					.onChange(async (value) => {
+						this.plugin.settings.bashPath = value;
+						console.log('Bash path set to: ' + value);
+						await this.plugin.saveSettings();
+					}));
+		new Setting(containerEl)
+				.setName('Bash arguments')
+				.addText(text => text
+					.setValue(this.plugin.settings.bashArgs)
+					.onChange(async (value) => {
+						this.plugin.settings.bashArgs = value;
+						console.log('Bash args set to: ' + value);
+						await this.plugin.saveSettings();
+					}));
 		new Setting(containerEl)
 			.setName('Prolog Answer Limit')
 			.setDesc('Maximal number of answers to be returned by the Prolog engine. This is to prevent creating too huge texts in the notebook.')
