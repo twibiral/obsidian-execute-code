@@ -94,6 +94,8 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 - Shortcuts to insert current path etc into the code block -> "@vault" / "@file" / "@file_name"
 - Shortcut that can be used in a code block to show any image or video in the note -> "@show(img)"
 - Error warning when the execution fails (e.g. when python isn't installed)
+- Test if this plugin works in combination with dataview.
 
 ## Contribution
 All contributions are welcome. Just create a merge request or email me: tim.wibiral(at)uni-ulm.de
+The bullet points in Future Work are a good starting point if you want to help.
