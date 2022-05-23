@@ -10,49 +10,61 @@ The result is shown only after the execution is finished. It is not possible to 
 
 - JavaScript 
     - Requirements: Node.js is installed and the correct path is set in the settings.
-	```javascript
-	function hello(name){
-		console.log(`Hello ${name}!`);
-	}
+    ```javascript
+    function hello(name){
+        console.log(`Hello ${name}!`);
+    }
 	
-	hello("Bob")
-	```
+    hello("Bob")
+    ```
+  
 - Python     
     - Requirements: Python is installed and the correct path is set in the settings.
-	 ```python
-	def hello(name):
-		print(name)
+    ```python
+    def hello(name):
+        print(name)
 
-	if __name__ == "__main__":
-		hello("Eve")
-	```
+    if __name__ == "__main__":
+        hello("Eve")
+    ```
+  
 - CPP
     - Requirements: NO requirements, works with [JSCPP](https://github.com/felixhao28/JSCPP).
     - Problems: No error handling implemented yet and JSCPP doesn't support all language features.
-	```cpp
-	#include <iostream>
-	using namespace std;
+    ```cpp
+    #include <iostream>
+    using namespace std;
 
-	void hello(char name[]) {
-		cout << "Hello " << name << "!\n";
-	}
+    void hello(char name[]) {
+        cout << "Hello " << name << "!\n";
+    }
 
-	int main() {
-		hello("Alice");
-		return 0;
-	}
-	```
-- Prolog
-    - Requirements: NO requirements, works with [Tau-Prolog](https://github.com/tau-prolog/tau-prolog).
-    - Important: Add your queries after a line "`% query`" in the code block like in the following 
-  ```prolog
-  likes(john, pizza).
-  likes(john, cheese).
-  likes(jane, beer).
+    int main() {
+        hello("Alice");
+        return 0;
+    }
+    ```
   
-  % query
-  likes(john, X).
-  ```
+- Shell
+    - Requirements: Set the path to your preferred shell in the settings. Default is Bash.
+    - Linux / MacOS: Probably works out-of-the-box.
+    - Windows: Set path to `powershell`, add `-file` as argument, and change the default file ending to ``.ps1``.
+    ```shell
+    echo "Hello World!"
+    ls -la
+    ```
+	
+- Prolog
+   - Requirements: NO requirements, works with [Tau-Prolog](https://github.com/tau-prolog/tau-prolog).
+   - Important: Add your queries after a line "`% query`" in the code block like in the following 
+	```prolog
+	likes(john, pizza).
+	likes(john, cheese).
+	likes(jane, beer).
+	
+	% query
+	likes(john, X).
+	```
   
 Support for the following is planned:
 - Java
