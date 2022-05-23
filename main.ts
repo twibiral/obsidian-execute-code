@@ -1,5 +1,6 @@
 import {Notice, Plugin} from 'obsidian';
 import * as fs from "fs";
+import * as os from "os"
 import * as child_process from "child_process";
 import {Outputter} from "./Outputter";
 import {SettingsTab, ExecutorSettings} from "./SettingsTab";
@@ -8,7 +9,7 @@ import * as JSCPP from "JSCPP";
 // @ts-ignore
 import * as prolog from "tau-prolog";
 
-const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog"];
+const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "bash"];
 
 const buttonText = "Run";
 
@@ -22,6 +23,8 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	nodeArgs: "",
 	pythonPath: "python",
 	pythonArgs: "",
+	bashPath: "/bin/bash",
+	bashArgs: "",
 	maxPrologAnswers: 15,
 }
 
@@ -59,15 +62,19 @@ export default class ExecuteCodePlugin extends Plugin {
 					if (language.contains("language-js") || language.contains("language-javascript")) {
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
-							this.runJavaScript(codeBlock.getText(), out, button);
+							this.runCode(codeBlock.getText(), out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
 						});
 
 					} else if (language.contains("language-python")) {
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
-							this.runPython(codeBlock.getText(), out, button);
+							this.runCode(codeBlock.getText(), out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
 						});
-
+					} else if (language.contains("language-bash")) {
+						button.addEventListener("click", () => {
+							button.className = runButtonDisabledClass;
+							this.runCode(codeBlock.getText(), out, button, this.settings.bashPath, this.settings.bashArgs, "sh");
+						});
 					} else if (language.contains("language-cpp")) {
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
@@ -145,28 +152,9 @@ export default class ExecuteCodePlugin extends Plugin {
 		console.log("Unloaded plugin: Execute Code");
 	}
 
-	private runJavaScript(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
-		new Notice("Running...");
-		const tempFileName = `temp_${Date.now()}.js`;
-		console.log(tempFileName);
-
-		fs.promises.writeFile(tempFileName, codeBlockContent)
-			.then(() => {
-				console.log(`Execute ${this.settings.nodePath} ${tempFileName}`);
-				const args = this.settings.nodeArgs ? this.settings.nodeArgs.split(" ") : [];
-				args.push(tempFileName);
-				const child = child_process.spawn(this.settings.nodePath, args);
-
-				this.handleChildOutput(child, outputter, button, tempFileName);
-			})
-			.catch((err) => {
-				console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
-			});
-	}
-
 	// runMatlab(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
 	// 	new Notice("Running...");
-	// 	const tempFileName = `temp_${Date.now()}.m`;
+	// 	const tempFileName = this.getTempFile('m')
 	//
 	// 	fs.promises.writeFile(tempFileName, codeBlockContent)
 	// 		.then(() => {
@@ -179,15 +167,22 @@ export default class ExecuteCodePlugin extends Plugin {
 	// 		});
 	// }
 
-	private runPython(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
+	private getTempFile(ext: string) {
+		return `${os.tmpdir()}/temp_${Date.now()}.${ext}`
+	}
+
+	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
 		new Notice("Running...");
-		const tempFileName = `temp_${Date.now()}.py`;
+		const tempFileName = this.getTempFile(ext)
+		console.log(`${tempFileName}`);
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
-				const args = this.settings.pythonArgs ? this.settings.pythonArgs.split(" ") : [];
+				console.log(`Execute ${this.settings.nodePath} ${tempFileName}`);
+				const args = cmdArgs ? cmdArgs.split(" ") : [];
 				args.push(tempFileName);
-				const child = child_process.spawn(this.settings.pythonPath,  args)
+				const child = child_process.spawn(cmd, args);
+
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
 			.catch((err) => {
