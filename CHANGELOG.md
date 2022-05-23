@@ -3,6 +3,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+
+## [0.5.3] - 2022-05-22
+### Changed
+- Fix persistent custom path (Thanks to @rmchale)
+- Add running, done and error Notice to C++ and Prolog
+
+## [0.5.2] - 2022-05-22
+### Changed
+- Fix issue #9. Works now on MacOS too. (Thanks to @rmchale)
+
 ## [0.5.1] - 2022-05-22
 ### Changed
 - Fix hardcoded Python path (Thanks to @vkmb)
