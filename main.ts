@@ -181,8 +181,6 @@ export default class ExecuteCodePlugin extends Plugin {
 				console.log(`Execute ${this.settings.nodePath} ${tempFileName}`);
 				const args = cmdArgs ? cmdArgs.split(" ") : [];
 				args.push(tempFileName);
-				console.log(this.settings.nodePath)
-				console.log(args)
 				const child = child_process.spawn(cmd, args);
 
 				this.handleChildOutput(child, outputter, button, tempFileName);
