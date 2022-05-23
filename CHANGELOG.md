@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [0.6.0] - 2022-05-23
 ### Added
-- Support for shell scripts
+- Support for shell scripts (Thanks to @rmchale for the help)
 
 ## [0.5.3] - 2022-05-22
 ### Changed
