@@ -98,4 +98,5 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 
 ## Contribution
 All contributions are welcome. Just create a merge request or email me: tim.wibiral(at)uni-ulm.de
+
 The bullet points in Future Work are a good starting point if you want to help.
