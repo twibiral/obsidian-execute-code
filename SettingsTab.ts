@@ -7,8 +7,9 @@ export interface ExecutorSettings {
 	nodeArgs: string;
 	pythonPath: string;
 	pythonArgs: string;
-	bashPath: string;
-	bashArgs: string;
+	shellPath: string;
+	shellArgs: string;
+	shellFileExtension: string;
 	maxPrologAnswers: number;
 }
 
@@ -77,25 +78,37 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Python args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+
 		new Setting(containerEl)
-				.setName('Bash path')
-				.setDesc('The path to bash.')
+				.setName('Shell path')
+				.setDesc('The path to shell. Default is Bash but you can use any shell you want, e.g. bash, zsh, fish, ...')
 				.addText(text => text
-					.setValue(this.plugin.settings.bashPath)
+					.setValue(this.plugin.settings.shellPath)
 					.onChange(async (value) => {
-						this.plugin.settings.bashPath = value;
-						console.log('Bash path set to: ' + value);
+						this.plugin.settings.shellPath = value;
+						console.log('Shell path set to: ' + value);
 						await this.plugin.saveSettings();
 					}));
 		new Setting(containerEl)
-				.setName('Bash arguments')
+				.setName('Shell arguments')
 				.addText(text => text
-					.setValue(this.plugin.settings.bashArgs)
+					.setValue(this.plugin.settings.shellArgs)
 					.onChange(async (value) => {
-						this.plugin.settings.bashArgs = value;
-						console.log('Bash args set to: ' + value);
+						this.plugin.settings.shellArgs = value;
+						console.log('Shell args set to: ' + value);
 						await this.plugin.saveSettings();
 					}));
+		new Setting(containerEl)
+			.setName('Shell file extension')
+			.setDesc('Changes the file extension for generated shell scripts. This is useful if you want to use a shell other than bash.')
+			.addText(text => text
+				.setValue(this.plugin.settings.shellFileExtension)
+				.onChange(async (value) => {
+					this.plugin.settings.shellFileExtension = value;
+					console.log('Shell file extension set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+
 		new Setting(containerEl)
 			.setName('Prolog Answer Limit')
 			.setDesc('Maximal number of answers to be returned by the Prolog engine. This is to prevent creating too huge texts in the notebook.')

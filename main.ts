@@ -9,7 +9,7 @@ import * as JSCPP from "JSCPP";
 // @ts-ignore
 import * as prolog from "tau-prolog";
 
-const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "bash"];
+const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash"];
 
 const buttonText = "Run";
 
@@ -23,8 +23,9 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	nodeArgs: "",
 	pythonPath: "python",
 	pythonArgs: "",
-	bashPath: "/bin/bash",
-	bashArgs: "",
+	shellPath: "bash",
+	shellArgs: "",
+	shellFileExtension: "sh",
 	maxPrologAnswers: 15,
 }
 
@@ -70,10 +71,11 @@ export default class ExecuteCodePlugin extends Plugin {
 							button.className = runButtonDisabledClass;
 							this.runCode(codeBlock.getText(), out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
 						});
-					} else if (language.contains("language-bash")) {
+
+					} else if (language.contains("language-shell") || language.contains("language-bash")) {
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
-							this.runCode(codeBlock.getText(), out, button, this.settings.bashPath, this.settings.bashArgs, "sh");
+							this.runCode(codeBlock.getText(), out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
 						});
 
 					} else if (language.contains("language-cpp")) {
