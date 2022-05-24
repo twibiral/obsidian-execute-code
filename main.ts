@@ -47,7 +47,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		supportedLanguages.forEach(l=> {
 			console.log(`registering renderer for ${l}`)
 			this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, ctx) => {
-				await MarkdownRenderer.renderMarkdown('```' +l+ '\n' + src +'\n```' , el, '', this.app.workspace.activeLeaf.view)
+				await MarkdownRenderer.renderMarkdown('```' +l+ '\n' + src +'\n```' , el, '', null)
 			  })
 		})
 	}
