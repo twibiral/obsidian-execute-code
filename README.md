@@ -71,7 +71,6 @@ Support for the following is planned:
 - Matlab
 - Julia Lang
 - R
-- Bash / Shell
 
 Open for suggestions.
 
@@ -100,3 +99,12 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 All contributions are welcome. Just create a merge request or email me: tim.wibiral(at)uni-ulm.de
 
 The bullet points in Future Work are a good starting point if you want to help.
+
+## Contributers
+<a href="https://github.com/twibiral/obsidian-execute-code/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=twibiral/obsidian-execute-code" />
+</a>
+
+
+
+<sub>Made with [contrib.rocks](https://contrib.rocks).</sub>
