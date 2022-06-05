@@ -22,7 +22,7 @@ The result is shown only after the execution is finished. It is not possible to 
     - Requirements: Python is installed and the correct path is set in the settings.
     ```python
     def hello(name):
-        print(name)
+        print("Hello", name)
 
     if __name__ == "__main__":
         hello("Eve")
@@ -65,8 +65,9 @@ The result is shown only after the execution is finished. It is not possible to 
 	% query
 	likes(john, X).
 	```
-  
+
 Support for the following is planned:
+
 - Java
 - Matlab
 - Julia Lang
@@ -74,8 +75,25 @@ Support for the following is planned:
 
 Open for suggestions.
 
+## Running in Preview
+
+Adding `run-` before the language name in the code blocks (as in the example below) renders the code block in the
+preview already.
+This allows you to execute the code in the preview.
+
+```
+```run-python
+def hello(name):
+print("Hello", name)
+
+    if __name__ == "__main__":
+        hello("Eve")
+`````` 
+
 ## Installation
-In your vault go to Settings > Community plugins > Browse and search for "Execute Code". Select the plugin, install it and activate it.
+
+In your vault go to Settings > Community plugins > Browse and search for "Execute Code". Select the plugin, install it
+and activate it.
 
 or
 
