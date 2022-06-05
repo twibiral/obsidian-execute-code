@@ -4,6 +4,7 @@ import * as os from "os"
 import * as child_process from "child_process";
 import {Outputter} from "./Outputter";
 import {SettingsTab, ExecutorSettings} from "./SettingsTab";
+import {MarkdownRenderer} from "obsidian"
 // @ts-ignore
 import * as JSCPP from "JSCPP";
 // @ts-ignore
@@ -41,6 +42,14 @@ export default class ExecuteCodePlugin extends Plugin {
 			this.addRunButtons(element);
 
 		});
+
+		// live preview renderers
+		supportedLanguages.forEach(l=> {
+			console.log(`registering renderer for ${l}`)
+			this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, ctx) => {
+				await MarkdownRenderer.renderMarkdown('```' +l+ '\n' + src +'\n```' , el, '', null)
+			  })
+		})
 	}
 
 	private addRunButtons(element: HTMLElement) {
