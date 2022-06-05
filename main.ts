@@ -1,10 +1,9 @@
-import {Notice, Plugin} from 'obsidian';
+import {Notice, Plugin, MarkdownRenderer} from 'obsidian';
 import * as fs from "fs";
 import * as os from "os"
 import * as child_process from "child_process";
 import {Outputter} from "./Outputter";
 import {SettingsTab, ExecutorSettings} from "./SettingsTab";
-import {MarkdownRenderer} from "obsidian"
 // @ts-ignore
 import * as JSCPP from "JSCPP";
 // @ts-ignore
@@ -46,9 +45,9 @@ export default class ExecuteCodePlugin extends Plugin {
 		// live preview renderers
 		supportedLanguages.forEach(l=> {
 			console.log(`registering renderer for ${l}`)
-			this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, ctx) => {
+			this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, _ctx) => {
 				await MarkdownRenderer.renderMarkdown('```' +l+ '\n' + src +'\n```' , el, '', null)
-			  })
+			})
 		})
 	}
 
@@ -87,7 +86,7 @@ export default class ExecuteCodePlugin extends Plugin {
 							this.runCode(codeBlock.getText(), out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
 						});
 
-					} else if (language.contains("language-cpp")) {
+					} else if (language.contains("language-cpp")) { 
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
 							out.clear();
@@ -170,27 +169,6 @@ export default class ExecuteCodePlugin extends Plugin {
 
 	private getTempFile(ext: string) {
 		return `${os.tmpdir()}/temp_${Date.now()}.${ext}`
-	}
-
-	private runJavaScript(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
-		new Notice("Running...");
-		const tempFileName = this.getTempFile('js')
-		console.log(`${tempFileName}`);
-
-		fs.promises.writeFile(tempFileName, codeBlockContent)
-			.then(() => {
-				console.log(`Execute ${this.settings.nodePath} ${tempFileName}`);
-				const args = this.settings.nodeArgs ? this.settings.nodeArgs.split(" ") : [];
-				args.push(tempFileName);
-				console.log(this.settings.nodePath)
-				console.log(args)
-				const child = child_process.spawn(this.settings.nodePath, args);
-
-				this.handleChildOutput(child, outputter, button, tempFileName);
-			})
-			.catch((err) => {
-				console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
-			});
 	}
 
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
