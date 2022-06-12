@@ -1,14 +1,29 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [Unreleased]
+
+### Added
+
+- Export to HTML when printing html code.
+- PyPlots are automatically embedded as svg image into notes.
+
+### Changed
+
+- Improved settings tab.
 
 ## [0.7.0] - 2022-06-05
+
 ### Added
-- Support for live preview. Adding `run-` before the language name in the code block renders the code block in the live preview. (Thanks to @rmchale)
+
+- Support for live preview. Adding `run-` before the language name in the code block renders the code block in the live
+  preview. (Thanks to @rmchale)
 
 ## [0.6.0] - 2022-05-23
+
 ### Added
 - Support for shell scripts (Thanks to @rmchale for the help)
 

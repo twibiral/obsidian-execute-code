@@ -1,9 +1,9 @@
-import {Notice, Plugin, MarkdownRenderer} from 'obsidian';
+import {MarkdownRenderer, Notice, Plugin} from 'obsidian';
 import * as fs from "fs";
 import * as os from "os"
 import * as child_process from "child_process";
 import {Outputter} from "./Outputter";
-import {SettingsTab, ExecutorSettings} from "./SettingsTab";
+import {ExecutorSettings, SettingsTab} from "./SettingsTab";
 // @ts-ignore
 import * as JSCPP from "JSCPP";
 // @ts-ignore
@@ -23,6 +23,7 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	nodeArgs: "",
 	pythonPath: "python",
 	pythonArgs: "",
+	pythonEmbedPlots: true,
 	shellPath: "bash",
 	shellArgs: "",
 	shellFileExtension: "sh",
@@ -77,7 +78,15 @@ export default class ExecuteCodePlugin extends Plugin {
 					} else if (language.contains("language-python")) {
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
-							this.runCode(codeBlock.getText(), out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
+
+							let codeText = codeBlock.getText();
+							if (this.settings.pythonEmbedPlots) {	// embed plots into html which shows them in the note
+								const showPlot = 'import io; __obsidian_execute_code_temp_pyplot_var__=io.StringIO(); plt.plot(); plt.savefig(__obsidian_execute_code_temp_pyplot_var__, format=\'svg\'); plt.close(); print(f"<div align=\\"center\\">{__obsidian_execute_code_temp_pyplot_var__.getvalue()}</div>");'
+								codeText = codeText.replace(/plt\.show\(\);/g, showPlot);
+								codeText = codeText.replace(/plt\.show\(\)/g, showPlot + ";");
+							}
+
+							this.runCode(codeText, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
 						});
 
 					} else if (language.contains("language-shell") || language.contains("language-bash")) {

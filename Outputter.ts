@@ -37,14 +37,15 @@ export class Outputter {
 			this.addOutputElement();
 		}
 
-		if(! this.clearButton) {
+		if (!this.clearButton) {
 			this.addClearButton();
 		}
 
 		this.stdoutText += text;
-		if(!this.stderrText && !this.stdoutText) return;
+		if (!this.stderrText && !this.stdoutText) return;
 
-		this.stdoutElem.setText(this.stdoutText);
+		// this.stdoutElem.setText(this.stdoutText);
+		this.stdoutElem.innerHTML = this.stdoutText;
 
 		// make visible again:
 		this.outputElement.style.display = "block";

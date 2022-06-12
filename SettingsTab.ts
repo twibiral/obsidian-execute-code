@@ -7,6 +7,7 @@ export interface ExecutorSettings {
 	nodeArgs: string;
 	pythonPath: string;
 	pythonArgs: string;
+	pythonEmbedPlots: boolean;
 	shellPath: string;
 	shellArgs: string;
 	shellFileExtension: string;
@@ -26,7 +27,9 @@ export class SettingsTab extends PluginSettingTab {
 		containerEl.empty();
 
 		containerEl.createEl('h2', {text: 'Settings for the Code Execution Plugin.'});
+
 		// ========== Timeout ==========
+		containerEl.createEl('h3', {text: 'Timout Settings'});
 		new Setting(containerEl)
 			.setName('Timeout (in seconds)')
 			.setDesc('The time after which a program gets shut down automatically. This is to prevent infinite loops. ')
@@ -41,6 +44,7 @@ export class SettingsTab extends PluginSettingTab {
 				}));
 
 		// ========== JavaScript / Node ==========
+		containerEl.createEl('h3', {text: 'JavaScript / Node Settings'});
 		new Setting(containerEl)
 			.setName('Node path')
 			.addText(text => text
@@ -61,6 +65,7 @@ export class SettingsTab extends PluginSettingTab {
 				}));
 
 		// ========== Python ==========
+		containerEl.createEl('h3', {text: 'Python Settings'});
 		new Setting(containerEl)
 			.setName('Python path')
 			.setDesc('The path to your Python installation.')
@@ -80,15 +85,25 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Python args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+		new Setting(containerEl)
+			.setName('Embed Python Plots')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.pythonEmbedPlots)
+				.onChange(async (value) => {
+					this.plugin.settings.pythonEmbedPlots = value;
+					console.log(value ? 'Embedding Plots into Notes.' : "Not embedding Plots into Notes.");
+					await this.plugin.saveSettings();
+				}));
 
 		// ========== Shell ==========
+		containerEl.createEl('h3', {text: 'Shell Settings'});
 		new Setting(containerEl)
-				.setName('Shell path')
-				.setDesc('The path to shell. Default is Bash but you can use any shell you want, e.g. bash, zsh, fish, ...')
-				.addText(text => text
-					.setValue(this.plugin.settings.shellPath)
-					.onChange(async (value) => {
-						this.plugin.settings.shellPath = value;
+			.setName('Shell path')
+			.setDesc('The path to shell. Default is Bash but you can use any shell you want, e.g. bash, zsh, fish, ...')
+			.addText(text => text
+				.setValue(this.plugin.settings.shellPath)
+				.onChange(async (value) => {
+					this.plugin.settings.shellPath = value;
 						console.log('Shell path set to: ' + value);
 						await this.plugin.saveSettings();
 					}));
@@ -113,6 +128,7 @@ export class SettingsTab extends PluginSettingTab {
 				}));
 
 		// ========== Prolog ==========
+		containerEl.createEl('h3', {text: 'Prolog Settings'});
 		new Setting(containerEl)
 			.setName('Prolog Answer Limit')
 			.setDesc('Maximal number of answers to be returned by the Prolog engine. This is to prevent creating too huge texts in the notebook.')
