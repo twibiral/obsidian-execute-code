@@ -7,6 +7,7 @@ export interface ExecutorSettings {
 	nodeArgs: string;
 	pythonPath: string;
 	pythonArgs: string;
+	pythonEmbedPlots: boolean;
 	shellPath: string;
 	shellArgs: string;
 	shellFileExtension: string;
@@ -84,16 +85,25 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Python args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+		new Setting(containerEl)
+			.setName('Embed Python Plots')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.pythonEmbedPlots)
+				.onChange(async (value) => {
+					this.plugin.settings.pythonEmbedPlots = value;
+					console.log(value ? 'Embedding Plots into Notes.' : "Not embedding Plots into Notes.");
+					await this.plugin.saveSettings();
+				}));
 
 		// ========== Shell ==========
 		containerEl.createEl('h3', {text: 'Shell Settings'});
 		new Setting(containerEl)
-				.setName('Shell path')
-				.setDesc('The path to shell. Default is Bash but you can use any shell you want, e.g. bash, zsh, fish, ...')
-				.addText(text => text
-					.setValue(this.plugin.settings.shellPath)
-					.onChange(async (value) => {
-						this.plugin.settings.shellPath = value;
+			.setName('Shell path')
+			.setDesc('The path to shell. Default is Bash but you can use any shell you want, e.g. bash, zsh, fish, ...')
+			.addText(text => text
+				.setValue(this.plugin.settings.shellPath)
+				.onChange(async (value) => {
+					this.plugin.settings.shellPath = value;
 						console.log('Shell path set to: ' + value);
 						await this.plugin.saveSettings();
 					}));
