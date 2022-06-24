@@ -8,6 +8,7 @@ import {ExecutorSettings, SettingsTab} from "./SettingsTab";
 import * as JSCPP from "JSCPP";
 // @ts-ignore
 import * as prolog from "tau-prolog";
+import {addMagicToJS, addMagicToPython} from "./Magic";
 
 const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash"];
 
@@ -70,13 +71,15 @@ export default class ExecuteCodePlugin extends Plugin {
 
 					// Add button:
 					if (language.contains("language-js") || language.contains("language-javascript")) {
+						const codeText = addMagicToJS(codeBlock.getText());
+
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
-							this.runCode(codeBlock.getText(), out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
+							this.runCode(codeText, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
 						});
 
 					} else if (language.contains("language-python")) {
-						button.addEventListener("click", () => {
+						button.addEventListener("click", async () => {
 							button.className = runButtonDisabledClass;
 
 							let codeText = codeBlock.getText();
@@ -84,6 +87,8 @@ export default class ExecuteCodePlugin extends Plugin {
 								const showPlot = 'import io; __obsidian_execute_code_temp_pyplot_var__=io.StringIO(); plt.plot(); plt.savefig(__obsidian_execute_code_temp_pyplot_var__, format=\'svg\'); plt.close(); print(f"<div align=\\"center\\">{__obsidian_execute_code_temp_pyplot_var__.getvalue()}</div>")'
 								codeText = codeText.replace(/plt\.show\(\)/g, showPlot);
 							}
+
+							codeText = addMagicToPython(codeText);
 
 							this.runCode(codeText, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
 						});
