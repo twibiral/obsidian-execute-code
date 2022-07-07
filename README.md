@@ -49,6 +49,7 @@ The result is shown only after the execution is finished. It is not possible to 
     - Requirements: Set the path to your preferred shell in the settings. Default is Bash.
     - Linux / MacOS: Probably works out-of-the-box.
     - Windows: Set path to `powershell`, add `-file` as argument, and change the default file ending to ``.ps1``.
+    - Problems: Set the code box type to shell or bash, even when using powershell (see issue #24 for more information)
     ```shell
     echo "Hello World!"
     ls -la
@@ -101,6 +102,9 @@ Follow [this link](https://obsidian.md/plugins?search=execute%20code#) and click
 
 ## Warning
 Do not execute code from sources you don't know or code you don't understand. Executing code can cause irrepairable damage.
+
+## Known Problems
+- Missing when `run` button after switching the theme: Try to close and reopen your notes and wait for a few minutes. It seems like obsidian doesn't call the postprocessors after the theme switch.
 
 ## Future Work
 - Find better way to show that the program is running (for example a loading sign).
