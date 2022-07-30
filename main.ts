@@ -8,8 +8,9 @@ import {ExecutorSettings, SettingsTab} from "./SettingsTab";
 import * as JSCPP from "JSCPP";
 // @ts-ignore
 import * as prolog from "tau-prolog";
+import {exec} from "child_process";
 
-const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash"];
+const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy"];
 
 const buttonText = "Run";
 
@@ -27,6 +28,9 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	shellPath: "bash",
 	shellArgs: "",
 	shellFileExtension: "sh",
+	groovyPath: "c:/Program Files (x86)/Groovy/bin/groovy",
+	groovyArgs: "",
+	groovyFileExtension: "groovy",
 	maxPrologAnswers: 15,
 }
 
@@ -115,6 +119,12 @@ export default class ExecuteCodePlugin extends Plugin {
 							button.className = runButtonClass;
 						})
 
+					} else if (language.contains("language-groovy")/* || language.contains("language-javascript")*/) {
+						button.addEventListener("click", () => {
+							button.className = runButtonDisabledClass;
+							this.runCode(codeBlock.getText(), out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
+						});
+
 					}
 				}
 
@@ -182,16 +192,24 @@ export default class ExecuteCodePlugin extends Plugin {
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
 		new Notice("Running...");
 		const tempFileName = this.getTempFile(ext)
-		console.log(`${tempFileName}`);
+		// console.log(`${tempFileName}`);
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
 				console.log(`Execute ${this.settings.nodePath} ${tempFileName}`);
 				const args = cmdArgs ? cmdArgs.split(" ") : [];
-				args.push(tempFileName);
-				const child = child_process.spawn(cmd, args);
 
-				this.handleChildOutput(child, outputter, button, tempFileName);
+				args.push(tempFileName);
+
+				if (ext === "groovy") {
+					const { exec } = require('child_process');
+					exec('groovy '+tempFileName, (error :any, stdout:string, stderr:string) => {
+						this.handleExecOutput(outputter, button, tempFileName, stdout, stderr);
+					});
+				} else {
+					var child = child_process.spawn(cmd, args);
+					this.handleChildOutput(child, outputter, button, tempFileName);
+				}
 			})
 			.catch((err) => {
 				console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
@@ -277,5 +295,20 @@ export default class ExecuteCodePlugin extends Plugin {
 					console.log("Error in 'Obsidian Execute Code' Plugin while removing file: " + err);
 				});
 		});
+	}
+
+	private handleExecOutput(outputter: Outputter, button: HTMLButtonElement, fileName: string, stdout:string, stderr:string) {
+		outputter.clear();
+
+		outputter.write(stdout);
+		outputter.writeErr(stderr);
+
+		button.className = runButtonClass;
+		new Notice(stderr === '' ? "Done!" : "Error!");
+
+		fs.promises.rm(fileName)
+			.catch((err) => {
+				console.log("Error in 'Obsidian Execute Code' Plugin while removing file: " + err);
+			});
 	}
 }

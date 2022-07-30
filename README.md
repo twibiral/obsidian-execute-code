@@ -58,13 +58,29 @@ The result is shown only after the execution is finished. It is not possible to 
 - Prolog
    - Requirements: NO requirements, works with [Tau-Prolog](https://github.com/tau-prolog/tau-prolog).
    - Important: Add your queries after a line "`% query`" in the code block like in the following 
-	```prolog
-	likes(john, pizza).
-	likes(john, cheese).
-	likes(jane, beer).
+    ```prolog
+    likes(john, pizza).
+    likes(john, cheese).
+    likes(jane, beer).
 	
-	% query
-	likes(john, X).
+    % query
+    likes(john, X).
+    ```
+
+- Groovy
+  - Requirements: Groovy is installed and the correct path is set in the settings.
+	 ```groovy
+		def hello(name){  
+			 println "Hello ${name}!" 
+		}  
+		
+		def helloClosure = {  
+		   println "Hello ${it}!" 
+		}  
+		
+		hello("Bob")
+		
+		helloClosure "Bob"
 	```
 
 Support for the following is planned:

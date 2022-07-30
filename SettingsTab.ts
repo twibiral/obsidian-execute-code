@@ -11,6 +11,9 @@ export interface ExecutorSettings {
 	shellPath: string;
 	shellArgs: string;
 	shellFileExtension: string;
+	groovyPath: string;
+	groovyArgs: any;
+	groovyFileExtension: string;
 	maxPrologAnswers: number;
 }
 
