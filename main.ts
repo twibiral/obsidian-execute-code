@@ -202,7 +202,6 @@ export default class ExecuteCodePlugin extends Plugin {
 				args.push(tempFileName);
 
 				if (ext === "groovy") {
-					const { exec } = require('child_process');
 					exec('groovy '+tempFileName, (error :any, stdout:string, stderr:string) => {
 						this.handleExecOutput(outputter, button, tempFileName, stdout, stderr);
 					});
