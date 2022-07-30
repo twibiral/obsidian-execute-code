@@ -192,7 +192,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
 		new Notice("Running...");
 		const tempFileName = this.getTempFile(ext)
-		// console.log(`${tempFileName}`);
+		console.log(`${tempFileName}`);
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
