@@ -8,7 +8,6 @@ import {ExecutorSettings, SettingsTab} from "./SettingsTab";
 import * as JSCPP from "JSCPP";
 // @ts-ignore
 import * as prolog from "tau-prolog";
-import {exec} from "child_process";
 
 const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy"];
 
