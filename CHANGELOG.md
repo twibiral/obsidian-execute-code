@@ -9,7 +9,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - Magic Commands that can be added to source code to get new behavior tailored to obsidian.
-	- @show(): shows the image at the given path with in the note.
+	- `@show(ImagePath)`: Displays an image at the given path in the note.
+	- `@show(ImagePath, Width, Height)`: Displays an image at the given path in the note.
+	- `@show(ImagePath, Width, Height, Alignment["center"|"left"|"right"])`: Displays an image at the given path in the
+	  note.
+	- `@vault`: Inserts the vault path as string.
+	- `@note`: Inserts the note path as string.
+	- `@title`: Inserts the note title as string.
+- Support for Groovy
 
 ## [0.8.1] - 2022-06-24
 
