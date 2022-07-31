@@ -11,6 +11,9 @@ export interface ExecutorSettings {
 	shellPath: string;
 	shellArgs: string;
 	shellFileExtension: string;
+	groovyPath: string;
+	groovyArgs: any;
+	groovyFileExtension: string;
 	maxPrologAnswers: number;
 }
 
@@ -139,6 +142,28 @@ export class SettingsTab extends PluginSettingTab {
 						console.log('Answer limit set to: ' + value);
 						this.plugin.settings.maxPrologAnswers = Number(value);
 					}
+					await this.plugin.saveSettings();
+				}));
+
+		// ========== Groovy ==========
+		containerEl.createEl('h3', {text: 'Groovy Settings'});
+		new Setting(containerEl)
+			.setName('Groovy path')
+			.setDesc('The path to your Groovy installation.')
+			.addText(text => text
+				.setValue(this.plugin.settings.groovyPath)
+				.onChange(async (value) => {
+					this.plugin.settings.groovyPath = value;
+					console.log('Groovy path set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Groovy arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.groovyArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.groovyArgs = value;
+					console.log('Groovy args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
 	}

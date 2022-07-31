@@ -49,6 +49,7 @@ The result is shown only after the execution is finished. It is not possible to 
     - Requirements: Set the path to your preferred shell in the settings. Default is Bash.
     - Linux / MacOS: Probably works out-of-the-box.
     - Windows: Set path to `powershell`, add `-file` as argument, and change the default file ending to ``.ps1``.
+    - Problems: Set the code box type to shell or bash, even when using powershell (see issue #24 for more information)
     ```shell
     echo "Hello World!"
     ls -la
@@ -57,13 +58,29 @@ The result is shown only after the execution is finished. It is not possible to 
 - Prolog
    - Requirements: NO requirements, works with [Tau-Prolog](https://github.com/tau-prolog/tau-prolog).
    - Important: Add your queries after a line "`% query`" in the code block like in the following 
-	```prolog
-	likes(john, pizza).
-	likes(john, cheese).
-	likes(jane, beer).
+    ```prolog
+    likes(john, pizza).
+    likes(john, cheese).
+    likes(jane, beer).
 	
-	% query
-	likes(john, X).
+    % query
+    likes(john, X).
+    ```
+
+- Groovy
+  - Requirements: Groovy is installed and the correct path is set in the settings.
+	 ```groovy
+		def hello(name){  
+			 println "Hello ${name}!" 
+		}  
+		
+		def helloClosure = {  
+		   println "Hello ${it}!" 
+		}  
+		
+		hello("Bob")
+		
+		helloClosure "Bob"
 	```
 
 Support for the following is planned:
@@ -101,6 +118,9 @@ Follow [this link](https://obsidian.md/plugins?search=execute%20code#) and click
 
 ## Warning
 Do not execute code from sources you don't know or code you don't understand. Executing code can cause irrepairable damage.
+
+## Known Problems
+- Missing when `run` button after switching the theme: Try to close and reopen your notes and wait for a few minutes. It seems like obsidian doesn't call the postprocessors after the theme switch.
 
 ## Future Work
 - Find better way to show that the program is running (for example a loading sign).
