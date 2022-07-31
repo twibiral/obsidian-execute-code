@@ -4,11 +4,11 @@ import * as os from "os"
 import * as child_process from "child_process";
 import {Outputter} from "./Outputter";
 import {ExecutorSettings, SettingsTab} from "./SettingsTab";
+import {addInlinePlotsToPython, addMagicToJS, addMagicToPython, insertNotePath, insertVaultPath} from "./Magic";
 // @ts-ignore
 import * as JSCPP from "JSCPP";
 // @ts-ignore
 import * as prolog from "tau-prolog";
-import {addInlinePlotsToPython, addMagicToJS, addMagicToPython, insertNotePath, insertVaultPath} from "./Magic";
 
 const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy"];
 
@@ -226,7 +226,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				args.push(tempFileName);
 
-				var child = child_process.spawn(cmd, args);
+				const child = child_process.spawn(cmd, args);
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
 			.catch((err) => {
