@@ -9,7 +9,7 @@ import * as JSCPP from "JSCPP";
 // @ts-ignore
 import * as prolog from "tau-prolog";
 
-const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash"];
+const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy"];
 
 const buttonText = "Run";
 
@@ -27,6 +27,9 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	shellPath: "bash",
 	shellArgs: "",
 	shellFileExtension: "sh",
+	groovyPath: "groovy",
+	groovyArgs: "",
+	groovyFileExtension: "groovy",
 	maxPrologAnswers: 15,
 }
 
@@ -115,6 +118,12 @@ export default class ExecuteCodePlugin extends Plugin {
 							button.className = runButtonClass;
 						})
 
+					} else if (language.contains("language-groovy")) {
+						button.addEventListener("click", () => {
+							button.className = runButtonDisabledClass;
+							this.runCode(codeBlock.getText(), out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
+						});
+
 					}
 				}
 
@@ -188,9 +197,10 @@ export default class ExecuteCodePlugin extends Plugin {
 			.then(() => {
 				console.log(`Execute ${this.settings.nodePath} ${tempFileName}`);
 				const args = cmdArgs ? cmdArgs.split(" ") : [];
-				args.push(tempFileName);
-				const child = child_process.spawn(cmd, args);
 
+				args.push(tempFileName);
+
+				var child = child_process.spawn(cmd, args);
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
 			.catch((err) => {
