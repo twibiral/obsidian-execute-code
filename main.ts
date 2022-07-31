@@ -1,4 +1,4 @@
-import {MarkdownRenderer, Notice, Plugin} from 'obsidian';
+import {FileSystemAdapter, MarkdownRenderer, MarkdownView, Notice, Plugin} from 'obsidian';
 import * as fs from "fs";
 import * as os from "os"
 import * as child_process from "child_process";
@@ -8,7 +8,7 @@ import {ExecutorSettings, SettingsTab} from "./SettingsTab";
 import * as JSCPP from "JSCPP";
 // @ts-ignore
 import * as prolog from "tau-prolog";
-import {addInlinePlotsToPython, addMagicToJS, addMagicToPython} from "./Magic";
+import {addInlinePlotsToPython, addMagicToJS, addMagicToPython, insertNotePath, insertVaultPath} from "./Magic";
 
 const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash"];
 
@@ -86,6 +86,9 @@ export default class ExecuteCodePlugin extends Plugin {
 							if (this.settings.pythonEmbedPlots)	// embed plots into html which shows them in the note
 								codeText = addInlinePlotsToPython(codeText);
 
+							const vars = this.getVaultVariables();
+							codeText = insertVaultPath(codeText, vars.vaultPath);
+							codeText = insertNotePath(codeText, vars.filePath);
 							codeText = addMagicToPython(codeText);
 
 							this.runCode(codeText, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
@@ -122,6 +125,26 @@ export default class ExecuteCodePlugin extends Plugin {
 				}
 
 			})
+	}
+
+	private getVaultVariables() {
+		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+		if (activeView == null) {
+			return null;
+		}
+
+		const adapter = app.vault.adapter as FileSystemAdapter;
+		const vaultPath = adapter.getBasePath();
+		const folder = activeView.file.parent.path;
+		const fileName = activeView.file.name
+		const filePath = activeView.file.path
+
+		return {
+			vaultPath: vaultPath,
+			folder: folder,
+			fileName: fileName,
+			filePath: filePath,
+		}
 	}
 
 	private runCpp(cppCode: string, out: Outputter) {

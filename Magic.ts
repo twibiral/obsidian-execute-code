@@ -7,7 +7,17 @@
  * - `@show(ImagePath, Width, Height, Alignment)`: Displays an image at the given path in the note.
  */
 
-const SHOW_REGEX = /@show\(["'](?<path>[^,<>"'?*=]+)["'](,\s*(?<width>[0-9]+[\w%]+),?\s*(?<height>[0-9]+[\w%]+))?(,\s*(?<align>left|center|right))?\)/g;
+const SHOW_REGEX = /@show\(["'](?<path>[^<>?*=!\n#()\[\]{}]+)["'](,\s*(?<width>[0-9]+[\w%]+),?\s*(?<height>[0-9]+[\w%]+))?(,\s*(?<align>left|center|right))?\)/g;
+const VAULT_REGEX = /@vault/g
+const CURRENT_NOTE_REGEX = /@note/g;
+
+export function insertVaultPath(source: string, vaultPath: string): string {
+	return source.replace(VAULT_REGEX, `"app://local/${vaultPath.replace(/\\/g, "/")}"`);
+}
+
+export function insertNotePath(source: string, notePath: string): string {
+	return source.replace(CURRENT_NOTE_REGEX, `"${notePath}"`);
+}
 
 export function addInlinePlotsToPython(source: string): string {
 	const showPlot = 'import io; __obsidian_execute_code_temp_pyplot_var__=io.StringIO(); plt.plot(); plt.savefig(__obsidian_execute_code_temp_pyplot_var__, format=\'svg\'); plt.close(); print(f"<div align=\\"center\\">{__obsidian_execute_code_temp_pyplot_var__.getvalue()}</div>")'
@@ -58,6 +68,12 @@ function jsParseShowImage(source: string): string {
 }
 
 function buildMagicShowImage(imagePath: string, width: string = "0", height: string = "0", alignment: string = "center"): string {
+	if (imagePath.contains("+")) {
+		let splittedPath = imagePath.replace(/['"]/g, "").split("+");
+		splittedPath = splittedPath.map(element => element.trim())
+		imagePath = splittedPath.join("");
+	}
+
 	if (width == "0" || height == "0")
 		return `<img src="${imagePath}" align="${alignment}">`;
 
