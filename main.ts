@@ -201,14 +201,8 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				args.push(tempFileName);
 
-				if (ext === "groovy") {
-					exec('groovy '+tempFileName, (error :any, stdout:string, stderr:string) => {
-						this.handleExecOutput(outputter, button, tempFileName, stdout, stderr);
-					});
-				} else {
-					var child = child_process.spawn(cmd, args);
-					this.handleChildOutput(child, outputter, button, tempFileName);
-				}
+				var child = child_process.spawn(cmd, args);
+				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
 			.catch((err) => {
 				console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
@@ -294,20 +288,5 @@ export default class ExecuteCodePlugin extends Plugin {
 					console.log("Error in 'Obsidian Execute Code' Plugin while removing file: " + err);
 				});
 		});
-	}
-
-	private handleExecOutput(outputter: Outputter, button: HTMLButtonElement, fileName: string, stdout:string, stderr:string) {
-		outputter.clear();
-
-		outputter.write(stdout);
-		outputter.writeErr(stderr);
-
-		button.className = runButtonClass;
-		new Notice(stderr === '' ? "Done!" : "Error!");
-
-		fs.promises.rm(fileName)
-			.catch((err) => {
-				console.log("Error in 'Obsidian Execute Code' Plugin while removing file: " + err);
-			});
 	}
 }
