@@ -4,7 +4,14 @@ import * as os from "os"
 import * as child_process from "child_process";
 import {Outputter} from "./Outputter";
 import {ExecutorSettings, SettingsTab} from "./SettingsTab";
-import {addInlinePlotsToPython, addMagicToJS, addMagicToPython, insertNotePath, insertVaultPath} from "./Magic";
+import {
+	addInlinePlotsToPython,
+	addMagicToJS,
+	addMagicToPython,
+	insertNotePath,
+	insertNoteTitle,
+	insertVaultPath
+} from "./Magic";
 // @ts-ignore
 import * as JSCPP from "JSCPP";
 // @ts-ignore
@@ -63,6 +70,12 @@ export default class ExecuteCodePlugin extends Plugin {
 				const parent = pre.parentElement as HTMLDivElement;
 				const language = codeBlock.className.toLowerCase();
 
+				let srcCode = codeBlock.getText();	// get source code and perform magic to insert title etc
+				const vars = this.getVaultVariables();
+				srcCode = insertVaultPath(srcCode, vars.vaultPath);
+				srcCode = insertNotePath(srcCode, vars.filePath);
+				srcCode = insertNoteTitle(srcCode, vars.fileName);
+
 				if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
 					&& !parent.classList.contains(hasButtonClass)) { // unsupported language
 
@@ -74,40 +87,36 @@ export default class ExecuteCodePlugin extends Plugin {
 
 					// Add button:
 					if (language.contains("language-js") || language.contains("language-javascript")) {
-						const codeText = addMagicToJS(codeBlock.getText());
+						srcCode = addMagicToJS(srcCode);
 
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
-							this.runCode(codeText, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
+							this.runCode(srcCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
 						});
 
 					} else if (language.contains("language-python")) {
 						button.addEventListener("click", async () => {
 							button.className = runButtonDisabledClass;
 
-							let codeText = codeBlock.getText();
 							if (this.settings.pythonEmbedPlots)	// embed plots into html which shows them in the note
-								codeText = addInlinePlotsToPython(codeText);
+								srcCode = addInlinePlotsToPython(srcCode);
 
-							const vars = this.getVaultVariables();
-							codeText = insertVaultPath(codeText, vars.vaultPath);
-							codeText = insertNotePath(codeText, vars.filePath);
-							codeText = addMagicToPython(codeText);
+							srcCode = addMagicToPython(srcCode);
 
-							this.runCode(codeText, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
+							this.runCode(srcCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
 						});
 
 					} else if (language.contains("language-shell") || language.contains("language-bash")) {
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
-							this.runCode(codeBlock.getText(), out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
+							this.runCode(srcCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
 						});
 
 					} else if (language.contains("language-cpp")) { 
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
 							out.clear();
-							this.runCpp(codeBlock.getText(), out);
+							this.runCpp(srcCode, out);
 							button.className = runButtonClass;
 						})
 
@@ -116,7 +125,7 @@ export default class ExecuteCodePlugin extends Plugin {
 							button.className = runButtonDisabledClass;
 							out.clear();
 
-							const prologCode = codeBlock.getText().split(/\n+%+\s*query\n+/);
+							const prologCode = srcCode.split(/\n+%+\s*query\n+/);
 							if(prologCode.length < 2) return;	// no query found
 
 							this.runPrologCode(prologCode, out);
@@ -127,7 +136,7 @@ export default class ExecuteCodePlugin extends Plugin {
 					} else if (language.contains("language-groovy")) {
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
-							this.runCode(codeBlock.getText(), out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
+							this.runCode(srcCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
 						});
 
 					}
