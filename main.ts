@@ -247,7 +247,7 @@ export default class ExecuteCodePlugin extends Plugin {
 					opts = {shell:true};
 				}
 
-				var child = child_process.spawn(cmd, args, opts);
+				const child = child_process.spawn(cmd, args, opts);
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
 			.catch((err) => {
