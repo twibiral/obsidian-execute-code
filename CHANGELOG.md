@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.9.0] - 2022-07-31
+
+### Added
+
+- Magic Commands that can be added to source code to get new behavior tailored to obsidian.
+	- `@show(ImagePath)`: Displays an image at the given path in the note.
+	- `@show(ImagePath, Width, Height)`: Displays an image at the given path in the note.
+	- `@show(ImagePath, Width, Height, Alignment["center"|"left"|"right"])`: Displays an image at the given path in the
+	  note.
+	- `@vault`: Inserts the vault path as string.
+	- `@note`: Inserts the note path as string.
+	- `@title`: Inserts the note title as string.
+- Support for Groovy
+
+### Changed
+
+- Some refactoring and cleanup.
+
 ## [0.8.1] - 2022-06-24
 
 ### Changed

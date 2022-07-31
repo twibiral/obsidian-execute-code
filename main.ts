@@ -1,9 +1,17 @@
-import {MarkdownRenderer, Notice, Plugin} from 'obsidian';
+import {FileSystemAdapter, MarkdownRenderer, MarkdownView, Notice, Plugin} from 'obsidian';
 import * as fs from "fs";
 import * as os from "os"
 import * as child_process from "child_process";
 import {Outputter} from "./Outputter";
 import {ExecutorSettings, SettingsTab} from "./SettingsTab";
+import {
+	addInlinePlotsToPython,
+	addMagicToJS,
+	addMagicToPython,
+	insertNotePath,
+	insertNoteTitle,
+	insertVaultPath
+} from "./Magic";
 // @ts-ignore
 import * as JSCPP from "JSCPP";
 // @ts-ignore
@@ -47,12 +55,51 @@ export default class ExecuteCodePlugin extends Plugin {
 		});
 
 		// live preview renderers
-		supportedLanguages.forEach(l=> {
+		supportedLanguages.forEach(l => {
 			console.log(`registering renderer for ${l}`)
 			this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, _ctx) => {
-				await MarkdownRenderer.renderMarkdown('```' +l+ '\n' + src +'\n```' , el, '', null)
+				await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + '\n```', el, '', null)
 			})
 		})
+	}
+
+	onunload() {
+		document
+			.querySelectorAll("pre > code")
+			.forEach((codeBlock: HTMLElement) => {
+				const pre = codeBlock.parentElement as HTMLPreElement;
+				const parent = pre.parentElement as HTMLDivElement;
+
+				if (parent.hasClass(hasButtonClass)) {
+					parent.removeClass(hasButtonClass);
+				}
+			});
+
+		document
+			.querySelectorAll("." + runButtonClass)
+			.forEach((button: HTMLButtonElement) => button.remove());
+
+		document
+			.querySelectorAll("." + runButtonDisabledClass)
+			.forEach((button: HTMLButtonElement) => button.remove());
+
+		document
+			.querySelectorAll(".clear-button")
+			.forEach((button: HTMLButtonElement) => button.remove());
+
+		document
+			.querySelectorAll(".language-output")
+			.forEach((out: HTMLElement) => out.remove());
+
+		console.log("Unloaded plugin: Execute Code");
+	}
+
+	async loadSettings() {
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+	}
+
+	async saveSettings() {
+		await this.saveData(this.settings);
 	}
 
 	private addRunButtons(element: HTMLElement) {
@@ -61,6 +108,12 @@ export default class ExecuteCodePlugin extends Plugin {
 				const pre = codeBlock.parentElement as HTMLPreElement;
 				const parent = pre.parentElement as HTMLDivElement;
 				const language = codeBlock.className.toLowerCase();
+
+				let srcCode = codeBlock.getText();	// get source code and perform magic to insert title etc
+				const vars = this.getVaultVariables();
+				srcCode = insertVaultPath(srcCode, vars.vaultPath);
+				srcCode = insertNotePath(srcCode, vars.filePath);
+				srcCode = insertNoteTitle(srcCode, vars.fileName);
 
 				if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
 					&& !parent.classList.contains(hasButtonClass)) { // unsupported language
@@ -73,35 +126,36 @@ export default class ExecuteCodePlugin extends Plugin {
 
 					// Add button:
 					if (language.contains("language-js") || language.contains("language-javascript")) {
+						srcCode = addMagicToJS(srcCode);
+
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
-							this.runCode(codeBlock.getText(), out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
+							this.runCode(srcCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
 						});
 
 					} else if (language.contains("language-python")) {
-						button.addEventListener("click", () => {
+						button.addEventListener("click", async () => {
 							button.className = runButtonDisabledClass;
 
-							let codeText = codeBlock.getText();
-							if (this.settings.pythonEmbedPlots) {	// embed plots into html which shows them in the note
-								const showPlot = 'import io; __obsidian_execute_code_temp_pyplot_var__=io.StringIO(); plt.plot(); plt.savefig(__obsidian_execute_code_temp_pyplot_var__, format=\'svg\'); plt.close(); print(f"<div align=\\"center\\">{__obsidian_execute_code_temp_pyplot_var__.getvalue()}</div>")'
-								codeText = codeText.replace(/plt\.show\(\)/g, showPlot);
-							}
+							if (this.settings.pythonEmbedPlots)	// embed plots into html which shows them in the note
+								srcCode = addInlinePlotsToPython(srcCode);
 
-							this.runCode(codeText, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
+							srcCode = addMagicToPython(srcCode);
+
+							this.runCode(srcCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
 						});
 
 					} else if (language.contains("language-shell") || language.contains("language-bash")) {
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
-							this.runCode(codeBlock.getText(), out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
+							this.runCode(srcCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
 						});
 
-					} else if (language.contains("language-cpp")) { 
+					} else if (language.contains("language-cpp")) {
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
 							out.clear();
-							this.runCpp(codeBlock.getText(), out);
+							this.runCpp(srcCode, out);
 							button.className = runButtonClass;
 						})
 
@@ -110,8 +164,8 @@ export default class ExecuteCodePlugin extends Plugin {
 							button.className = runButtonDisabledClass;
 							out.clear();
 
-							const prologCode = codeBlock.getText().split(/\n+%+\s*query\n+/);
-							if(prologCode.length < 2) return;	// no query found
+							const prologCode = srcCode.split(/\n+%+\s*query\n+/);
+							if (prologCode.length < 2) return;	// no query found
 
 							this.runPrologCode(prologCode, out);
 
@@ -121,13 +175,33 @@ export default class ExecuteCodePlugin extends Plugin {
 					} else if (language.contains("language-groovy")) {
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
-							this.runCode(codeBlock.getText(), out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
+							this.runCode(srcCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
 						});
 
 					}
 				}
 
 			})
+	}
+
+	private getVaultVariables() {
+		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+		if (activeView == null) {
+			return null;
+		}
+
+		const adapter = app.vault.adapter as FileSystemAdapter;
+		const vaultPath = adapter.getBasePath();
+		const folder = activeView.file.parent.path;
+		const fileName = activeView.file.name
+		const filePath = activeView.file.path
+
+		return {
+			vaultPath: vaultPath,
+			folder: folder,
+			fileName: fileName,
+			filePath: filePath,
+		}
 	}
 
 	private runCpp(cppCode: string, out: Outputter) {
@@ -153,37 +227,6 @@ export default class ExecuteCodePlugin extends Plugin {
 		return button;
 	}
 
-	onunload() {
-		document
-			.querySelectorAll("pre > code")
-			.forEach((codeBlock: HTMLElement) => {
-				const pre = codeBlock.parentElement as HTMLPreElement;
-				const parent = pre.parentElement as HTMLDivElement;
-
-				if(parent.hasClass(hasButtonClass)){
-					parent.removeClass(hasButtonClass);
-				}
-			});
-
-		document
-			.querySelectorAll("." + runButtonClass)
-			.forEach((button: HTMLButtonElement) => button.remove());
-
-		document
-			.querySelectorAll("." + runButtonDisabledClass)
-			.forEach((button: HTMLButtonElement) => button.remove());
-
-		document
-			.querySelectorAll(".clear-button")
-			.forEach((button: HTMLButtonElement) => button.remove());
-
-		document
-			.querySelectorAll(".language-output")
-			.forEach((out: HTMLElement) => out.remove());
-
-		console.log("Unloaded plugin: Execute Code");
-	}
-
 	private getTempFile(ext: string) {
 		return `${os.tmpdir()}/temp_${Date.now()}.${ext}`
 	}
@@ -200,7 +243,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				args.push(tempFileName);
 
-				var child = child_process.spawn(cmd, args);
+				const child = child_process.spawn(cmd, args);
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
 			.catch((err) => {
@@ -258,14 +301,6 @@ export default class ExecuteCodePlugin extends Plugin {
 				}
 			}
 		);
-	}
-
-	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-	}
-
-	async saveSettings() {
-		await this.saveData(this.settings);
 	}
 
 	private handleChildOutput(child: child_process.ChildProcessWithoutNullStreams, outputter: Outputter, button: HTMLButtonElement, fileName: string) {

@@ -17,9 +17,9 @@ The result is shown only after the execution is finished. It is not possible to 
 	
     hello("Bob")
     ```
-  
-- Python     
-    - Requirements: Python is installed and the correct path is set in the settings.
+
+- Python
+	- Requirements: Python is installed and the correct path is set in the settings.
     ```python
     def hello(name):
         print("Hello", name)
@@ -27,10 +27,25 @@ The result is shown only after the execution is finished. It is not possible to 
     if __name__ == "__main__":
         hello("Eve")
     ```
-  
+
+	- Plots with matplotlib/seaborn are embedded in the note by default. You can turn this off in the settings.
+    ```python
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    sns.set_style("darkgrid")
+    iris = sns.load_dataset('iris')
+    sns.FacetGrid(iris, hue ="species",
+        height = 5).map(plt.scatter,
+        'sepal_length',
+        'petal_length').add_legend()
+
+    plt.show()
+	```
+  ![Example of an embedded plot.](https://github.com/twibiral/obsidian-execute-code/blob/master/plotting_example.png?raw=true)
+
 - CPP
-    - Requirements: NO requirements, works with [JSCPP](https://github.com/felixhao28/JSCPP).
-    - Problems: No error handling implemented yet and JSCPP doesn't support all language features.
+	- Requirements: NO requirements, works with [JSCPP](https://github.com/felixhao28/JSCPP).
+	- Problems: No error handling implemented yet and JSCPP doesn't support all language features.
     ```cpp
     #include <iostream>
     using namespace std;
@@ -68,20 +83,20 @@ The result is shown only after the execution is finished. It is not possible to 
     ```
 
 - Groovy
-  - Requirements: Groovy is installed and the correct path is set in the settings.
-	 ```groovy
-		def hello(name){  
-			 println "Hello ${name}!" 
-		}  
+	- Requirements: Groovy is installed and the correct path is set in the settings.
+  ```groovy
+        def hello(name){  
+             println "Hello ${name}!" 
+        }  
 		
-		def helloClosure = {  
-		   println "Hello ${it}!" 
-		}  
+        def helloClosure = {  
+           println "Hello ${it}!" 
+        }  
 		
-		hello("Bob")
+        hello("Bob")
 		
-		helloClosure "Bob"
-	```
+        helloClosure "Bob"
+    ```
 
 Support for the following is planned:
 
@@ -91,6 +106,25 @@ Support for the following is planned:
 - R
 
 Open for suggestions.
+
+## Magic Commands
+
+Magic commands are some meta commands that can be used in the code block. They are processed by the plugin before the
+source code is executed.
+
+The following magic commands are supported:
+
+- `@vault`: Inserts the vault path as string.
+- `@note`: Inserts the note path as string.
+- `@title`: Inserts the note title as string.
+- `@show(ImagePath)`: Displays an image at the given path in the note.
+- `@show(ImagePath, Width, Height)`: Displays an image at the given path in the note.
+- `@show(ImagePath, Width, Height, Alignment[center|left|right])`: Displays an image at the given path in the
+  note.
+
+(`@show(...)` is only supported for JavaScript and Python yet.)
+
+![Example how to use the magic commands.](https://github.com/twibiral/obsidian-execute-code/blob/master/magic_example.png?raw=true)
 
 ## Running in Preview
 
@@ -127,9 +161,6 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 - Notebook Mode similar to Jupyter
 - Global Declarations that make method and variable definitions available to subsequent code blocks
 - Key combination to execute all code blocks in a file
-- Overwrite python "plt.show()" to show the generated plot in the note (-> issue #13)
-- Shortcuts to insert current path etc into the code block -> "@vault" / "@file" / "@file_name"
-- Shortcut that can be used in a code block to show any image or video in the note -> "@show(img)"
 - Error warning when the execution fails (e.g. when python isn't installed)
 - Test if this plugin works in combination with dataview.
 
