@@ -55,12 +55,51 @@ export default class ExecuteCodePlugin extends Plugin {
 		});
 
 		// live preview renderers
-		supportedLanguages.forEach(l=> {
+		supportedLanguages.forEach(l => {
 			console.log(`registering renderer for ${l}`)
 			this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, _ctx) => {
-				await MarkdownRenderer.renderMarkdown('```' +l+ '\n' + src +'\n```' , el, '', null)
+				await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + '\n```', el, '', null)
 			})
 		})
+	}
+
+	onunload() {
+		document
+			.querySelectorAll("pre > code")
+			.forEach((codeBlock: HTMLElement) => {
+				const pre = codeBlock.parentElement as HTMLPreElement;
+				const parent = pre.parentElement as HTMLDivElement;
+
+				if (parent.hasClass(hasButtonClass)) {
+					parent.removeClass(hasButtonClass);
+				}
+			});
+
+		document
+			.querySelectorAll("." + runButtonClass)
+			.forEach((button: HTMLButtonElement) => button.remove());
+
+		document
+			.querySelectorAll("." + runButtonDisabledClass)
+			.forEach((button: HTMLButtonElement) => button.remove());
+
+		document
+			.querySelectorAll(".clear-button")
+			.forEach((button: HTMLButtonElement) => button.remove());
+
+		document
+			.querySelectorAll(".language-output")
+			.forEach((out: HTMLElement) => out.remove());
+
+		console.log("Unloaded plugin: Execute Code");
+	}
+
+	async loadSettings() {
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+	}
+
+	async saveSettings() {
+		await this.saveData(this.settings);
 	}
 
 	private addRunButtons(element: HTMLElement) {
@@ -112,7 +151,7 @@ export default class ExecuteCodePlugin extends Plugin {
 							this.runCode(srcCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
 						});
 
-					} else if (language.contains("language-cpp")) { 
+					} else if (language.contains("language-cpp")) {
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
 							out.clear();
@@ -126,7 +165,7 @@ export default class ExecuteCodePlugin extends Plugin {
 							out.clear();
 
 							const prologCode = srcCode.split(/\n+%+\s*query\n+/);
-							if(prologCode.length < 2) return;	// no query found
+							if (prologCode.length < 2) return;	// no query found
 
 							this.runPrologCode(prologCode, out);
 
@@ -186,37 +225,6 @@ export default class ExecuteCodePlugin extends Plugin {
 		button.classList.add(runButtonClass);
 		button.setText(buttonText);
 		return button;
-	}
-
-	onunload() {
-		document
-			.querySelectorAll("pre > code")
-			.forEach((codeBlock: HTMLElement) => {
-				const pre = codeBlock.parentElement as HTMLPreElement;
-				const parent = pre.parentElement as HTMLDivElement;
-
-				if(parent.hasClass(hasButtonClass)){
-					parent.removeClass(hasButtonClass);
-				}
-			});
-
-		document
-			.querySelectorAll("." + runButtonClass)
-			.forEach((button: HTMLButtonElement) => button.remove());
-
-		document
-			.querySelectorAll("." + runButtonDisabledClass)
-			.forEach((button: HTMLButtonElement) => button.remove());
-
-		document
-			.querySelectorAll(".clear-button")
-			.forEach((button: HTMLButtonElement) => button.remove());
-
-		document
-			.querySelectorAll(".language-output")
-			.forEach((out: HTMLElement) => out.remove());
-
-		console.log("Unloaded plugin: Execute Code");
 	}
 
 	private getTempFile(ext: string) {
@@ -293,14 +301,6 @@ export default class ExecuteCodePlugin extends Plugin {
 				}
 			}
 		);
-	}
-
-	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-	}
-
-	async saveSettings() {
-		await this.saveData(this.settings);
 	}
 
 	private handleChildOutput(child: child_process.ChildProcessWithoutNullStreams, outputter: Outputter, button: HTMLButtonElement, fileName: string) {
