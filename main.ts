@@ -28,7 +28,7 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	shellPath: "bash",
 	shellArgs: "",
 	shellFileExtension: "sh",
-	groovyPath: "c:/Program Files (x86)/Groovy/bin/groovy",
+	groovyPath: "groovy",
 	groovyArgs: "",
 	groovyFileExtension: "groovy",
 	maxPrologAnswers: 15,
@@ -119,7 +119,7 @@ export default class ExecuteCodePlugin extends Plugin {
 							button.className = runButtonClass;
 						})
 
-					} else if (language.contains("language-groovy")/* || language.contains("language-javascript")*/) {
+					} else if (language.contains("language-groovy")) {
 						button.addEventListener("click", () => {
 							button.className = runButtonDisabledClass;
 							this.runCode(codeBlock.getText(), out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
