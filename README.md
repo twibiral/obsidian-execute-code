@@ -161,9 +161,6 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 - Notebook Mode similar to Jupyter
 - Global Declarations that make method and variable definitions available to subsequent code blocks
 - Key combination to execute all code blocks in a file
-- Overwrite python "plt.show()" to show the generated plot in the note (-> issue #13)
-- Shortcuts to insert current path etc into the code block -> "@vault" / "@file" / "@file_name"
-- Shortcut that can be used in a code block to show any image or video in the note -> "@show(img)"
 - Error warning when the execution fails (e.g. when python isn't installed)
 - Test if this plugin works in combination with dataview.
 
