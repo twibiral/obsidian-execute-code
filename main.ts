@@ -8,7 +8,7 @@ import {ExecutorSettings, SettingsTab} from "./SettingsTab";
 import * as JSCPP from "JSCPP";
 // @ts-ignore
 import * as prolog from "tau-prolog";
-import {addMagicToJS, addMagicToPython} from "./Magic";
+import {addInlinePlotsToPython, addMagicToJS, addMagicToPython} from "./Magic";
 
 const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash"];
 
@@ -83,10 +83,8 @@ export default class ExecuteCodePlugin extends Plugin {
 							button.className = runButtonDisabledClass;
 
 							let codeText = codeBlock.getText();
-							if (this.settings.pythonEmbedPlots) {	// embed plots into html which shows them in the note
-								const showPlot = 'import io; __obsidian_execute_code_temp_pyplot_var__=io.StringIO(); plt.plot(); plt.savefig(__obsidian_execute_code_temp_pyplot_var__, format=\'svg\'); plt.close(); print(f"<div align=\\"center\\">{__obsidian_execute_code_temp_pyplot_var__.getvalue()}</div>")'
-								codeText = codeText.replace(/plt\.show\(\)/g, showPlot);
-							}
+							if (this.settings.pythonEmbedPlots)	// embed plots into html which shows them in the note
+								codeText = addInlinePlotsToPython(codeText);
 
 							codeText = addMagicToPython(codeText);
 

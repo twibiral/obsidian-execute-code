@@ -9,6 +9,11 @@
 
 const SHOW_REGEX = /@show\(["'](?<path>[^,<>"'?*=]+)["'](,\s*(?<width>[0-9]+[\w%]+),?\s*(?<height>[0-9]+[\w%]+))?(,\s*(?<align>left|center|right))?\)/g;
 
+export function addInlinePlotsToPython(source: string): string {
+	const showPlot = 'import io; __obsidian_execute_code_temp_pyplot_var__=io.StringIO(); plt.plot(); plt.savefig(__obsidian_execute_code_temp_pyplot_var__, format=\'svg\'); plt.close(); print(f"<div align=\\"center\\">{__obsidian_execute_code_temp_pyplot_var__.getvalue()}</div>")'
+	return source.replace(/plt\.show\(\)/g, showPlot);
+}
+
 export function addMagicToPython(source: string): string {
 	source = pythonParseShowImage(source);
 	return source;
