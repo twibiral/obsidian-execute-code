@@ -20,11 +20,15 @@ export function insertVaultPath(source: string, vaultPath: string): string {
 }
 
 export function insertNotePath(source: string, notePath: string): string {
-	return source.replace(CURRENT_NOTE_REGEX, `"${notePath}"`);
+	return source.replace(CURRENT_NOTE_REGEX, `"app://local/${notePath.replace(/\\/g, "/")}"`);
 }
 
 export function insertNoteTitle(source: string, noteTitle: string): string {
-	return source.replace(NOTE_TITLE_REGEX, `"${noteTitle}"`);
+	let t = "";
+	if (noteTitle.contains("."))
+		t = noteTitle.split(".").slice(0, -1).join(".");
+
+	return source.replace(NOTE_TITLE_REGEX, `"${t}"`);
 }
 
 export function addInlinePlotsToPython(source: string): string {
