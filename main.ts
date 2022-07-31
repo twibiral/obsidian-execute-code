@@ -240,10 +240,14 @@ export default class ExecuteCodePlugin extends Plugin {
 			.then(() => {
 				console.log(`Execute ${this.settings.nodePath} ${tempFileName}`);
 				const args = cmdArgs ? cmdArgs.split(" ") : [];
-
 				args.push(tempFileName);
+				var opts = {}
 
-				const child = child_process.spawn(cmd, args);
+				if (ext === "groovy") {
+					opts = {shell:true};
+				}
+
+				var child = child_process.spawn(cmd, args, opts);
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
 			.catch((err) => {
