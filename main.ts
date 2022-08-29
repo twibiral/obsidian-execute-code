@@ -6,6 +6,7 @@ import {Outputter} from "./Outputter";
 import {ExecutorSettings, SettingsTab} from "./SettingsTab";
 import {
 	addInlinePlotsToPython,
+	addInlinePlotsToR,
 	addMagicToJS,
 	addMagicToPython,
 	insertNotePath,
@@ -17,7 +18,7 @@ import * as JSCPP from "JSCPP";
 // @ts-ignore
 import * as prolog from "tau-prolog";
 
-const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy"];
+const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r"];
 
 const buttonText = "Run";
 
@@ -39,6 +40,9 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	groovyArgs: "",
 	groovyFileExtension: "groovy",
 	maxPrologAnswers: 15,
+	RPath: "Rscript",
+	RArgs: "",
+	REmbedPlots: true,
 }
 
 export default class ExecuteCodePlugin extends Plugin {
@@ -51,12 +55,11 @@ export default class ExecuteCodePlugin extends Plugin {
 		this.addRunButtons(document.body);
 		this.registerMarkdownPostProcessor((element, _context) => {
 			this.addRunButtons(element);
-
 		});
 
 		// live preview renderers
 		supportedLanguages.forEach(l => {
-			console.debug(`Registering renderer for ${l}`)
+			console.debug(`Registering renderer for ${l}.`)
 			this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, _ctx) => {
 				await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + '\n```', el, '', null)
 			})
@@ -191,6 +194,15 @@ export default class ExecuteCodePlugin extends Plugin {
 				this.runGroovyCode(srcCode, out, button);
 			});
 
+		} else if (language.contains("language-r")) {
+			button.addEventListener("click", () => {
+				button.className = runButtonDisabledClass;
+
+				srcCode = addInlinePlotsToR(srcCode);
+				console.log(srcCode);
+
+				this.runCode(srcCode, out, button, this.settings.RPath, this.settings.RArgs, "R");
+			});
 		}
 	}
 

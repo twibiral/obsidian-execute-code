@@ -10,6 +10,8 @@
  * - `@title`: Inserts the note title as string.
  */
 
+import * as os from "os";
+
 const SHOW_REGEX = /@show\(["'](?<path>[^<>?*=!\n#()\[\]{}]+)["'](,\s*(?<width>\d+[\w%]+),?\s*(?<height>\d+[\w%]+))?(,\s*(?<align>left|center|right))?\)/g;
 const VAULT_REGEX = /@vault/g
 const CURRENT_NOTE_REGEX = /@note/g;
@@ -34,6 +36,21 @@ export function insertNoteTitle(source: string, noteTitle: string): string {
 export function addInlinePlotsToPython(source: string): string {
 	const showPlot = `import io; import sys; __obsidian_execute_code_temp_pyplot_var__=io.BytesIO(); plt.plot(); plt.savefig(__obsidian_execute_code_temp_pyplot_var__, format='svg'); plt.close(); sys.stdout.buffer.write(__obsidian_execute_code_temp_pyplot_var__.getvalue())`;
 	return source.replace(/plt\.show\(\)/g, showPlot);
+}
+
+export function addInlinePlotsToR(source: string): string {
+	const plotRegEx = /plot\(.*\)/g;
+
+	const matches = source.matchAll(plotRegEx);
+	for (const match of matches) {
+		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/");
+		const substitute = `png("${tempFile}"); ${match[0]}; dev.off(); cat('<img src="app://local/${tempFile}" align="center">')`;
+
+
+		source = source.replace(match[0], substitute);
+	}
+
+	return source;
 }
 
 export function addMagicToPython(source: string): string {
