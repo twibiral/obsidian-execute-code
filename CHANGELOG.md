@@ -9,10 +9,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 
 - Fix errors that appear when code blocks are inserted to table cells (Issue #41 and #35).
+- Improve style to fix issue #36
 - Refactoring
 	- Extract Groovy execution to separate function
 	- Extract Button Listener handling to separate function
 	- Fix code smells
+
+### Added
 
 ## [0.9.2] - 22-08-29
 
