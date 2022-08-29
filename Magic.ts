@@ -10,7 +10,7 @@
  * - `@title`: Inserts the note title as string.
  */
 
-const SHOW_REGEX = /@show\(["'](?<path>[^<>?*=!\n#()\[\]{}]+)["'](,\s*(?<width>[0-9]+[\w%]+),?\s*(?<height>[0-9]+[\w%]+))?(,\s*(?<align>left|center|right))?\)/g;
+const SHOW_REGEX = /@show\(["'](?<path>[^<>?*=!\n#()\[\]{}]+)["'](,\s*(?<width>\d+[\w%]+),?\s*(?<height>\d+[\w%]+))?(,\s*(?<align>left|center|right))?\)/g;
 const VAULT_REGEX = /@vault/g
 const CURRENT_NOTE_REGEX = /@note/g;
 const NOTE_TITLE_REGEX = /@title/g;
@@ -87,7 +87,7 @@ function buildMagicShowImage(imagePath: string, width: string = "0", height: str
 	}
 
 	if (width == "0" || height == "0")
-		return `<img src="${imagePath}" align="${alignment}">`;
+		return `<img src="${imagePath}" align="${alignment}" alt="Image found at path ${imagePath}.>`;
 
-	return `<img src="${imagePath}" width="${width}" height="${height}" align="${alignment}">`;
+	return `<img src="${imagePath}" width="${width}" height="${height}" align="${alignment}" alt="Image found at path ${imagePath}.">`;
 }

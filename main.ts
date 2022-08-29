@@ -272,9 +272,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				args.push(tempFileName);
 
-				var opts = {shell: true}
-
-				const child = child_process.spawn(cmd, args, opts);
+				const child = child_process.spawn(cmd, args, {shell: true});
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
 			.catch((err) => {
