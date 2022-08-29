@@ -129,66 +129,69 @@ export default class ExecuteCodePlugin extends Plugin {
 
 						const out = new Outputter(codeBlock);
 
-						// Add button:
-						if (language.contains("language-js") || language.contains("language-javascript")) {
-							srcCode = addMagicToJS(srcCode);
-
-							button.addEventListener("click", () => {
-								button.className = runButtonDisabledClass;
-								this.runCode(srcCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
-							});
-
-						} else if (language.contains("language-python")) {
-							button.addEventListener("click", async () => {
-								button.className = runButtonDisabledClass;
-
-								if (this.settings.pythonEmbedPlots)	// embed plots into html which shows them in the note
-									srcCode = addInlinePlotsToPython(srcCode);
-
-								srcCode = addMagicToPython(srcCode);
-
-								this.runCode(srcCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
-							});
-
-						} else if (language.contains("language-shell") || language.contains("language-bash")) {
-							button.addEventListener("click", () => {
-								button.className = runButtonDisabledClass;
-								this.runCode(srcCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
-							});
-
-						} else if (language.contains("language-cpp")) {
-							button.addEventListener("click", () => {
-								button.className = runButtonDisabledClass;
-								out.clear();
-								this.runCpp(srcCode, out);
-								button.className = runButtonClass;
-							})
-
-						} else if (language.contains("language-prolog")) {
-							button.addEventListener("click", () => {
-								button.className = runButtonDisabledClass;
-								out.clear();
-
-								const prologCode = srcCode.split(/\n+%+\s*query\n+/);
-								if (prologCode.length < 2) return;	// no query found
-
-								this.runPrologCode(prologCode, out);
-
-								button.className = runButtonClass;
-							})
-
-						} else if (language.contains("language-groovy")) {
-							button.addEventListener("click", () => {
-								button.className = runButtonDisabledClass;
-								this.runGroovyCode(srcCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
-							});
-
-						}
+						this.addListenerToButton(language, srcCode, button, out);
 					}
 				}
 
 
 			})
+	}
+
+	private addListenerToButton(language: string, srcCode: string, button: HTMLButtonElement, out: Outputter) {
+		if (language.contains("language-js") || language.contains("language-javascript")) {
+			srcCode = addMagicToJS(srcCode);
+
+			button.addEventListener("click", () => {
+				button.className = runButtonDisabledClass;
+				this.runCode(srcCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
+			});
+
+		} else if (language.contains("language-python")) {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+
+				if (this.settings.pythonEmbedPlots)	// embed plots into html which shows them in the note
+					srcCode = addInlinePlotsToPython(srcCode);
+
+				srcCode = addMagicToPython(srcCode);
+
+				this.runCode(srcCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
+			});
+
+		} else if (language.contains("language-shell") || language.contains("language-bash")) {
+			button.addEventListener("click", () => {
+				button.className = runButtonDisabledClass;
+				this.runCode(srcCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
+			});
+
+		} else if (language.contains("language-cpp")) {
+			button.addEventListener("click", () => {
+				button.className = runButtonDisabledClass;
+				out.clear();
+				this.runCpp(srcCode, out);
+				button.className = runButtonClass;
+			})
+
+		} else if (language.contains("language-prolog")) {
+			button.addEventListener("click", () => {
+				button.className = runButtonDisabledClass;
+				out.clear();
+
+				const prologCode = srcCode.split(/\n+%+\s*query\n+/);
+				if (prologCode.length < 2) return;	// no query found
+
+				this.runPrologCode(prologCode, out);
+
+				button.className = runButtonClass;
+			})
+
+		} else if (language.contains("language-groovy")) {
+			button.addEventListener("click", () => {
+				button.className = runButtonDisabledClass;
+				this.runGroovyCode(srcCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
+			});
+
+		}
 	}
 
 	private getVaultVariables() {
