@@ -114,6 +114,8 @@ executed programm now.
 		
         helloClosure "Bob"
     ```
+- Squiggle: For Squiggle support look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle)
+  by @jqhoogland.
 
 Support for the following is planned:
 
