@@ -180,7 +180,7 @@ export default class ExecuteCodePlugin extends Plugin {
 						} else if (language.contains("language-groovy")) {
 							button.addEventListener("click", () => {
 								button.className = runButtonDisabledClass;
-								this.runCode(srcCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
+								this.runGroovyCode(srcCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
 							});
 
 						}
@@ -239,6 +239,25 @@ export default class ExecuteCodePlugin extends Plugin {
 	}
 
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
+		new Notice("Running...");
+		const tempFileName = this.getTempFile(ext)
+		console.log(`${tempFileName}`);
+
+		fs.promises.writeFile(tempFileName, codeBlockContent)
+			.then(() => {
+				console.log(`Execute ${this.settings.nodePath} ${tempFileName}`);
+				const args = cmdArgs ? cmdArgs.split(" ") : [];
+				args.push(tempFileName);
+				const child = child_process.spawn(cmd, args);
+
+				this.handleChildOutput(child, outputter, button, tempFileName);
+			})
+			.catch((err) => {
+				console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
+			});
+	}
+
+	private runGroovyCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
 		new Notice("Running...");
 		const tempFileName = this.getTempFile(ext)
 		console.log(`${tempFileName}`);
