@@ -43,6 +43,22 @@ The result is shown only after the execution is finished. It is not possible to 
 	```
   ![Example of an embedded plot.](https://github.com/twibiral/obsidian-execute-code/blob/master/plotting_example.png?raw=true)
 
+- R
+	- Requirements: R is installed and the correct path is set in the settings.
+    ```r
+    hello <- function(name){
+        print(paste("Hello", name, sep = " "))
+    }
+	
+    hello("Bob")
+    ```
+	- Plots can be embedded in the note by default. You can turn this off in the settings.
+    ```r
+	y = c(12, 15, 28, 17, 18)
+	x = 1:length(y)
+	plot(x, y, type="l")
+    ```
+
 - CPP
 	- Requirements: NO requirements, works with [JSCPP](https://github.com/felixhao28/JSCPP).
 	- Problems: No error handling implemented yet and JSCPP doesn't support all language features.
@@ -103,7 +119,6 @@ Support for the following is planned:
 - Java
 - Matlab
 - Julia Lang
-- R
 
 Open for suggestions.
 
