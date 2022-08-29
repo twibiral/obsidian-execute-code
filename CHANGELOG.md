@@ -23,6 +23,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 	- Extract Button Listener handling to separate function.
 	- Fix code smells.
 
+R is now supported (update to version 0.11.0).
+
+If you create a plot with the `plot()` function in R, the plot will be embedded into the note.
+
 ### Added
 
 - Add error messages to the output block.
