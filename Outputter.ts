@@ -44,12 +44,10 @@ export class Outputter {
 		this.stdoutText += text;
 		if (!this.stderrText && !this.stdoutText) return;
 
-		// this.stdoutElem.setText(this.stdoutText);
 		this.stdoutElem.innerHTML = this.stdoutText;
 
 		// make visible again:
 		this.outputElement.style.display = "block";
-		this.clearButton.style.display = "block";
 	}
 
 	writeErr(text: string) {
@@ -68,7 +66,6 @@ export class Outputter {
 
 		// make visible again:
 		this.outputElement.style.display = "block";
-		this.clearButton.style.display = "block";
 	}
 
 	private getParentElement() {

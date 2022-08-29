@@ -34,10 +34,6 @@ pre:hover .run-button-disabled {
     display: none;
 }
 
-code.language-output {
-	padding-bottom: 2.5em;
-}
-
 code.language-output span.stdout {
 	color: var(--text-muted);
 }
