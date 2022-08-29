@@ -2,9 +2,10 @@
 
 This plugin allows you to execute code snippets in code blocks in your notes. The plugin adds a 'run' button for code blocks in supported languages. Clicking them results in the code of the block being executed. After the execution the result of the execution is showed. 
 
-The result is shown only after the execution is finished. It is not possible to enter text on the command line into the executed programm now.
+The result is shown only after the execution is finished. It is not possible to enter text on the command line into the
+executed programm now.
 
-![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/execute_code_example.gif?raw=true)
+![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
 ## Supported programming languages
 
@@ -41,7 +42,7 @@ The result is shown only after the execution is finished. It is not possible to 
 
     plt.show()
 	```
-  ![Example of an embedded plot.](https://github.com/twibiral/obsidian-execute-code/blob/master/plotting_example.png?raw=true)
+  ![Example of an embedded plot.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/plotting_example.png?raw=true)
 
 - R
 	- Requirements: R is installed and the correct path is set in the settings.
@@ -139,7 +140,7 @@ The following magic commands are supported:
 
 (`@show(...)` is only supported for JavaScript and Python yet.)
 
-![Example how to use the magic commands.](https://github.com/twibiral/obsidian-execute-code/blob/master/magic_example.png?raw=true)
+![Example how to use the magic commands.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/magic_example.png?raw=true)
 
 ## Running in Preview
 
