@@ -139,7 +139,7 @@ export class SettingsTab extends PluginSettingTab {
 				.setValue("" + this.plugin.settings.maxPrologAnswers)
 				.onChange(async (value) => {
 					if( Number(value) * 1000){
-						console.log('Answer limit set to: ' + value);
+						console.log('Prolog answer limit set to: ' + value);
 						this.plugin.settings.maxPrologAnswers = Number(value);
 					}
 					await this.plugin.saveSettings();

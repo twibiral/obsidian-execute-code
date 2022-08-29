@@ -56,7 +56,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 		// live preview renderers
 		supportedLanguages.forEach(l => {
-			console.log(`registering renderer for ${l}`)
+			console.debug(`Registering renderer for ${l}`)
 			this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, _ctx) => {
 				await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + '\n```', el, '', null)
 			})
@@ -188,7 +188,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language.contains("language-groovy")) {
 			button.addEventListener("click", () => {
 				button.className = runButtonDisabledClass;
-				this.runGroovyCode(srcCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
+				this.runGroovyCode(srcCode, out, button);
 			});
 
 		}
@@ -215,7 +215,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	}
 
 	private createRunButton() {
-		console.log("Add run button");
+		console.debug("Add run button");
 		const button = document.createElement("button");
 		button.classList.add(runButtonClass);
 		button.setText(buttonText);
@@ -236,7 +236,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
 		new Notice("Running...");
 		const tempFileName = this.getTempFile(ext)
-		console.log(`${tempFileName}`);
+		console.debug(`Execute ${cmd} ${cmdArgs} ${tempFileName}`);
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
@@ -268,23 +268,22 @@ export default class ExecuteCodePlugin extends Plugin {
 		new Notice(exitCode === 0 ? "Done!" : "Error!");
 	}
 
-	private runGroovyCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
+	private runGroovyCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
 		new Notice("Running...");
-		const tempFileName = this.getTempFile(ext)
-		console.log(`${tempFileName}`);
+		const tempFileName = this.getTempFile(this.settings.groovyFileExtension)
+		console.debug(`Execute ${this.settings.groovyPath} ${this.settings.groovyArgs} ${tempFileName}`);
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
-				console.log(`Execute ${this.settings.nodePath} ${tempFileName}`);
-				const args = cmdArgs ? cmdArgs.split(" ") : [];
+				const args = this.settings.groovyArgs ? this.settings.groovyArgs.split(" ") : [];
 
 				args.push(tempFileName);
 
-				const child = child_process.spawn(cmd, args, {shell: true});
+				const child = child_process.spawn(this.settings.groovyPath, args, {shell: true});
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
 			.catch((err) => {
-				this.notifyError(cmd, cmdArgs, tempFileName, err, outputter);
+				this.notifyError(this.settings.groovyPath, this.settings.groovyArgs, tempFileName, err, outputter);
 			});
 	}
 
@@ -297,7 +296,7 @@ export default class ExecuteCodePlugin extends Plugin {
 					session.query(prologCode[1]
 						, {
 							success: async (goal: any) => {
-								console.log(goal)
+								console.debug(`Prolog goal: ${goal}`)
 								let answersLeft = true;
 								let counter = 0;
 
@@ -305,7 +304,7 @@ export default class ExecuteCodePlugin extends Plugin {
 									await session.answer({
 										success: function (answer: any) {
 											new Notice("Done!");
-											console.log(session.format_answer(answer));
+											console.debug(`Prolog result:${session.format_answer(answer)}`);
 											out.write(session.format_answer(answer) + "\n");
 										},
 										fail: function () {
@@ -357,7 +356,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 			fs.promises.rm(fileName)
 				.catch((err) => {
-					console.log("Error in 'Obsidian Execute Code' Plugin while removing file: " + err);
+					console.error("Error in 'Obsidian Execute Code' Plugin while removing file: " + err);
 				});
 		});
 	}
