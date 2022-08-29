@@ -269,11 +269,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				args.push(tempFileName);
 
-				var opts = {}
-
-				if (ext === "groovy") {
-					opts = {shell:true}
-				}
+				var opts = {shell: true}
 
 				const child = child_process.spawn(cmd, args, opts);
 				this.handleChildOutput(child, outputter, button, tempFileName);
