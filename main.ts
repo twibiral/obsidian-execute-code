@@ -105,81 +105,88 @@ export default class ExecuteCodePlugin extends Plugin {
 	private addRunButtons(element: HTMLElement) {
 		element.querySelectorAll("code")
 			.forEach((codeBlock: HTMLElement) => {
-				const pre = codeBlock.parentElement as HTMLPreElement;
-				const parent = pre.parentElement as HTMLDivElement;
 				const language = codeBlock.className.toLowerCase();
+				if (language && language.contains("-language")) {
+					const pre = codeBlock.parentElement as HTMLPreElement;
+					const parent = pre.parentElement as HTMLDivElement;
 
-				let srcCode = codeBlock.getText();	// get source code and perform magic to insert title etc
-				const vars = this.getVaultVariables();
-				srcCode = insertVaultPath(srcCode, vars.vaultPath);
-				srcCode = insertNotePath(srcCode, vars.filePath);
-				srcCode = insertNoteTitle(srcCode, vars.fileName);
+					let srcCode = codeBlock.getText();	// get source code and perform magic to insert title etc
+					const vars = this.getVaultVariables();
+					if (vars) {
+						srcCode = insertVaultPath(srcCode, vars.vaultPath);
+						srcCode = insertNotePath(srcCode, vars.filePath);
+						srcCode = insertNoteTitle(srcCode, vars.fileName);
+					} else {
+						console.warn(`Could not load all Vault variables! ${vars}`)
+					}
 
-				if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
-					&& !parent.classList.contains(hasButtonClass)) { // unsupported language
+					if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
+						&& !parent.classList.contains(hasButtonClass)) { // unsupported language
 
-					parent.classList.add(hasButtonClass);
-					const button = this.createRunButton();
-					pre.appendChild(button);
+						parent.classList.add(hasButtonClass);
+						const button = this.createRunButton();
+						pre.appendChild(button);
 
-					const out = new Outputter(codeBlock);
+						const out = new Outputter(codeBlock);
 
-					// Add button:
-					if (language.contains("language-js") || language.contains("language-javascript")) {
-						srcCode = addMagicToJS(srcCode);
+						// Add button:
+						if (language.contains("language-js") || language.contains("language-javascript")) {
+							srcCode = addMagicToJS(srcCode);
 
-						button.addEventListener("click", () => {
-							button.className = runButtonDisabledClass;
-							this.runCode(srcCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
-						});
+							button.addEventListener("click", () => {
+								button.className = runButtonDisabledClass;
+								this.runCode(srcCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
+							});
 
-					} else if (language.contains("language-python")) {
-						button.addEventListener("click", async () => {
-							button.className = runButtonDisabledClass;
+						} else if (language.contains("language-python")) {
+							button.addEventListener("click", async () => {
+								button.className = runButtonDisabledClass;
 
-							if (this.settings.pythonEmbedPlots)	// embed plots into html which shows them in the note
-								srcCode = addInlinePlotsToPython(srcCode);
+								if (this.settings.pythonEmbedPlots)	// embed plots into html which shows them in the note
+									srcCode = addInlinePlotsToPython(srcCode);
 
-							srcCode = addMagicToPython(srcCode);
+								srcCode = addMagicToPython(srcCode);
 
-							this.runCode(srcCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
-						});
+								this.runCode(srcCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
+							});
 
-					} else if (language.contains("language-shell") || language.contains("language-bash")) {
-						button.addEventListener("click", () => {
-							button.className = runButtonDisabledClass;
-							this.runCode(srcCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
-						});
+						} else if (language.contains("language-shell") || language.contains("language-bash")) {
+							button.addEventListener("click", () => {
+								button.className = runButtonDisabledClass;
+								this.runCode(srcCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
+							});
 
-					} else if (language.contains("language-cpp")) {
-						button.addEventListener("click", () => {
-							button.className = runButtonDisabledClass;
-							out.clear();
-							this.runCpp(srcCode, out);
-							button.className = runButtonClass;
-						})
+						} else if (language.contains("language-cpp")) {
+							button.addEventListener("click", () => {
+								button.className = runButtonDisabledClass;
+								out.clear();
+								this.runCpp(srcCode, out);
+								button.className = runButtonClass;
+							})
 
-					} else if (language.contains("language-prolog")) {
-						button.addEventListener("click", () => {
-							button.className = runButtonDisabledClass;
-							out.clear();
+						} else if (language.contains("language-prolog")) {
+							button.addEventListener("click", () => {
+								button.className = runButtonDisabledClass;
+								out.clear();
 
-							const prologCode = srcCode.split(/\n+%+\s*query\n+/);
-							if (prologCode.length < 2) return;	// no query found
+								const prologCode = srcCode.split(/\n+%+\s*query\n+/);
+								if (prologCode.length < 2) return;	// no query found
 
-							this.runPrologCode(prologCode, out);
+								this.runPrologCode(prologCode, out);
 
-							button.className = runButtonClass;
-						})
+								button.className = runButtonClass;
+							})
 
-					} else if (language.contains("language-groovy")) {
-						button.addEventListener("click", () => {
-							button.className = runButtonDisabledClass;
-							this.runCode(srcCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
-						});
+						} else if (language.contains("language-groovy")) {
+							button.addEventListener("click", () => {
+								button.className = runButtonDisabledClass;
+								this.runCode(srcCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
+							});
 
+						}
 					}
 				}
+
 
 			})
 	}
