@@ -214,21 +214,6 @@ export default class ExecuteCodePlugin extends Plugin {
 		}
 	}
 
-	private runCpp(cppCode: string, out: Outputter) {
-		new Notice("Running...");
-		const config = {
-			stdio: {
-				write: (s: string) => out.write(s)
-			},
-			unsigned_overflow: "warn", // can be "error"(default), "warn" or "ignore"
-			maxTimeout: this.settings.timeout,
-		};
-		const exitCode = JSCPP.run(cppCode, 0, config);
-		console.log("C++ exit code: " + exitCode);
-		out.write("\nprogram stopped with exit code " + exitCode);
-		new Notice(exitCode === 0 ? "Done" : "Error");
-	}
-
 	private createRunButton() {
 		console.log("Add run button");
 		const button = document.createElement("button");
@@ -241,6 +226,13 @@ export default class ExecuteCodePlugin extends Plugin {
 		return `${os.tmpdir()}/temp_${Date.now()}.${ext}`
 	}
 
+	private notifyError(cmd: string, cmdArgs: string, tempFileName: string, err: any, outputter: Outputter) {
+		const errorMSG = `Error while executing ${cmd} ${cmdArgs} ${tempFileName}: ${err}`
+		console.error(errorMSG);
+		outputter.writeErr(errorMSG);
+		new Notice("Error while executing code!");
+	}
+
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
 		new Notice("Running...");
 		const tempFileName = this.getTempFile(ext)
@@ -248,16 +240,32 @@ export default class ExecuteCodePlugin extends Plugin {
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
-				console.log(`Execute ${this.settings.nodePath} ${tempFileName}`);
 				const args = cmdArgs ? cmdArgs.split(" ") : [];
 				args.push(tempFileName);
+
+				console.debug(`Execute ${cmd} ${args.join(" ")}`);
 				const child = child_process.spawn(cmd, args);
 
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
 			.catch((err) => {
-				console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
+				this.notifyError(cmd, cmdArgs, tempFileName, err, outputter);
 			});
+	}
+
+	private runCpp(cppCode: string, out: Outputter) {
+		new Notice("Running...");
+		const config = {
+			stdio: {
+				write: (s: string) => out.write(s)
+			},
+			unsigned_overflow: "warn", // can be "error"(default), "warn" or "ignore"
+			maxTimeout: this.settings.timeout,
+		};
+		const exitCode = JSCPP.run(cppCode, 0, config);
+
+		out.write("\nprogram stopped with exit code " + exitCode);
+		new Notice(exitCode === 0 ? "Done!" : "Error!");
 	}
 
 	private runGroovyCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
@@ -276,7 +284,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
 			.catch((err) => {
-				console.log("Error in 'Obsidian Execute Code' Plugin while executing: " + err);
+				this.notifyError(cmd, cmdArgs, tempFileName, err, outputter);
 			});
 	}
 
@@ -308,6 +316,7 @@ export default class ExecuteCodePlugin extends Plugin {
 											new Notice("Error!");
 											console.error(err);
 											answersLeft = false;
+											out.writeErr(`Error while executing code: ${err}`);
 										},
 										limit: function () {
 											answersLeft = false;
