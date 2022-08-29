@@ -106,7 +106,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		element.querySelectorAll("code")
 			.forEach((codeBlock: HTMLElement) => {
 				const language = codeBlock.className.toLowerCase();
-				if (language && language.contains("-language")) {
+				if (language && language.contains("language-")) {
 					const pre = codeBlock.parentElement as HTMLPreElement;
 					const parent = pre.parentElement as HTMLDivElement;
 
