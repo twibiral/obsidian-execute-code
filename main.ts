@@ -18,7 +18,7 @@ import * as JSCPP from "JSCPP";
 // @ts-ignore
 import * as prolog from "tau-prolog";
 
-const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r"];
+const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r","go"];
 
 const buttonText = "Run";
 
@@ -39,6 +39,9 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	groovyPath: "groovy",
 	groovyArgs: "",
 	groovyFileExtension: "groovy",
+    golangPath: "go",
+    golangArgs: "run",
+    golangFileExtension: "go",
 	maxPrologAnswers: 15,
 	RPath: "Rscript",
 	RArgs: "",
@@ -203,7 +206,13 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				this.runCode(srcCode, out, button, this.settings.RPath, this.settings.RArgs, "R");
 			});
-		}
+		} else if (language.contains("language-go")) {
+            button.addEventListener("click" , () => {
+                // button.className = runButtonDisabledClass;
+
+				this.runCode(srcCode, out, button, this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension);
+            })
+        }
 	}
 
 	private getVaultVariables() {
