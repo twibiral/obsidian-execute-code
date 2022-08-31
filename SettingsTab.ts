@@ -14,7 +14,13 @@ export interface ExecutorSettings {
 	groovyPath: string;
 	groovyArgs: any;
 	groovyFileExtension: string;
+	golangPath: string,
+	golangArgs: string,
+	golangFileExtension: string,
 	maxPrologAnswers: number;
+	RPath: string;
+	RArgs: string;
+	REmbedPlots: boolean;
 }
 
 export class SettingsTab extends PluginSettingTab {
@@ -64,6 +70,19 @@ export class SettingsTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.nodeArgs = value;
 					console.log('Node args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+
+        // ========== Golang =========
+		containerEl.createEl('h3', {text: 'Golang Settings'});
+		new Setting(containerEl)
+			.setName('Golang Path')
+			.setDesc('The path to your Golang installation.')
+			.addText(text => text
+				.setValue(this.plugin.settings.golangPath)
+				.onChange(async (value) => {
+					this.plugin.settings.golangPath = value;
+					console.log('Golang path set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
 
@@ -164,6 +183,37 @@ export class SettingsTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.groovyArgs = value;
 					console.log('Groovy args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+
+		// ========== R ==========
+		containerEl.createEl('h3', {text: 'R Settings'});
+		new Setting(containerEl)
+			.setName('R path')
+			.setDesc('The path to your R installation.')
+			.addText(text => text
+				.setValue(this.plugin.settings.RPath)
+				.onChange(async (value) => {
+					this.plugin.settings.RPath = value;
+					console.log('R path set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('R arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.RArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.RArgs = value;
+					console.log('R args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Embed R Plots created via <code>plot()</code> into Notes')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.REmbedPlots)
+				.onChange(async (value) => {
+					this.plugin.settings.REmbedPlots = value;
+					console.log(value ? 'Embedding R Plots into Notes.' : "Not embedding R Plots into Notes.");
 					await this.plugin.saveSettings();
 				}));
 	}

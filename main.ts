@@ -6,6 +6,7 @@ import {Outputter} from "./Outputter";
 import {ExecutorSettings, SettingsTab} from "./SettingsTab";
 import {
 	addInlinePlotsToPython,
+	addInlinePlotsToR,
 	addMagicToJS,
 	addMagicToPython,
 	insertNotePath,
@@ -17,7 +18,7 @@ import * as JSCPP from "JSCPP";
 // @ts-ignore
 import * as prolog from "tau-prolog";
 
-const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy"];
+const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go"];
 
 const buttonText = "Run";
 
@@ -38,7 +39,13 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	groovyPath: "groovy",
 	groovyArgs: "",
 	groovyFileExtension: "groovy",
+    golangPath: "go",
+    golangArgs: "run",
+    golangFileExtension: "go",
 	maxPrologAnswers: 15,
+	RPath: "Rscript",
+	RArgs: "",
+	REmbedPlots: true,
 }
 
 export default class ExecuteCodePlugin extends Plugin {
@@ -51,12 +58,11 @@ export default class ExecuteCodePlugin extends Plugin {
 		this.addRunButtons(document.body);
 		this.registerMarkdownPostProcessor((element, _context) => {
 			this.addRunButtons(element);
-
 		});
 
 		// live preview renderers
 		supportedLanguages.forEach(l => {
-			console.debug(`Registering renderer for ${l}`)
+			console.debug(`Registering renderer for ${l}.`)
 			this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, _ctx) => {
 				await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + '\n```', el, '', null)
 			})
@@ -106,31 +112,32 @@ export default class ExecuteCodePlugin extends Plugin {
 		element.querySelectorAll("code")
 			.forEach((codeBlock: HTMLElement) => {
 				const language = codeBlock.className.toLowerCase();
-				if (language && language.contains("language-")) {
-					const pre = codeBlock.parentElement as HTMLPreElement;
-					const parent = pre.parentElement as HTMLDivElement;
+				if (!language && !language.contains("language-"))
+					return;
 
-					let srcCode = codeBlock.getText();	// get source code and perform magic to insert title etc
-					const vars = this.getVaultVariables();
-					if (vars) {
-						srcCode = insertVaultPath(srcCode, vars.vaultPath);
-						srcCode = insertNotePath(srcCode, vars.filePath);
-						srcCode = insertNoteTitle(srcCode, vars.fileName);
-					} else {
-						console.warn(`Could not load all Vault variables! ${vars}`)
-					}
+				const pre = codeBlock.parentElement as HTMLPreElement;
+				const parent = pre.parentElement as HTMLDivElement;
 
-					if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
-						&& !parent.classList.contains(hasButtonClass)) { // unsupported language
+				let srcCode = codeBlock.getText();	// get source code and perform magic to insert title etc
+				const vars = this.getVaultVariables();
+				if (vars) {
+					srcCode = insertVaultPath(srcCode, vars.vaultPath);
+					srcCode = insertNotePath(srcCode, vars.filePath);
+					srcCode = insertNoteTitle(srcCode, vars.fileName);
+				} else {
+					console.warn(`Could not load all Vault variables! ${vars}`)
+				}
 
-						parent.classList.add(hasButtonClass);
-						const button = this.createRunButton();
-						pre.appendChild(button);
+				if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
+					&& !parent.classList.contains(hasButtonClass)) { // unsupported language
 
-						const out = new Outputter(codeBlock);
+					parent.classList.add(hasButtonClass);
+					const button = this.createRunButton();
+					pre.appendChild(button);
 
-						this.addListenerToButton(language, srcCode, button, out);
-					}
+					const out = new Outputter(codeBlock);
+
+					this.addListenerToButton(language, srcCode, button, out);
 				}
 
 
@@ -191,7 +198,22 @@ export default class ExecuteCodePlugin extends Plugin {
 				this.runGroovyCode(srcCode, out, button);
 			});
 
-		}
+		} else if (language.contains("language-r")) {
+			button.addEventListener("click", () => {
+				button.className = runButtonDisabledClass;
+
+				srcCode = addInlinePlotsToR(srcCode);
+				console.log(srcCode);
+
+				this.runCode(srcCode, out, button, this.settings.RPath, this.settings.RArgs, "R");
+			});
+		} else if (language.contains("language-go")) {
+            button.addEventListener("click" , () => {
+                button.className = runButtonDisabledClass;
+
+				this.runCode(srcCode, out, button, this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension);
+            })
+        }
 	}
 
 	private getVaultVariables() {
@@ -250,6 +272,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			})
 			.catch((err) => {
 				this.notifyError(cmd, cmdArgs, tempFileName, err, outputter);
+				button.className = runButtonClass;
 			});
 	}
 
@@ -284,6 +307,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			})
 			.catch((err) => {
 				this.notifyError(this.settings.groovyPath, this.settings.groovyArgs, tempFileName, err, outputter);
+				button.className = runButtonClass;
 			});
 	}
 
@@ -357,7 +381,14 @@ export default class ExecuteCodePlugin extends Plugin {
 			fs.promises.rm(fileName)
 				.catch((err) => {
 					console.error("Error in 'Obsidian Execute Code' Plugin while removing file: " + err);
+					button.className = runButtonClass;
 				});
+		});
+
+		child.on('error', (err) => {
+			button.className = runButtonClass;
+			new Notice("Error!");
+			outputter.writeErr(err.toString());
 		});
 	}
 }
