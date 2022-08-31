@@ -127,6 +127,16 @@ executed programm now.
 		  fmt.Println("Hello World")
 	  }
   ```
+- Rust
+	- Requirements: Cargo is installed and correct path is set in the settings(`cargo` binary is available).
+    - `cargo-eval` is installed. Install using `cargo install cargo-eval`.
+    - Import statements and external crates is supported by `cargo-eval`. Read their [documentation](https://github.com/reitermarkus/cargo-eval).
+	- Every code block must a main function.
+  ```rust
+	  fn main() {
+		  println!("Hello World");
+	  }
+  ```
 
 - Squiggle: For Squiggle support look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle)
   by @jqhoogland.

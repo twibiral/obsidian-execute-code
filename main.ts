@@ -18,7 +18,7 @@ import * as JSCPP from "JSCPP";
 // @ts-ignore
 import * as prolog from "tau-prolog";
 
-const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go"];
+const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust"];
 
 const buttonText = "Run";
 
@@ -42,6 +42,9 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
     golangPath: "go",
     golangArgs: "run",
     golangFileExtension: "go",
+    cargoPath: "cargo",
+    cargoArgs: "run",
+    rustFileExtension: "rs",
 	maxPrologAnswers: 15,
 	RPath: "Rscript",
 	RArgs: "",
@@ -198,7 +201,14 @@ export default class ExecuteCodePlugin extends Plugin {
 				this.runGroovyCode(srcCode, out, button);
 			});
 
-		} else if (language.contains("language-r")) {
+		} else if (language.contains("language-rust")) {
+            button.addEventListener("click" , () => {
+                button.className = runButtonDisabledClass;
+
+				this.runCode(srcCode, out, button, this.settings.cargoPath, this.settings.cargoArgs, this.settings.rustFileExtension);
+            });
+
+        } else if (language.contains("language-r")) {
 			button.addEventListener("click", () => {
 				button.className = runButtonDisabledClass;
 
@@ -212,7 +222,7 @@ export default class ExecuteCodePlugin extends Plugin {
                 button.className = runButtonDisabledClass;
 
 				this.runCode(srcCode, out, button, this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension);
-            })
+            });
         }
 	}
 

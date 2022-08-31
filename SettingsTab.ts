@@ -86,6 +86,19 @@ export class SettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
+        // ========== Rust ===========
+		containerEl.createEl('h3', {text: 'Rust Settings'});
+		new Setting(containerEl)
+			.setName('Cargo Path')
+			.setDesc('The path to your Cargo installation.')
+			.addText(text => text
+				.setValue(this.plugin.settings.cargoPath)
+				.onChange(async (value) => {
+					this.plugin.settings.cargoPath = value;
+					console.log('Cargo path set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+
 		// ========== Python ==========
 		containerEl.createEl('h3', {text: 'Python Settings'});
 		new Setting(containerEl)
