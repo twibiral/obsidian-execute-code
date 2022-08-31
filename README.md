@@ -102,30 +102,31 @@ executed programm now.
 - Groovy
 	- Requirements: Groovy is installed and the correct path is set in the settings.
   ```groovy
-        def hello(name){  
-             println "Hello ${name}!" 
-        }  
-		
-        def helloClosure = {  
-           println "Hello ${it}!" 
-        }  
-		
-        hello("Bob")
-		
-        helloClosure "Bob"
-    ```
+		def hello(name){  
+			 println "Hello ${name}!" 
+		}  
+		  
+		def helloClosure = {  
+		   println "Hello ${it}!" 
+		}  
+		  
+		hello("Bob")
+		  
+		helloClosure "Bob"
+	```
+
 - Golang
-    - Requirements: Golang is installed and correct path is set in the settings(`go` binary is available).
-    - Every code block must contain package declaration and a main function.
-```go
-    package main
-
-    import "fmt"
-
-    func main() {
-        fmt.Println("Hello World")
-    }
-```
+	- Requirements: Golang is installed and correct path is set in the settings(`go` binary is available).
+	- Every code block must contain package declaration and a main function.
+  ```go
+	  package main
+  
+	  import "fmt"
+  
+	  func main() {
+		  fmt.Println("Hello World")
+	  }
+  ```
 
 - Squiggle: For Squiggle support look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle)
   by @jqhoogland.
