@@ -114,6 +114,19 @@ executed programm now.
 		
         helloClosure "Bob"
     ```
+- Golang
+    - Requirements: Golang is installed and correct path is set in the settings(`go` binary is available).
+    - Every code block must contain package declaration and a main function.
+```go
+    package main
+
+    import "fmt"
+
+    func main() {
+        fmt.Println("Hello World")
+    }
+```
+
 - Squiggle: For Squiggle support look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle)
   by @jqhoogland.
 

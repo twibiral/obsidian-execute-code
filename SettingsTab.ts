@@ -70,6 +70,19 @@ export class SettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
+        // ========== Golang =========
+		containerEl.createEl('h3', {text: 'Golang Settings'});
+		new Setting(containerEl)
+			.setName('Golang Path')
+			.setDesc('The path to your Golang installation.')
+			.addText(text => text
+				.setValue(this.plugin.settings.golangPath)
+				.onChange(async (value) => {
+					this.plugin.settings.golangPath = value;
+					console.log('Golang path set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+
 		// ========== Python ==========
 		containerEl.createEl('h3', {text: 'Python Settings'});
 		new Setting(containerEl)
