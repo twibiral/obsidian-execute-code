@@ -208,7 +208,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			});
 		} else if (language.contains("language-go")) {
             button.addEventListener("click" , () => {
-                // button.className = runButtonDisabledClass;
+                button.className = runButtonDisabledClass;
 
 				this.runCode(srcCode, out, button, this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension);
             })
