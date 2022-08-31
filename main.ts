@@ -112,31 +112,32 @@ export default class ExecuteCodePlugin extends Plugin {
 		element.querySelectorAll("code")
 			.forEach((codeBlock: HTMLElement) => {
 				const language = codeBlock.className.toLowerCase();
-				if (language && language.contains("language-")) {
-					const pre = codeBlock.parentElement as HTMLPreElement;
-					const parent = pre.parentElement as HTMLDivElement;
+				if (!language && !language.contains("language-"))
+					return;
 
-					let srcCode = codeBlock.getText();	// get source code and perform magic to insert title etc
-					const vars = this.getVaultVariables();
-					if (vars) {
-						srcCode = insertVaultPath(srcCode, vars.vaultPath);
-						srcCode = insertNotePath(srcCode, vars.filePath);
-						srcCode = insertNoteTitle(srcCode, vars.fileName);
-					} else {
-						console.warn(`Could not load all Vault variables! ${vars}`)
-					}
+				const pre = codeBlock.parentElement as HTMLPreElement;
+				const parent = pre.parentElement as HTMLDivElement;
 
-					if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
-						&& !parent.classList.contains(hasButtonClass)) { // unsupported language
+				let srcCode = codeBlock.getText();	// get source code and perform magic to insert title etc
+				const vars = this.getVaultVariables();
+				if (vars) {
+					srcCode = insertVaultPath(srcCode, vars.vaultPath);
+					srcCode = insertNotePath(srcCode, vars.filePath);
+					srcCode = insertNoteTitle(srcCode, vars.fileName);
+				} else {
+					console.warn(`Could not load all Vault variables! ${vars}`)
+				}
 
-						parent.classList.add(hasButtonClass);
-						const button = this.createRunButton();
-						pre.appendChild(button);
+				if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
+					&& !parent.classList.contains(hasButtonClass)) { // unsupported language
 
-						const out = new Outputter(codeBlock);
+					parent.classList.add(hasButtonClass);
+					const button = this.createRunButton();
+					pre.appendChild(button);
 
-						this.addListenerToButton(language, srcCode, button, out);
-					}
+					const out = new Outputter(codeBlock);
+
+					this.addListenerToButton(language, srcCode, button, out);
 				}
 
 
