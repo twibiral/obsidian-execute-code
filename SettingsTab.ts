@@ -14,6 +14,9 @@ export interface ExecutorSettings {
 	groovyPath: string;
 	groovyArgs: any;
 	groovyFileExtension: string;
+	golangPath: string,
+	golangArgs: string,
+	golangFileExtension: string,
 	maxPrologAnswers: number;
 	RPath: string;
 	RArgs: string;
