@@ -18,7 +18,7 @@ import * as JSCPP from "JSCPP";
 // @ts-ignore
 import * as prolog from "tau-prolog";
 
-const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r","go"];
+const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go"];
 
 const buttonText = "Run";
 
@@ -272,6 +272,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			})
 			.catch((err) => {
 				this.notifyError(cmd, cmdArgs, tempFileName, err, outputter);
+				button.className = runButtonClass;
 			});
 	}
 
@@ -306,6 +307,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			})
 			.catch((err) => {
 				this.notifyError(this.settings.groovyPath, this.settings.groovyArgs, tempFileName, err, outputter);
+				button.className = runButtonClass;
 			});
 	}
 
@@ -379,7 +381,14 @@ export default class ExecuteCodePlugin extends Plugin {
 			fs.promises.rm(fileName)
 				.catch((err) => {
 					console.error("Error in 'Obsidian Execute Code' Plugin while removing file: " + err);
+					button.className = runButtonClass;
 				});
+		});
+
+		child.on('error', (err) => {
+			button.className = runButtonClass;
+			new Notice("Error!");
+			outputter.writeErr(err.toString());
 		});
 	}
 }
