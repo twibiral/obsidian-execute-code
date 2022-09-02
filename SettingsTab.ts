@@ -61,6 +61,7 @@ export class SettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
+
 		// ========== JavaScript / Node ==========
 		containerEl.createEl('h3', {text: 'JavaScript / Node Settings'});
 		new Setting(containerEl)
@@ -105,34 +106,18 @@ export class SettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
-		// ========== Golang =========
-		containerEl.createEl('h3', {text: 'Golang Settings'});
-		new Setting(containerEl)
-			.setName('Golang Path')
-			.setDesc('The path to your Golang installation.')
-			.addText(text => text
-				.setValue(this.plugin.settings.golangPath)
-				.onChange(async (value) => {
-					this.plugin.settings.golangPath = value;
-					console.log('Golang path set to: ' + value);
-					await this.plugin.saveSettings();
-				}));
-
-		// ========== Rust ===========
-		containerEl.createEl('h3', {text: 'Rust Settings'});
-		new Setting(containerEl)
-			.setName('Cargo Path')
-			.setDesc('The path to your Cargo installation.')
-			.addText(text => text
-				.setValue(this.plugin.settings.cargoPath)
-				.onChange(async (value) => {
-					this.plugin.settings.cargoPath = value;
-					console.log('Cargo path set to: ' + value);
-					await this.plugin.saveSettings();
-				}));
 
 		// ========== Python ==========
 		containerEl.createEl('h3', {text: 'Python Settings'});
+		new Setting(containerEl)
+			.setName('Embed Python Plots')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.pythonEmbedPlots)
+				.onChange(async (value) => {
+					this.plugin.settings.pythonEmbedPlots = value;
+					console.log(value ? 'Embedding Plots into Notes.' : "Not embedding Plots into Notes.");
+					await this.plugin.saveSettings();
+				}));
 		new Setting(containerEl)
 			.setName('Python path')
 			.setDesc('The path to your Python installation.')
@@ -152,15 +137,35 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Python args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+
+
+		// ========== Golang =========
+		containerEl.createEl('h3', {text: 'Golang Settings'});
 		new Setting(containerEl)
-			.setName('Embed Python Plots')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.pythonEmbedPlots)
+			.setName('Golang Path')
+			.setDesc('The path to your Golang installation.')
+			.addText(text => text
+				.setValue(this.plugin.settings.golangPath)
 				.onChange(async (value) => {
-					this.plugin.settings.pythonEmbedPlots = value;
-					console.log(value ? 'Embedding Plots into Notes.' : "Not embedding Plots into Notes.");
+					this.plugin.settings.golangPath = value;
+					console.log('Golang path set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+
+
+		// ========== Rust ===========
+		containerEl.createEl('h3', {text: 'Rust Settings'});
+		new Setting(containerEl)
+			.setName('Cargo Path')
+			.setDesc('The path to your Cargo installation.')
+			.addText(text => text
+				.setValue(this.plugin.settings.cargoPath)
+				.onChange(async (value) => {
+					this.plugin.settings.cargoPath = value;
+					console.log('Cargo path set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+
 
 		// ========== Shell ==========
 		containerEl.createEl('h3', {text: 'Shell Settings'});
@@ -194,6 +199,7 @@ export class SettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
+
 		// ========== Prolog ==========
 		containerEl.createEl('h3', {text: 'Prolog Settings'});
 		new Setting(containerEl)
@@ -208,6 +214,7 @@ export class SettingsTab extends PluginSettingTab {
 					}
 					await this.plugin.saveSettings();
 				}));
+
 
 		// ========== Groovy ==========
 		containerEl.createEl('h3', {text: 'Groovy Settings'});
@@ -231,8 +238,18 @@ export class SettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
+
 		// ========== R ==========
 		containerEl.createEl('h3', {text: 'R Settings'});
+		new Setting(containerEl)
+			.setName('Embed R Plots created via <code>plot()</code> into Notes')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.REmbedPlots)
+				.onChange(async (value) => {
+					this.plugin.settings.REmbedPlots = value;
+					console.log(value ? 'Embedding R Plots into Notes.' : "Not embedding R Plots into Notes.");
+					await this.plugin.saveSettings();
+				}));
 		new Setting(containerEl)
 			.setName('R path')
 			.setDesc('The path to your R installation.')
@@ -250,15 +267,6 @@ export class SettingsTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.RArgs = value;
 					console.log('R args set to: ' + value);
-					await this.plugin.saveSettings();
-				}));
-		new Setting(containerEl)
-			.setName('Embed R Plots created via <code>plot()</code> into Notes')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.REmbedPlots)
-				.onChange(async (value) => {
-					this.plugin.settings.REmbedPlots = value;
-					console.log(value ? 'Embedding R Plots into Notes.' : "Not embedding R Plots into Notes.");
 					await this.plugin.saveSettings();
 				}));
 	}
