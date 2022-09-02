@@ -242,7 +242,7 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== R ==========
 		containerEl.createEl('h3', {text: 'R Settings'});
 		new Setting(containerEl)
-			.setName('Embed R Plots created via <code>plot()</code> into Notes')
+			.setName('Embed R Plots created via `plot()` into Notes')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.REmbedPlots)
 				.onChange(async (value) => {
