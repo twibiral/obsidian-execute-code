@@ -60,6 +60,16 @@ executed programm now.
 	plot(x, y, type="l")
     ```
 
+- Java
+	- Requirements: Java **11 or higher** is installed and the correct path is set in the settings.
+  ```java
+  public class HelloWorld {
+	  public static void main(String[] args) {
+		  System.out.println("Hello World!");
+	  }
+  }
+  ```
+
 - CPP
 	- Requirements: NO requirements, works with [JSCPP](https://github.com/felixhao28/JSCPP).
 	- Problems: No error handling implemented yet and JSCPP doesn't support all language features.
@@ -76,20 +86,22 @@ executed programm now.
         return 0;
     }
     ```
-  
+
 - Shell
-    - Requirements: Set the path to your preferred shell in the settings. Default is Bash.
-    - Linux / MacOS: Probably works out-of-the-box.
-    - Windows: Set path to `powershell`, add `-file` as argument, and change the default file ending to ``.ps1``.
-    - Problems: Set the code box type to shell or bash, even when using powershell (see issue #24 for more information)
+	- Requirements: Set the path to your preferred shell in the settings. Default is Bash
     ```shell
     echo "Hello World!"
     ls -la
     ```
-	
+
+- Powershell
+    ```powershell
+    echo "Hello World!"
+	```
+
 - Prolog
-   - Requirements: NO requirements, works with [Tau-Prolog](https://github.com/tau-prolog/tau-prolog).
-   - Important: Add your queries after a line "`% query`" in the code block like in the following 
+	- Requirements: NO requirements, works with [Tau-Prolog](https://github.com/tau-prolog/tau-prolog).
+	- Important: Add your queries after a line "`% query`" in the code block like in the following
     ```prolog
     likes(john, pizza).
     likes(john, cheese).
@@ -127,6 +139,7 @@ executed programm now.
 		  fmt.Println("Hello World")
 	  }
   ```
+
 - Rust
 	- Requirements: Cargo is installed and correct path is set in the settings(`cargo` binary is available).
     - `cargo-eval` is installed. Install using `cargo install cargo-eval`.
