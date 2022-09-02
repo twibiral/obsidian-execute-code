@@ -69,8 +69,9 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.nodePath)
 				.onChange(async (value) => {
-					this.plugin.settings.nodePath = value;
-					console.log('Node path set to: ' + value);
+					let sanitized = this.sanitizePath(value);
+					this.plugin.settings.nodePath = sanitized;
+					console.log('Node path set to: ' + sanitized);
 					await this.plugin.saveSettings();
 				}));
 		new Setting(containerEl)
@@ -92,8 +93,9 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.javaPath)
 				.onChange(async (value) => {
-					this.plugin.settings.javaPath = value;
-					console.log('Java path set to: ' + value);
+					let sanitized = this.sanitizePath(value);
+					this.plugin.settings.javaPath = sanitized;
+					console.log('Java path set to: ' + sanitized);
 					await this.plugin.saveSettings();
 				}));
 		new Setting(containerEl)
@@ -124,8 +126,9 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.pythonPath)
 				.onChange(async (value) => {
-					this.plugin.settings.pythonPath = value;
-					console.log('Python path set to: ' + value);
+					let sanitized = this.sanitizePath(value);
+					this.plugin.settings.pythonPath = sanitized;
+					console.log('Python path set to: ' + sanitized);
 					await this.plugin.saveSettings();
 				}));
 		new Setting(containerEl)
@@ -147,8 +150,9 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.golangPath)
 				.onChange(async (value) => {
-					this.plugin.settings.golangPath = value;
-					console.log('Golang path set to: ' + value);
+					let sanitized = this.sanitizePath(value);
+					this.plugin.settings.golangPath = sanitized;
+					console.log('Golang path set to: ' + sanitized);
 					await this.plugin.saveSettings();
 				}));
 
@@ -161,8 +165,9 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.cargoPath)
 				.onChange(async (value) => {
-					this.plugin.settings.cargoPath = value;
-					console.log('Cargo path set to: ' + value);
+					let sanitized = this.sanitizePath(value);
+					this.plugin.settings.cargoPath = sanitized;
+					console.log('Cargo path set to: ' + sanitized);
 					await this.plugin.saveSettings();
 				}));
 
@@ -175,8 +180,9 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.shellPath)
 				.onChange(async (value) => {
-					this.plugin.settings.shellPath = value;
-					console.log('Shell path set to: ' + value);
+					let sanitized = this.sanitizePath(value);
+					this.plugin.settings.shellPath = sanitized;
+					console.log('Shell path set to: ' + sanitized);
 					await this.plugin.saveSettings();
 				}));
 		new Setting(containerEl)
@@ -224,8 +230,9 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.groovyPath)
 				.onChange(async (value) => {
-					this.plugin.settings.groovyPath = value;
-					console.log('Groovy path set to: ' + value);
+					let sanitized = this.sanitizePath(value);
+					this.plugin.settings.groovyPath = sanitized;
+					console.log('Groovy path set to: ' + sanitized);
 					await this.plugin.saveSettings();
 				}));
 		new Setting(containerEl)
@@ -256,8 +263,9 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.RPath)
 				.onChange(async (value) => {
-					this.plugin.settings.RPath = value;
-					console.log('R path set to: ' + value);
+					let sanitized = this.sanitizePath(value);
+					this.plugin.settings.RPath = sanitized;
+					console.log('R path set to: ' + sanitized);
 					await this.plugin.saveSettings();
 				}));
 		new Setting(containerEl)
@@ -269,5 +277,13 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('R args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+	}
+
+	private sanitizePath(path: string): string {
+		path = path.replace(/\\/g, '/');
+		path.replace(/['"`]/, '');
+		path = path.trim();
+
+		return path
 	}
 }
