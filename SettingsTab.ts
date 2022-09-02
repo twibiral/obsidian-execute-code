@@ -21,6 +21,9 @@ export interface ExecutorSettings {
 	javaArgs: string,
 	javaFileExtension: string,
 	maxPrologAnswers: number;
+	powershellPath: string;
+	powershellArgs: string;
+	powershellFileExtension: string;
 	cargoPath: string;
 	cargoArgs: string,
 	rustFileExtension: string,

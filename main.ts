@@ -18,7 +18,8 @@ import * as JSCPP from "JSCPP";
 // @ts-ignore
 import * as prolog from "tau-prolog";
 
-const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust", "java"];
+const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
+	"java", "powershell"];
 
 const buttonText = "Run";
 
@@ -46,6 +47,9 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	javaArgs: "-ea",
 	javaFileExtension: "java",
 	maxPrologAnswers: 15,
+	powershellPath: "powershell",
+	powershellArgs: "-file",
+	powershellFileExtension: "ps1",
 	cargoPath: "cargo",
 	cargoArgs: "run",
 	rustFileExtension: "rs",
@@ -181,6 +185,12 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", () => {
 				button.className = runButtonDisabledClass;
 				this.runCode(srcCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
+			});
+
+		} else if (language.contains("language-powershell")) {
+			button.addEventListener("click", () => {
+				button.className = runButtonDisabledClass;
+				this.runCode(srcCode, out, button, this.settings.powershellPath, this.settings.powershellArgs, this.settings.powershellFileExtension);
 			});
 
 		} else if (language.contains("language-cpp")) {
