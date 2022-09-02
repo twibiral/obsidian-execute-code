@@ -18,7 +18,7 @@ import * as JSCPP from "JSCPP";
 // @ts-ignore
 import * as prolog from "tau-prolog";
 
-const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust"];
+const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust", "java"];
 
 const buttonText = "Run";
 
@@ -39,16 +39,19 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	groovyPath: "groovy",
 	groovyArgs: "",
 	groovyFileExtension: "groovy",
-    golangPath: "go",
-    golangArgs: "run",
-    golangFileExtension: "go",
-    cargoPath: "cargo",
-    cargoArgs: "run",
-    rustFileExtension: "rs",
+	golangPath: "go",
+	golangArgs: "run",
+	golangFileExtension: "go",
+	javaPath: "java",
+	javaArgs: "-ea",
+	javaFileExtension: "java",
 	maxPrologAnswers: 15,
+	cargoPath: "cargo",
+	cargoArgs: "run",
+	rustFileExtension: "rs",
 	RPath: "Rscript",
 	RArgs: "",
-	REmbedPlots: true,
+	REmbedPlots: true
 }
 
 export default class ExecuteCodePlugin extends Plugin {
@@ -156,6 +159,12 @@ export default class ExecuteCodePlugin extends Plugin {
 				this.runCode(srcCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
 			});
 
+		} else if (language.contains("java")) {
+			button.addEventListener("click", () => {
+				button.className = runButtonDisabledClass;
+				this.runCode(srcCode, out, button, this.settings.javaPath, this.settings.javaArgs, this.settings.javaFileExtension);
+			});
+
 		} else if (language.contains("language-python")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
@@ -202,13 +211,13 @@ export default class ExecuteCodePlugin extends Plugin {
 			});
 
 		} else if (language.contains("language-rust")) {
-            button.addEventListener("click" , () => {
-                button.className = runButtonDisabledClass;
+			button.addEventListener("click", () => {
+				button.className = runButtonDisabledClass;
 
 				this.runCode(srcCode, out, button, this.settings.cargoPath, this.settings.cargoArgs, this.settings.rustFileExtension);
-            });
+			});
 
-        } else if (language.contains("language-r")) {
+		} else if (language.contains("language-r")) {
 			button.addEventListener("click", () => {
 				button.className = runButtonDisabledClass;
 
@@ -218,12 +227,12 @@ export default class ExecuteCodePlugin extends Plugin {
 				this.runCode(srcCode, out, button, this.settings.RPath, this.settings.RArgs, "R");
 			});
 		} else if (language.contains("language-go")) {
-            button.addEventListener("click" , () => {
-                button.className = runButtonDisabledClass;
+			button.addEventListener("click", () => {
+				button.className = runButtonDisabledClass;
 
 				this.runCode(srcCode, out, button, this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension);
-            });
-        }
+			});
+		}
 	}
 
 	private getVaultVariables() {

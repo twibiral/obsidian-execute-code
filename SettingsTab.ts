@@ -17,7 +17,13 @@ export interface ExecutorSettings {
 	golangPath: string,
 	golangArgs: string,
 	golangFileExtension: string,
+	javaPath: string,
+	javaArgs: string,
+	javaFileExtension: string,
 	maxPrologAnswers: number;
+	cargoPath: string;
+	cargoArgs: string,
+	rustFileExtension: string,
 	RPath: string;
 	RArgs: string;
 	REmbedPlots: boolean;
@@ -43,9 +49,9 @@ export class SettingsTab extends PluginSettingTab {
 			.setName('Timeout (in seconds)')
 			.setDesc('The time after which a program gets shut down automatically. This is to prevent infinite loops. ')
 			.addText(text => text
-				.setValue("" + this.plugin.settings.timeout/1000)
+				.setValue("" + this.plugin.settings.timeout / 1000)
 				.onChange(async (value) => {
-					if( Number(value) * 1000){
+					if (Number(value) * 1000) {
 						console.log('Timeout set to: ' + value);
 						this.plugin.settings.timeout = Number(value) * 1000;
 					}
@@ -73,7 +79,30 @@ export class SettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
-        // ========== Golang =========
+
+		// ========== Java ==========
+		containerEl.createEl('h3', {text: 'Java Settings'});
+		new Setting(containerEl)
+			.setName('Java path (Java 11 or higher)')
+			.setDesc('The path to your Java installation.')
+			.addText(text => text
+				.setValue(this.plugin.settings.javaPath)
+				.onChange(async (value) => {
+					this.plugin.settings.javaPath = value;
+					console.log('Java path set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Java arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.javaArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.javaArgs = value;
+					console.log('Java args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+
+		// ========== Golang =========
 		containerEl.createEl('h3', {text: 'Golang Settings'});
 		new Setting(containerEl)
 			.setName('Golang Path')
@@ -86,7 +115,7 @@ export class SettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
-        // ========== Rust ===========
+		// ========== Rust ===========
 		containerEl.createEl('h3', {text: 'Rust Settings'});
 		new Setting(containerEl)
 			.setName('Cargo Path')
@@ -139,18 +168,18 @@ export class SettingsTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.shellPath)
 				.onChange(async (value) => {
 					this.plugin.settings.shellPath = value;
-						console.log('Shell path set to: ' + value);
-						await this.plugin.saveSettings();
-					}));
+					console.log('Shell path set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
 		new Setting(containerEl)
-				.setName('Shell arguments')
-				.addText(text => text
-					.setValue(this.plugin.settings.shellArgs)
-					.onChange(async (value) => {
-						this.plugin.settings.shellArgs = value;
-						console.log('Shell args set to: ' + value);
-						await this.plugin.saveSettings();
-					}));
+			.setName('Shell arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.shellArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.shellArgs = value;
+					console.log('Shell args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
 		new Setting(containerEl)
 			.setName('Shell file extension')
 			.setDesc('Changes the file extension for generated shell scripts. This is useful if you want to use a shell other than bash.')
@@ -170,7 +199,7 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue("" + this.plugin.settings.maxPrologAnswers)
 				.onChange(async (value) => {
-					if( Number(value) * 1000){
+					if (Number(value) * 1000) {
 						console.log('Prolog answer limit set to: ' + value);
 						this.plugin.settings.maxPrologAnswers = Number(value);
 					}
