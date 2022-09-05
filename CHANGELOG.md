@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
-- Support for Kotlin
+- Support for Kotlin (thanks to @Gluton-Official)
 
 ## [0.13.0] - 2022-09-02
 
