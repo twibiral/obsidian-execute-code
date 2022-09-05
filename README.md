@@ -9,7 +9,7 @@ executed programm now.
 
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
-The following [languages are supported](#supported-programming-languages): CPP, Golang, Groovy, Java, JavaScript,
+The following [languages are supported](#supported-programming-languages): CPP, Golang, Groovy, Kotlin, Java, JavaScript,
 Prolog, Rust, Python, R, Shell & Powershell.
 
 Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands) that help you to
@@ -18,7 +18,7 @@ access paths in obsidian or show images in your notes.
 ## Supported programming languages
 
 - JavaScript
-	- Requirements: Node.js is installed and the correct path is set in the settings.
+    - Requirements: Node.js is installed and the correct path is set in the settings.
     ```javascript
     function hello(name){
         console.log(`Hello ${name}!`);
@@ -28,7 +28,7 @@ access paths in obsidian or show images in your notes.
     ```
 
 - Python
-	- Requirements: Python is installed and the correct path is set in the settings.
+    - Requirements: Python is installed and the correct path is set in the settings.
     ```python
     def hello(name):
         print("Hello", name)
@@ -37,7 +37,7 @@ access paths in obsidian or show images in your notes.
         hello("Eve")
     ```
 
-	- Plots with matplotlib/seaborn are embedded in the note by default. You can turn this off in the settings.
+    - Plots with matplotlib/seaborn are embedded in the note by default. You can turn this off in the settings.
     ```python
     import seaborn as sns
     import matplotlib.pyplot as plt
@@ -49,11 +49,11 @@ access paths in obsidian or show images in your notes.
         'petal_length').add_legend()
 
     plt.show()
-	```
+    ```
   ![Example of an embedded plot.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/plotting_example.png?raw=true)
 
 - R
-	- Requirements: R is installed and the correct path is set in the settings.
+    - Requirements: R is installed and the correct path is set in the settings.
     ```r
     hello <- function(name){
         print(paste("Hello", name, sep = " "))
@@ -61,26 +61,26 @@ access paths in obsidian or show images in your notes.
 	
     hello("Bob")
     ```
-	- Plots can be embedded in the note by default. You can turn this off in the settings.
+    - Plots can be embedded in the note by default. You can turn this off in the settings.
     ```r
-	y = c(12, 15, 28, 17, 18)
-	x = 1:length(y)
-	plot(x, y, type="l")
+    y = c(12, 15, 28, 17, 18)
+    x = 1:length(y)
+    plot(x, y, type="l")
     ```
 
 - Java
-	- Requirements: Java **11 or higher** is installed and the correct path is set in the settings.
-  ```java
-  public class HelloWorld {
-	  public static void main(String[] args) {
-		  System.out.println("Hello World!");
-	  }
-  }
-  ```
+    - Requirements: Java **11 or higher** is installed and the correct path is set in the settings.
+    ```java
+    public class HelloWorld {
+        public static void main(String[] args) {
+            System.out.println("Hello World!");
+        }
+    }
+    ```
 
 - CPP
-	- Requirements: NO requirements, works with [JSCPP](https://github.com/felixhao28/JSCPP).
-	- Problems: No error handling implemented yet and JSCPP doesn't support all language features.
+    - Requirements: NO requirements, works with [JSCPP](https://github.com/felixhao28/JSCPP).
+    - Problems: No error handling implemented yet and JSCPP doesn't support all language features.
     ```cpp
     #include <iostream>
     using namespace std;
@@ -96,7 +96,7 @@ access paths in obsidian or show images in your notes.
     ```
 
 - Shell
-	- Requirements: Set the path to your preferred shell in the settings. Default is Bash
+    - Requirements: Set the path to your preferred shell in the settings. Default is Bash
     ```shell
     echo "Hello World!"
     ls -la
@@ -108,8 +108,8 @@ access paths in obsidian or show images in your notes.
   ```
 
 - Prolog
-	- Requirements: NO requirements, works with [Tau-Prolog](https://github.com/tau-prolog/tau-prolog).
-	- Important: Add your queries after a line "`% query`" in the code block like in the following
+    - Requirements: NO requirements, works with [Tau-Prolog](https://github.com/tau-prolog/tau-prolog).
+    - Important: Add your queries after a line "`% query`" in the code block like in the following
     ```prolog
     likes(john, pizza).
     likes(john, cheese).
@@ -120,45 +120,54 @@ access paths in obsidian or show images in your notes.
     ```
 
 - Groovy
-	- Requirements: Groovy is installed and the correct path is set in the settings.
-  ```groovy
-		def hello(name){  
-			 println "Hello ${name}!" 
-		}  
-		  
-		def helloClosure = {  
-		   println "Hello ${it}!" 
-		}  
-		  
-		hello("Bob")
-		  
-		helloClosure "Bob"
-	```
+    - Requirements: Groovy is installed and the correct path is set in the settings.
+    ```groovy
+    def hello(name){  
+         println "Hello ${name}!" 
+    }  
+    
+    def helloClosure = {  
+    println "Hello ${it}!" 
+    }  
+    
+    hello("Bob")
+    
+    helloClosure "Bob"
+    ```
 
 - Golang
-	- Requirements: Golang is installed and correct path is set in the settings(`go` binary is available).
-	- Every code block must contain package declaration and a main function.
-  ```go
-	  package main
+    - Requirements: Golang is installed and correct path is set in the settings(`go` binary is available).
+    - Every code block must contain package declaration and a main function.
+    ```go
+    package main
   
-	  import "fmt"
+    import "fmt"
   
-	  func main() {
-		  fmt.Println("Hello World")
-	  }
-  ```
+    func main() {
+        fmt.Println("Hello World")
+    }
+    ```
 
 - Rust
-	- Requirements: Cargo is installed and correct path is set in the settings(`cargo` binary is available).
+    - Requirements: Cargo is installed and correct path is set in the settings(`cargo` binary is available).
     - `cargo-eval` is installed. Install using `cargo install cargo-eval`.
     - Import statements and external crates is supported by `cargo-eval`. Read their [documentation](https://github.com/reitermarkus/cargo-eval).
-	- Every code block must a main function.
-  ```rust
-	  fn main() {
-		  println!("Hello World");
-	  }
-  ```
+    - Every code block must a main function.
+    ```rust
+    fn main() {
+        println!("Hello World");
+    }
+    ```
+  
+- Kotlin
+  - Requirements: Kotlin is installed and correct path is set in the settings.
+  ```kotlin
+  hello(name: String) {
+      println("Hello $name!")
+  }
 
+  hello("Bob")
+  ```
 - Squiggle: For Squiggle support look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle)
   by @jqhoogland.
 
