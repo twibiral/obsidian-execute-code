@@ -19,7 +19,7 @@ import * as JSCPP from "JSCPP";
 import * as prolog from "tau-prolog";
 
 const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
-	"java", "powershell"];
+	"java", "powershell", "kotlin"];
 
 const buttonText = "Run";
 
@@ -55,7 +55,10 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	rustFileExtension: "rs",
 	RPath: "Rscript",
 	RArgs: "",
-	REmbedPlots: true
+	REmbedPlots: true,
+	kotlinPath: "kotlinc",
+	kotlinArgs: "-script",
+	kotlinFileExtension: "kts",
 }
 
 export default class ExecuteCodePlugin extends Plugin {
@@ -217,7 +220,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language.contains("language-groovy")) {
 			button.addEventListener("click", () => {
 				button.className = runButtonDisabledClass;
-				this.runGroovyCode(srcCode, out, button);
+				this.runCodeInShell(srcCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
 			});
 
 		} else if (language.contains("language-rust")) {
@@ -241,6 +244,11 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 
 				this.runCode(srcCode, out, button, this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension);
+			});
+		} else if (language.contains("language-kotlin")) {
+			button.addEventListener("click", () => {
+				button.className = runButtonDisabledClass;
+				this.runCodeInShell(srcCode, out, button, this.settings.kotlinPath, this.settings.kotlinArgs, this.settings.kotlinFileExtension);
 			});
 		}
 	}
@@ -305,6 +313,27 @@ export default class ExecuteCodePlugin extends Plugin {
 			});
 	}
 
+	private runCodeInShell(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
+		new Notice("Running...");
+		const tempFileName = this.getTempFile(ext)
+		console.debug(`Execute ${cmd} ${cmdArgs} ${tempFileName}`);
+
+		fs.promises.writeFile(tempFileName, codeBlockContent)
+			.then(() => {
+				const args = cmdArgs ? cmdArgs.split(" ") : [];
+				args.push(tempFileName);
+
+				console.debug(`Execute ${cmd} ${args.join(" ")}`);
+				const child = child_process.spawn(cmd, args, {shell: true});
+
+				this.handleChildOutput(child, outputter, button, tempFileName);
+			})
+			.catch((err) => {
+				this.notifyError(cmd, cmdArgs, tempFileName, err, outputter);
+				button.className = runButtonClass;
+			});
+	}
+
 	private runCpp(cppCode: string, out: Outputter) {
 		new Notice("Running...");
 		const config = {
@@ -318,26 +347,6 @@ export default class ExecuteCodePlugin extends Plugin {
 
 		out.write("\nprogram stopped with exit code " + exitCode);
 		new Notice(exitCode === 0 ? "Done!" : "Error!");
-	}
-
-	private runGroovyCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement) {
-		new Notice("Running...");
-		const tempFileName = this.getTempFile(this.settings.groovyFileExtension)
-		console.debug(`Execute ${this.settings.groovyPath} ${this.settings.groovyArgs} ${tempFileName}`);
-
-		fs.promises.writeFile(tempFileName, codeBlockContent)
-			.then(() => {
-				const args = this.settings.groovyArgs ? this.settings.groovyArgs.split(" ") : [];
-
-				args.push(tempFileName);
-
-				const child = child_process.spawn(this.settings.groovyPath, args, {shell: true});
-				this.handleChildOutput(child, outputter, button, tempFileName);
-			})
-			.catch((err) => {
-				this.notifyError(this.settings.groovyPath, this.settings.groovyArgs, tempFileName, err, outputter);
-				button.className = runButtonClass;
-			});
 	}
 
 	private runPrologCode(prologCode: string[], out: Outputter) {

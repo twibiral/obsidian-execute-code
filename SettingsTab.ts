@@ -30,6 +30,9 @@ export interface ExecutorSettings {
 	RPath: string;
 	RArgs: string;
 	REmbedPlots: boolean;
+	kotlinPath: string;
+	kotlinArgs: string;
+	kotlinFileExtension: string;
 }
 
 export class SettingsTab extends PluginSettingTab {
@@ -309,6 +312,29 @@ export class SettingsTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.RArgs = value;
 					console.log('R args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+
+		// ========== Kotlin ==========
+		containerEl.createEl('h3', {text: 'Kotlin Settings'});
+		new Setting(containerEl)
+			.setName('Kotlin path')
+			.setDesc('The path to your Kotlin installation.')
+			.addText(text => text
+				.setValue(this.plugin.settings.kotlinPath)
+				.onChange(async (value) => {
+					let sanitized = this.sanitizePath(value);
+					this.plugin.settings.kotlinPath = sanitized;
+					console.log('Kotlin path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Kotlin arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.kotlinArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.kotlinArgs = value;
+					console.log('Kotlin args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
 	}
