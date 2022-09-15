@@ -1,4 +1,4 @@
-import {App, DropdownComponent, PluginSettingTab, Setting} from "obsidian";
+import {App, PluginSettingTab, Setting} from "obsidian";
 import ExecuteCodePlugin from "./main";
 
 export interface ExecutorSettings {
@@ -183,18 +183,8 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== C++ ===========
 		containerEl.createEl('h3', {text: 'C++ Settings'});
 		new Setting(containerEl)
-			.setName('C++ Runner')
-			.addDropdown(dropdown => dropdown
-				.addOption('cling', 'Cling')
-				.setValue(this.plugin.settings.cppRunner)
-				.onChange(async (value) => {
-					this.plugin.settings.cppRunner = value;
-					console.log('C++ runner set to: ' + value);
-					await this.plugin.saveSettings();
-				}));
-		new Setting(containerEl)
-			.setName('C++ inject code')
-			.setDesc('Code to add to the top of every C++ code block. Can be #include, #define, using directives, etc.')
+			.setName('Inject C++ code')
+			.setDesc('Code to add to the top of every C++ code block before running. Can be #include, #define, using directives, etc.')
 			.setClass('settings-code-input-box')
 			.addTextArea(textarea => textarea
 				.setValue(this.plugin.settings.cppInject)
