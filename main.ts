@@ -14,8 +14,6 @@ import {
 	insertVaultPath
 } from "./Magic";
 // @ts-ignore
-import * as JSCPP from "JSCPP";
-// @ts-ignore
 import * as prolog from "tau-prolog";
 
 const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
@@ -52,7 +50,7 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	powershellFileExtension: "ps1",
 	cargoPath: "cargo",
 	cargoArgs: "run",
-	cppRunner: "jscpp",
+	cppRunner: "cling",
 	cppInject: "",
 	clingPath: "cling",
 	clingArgs: "",
@@ -207,9 +205,6 @@ export default class ExecuteCodePlugin extends Plugin {
 				out.clear();
 				const cppCode = `${this.settings.cppInject}\n${srcCode}`;
 				switch(this.settings.cppRunner) {
-					case "jscpp":
-						this.runJscpp(cppCode, out);
-						break;
 					case "cling":
 						this.runCode(cppCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp");
 						break;
@@ -350,21 +345,6 @@ export default class ExecuteCodePlugin extends Plugin {
 				this.notifyError(cmd, cmdArgs, tempFileName, err, outputter);
 				button.className = runButtonClass;
 			});
-	}
-
-	private runJscpp(cppCode: string, out: Outputter) {
-		new Notice("Running...");
-		const config = {
-			stdio: {
-				write: (s: string) => out.write(s)
-			},
-			unsigned_overflow: "warn", // can be "error"(default), "warn" or "ignore"
-			maxTimeout: this.settings.timeout,
-		};
-		const exitCode = JSCPP.run(cppCode, 0, config);
-
-		out.write("\nprogram stopped with exit code " + exitCode);
-		new Notice(exitCode === 0 ? "Done!" : "Error!");
 	}
 
 	private runPrologCode(prologCode: string[], out: Outputter) {

@@ -23,7 +23,6 @@
 	},
 	"dependencies": {
 		"g": "^2.0.1",
-		"JSCPP": "^2.0.9",
 		"moment": "^2.29.3",
 		"original-fs": "^1.1.0",
 		"tau-prolog": "^0.3.2"

@@ -184,9 +184,7 @@ export class SettingsTab extends PluginSettingTab {
 		containerEl.createEl('h3', {text: 'C++ Settings'});
 		new Setting(containerEl)
 			.setName('C++ Runner')
-			.setDesc('Prefer Cling for the best C++ experience.')
 			.addDropdown(dropdown => dropdown
-				.addOption('jscpp', 'JSCPP')
 				.addOption('cling', 'Cling')
 				.setValue(this.plugin.settings.cppRunner)
 				.onChange(async (value) => {
