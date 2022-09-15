@@ -27,10 +27,10 @@ export interface ExecutorSettings {
 	cargoPath: string;
 	cargoArgs: string;
 	cppRunner: string;
+	cppInject: string;
 	clingPath: string;
 	clingArgs: string;
 	clingStd: string;
-	clingInject: string;
 	rustFileExtension: string,
 	RPath: string;
 	RArgs: string;
@@ -197,11 +197,11 @@ export class SettingsTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName('C++ inject code')
 			.setDesc('Code to add to the top of every C++ code block. Can be #include, #define, using directives, etc.')
-			.setClass('code-input-box')
+			.setClass('settings-code-input-box')
 			.addTextArea(textarea => textarea
-				.setValue(this.plugin.settings.clingInject)
+				.setValue(this.plugin.settings.cppInject)
 				.onChange(async (value) => {
-					this.plugin.settings.clingInject = value;
+					this.plugin.settings.cppInject = value;
 					console.log('C++ inject set to: ' + value);
 					await this.plugin.saveSettings();
 				}));

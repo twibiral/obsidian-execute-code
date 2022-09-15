@@ -53,10 +53,10 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	cargoPath: "cargo",
 	cargoArgs: "run",
 	cppRunner: "jscpp",
+	cppInject: "",
 	clingPath: "cling",
 	clingArgs: "",
 	clingStd: "c++17",
-	clingInject: "",
 	rustFileExtension: "rs",
 	RPath: "Rscript",
 	RArgs: "",
@@ -205,12 +205,13 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", () => {
 				button.className = runButtonDisabledClass;
 				out.clear();
+				const cppCode = `${this.settings.cppInject}\n${srcCode}`;
 				switch(this.settings.cppRunner) {
-					case "jcpp":
-						this.runJscpp(srcCode, out);
+					case "jscpp":
+						this.runJscpp(cppCode, out);
 						break;
 					case "cling":
-						this.runCode(srcCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp");
+						this.runCode(cppCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp");
 						break;
 				}
 				button.className = runButtonClass;

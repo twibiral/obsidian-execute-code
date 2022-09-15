@@ -46,7 +46,7 @@ code.language-output hr {
 	margin: 0 0 1em;
 }
 
-.code-input-box textarea, .code-input-box input {
+.settings-code-input-box textarea, .settings-code-input-box input {
     min-width: 400px;
 	min-height: 100px;
     font-family: monospace;
