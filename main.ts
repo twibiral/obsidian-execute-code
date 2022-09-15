@@ -52,6 +52,11 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	powershellFileExtension: "ps1",
 	cargoPath: "cargo",
 	cargoArgs: "run",
+	cppRunner: "jscpp",
+	clingPath: "cling",
+	clingArgs: "",
+	clingStd: "c++17",
+	clingInject: "",
 	rustFileExtension: "rs",
 	RPath: "Rscript",
 	RArgs: "",
@@ -200,7 +205,14 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", () => {
 				button.className = runButtonDisabledClass;
 				out.clear();
-				this.runCpp(srcCode, out);
+				switch(this.settings.cppRunner) {
+					case "jcpp":
+						this.runJscpp(srcCode, out);
+						break;
+					case "cling":
+						this.runCode(srcCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp");
+						break;
+				}
 				button.className = runButtonClass;
 			})
 
@@ -281,8 +293,9 @@ export default class ExecuteCodePlugin extends Plugin {
 		return button;
 	}
 
-	private getTempFile(ext: string) {
-		return `${os.tmpdir()}/temp_${Date.now()}.${ext}`
+	private getTempFile(ext: string): [string, number] {
+		const now = Date.now();
+		return [`${os.tmpdir()}/temp_${now}.${ext}`, now];
 	}
 
 	private notifyError(cmd: string, cmdArgs: string, tempFileName: string, err: any, outputter: Outputter) {
@@ -294,10 +307,14 @@ export default class ExecuteCodePlugin extends Plugin {
 
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
 		new Notice("Running...");
-		const tempFileName = this.getTempFile(ext)
+		const [tempFileName, fileId] = this.getTempFile(ext)
 		console.debug(`Execute ${cmd} ${cmdArgs} ${tempFileName}`);
+		
+		let codeContent = codeBlockContent;
+		if (ext === "cpp")
+			codeContent = codeContent.replace(/main\(\)/g, `temp_${fileId}()`);
 
-		fs.promises.writeFile(tempFileName, codeBlockContent)
+		fs.promises.writeFile(tempFileName, codeContent)
 			.then(() => {
 				const args = cmdArgs ? cmdArgs.split(" ") : [];
 				args.push(tempFileName);
@@ -315,7 +332,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 	private runCodeInShell(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
 		new Notice("Running...");
-		const tempFileName = this.getTempFile(ext)
+		const [tempFileName] = this.getTempFile(ext)
 		console.debug(`Execute ${cmd} ${cmdArgs} ${tempFileName}`);
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
@@ -334,7 +351,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			});
 	}
 
-	private runCpp(cppCode: string, out: Outputter) {
+	private runJscpp(cppCode: string, out: Outputter) {
 		new Notice("Running...");
 		const config = {
 			stdio: {
