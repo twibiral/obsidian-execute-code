@@ -204,11 +204,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				out.clear();
 				const cppCode = `${this.settings.cppInject}\n${srcCode}`;
-				switch(this.settings.cppRunner) {
-					case "cling":
-						this.runCode(cppCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp");
-						break;
-				}
+				this.runCode(cppCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp");
 				button.className = runButtonClass;
 			})
 
