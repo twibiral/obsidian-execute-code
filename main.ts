@@ -301,12 +301,9 @@ export default class ExecuteCodePlugin extends Plugin {
 		new Notice("Running...");
 		const [tempFileName, fileId] = this.getTempFile(ext)
 		console.debug(`Execute ${cmd} ${cmdArgs} ${tempFileName}`);
-		
-		let codeContent = codeBlockContent;
 		if (ext === "cpp")
-			codeContent = codeContent.replace(/main\(\)/g, `temp_${fileId}()`);
-
-		fs.promises.writeFile(tempFileName, codeContent)
+			codeBlockContent = codeBlockContent.replace(/main\(\)/g, `temp_${fileId}()`);
+		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
 				const args = cmdArgs ? cmdArgs.split(" ") : [];
 				args.push(tempFileName);
