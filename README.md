@@ -79,13 +79,15 @@ access paths in obsidian or show images in your notes.
   ```
 
 - CPP
-	- Requirements: NO requirements, works with [JSCPP](https://github.com/felixhao28/JSCPP).
-	- Problems: No error handling implemented yet and JSCPP doesn't support all language features.
+	- Requirements: [Cling](https://github.com/root-project/cling) is installed and correct path is set in the settings.
+	- Every code block must contain a main function.
     ```cpp
     #include <iostream>
+	#include <string>
+
     using namespace std;
 
-    void hello(char name[]) {
+    void hello(string name) {
         cout << "Hello " << name << "!\n";
     }
 
