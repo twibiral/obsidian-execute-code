@@ -14,8 +14,6 @@ import {
 	insertVaultPath
 } from "./Magic";
 // @ts-ignore
-import * as JSCPP from "JSCPP";
-// @ts-ignore
 import * as prolog from "tau-prolog";
 
 const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
@@ -52,6 +50,11 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	powershellFileExtension: "ps1",
 	cargoPath: "cargo",
 	cargoArgs: "run",
+	cppRunner: "cling",
+	cppInject: "",
+	clingPath: "cling",
+	clingArgs: "",
+	clingStd: "c++17",
 	rustFileExtension: "rs",
 	RPath: "Rscript",
 	RArgs: "",
@@ -200,7 +203,8 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", () => {
 				button.className = runButtonDisabledClass;
 				out.clear();
-				this.runCpp(srcCode, out);
+				const cppCode = `${this.settings.cppInject}\n${srcCode}`;
+				this.runCode(cppCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp");
 				button.className = runButtonClass;
 			})
 
@@ -281,8 +285,9 @@ export default class ExecuteCodePlugin extends Plugin {
 		return button;
 	}
 
-	private getTempFile(ext: string) {
-		return `${os.tmpdir()}/temp_${Date.now()}.${ext}`
+	private getTempFile(ext: string): [string, number] {
+		const now = Date.now();
+		return [`${os.tmpdir()}/temp_${now}.${ext}`, now];
 	}
 
 	private notifyError(cmd: string, cmdArgs: string, tempFileName: string, err: any, outputter: Outputter) {
@@ -294,9 +299,10 @@ export default class ExecuteCodePlugin extends Plugin {
 
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
 		new Notice("Running...");
-		const tempFileName = this.getTempFile(ext)
+		const [tempFileName, fileId] = this.getTempFile(ext)
 		console.debug(`Execute ${cmd} ${cmdArgs} ${tempFileName}`);
-
+		if (ext === "cpp")
+			codeBlockContent = codeBlockContent.replace(/main\(\)/g, `temp_${fileId}()`);
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
 				const args = cmdArgs ? cmdArgs.split(" ") : [];
@@ -315,7 +321,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 	private runCodeInShell(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
 		new Notice("Running...");
-		const tempFileName = this.getTempFile(ext)
+		const [tempFileName] = this.getTempFile(ext)
 		console.debug(`Execute ${cmd} ${cmdArgs} ${tempFileName}`);
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
@@ -332,21 +338,6 @@ export default class ExecuteCodePlugin extends Plugin {
 				this.notifyError(cmd, cmdArgs, tempFileName, err, outputter);
 				button.className = runButtonClass;
 			});
-	}
-
-	private runCpp(cppCode: string, out: Outputter) {
-		new Notice("Running...");
-		const config = {
-			stdio: {
-				write: (s: string) => out.write(s)
-			},
-			unsigned_overflow: "warn", // can be "error"(default), "warn" or "ignore"
-			maxTimeout: this.settings.timeout,
-		};
-		const exitCode = JSCPP.run(cppCode, 0, config);
-
-		out.write("\nprogram stopped with exit code " + exitCode);
-		new Notice(exitCode === 0 ? "Done!" : "Error!");
 	}
 
 	private runPrologCode(prologCode: string[], out: Outputter) {

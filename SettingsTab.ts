@@ -25,7 +25,12 @@ export interface ExecutorSettings {
 	powershellArgs: string;
 	powershellFileExtension: string;
 	cargoPath: string;
-	cargoArgs: string,
+	cargoArgs: string;
+	cppRunner: string;
+	cppInject: string;
+	clingPath: string;
+	clingArgs: string;
+	clingStd: string;
 	rustFileExtension: string,
 	RPath: string;
 	RArgs: string;
@@ -171,6 +176,53 @@ export class SettingsTab extends PluginSettingTab {
 					let sanitized = this.sanitizePath(value);
 					this.plugin.settings.cargoPath = sanitized;
 					console.log('Cargo path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+
+
+		// ========== C++ ===========
+		containerEl.createEl('h3', {text: 'C++ Settings'});
+		new Setting(containerEl)
+			.setName('Inject C++ code')
+			.setDesc('Code to add to the top of every C++ code block before running. Can be #include, #define, using directives, etc.')
+			.setClass('settings-code-input-box')
+			.addTextArea(textarea => textarea
+				.setValue(this.plugin.settings.cppInject)
+				.onChange(async (value) => {
+					this.plugin.settings.cppInject = value;
+					console.log('C++ inject set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Cling path')
+			.setDesc('The path to your Cling installation.')
+			.addText(text => text
+				.setValue(this.plugin.settings.clingPath)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.clingPath = sanitized;
+					console.log('Cling path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Cling arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.clingArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.clingArgs = value;
+					console.log('Cling args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Cling std')
+			.addDropdown(dropdown => dropdown
+				.addOption('c++11', 'C++ 11')
+				.addOption('c++14', 'C++ 14')
+				.addOption('c++17', 'C++ 17')
+				.setValue(this.plugin.settings.clingStd)
+				.onChange(async (value) => {
+					this.plugin.settings.clingStd = value;
+					console.log('Cling std set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
 

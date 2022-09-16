@@ -45,3 +45,10 @@ code.language-output span.stderr {
 code.language-output hr {
 	margin: 0 0 1em;
 }
+
+.settings-code-input-box textarea, .settings-code-input-box input {
+    min-width: 400px;
+	min-height: 100px;
+    font-family: monospace;
+    resize: vertical; 
+}
