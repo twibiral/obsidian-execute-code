@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [Unreleased]
+
+### Changed
+
+- Improved C++ support by switching from JSCPP to Cling (thanks to @milan338).
+
 ## [0.14.0] - 2022-09-05
 
 ### Added
