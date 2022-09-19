@@ -18,14 +18,13 @@ import * as prolog from "tau-prolog";
 
 const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
 	"java", "powershell", "kotlin"];
-const languagePrefixes = ['run', 'pre', 'post'];
+const languagePrefixes = ["run", "pre", "post"];
 
 const buttonText = "Run";
 
 const runButtonClass = "run-code-button";
 const runButtonDisabledClass = "run-button-disabled";
 const hasButtonClass = "has-run-code-button";
-const codeParentClass = 'code-parent';
 
 const DEFAULT_SETTINGS: ExecutorSettings = {
 	timeout: 10000,
@@ -83,7 +82,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			console.debug(`Registering renderer for ${l}.`)
 			languagePrefixes.forEach(prefix => {
 				this.registerMarkdownCodeBlockProcessor(`${prefix}-${l}`, async (src, el, _ctx) => {
-					await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + '\n```', el, '', null)
+					await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + '```', el, '', null);
 				});
 			})
 		})
@@ -147,66 +146,54 @@ export default class ExecuteCodePlugin extends Plugin {
 	// TODO get this working for run blocks as well
 
 
-	// !
-	// TODO looks like divs that aren't in view are deleted, this is a pretty big issue
-	// TODO have to fix this somehow...
-	// !
-
-
-	// TODO might have to be async here, make all the run code async
 	private async injectCode(codeBlock: HTMLElement, srcCode: string, language: string) {
 		let prependSrcCode = '';
 		let appendSrcCode = '';
 
-		// console.log(this.app.workspace.activeLeaf.view.containerEl);
+		// We need to get access to all code blocks on the page so we can grab the pre / post blocks above
+		// Obsidian unloads code blocks not in view, so instead we render the entire file here to get access
+		// to all code blocks on the page
+		const activeFile = this.app.workspace.getActiveFile();
+		const fileContents = await this.app.vault.read(activeFile);
+		const renderedMd = document.createElement("tmp-codeblock-page-rendered-md");
+		await MarkdownRenderer.renderMarkdown(fileContents, renderedMd, activeFile.path, null);
 
-		// const a = new MarkdownPreviewView(this.app.workspace.activeLeaf.view.containerEl);
-		// a.rerender()
+		const preClassName = `block-language-pre-${language}`;
+		const postClassName = `block-language-post-${language}`;
 
+		let stopSearching = false; // Stop searching when we find the block we're running - only include pre/post blocks above
 
-		// console.log('active leaf display text')
-		// const activeFile = this.app.workspace.getActiveFile();
-		// const fileContents = await this.app.vault.read(activeFile);
-		// const renderedMdEle = document.createElement("tmp-codeblock-page-rendered-md");
-		// await MarkdownRenderer.renderMarkdown(fileContents, renderedMdEle, activeFile.path, this);
-		// console.log(renderedMdEle);
-		// renderedMdEle.remove();
-
-		// console.log(fileContents);
-
-		// TODO do a query selector all on the code blocks and look for only those with the class language-${language}
-
-		const pageElement = codeBlock.parentElement.parentElement.parentElement;
-		const preClassName = `${codeParentClass}-language-pre-${language}`;
-		const postClassName = `${codeParentClass}-language-post-${language}`;
-
-
-		for (const ele of Array.from(pageElement.children)) {
-			// Don't prepend self or anything below self code block
-			if (ele === codeBlock.parentElement.parentElement)
-				break;
-			console.log('classnames: ');
-			console.log(ele.className);
-			// Only check pre and post blocks
-			if (!ele.className.contains(preClassName) && !ele.className.contains(postClassName))
+		for (const ele of Array.from(renderedMd.children)) {
+			// All prefixed code blocks will render as DIV elements, non-prefixed will render as PRE elements
+			// The current code block being run may be a PRE element, so we check these two tag names
+			if (ele.tagName != "DIV" && ele.tagName != "PRE")
 				continue;
-			ele.children[0].children[0].querySelectorAll("code") // Get all code elements in pre element
-				.forEach((injectCodeBlock: HTMLElement) => {
-					// Ignore non-source code blocks e.g. language-output
-					if (!injectCodeBlock.className.contains(`language-${language}`))
-						return;
-					// Pre-block
-					if (ele.hasClass(preClassName))
-						prependSrcCode += this.getSrcCode(injectCodeBlock);
-					// Post-block
-					else if (ele.hasClass(postClassName))
-						{appendSrcCode += this.getSrcCode(injectCodeBlock);	console.log('new append code:'); console.log(appendSrcCode);}
-				})
+			const injectCodeBlocks = (ele.tagName == "DIV" ?  ele.children[0] : ele).querySelectorAll("code");
+			for (const iCodeBlock of Array.from(injectCodeBlocks)) {
+				// Stop searching once found the current block being executed
+				if (codeBlock.childNodes.length === iCodeBlock.childNodes.length) {
+					const injectSrcCode = this.getSrcCode(iCodeBlock);
+					if (srcCode.length === injectSrcCode.length && srcCode === injectSrcCode) {
+						stopSearching = true;
+						break;
+					}
+				}
+				// Only inject pre / post blocks and ignore non-source code blocks e.g. language-output
+				if (ele.tagName != "DIV" || !iCodeBlock.className.contains(`language-${language}`))
+					break;
+				// Pre-block
+				if (ele.hasClass(preClassName))
+					prependSrcCode += this.getSrcCode(iCodeBlock);
+				// Post-block
+				else if (ele.hasClass(postClassName))
+					appendSrcCode += this.getSrcCode(iCodeBlock);
+			}
+			if (stopSearching)
+				break;
 		}
 		// TODO add global inject here
 		srcCode = `${prependSrcCode}\n${srcCode}\n${appendSrcCode}`;
-		console.log('source code:');
-		console.log(srcCode);
+		renderedMd.remove(); // Cleanup now unused rendered markdown
 		return srcCode;
 	}
 
@@ -223,17 +210,25 @@ export default class ExecuteCodePlugin extends Plugin {
 				const srcCode = this.getSrcCode(codeBlock);
 
 				// Set up enumeration over all code blocks for injection later when running code
-				const languageClassName = /language-([^\s]+)/.exec(language)[0];
-				const className = `${codeParentClass}-${languageClassName}`;
-				if (!parent.hasClass(className))
-					parent.addClass(className); // Element gets reconstructed on language change, no need to remove previous classes
+				// console.log(`language: ${language}`);
+				// console.log(codeBlock);
+
+
 
 				// TODO doesn't look like clear button being added to the outputs?
 
 				// TODO If don't have main function and requires main function, pressing run put the entire code block in a main function
 
-				if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
-					&& !parent.classList.contains(hasButtonClass)) { // unsupported language
+				const isSupportedLanguage = supportedLanguages.some((lang) => {
+					if (language.contains(`language-${lang}`))
+						return true;
+					for (const prefix of languagePrefixes) {
+						if (language.contains(`language-${prefix}-${lang}`))
+							return true;
+					}
+					return false;
+				});
+				if (isSupportedLanguage && !parent.classList.contains(hasButtonClass)) {
 					const out = new Outputter(codeBlock);
 					parent.classList.add(hasButtonClass);
 					const button = this.createRunButton();
