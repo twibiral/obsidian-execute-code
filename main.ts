@@ -30,29 +30,38 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	timeout: 10000,
 	nodePath: "node",
 	nodeArgs: "",
+	nodeInject: "",
 	pythonPath: "python",
 	pythonArgs: "",
 	pythonEmbedPlots: true,
+	pythonInject: "",
 	shellPath: "bash",
 	shellArgs: "",
 	shellFileExtension: "sh",
+	shellInject: "",
 	groovyPath: "groovy",
 	groovyArgs: "",
 	groovyFileExtension: "groovy",
+	groovyInject: "",
 	golangPath: "go",
 	golangArgs: "run",
 	golangFileExtension: "go",
+	golangInject: "",
 	javaPath: "java",
 	javaArgs: "-ea",
 	javaFileExtension: "java",
+	javaInject: "",
 	maxPrologAnswers: 15,
+	prologInject: "",
 	powershellPath: "powershell",
 	powershellArgs: "-file",
 	powershellFileExtension: "ps1",
+	powershellInject: "",
 	cargoPath: "cargo",
 	cargoArgs: "run",
+	rustInject: "",
 	cppRunner: "cling",
-	cppInject: "", // TODO group this with all other languages
+	cppInject: "",
 	clingPath: "cling",
 	clingArgs: "",
 	clingStd: "c++17",
@@ -60,9 +69,11 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	RPath: "Rscript",
 	RArgs: "",
 	REmbedPlots: true,
+	RInject: "",
 	kotlinPath: "kotlinc",
 	kotlinArgs: "-script",
 	kotlinFileExtension: "kts",
+	kotlinInject: "",
 }
 
 export default class ExecuteCodePlugin extends Plugin {
@@ -140,12 +151,8 @@ export default class ExecuteCodePlugin extends Plugin {
 		return srcCode;
 	}
 
-	// TODO make sure this works with side-by-side documents
-	// TODO make sure this works in preview mode i.e. with the run- prefix
-
-	// TODO get this working for run blocks as well
-
-
+	// TODO get this to work with run blocks in edit mode
+	// TODO looks like it doesn't stop traversing down when it reaches self?
 	private async injectCode(codeBlock: HTMLElement, srcCode: string, language: string) {
 		let prependSrcCode = '';
 		let appendSrcCode = '';
@@ -191,8 +198,8 @@ export default class ExecuteCodePlugin extends Plugin {
 			if (stopSearching)
 				break;
 		}
-		// TODO add global inject here
-		srcCode = `${prependSrcCode}\n${srcCode}\n${appendSrcCode}`;
+		const realLanguage = /[^-]*$/.exec(language);
+		srcCode = `${this.settings[`${realLanguage}Inject` as keyof ExecutorSettings]}\n${prependSrcCode}\n${srcCode}\n${appendSrcCode}`;
 		renderedMd.remove(); // Cleanup now unused rendered markdown
 		return srcCode;
 	}
@@ -208,10 +215,6 @@ export default class ExecuteCodePlugin extends Plugin {
 				const parent = pre.parentElement as HTMLDivElement;
 
 				const srcCode = this.getSrcCode(codeBlock);
-
-				// Set up enumeration over all code blocks for injection later when running code
-				// console.log(`language: ${language}`);
-				// console.log(codeBlock);
 
 
 
@@ -238,6 +241,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			});
 	}
 
+	// TODO tidy up, move injectCode to separate line / variable
 	private addListenerToButton(language: string, srcCode: string, codeBlock: HTMLElement, button: HTMLButtonElement, out: Outputter) {
 		if (language.contains("language-js") || language.contains("language-javascript")) {
 			srcCode = addMagicToJS(srcCode);
@@ -268,20 +272,19 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language.contains("language-shell") || language.contains("language-bash")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				this.runCode(srcCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
+				this.runCode(await this.injectCode(codeBlock, srcCode, "shell"), out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
 			});
 
 		} else if (language.contains("language-powershell")) {
 			button.addEventListener("click",async  () => {
 				button.className = runButtonDisabledClass;
-				this.runCode(srcCode, out, button, this.settings.powershellPath, this.settings.powershellArgs, this.settings.powershellFileExtension);
+				this.runCode(await this.injectCode(codeBlock, srcCode, "powershell"), out, button, this.settings.powershellPath, this.settings.powershellArgs, this.settings.powershellFileExtension);
 			});
 
 		} else if (language.contains("language-cpp")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				out.clear();
-				const cppCode = `${this.settings.cppInject}\n${srcCode}`; // TODO move this logic into prependcode
 				this.runCode(await this.injectCode(codeBlock, srcCode, "cpp"), out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp");
 				button.className = runButtonClass;
 			})
@@ -291,7 +294,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				out.clear();
 
-				const prologCode = srcCode.split(/\n+%+\s*query\n+/);
+				const prologCode = (await this.injectCode(codeBlock, srcCode, "prolog")).split(/\n+%+\s*query\n+/);
 				if (prologCode.length < 2) return;	// no query found
 
 				this.runPrologCode(prologCode, out);
