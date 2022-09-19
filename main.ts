@@ -18,12 +18,14 @@ import * as prolog from "tau-prolog";
 
 const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
 	"java", "powershell", "kotlin"];
+const languagePrefixes = ['run', 'pre', 'post'];
 
 const buttonText = "Run";
 
 const runButtonClass = "run-code-button";
 const runButtonDisabledClass = "run-button-disabled";
 const hasButtonClass = "has-run-code-button";
+const codeParentClass = 'code-parent';
 
 const DEFAULT_SETTINGS: ExecutorSettings = {
 	timeout: 10000,
@@ -51,7 +53,7 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	cargoPath: "cargo",
 	cargoArgs: "run",
 	cppRunner: "cling",
-	cppInject: "",
+	cppInject: "", // TODO group this with all other languages
 	clingPath: "cling",
 	clingArgs: "",
 	clingStd: "c++17",
@@ -66,6 +68,7 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 
 export default class ExecuteCodePlugin extends Plugin {
 	settings: ExecutorSettings;
+	pageElement: HTMLDivElement;
 
 	async onload() {
 		await this.loadSettings();
@@ -79,8 +82,10 @@ export default class ExecuteCodePlugin extends Plugin {
 		// live preview renderers
 		supportedLanguages.forEach(l => {
 			console.debug(`Registering renderer for ${l}.`)
-			this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, _ctx) => {
-				await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + '\n```', el, '', null)
+			languagePrefixes.forEach(prefix => {
+				this.registerMarkdownCodeBlockProcessor(`${prefix}-${l}`, async (src, el, _ctx) => {
+					await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + '\n```', el, '', null)
+				});
 			})
 		})
 	}
@@ -124,55 +129,84 @@ export default class ExecuteCodePlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
+	private getSrcCode(codeBlock: HTMLElement) {
+		let srcCode = codeBlock.getText();	// get source code and perform magic to insert title etc
+		const vars = this.getVaultVariables();
+		if (vars) {
+			srcCode = insertVaultPath(srcCode, vars.vaultPath);
+			srcCode = insertNotePath(srcCode, vars.filePath);
+			srcCode = insertNoteTitle(srcCode, vars.fileName);
+		} else {
+			console.warn(`Could not load all Vault variables! ${vars}`)
+		}
+		return srcCode;
+	}
+
+	// TODO do the global injection here like with cpp
+	private injectCode(codeBlock: HTMLElement, srcCode: string, language: string) {
+		let prependSrcCode = '';
+		const parent = codeBlock.parentElement.parentElement as HTMLDivElement;
+		for (const ele of Array.from(this.pageElement.children)) {
+			// Don't prepend self or anything below self code block
+			if (ele === parent)
+				break;
+			if (!ele.hasClass(`${codeParentClass}-language-${language}`))
+				continue;
+			const childCode = this.getSrcCode(ele.children[0].children[0] as HTMLElement);
+			prependSrcCode += `${childCode}\n`;
+		}
+		srcCode = `${prependSrcCode}\n${srcCode}`;
+		return srcCode;
+	}
+
 	private addRunButtons(element: HTMLElement) {
 		element.querySelectorAll("code")
 			.forEach((codeBlock: HTMLElement) => {
 				const language = codeBlock.className.toLowerCase();
-				if (!language && !language.contains("language-"))
+				if (!language || !language.contains("language-"))
 					return;
 
 				const pre = codeBlock.parentElement as HTMLPreElement;
 				const parent = pre.parentElement as HTMLDivElement;
 
-				let srcCode = codeBlock.getText();	// get source code and perform magic to insert title etc
-				const vars = this.getVaultVariables();
-				if (vars) {
-					srcCode = insertVaultPath(srcCode, vars.vaultPath);
-					srcCode = insertNotePath(srcCode, vars.filePath);
-					srcCode = insertNoteTitle(srcCode, vars.fileName);
-				} else {
-					console.warn(`Could not load all Vault variables! ${vars}`)
-				}
+				const srcCode = this.getSrcCode(codeBlock);
+
+				// Set up enumeration over all code blocks for injection later when running code
+				const languageClassName = /language-([^\s]+)/.exec(language)[0];
+				const className = `${codeParentClass}-${languageClassName}`;
+				if (!parent.hasClass(className))
+					parent.addClass(className);
+				if (!this.pageElement)
+					this.pageElement = document.getElementsByClassName('markdown-preview-section')[0] as HTMLDivElement;
+
+				// TODO doesn't look like clear button being added to the outputs?
+
+				// TODO If don't have main function and requires main function, pressing run put the entire code block in a main function
 
 				if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
 					&& !parent.classList.contains(hasButtonClass)) { // unsupported language
-
+					const out = new Outputter(codeBlock);
 					parent.classList.add(hasButtonClass);
 					const button = this.createRunButton();
 					pre.appendChild(button);
-
-					const out = new Outputter(codeBlock);
-
-					this.addListenerToButton(language, srcCode, button, out);
+					this.addListenerToButton(language, srcCode, codeBlock, button, out);
 				}
-
-
-			})
+			});
 	}
 
-	private addListenerToButton(language: string, srcCode: string, button: HTMLButtonElement, out: Outputter) {
+	private addListenerToButton(language: string, srcCode: string, codeBlock: HTMLElement, button: HTMLButtonElement, out: Outputter) {
 		if (language.contains("language-js") || language.contains("language-javascript")) {
 			srcCode = addMagicToJS(srcCode);
 
 			button.addEventListener("click", () => {
 				button.className = runButtonDisabledClass;
-				this.runCode(srcCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
+				this.runCode(this.injectCode(codeBlock, srcCode, "js"), out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
 			});
 
 		} else if (language.contains("java")) {
 			button.addEventListener("click", () => {
 				button.className = runButtonDisabledClass;
-				this.runCode(srcCode, out, button, this.settings.javaPath, this.settings.javaArgs, this.settings.javaFileExtension);
+				this.runCode(this.injectCode(codeBlock, srcCode, "java"), out, button, this.settings.javaPath, this.settings.javaArgs, this.settings.javaFileExtension);
 			});
 
 		} else if (language.contains("language-python")) {
@@ -184,7 +218,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				srcCode = addMagicToPython(srcCode);
 
-				this.runCode(srcCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
+				this.runCode(this.injectCode(codeBlock, srcCode, "python"), out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
 			});
 
 		} else if (language.contains("language-shell") || language.contains("language-bash")) {
@@ -203,8 +237,8 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", () => {
 				button.className = runButtonDisabledClass;
 				out.clear();
-				const cppCode = `${this.settings.cppInject}\n${srcCode}`;
-				this.runCode(cppCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp");
+				const cppCode = `${this.settings.cppInject}\n${srcCode}`; // TODO move this logic into prependcode
+				this.runCode(this.injectCode(codeBlock, srcCode, "cpp"), out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp");
 				button.className = runButtonClass;
 			})
 
@@ -224,14 +258,14 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language.contains("language-groovy")) {
 			button.addEventListener("click", () => {
 				button.className = runButtonDisabledClass;
-				this.runCodeInShell(srcCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
+				this.runCodeInShell(this.injectCode(codeBlock, srcCode, "groovy"), out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
 			});
 
 		} else if (language.contains("language-rust")) {
 			button.addEventListener("click", () => {
 				button.className = runButtonDisabledClass;
 
-				this.runCode(srcCode, out, button, this.settings.cargoPath, this.settings.cargoArgs, this.settings.rustFileExtension);
+				this.runCode(this.injectCode(codeBlock, srcCode, "rust"), out, button, this.settings.cargoPath, this.settings.cargoArgs, this.settings.rustFileExtension);
 			});
 
 		} else if (language.contains("language-r")) {
@@ -241,18 +275,18 @@ export default class ExecuteCodePlugin extends Plugin {
 				srcCode = addInlinePlotsToR(srcCode);
 				console.log(srcCode);
 
-				this.runCode(srcCode, out, button, this.settings.RPath, this.settings.RArgs, "R");
+				this.runCode(this.injectCode(codeBlock, srcCode, "r"), out, button, this.settings.RPath, this.settings.RArgs, "R");
 			});
 		} else if (language.contains("language-go")) {
 			button.addEventListener("click", () => {
 				button.className = runButtonDisabledClass;
 
-				this.runCode(srcCode, out, button, this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension);
+				this.runCode(this.injectCode(codeBlock, srcCode, "go"), out, button, this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension);
 			});
 		} else if (language.contains("language-kotlin")) {
 			button.addEventListener("click", () => {
 				button.className = runButtonDisabledClass;
-				this.runCodeInShell(srcCode, out, button, this.settings.kotlinPath, this.settings.kotlinArgs, this.settings.kotlinFileExtension);
+				this.runCodeInShell(this.injectCode(codeBlock, srcCode, "kotlin"), out, button, this.settings.kotlinPath, this.settings.kotlinArgs, this.settings.kotlinFileExtension);
 			});
 		}
 	}

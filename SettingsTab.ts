@@ -54,8 +54,9 @@ export class SettingsTab extends PluginSettingTab {
 
 		containerEl.createEl('h2', {text: 'Settings for the Code Execution Plugin.'});
 
-		// ========== Timeout ==========
-		containerEl.createEl('h3', {text: 'Timout Settings'});
+
+		// ========== General ==========
+		containerEl.createEl('h3', {text: 'General Settings'});
 		new Setting(containerEl)
 			.setName('Timeout (in seconds)')
 			.setDesc('The time after which a program gets shut down automatically. This is to prevent infinite loops. ')
@@ -68,6 +69,9 @@ export class SettingsTab extends PluginSettingTab {
 					}
 					await this.plugin.saveSettings();
 				}));
+		// TODO add collapsible region here with options for code injection for all languages
+
+		// TODO setting per language that requires main function if main function should be implicitly made or not, if not, non-main blocks will not have a run button
 
 
 		// ========== JavaScript / Node ==========
