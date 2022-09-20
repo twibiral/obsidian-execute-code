@@ -152,19 +152,21 @@ export default class ExecuteCodePlugin extends Plugin {
 		return ret;
 	}
 
-	// TODO make js and javascript equivalent i.e. have equivalent languages
-	// TODO can just do this with replace 'javscript' with 'js' in comparisons
+	// Transform a language name, to enable working with multiple language aliases, for example
+	private transformLanguage(language: string) {
+		return language.replace("javascript", "js");
+	}
 
-	private async injectCode(srcCode: string, language: string) { // TODO enforce valid language, not just string
+	private async injectCode(srcCode: string, _language: string) { // TODO enforce valid language, not just string
 		let prependSrcCode = "";
 		let appendSrcCode = "";
 
+		const language = this.transformLanguage(_language);
 		const preLangName = `pre-${language}`;
 		const postLangName = `post-${language}`;
 
 		// We need to get access to all code blocks on the page so we can grab the pre / post blocks above
 		// Obsidian unloads code blocks not in view, so instead we load the raw document file and traverse line-by-line
-		console.time('injectCode');
 		const activeFile = this.app.workspace.getActiveFile();
 		const fileContents = await this.app.vault.read(activeFile);
 
@@ -190,7 +192,7 @@ export default class ExecuteCodePlugin extends Plugin {
 					insideCodeBlock = false;
 				}
 				else {
-					currentLanguage = line.split("```")[1].trim().split(" ")[0];
+					currentLanguage = this.transformLanguage(line.split("```")[1].trim().split(" ")[0]);
 					// Don't check code blocks from a different language
 					isLanguageEqual = /[^-]*$/.exec(language)[0] ===  /[^-]*$/.exec(currentLanguage)[0];
 					insideCodeBlock = true;
@@ -202,7 +204,6 @@ export default class ExecuteCodePlugin extends Plugin {
 
 		const realLanguage = /[^-]*$/.exec(language)[0];
 		const injectedCode = `${this.settings[`${realLanguage}Inject` as keyof ExecutorSettings]}\n${prependSrcCode}\n${srcCode}\n${appendSrcCode}`;
-		console.timeEnd('injectCode');
 		return this.transformCode(injectedCode);
 	}
 

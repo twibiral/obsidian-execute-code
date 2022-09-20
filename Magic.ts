@@ -74,7 +74,6 @@ function pythonParseShowImage(source: string): string {
 
 		const image = buildMagicShowImage(imagePath.replace(/\\/g, "\\\\"), width, height, alignment);
 		source = source.replace(match[0], "print(\'" + image + "\')");
-		console.log(source);
 	}
 
 	return source;
