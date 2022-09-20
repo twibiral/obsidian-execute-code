@@ -2,9 +2,11 @@ import {FileSystemAdapter, MarkdownRenderer, MarkdownView, Notice, Plugin} from 
 import * as fs from "fs";
 import * as os from "os"
 import * as child_process from "child_process";
+
 import {Outputter} from "./Outputter";
-import type {ExecutorSettingsLanguages} from "./SettingsTab";
-import {ExecutorSettings, SettingsTab} from "./SettingsTab";
+import type {ExecutorSettings, ExecutorSettingsLanguages} from "./Settings";
+import {DEFAULT_SETTINGS} from "./Settings";
+import {SettingsTab} from "./SettingsTab";
 import {
 	addInlinePlotsToPython,
 	addInlinePlotsToR,
@@ -14,9 +16,9 @@ import {
 	insertNoteTitle,
 	insertVaultPath
 } from "./Magic";
+
 // @ts-ignore
 import * as prolog from "tau-prolog";
-import {DEFAULT_SETTINGS} from "./Settings";
 
 export const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
 	"java", "powershell", "kotlin"] as const;
@@ -27,6 +29,7 @@ const buttonText = "Run";
 const runButtonClass = "run-code-button";
 const runButtonDisabledClass = "run-button-disabled";
 const hasButtonClass = "has-run-code-button";
+
 
 export default class ExecuteCodePlugin extends Plugin {
 	settings: ExecutorSettings;
@@ -144,16 +147,15 @@ export default class ExecuteCodePlugin extends Plugin {
 					currentLanguage = "";
 					currentCode = "";
 					insideCodeBlock = false;
-				}
-				else {
+				} else {
 					currentLanguage = this.transformLanguage(line.split("```")[1].trim().split(" ")[0]);
 					// Don't check code blocks from a different language
-					isLanguageEqual = /[^-]*$/.exec(language)[0] ===  /[^-]*$/.exec(currentLanguage)[0];
+					isLanguageEqual = /[^-]*$/.exec(language)[0] === /[^-]*$/.exec(currentLanguage)[0];
 					insideCodeBlock = true;
 				}
-			}
-			else if (insideCodeBlock)
+			} else if (insideCodeBlock) {
 				currentCode += `${line}\n`;
+			}
 		}
 
 		const realLanguage = /[^-]*$/.exec(language)[0];
@@ -220,7 +222,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			});
 
 		} else if (language.contains("language-powershell")) {
-			button.addEventListener("click",async  () => {
+			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await this.injectCode(srcCode, "powershell");
 				this.runCode(transformedCode, out, button, this.settings.powershellPath, this.settings.powershellArgs, this.settings.powershellFileExtension);
