@@ -14,12 +14,15 @@ export class Outputter {
 	}
 
 	clear() {
-		if(this.outputElement) {
+		if (this.outputElement) {
 			this.stdoutElem.setText("");
 			this.stderrElem.setText("");
 		}
 		this.stdoutText = "";
 		this.stderrText = "";
+
+		if (this.clearButton)
+			this.clearButton.className = "clear-button-disabled";
 	}
 
 	delete() {
@@ -27,13 +30,13 @@ export class Outputter {
 			this.outputElement.style.display = "none";
 
 		if(this.clearButton)
-			this.clearButton.style.display = "none";
+			this.clearButton.className = "clear-button-disabled";
 
 		this.clear()
 	}
 
 	write(text: string) {
-		if(! this.outputElement) {
+		if (!this.outputElement) {
 			this.addOutputElement();
 		}
 
@@ -42,32 +45,36 @@ export class Outputter {
 		}
 
 		this.stdoutText += text;
+
+		// Keep output field and clear button invisible if no text was printed.
 		if (!this.stderrText && !this.stdoutText) return;
 
 		this.stdoutElem.innerHTML = this.stdoutText;
 
 		// make visible again:
 		this.outputElement.style.display = "block";
-		this.clearButton.style.display = "block"
+		this.clearButton.className = "clear-button";
 	}
 
 	writeErr(text: string) {
-		if(! this.outputElement) {
+		if (!this.outputElement) {
 			this.addOutputElement();
 		}
 
-		if(! this.clearButton) {
+		if (!this.clearButton) {
 			this.addClearButton();
 		}
 
 		this.stderrText += text;
-		if(!this.stderrText && !this.stdoutText) return;
+
+		// Keep output field and clear button invisible if no text was printed.
+		if (!this.stderrText && !this.stdoutText) return;
 
 		this.stderrElem.setText(this.stderrText);
 
 		// make visible again:
 		this.outputElement.style.display = "block";
-		this.clearButton.style.display = "block"
+		this.clearButton.className = "clear-button";
 	}
 
 	private getParentElement() {

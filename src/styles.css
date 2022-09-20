@@ -20,20 +20,16 @@ button.clear-button {
 	z-index: 100;
 }
 
-pre:hover .run-code-button {
-    display: block;
+pre:hover .run-code-button, pre:hover .clear-button {
+	display: block;
 }
 
-pre:hover .clear-button {
-    display: block;
+pre:hover .run-button-disabled, pre:hover .clear-button-disabled {
+	display: none;
 }
 
-.run-button-disabled {
-    display: none;
-}
-
-pre:hover .run-button-disabled {
-    display: none;
+.run-button-disabled, .clear-button-disabled {
+	display: none;
 }
 
 code.language-output span.stdout {
