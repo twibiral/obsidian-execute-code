@@ -15,9 +15,10 @@ import {
 } from "./Magic";
 // @ts-ignore
 import * as prolog from "tau-prolog";
+import type {ExecutorSettingsLanguages} from "./SettingsTab";
 
-const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
-	"java", "powershell", "kotlin"];
+export const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
+	"java", "powershell", "kotlin"] as const;
 const languagePrefixes = ["run", "pre", "post"];
 
 const buttonText = "Run";
@@ -30,7 +31,7 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	timeout: 10000,
 	nodePath: "node",
 	nodeArgs: "",
-	nodeInject: "",
+	jsInject: "",
 	pythonPath: "python",
 	pythonArgs: "",
 	pythonEmbedPlots: true,
@@ -46,7 +47,7 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	golangPath: "go",
 	golangArgs: "run",
 	golangFileExtension: "go",
-	golangInject: "",
+	goInject: "",
 	javaPath: "java",
 	javaArgs: "-ea",
 	javaFileExtension: "java",
@@ -157,7 +158,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		return language.replace("javascript", "js");
 	}
 
-	private async injectCode(srcCode: string, _language: string) { // TODO enforce valid language, not just string
+	private async injectCode(srcCode: string, _language: ExecutorSettingsLanguages) {
 		let prependSrcCode = "";
 		let appendSrcCode = "";
 
@@ -218,10 +219,6 @@ export default class ExecuteCodePlugin extends Plugin {
 				const parent = pre.parentElement as HTMLDivElement;
 
 				const srcCode = codeBlock.getText();
-
-				// TODO doesn't look like clear button being added to the outputs?
-
-				// TODO If don't have main function and requires main function, pressing run put the entire code block in a main function
 
 				if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
 					&& !parent.classList.contains(hasButtonClass)) { // unsupported language

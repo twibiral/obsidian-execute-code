@@ -1,11 +1,14 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
 import ExecuteCodePlugin from "./main";
+import type {supportedLanguages} from "./main";
+
+export type ExecutorSettingsLanguages = Exclude<typeof supportedLanguages[number], "javascript">;
 
 export interface ExecutorSettings {
 	timeout: number;
 	nodePath: string;
 	nodeArgs: string;
-	nodeInject: string;
+	jsInject: string;
 	pythonPath: string;
 	pythonArgs: string;
 	pythonEmbedPlots: boolean;
@@ -21,7 +24,7 @@ export interface ExecutorSettings {
 	golangPath: string,
 	golangArgs: string,
 	golangFileExtension: string,
-	golangInject: string;
+	goInject: string;
 	javaPath: string,
 	javaArgs: string,
 	javaFileExtension: string,
@@ -105,7 +108,7 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Node args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
-		this.makeInjectSetting("javascript", "JavaScript");
+		this.makeInjectSetting("js", "JavaScript");
 
 
 		// ========== Java ==========
@@ -180,7 +183,7 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Golang path set to: ' + sanitized);
 					await this.plugin.saveSettings();
 				}));
-		this.makeInjectSetting("golang", "Golang");
+		this.makeInjectSetting("go", "Golang");
 
 
 		// ========== Rust ===========
@@ -414,15 +417,15 @@ export class SettingsTab extends PluginSettingTab {
 		return path
 	}
 
-	private makeInjectSetting(language: string, languageAlt: string) { // TODO better type safety not just string
+	private makeInjectSetting(language: ExecutorSettingsLanguages, languageAlt: string) {
 		new Setting(this.containerEl)
 			.setName(`Inject ${languageAlt} code`)
 			.setDesc(`Code to add to the top of every ${languageAlt} code block before running.`)
 			.setClass('settings-code-input-box')
 			.addTextArea(textarea => textarea
-				.setValue(this.plugin.settings[`${language}Inject` as keyof ExecutorSettings]) // TODO better type safety
+				.setValue(this.plugin.settings[`${language}Inject` as keyof ExecutorSettings])
 				.onChange(async (value) => {
-					(this.plugin.settings[`${language}Inject` as keyof ExecutorSettings] as string) = value; // TODO better type safety
+					(this.plugin.settings[`${language}Inject` as keyof ExecutorSettings] as string) = value;
 					console.log(`${language} inject set to ${value}`);
 					await this.plugin.saveSettings();
 				}));
