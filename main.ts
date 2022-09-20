@@ -93,6 +93,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			console.debug(`Registering renderer for ${l}.`)
 			languagePrefixes.forEach(prefix => {
 				this.registerMarkdownCodeBlockProcessor(`${prefix}-${l}`, async (src, el, _ctx) => {
+					// TODO have to add newline when in editing mode
 					await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + '```', el, '', null);
 				});
 			})
@@ -151,56 +152,52 @@ export default class ExecuteCodePlugin extends Plugin {
 		return srcCode;
 	}
 
-	// TODO get this to work with run blocks in edit mode
-	// TODO looks like it doesn't stop traversing down when it reaches self?
-	private async injectCode(codeBlock: HTMLElement, srcCode: string, language: string) {
-		let prependSrcCode = '';
-		let appendSrcCode = '';
+	private async injectCode(codeBlock: HTMLElement, srcCode: string, language: string) { // TODO enforce valid language, not just string
+		let prependSrcCode = "";
+		let appendSrcCode = "";
+
+		const preLangName = `pre-${language}`;
+		const postLangName = `post-${language}`;
 
 		// We need to get access to all code blocks on the page so we can grab the pre / post blocks above
-		// Obsidian unloads code blocks not in view, so instead we render the entire file here to get access
-		// to all code blocks on the page
+		// Obsidian unloads code blocks not in view, so instead we load the raw document file and traverse line-by-line
+		console.time('injectCode');
 		const activeFile = this.app.workspace.getActiveFile();
 		const fileContents = await this.app.vault.read(activeFile);
-		const renderedMd = document.createElement("tmp-codeblock-page-rendered-md");
-		await MarkdownRenderer.renderMarkdown(fileContents, renderedMd, activeFile.path, null);
 
-		const preClassName = `block-language-pre-${language}`;
-		const postClassName = `block-language-post-${language}`;
+		let insideCodeBlock = false;
+		let isLanguageEqual = false;
+		let currentLanguage = "";
+		let currentCode = "";
 
-		let stopSearching = false; // Stop searching when we find the block we're running - only include pre/post blocks above
-
-		for (const ele of Array.from(renderedMd.children)) {
-			// All prefixed code blocks will render as DIV elements, non-prefixed will render as PRE elements
-			// The current code block being run may be a PRE element, so we check these two tag names
-			if (ele.tagName != "DIV" && ele.tagName != "PRE")
-				continue;
-			const injectCodeBlocks = (ele.tagName == "DIV" ?  ele.children[0] : ele).querySelectorAll("code");
-			for (const iCodeBlock of Array.from(injectCodeBlocks)) {
-				// Stop searching once found the current block being executed
-				if (codeBlock.childNodes.length === iCodeBlock.childNodes.length) {
-					const injectSrcCode = this.getSrcCode(iCodeBlock);
-					if (srcCode.length === injectSrcCode.length && srcCode === injectSrcCode) {
-						stopSearching = true;
+		for (const line of fileContents.split('\n')) {
+			if (line.startsWith("```")) {
+				if (insideCodeBlock) {
+					// Stop traversal once we've reached the code block being run
+					if (isLanguageEqual && srcCode.length === currentCode.length && srcCode === currentCode)
 						break;
-					}
+					if (currentLanguage === preLangName)
+						prependSrcCode += `${currentCode}\n`;
+					else if (currentLanguage === postLangName)
+						appendSrcCode += `${currentCode}\n`;
+					currentLanguage = "";
+					currentCode = "";
+					insideCodeBlock = false;
 				}
-				// Only inject pre / post blocks and ignore non-source code blocks e.g. language-output
-				if (ele.tagName != "DIV" || !iCodeBlock.className.contains(`language-${language}`))
-					break;
-				// Pre-block
-				if (ele.hasClass(preClassName))
-					prependSrcCode += this.getSrcCode(iCodeBlock);
-				// Post-block
-				else if (ele.hasClass(postClassName))
-					appendSrcCode += this.getSrcCode(iCodeBlock);
+				else {
+					currentLanguage = line.split("```")[1].trim().split(" ")[0];
+					// Don't check code blocks from a different language
+					isLanguageEqual = /[^-]*$/.exec(language)[0] ===  /[^-]*$/.exec(currentLanguage)[0];
+					insideCodeBlock = true;
+				}
 			}
-			if (stopSearching)
-				break;
+			else if (insideCodeBlock)
+				currentCode += `${line}\n`;
 		}
-		const realLanguage = /[^-]*$/.exec(language);
+
+		const realLanguage = /[^-]*$/.exec(language)[0];
 		srcCode = `${this.settings[`${realLanguage}Inject` as keyof ExecutorSettings]}\n${prependSrcCode}\n${srcCode}\n${appendSrcCode}`;
-		renderedMd.remove(); // Cleanup now unused rendered markdown
+		console.timeEnd('injectCode');
 		return srcCode;
 	}
 
