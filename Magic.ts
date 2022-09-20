@@ -104,7 +104,7 @@ function buildMagicShowImage(imagePath: string, width: string = "0", height: str
 	}
 
 	if (width == "0" || height == "0")
-		return `<img src="${imagePath}" align="${alignment}" alt="Image found at path ${imagePath}.>`;
+		return `<img src="${imagePath}" align="${alignment}" alt="Image found at path ${imagePath}.">`;
 
 	return `<img src="${imagePath}" width="${width}" height="${height}" align="${alignment}" alt="Image found at path ${imagePath}.">`;
 }
