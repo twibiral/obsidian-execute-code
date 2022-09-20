@@ -1,6 +1,6 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
-import ExecuteCodePlugin from "./main";
 import type {supportedLanguages} from "./main";
+import ExecuteCodePlugin from "./main";
 
 export type ExecutorSettingsLanguages = Exclude<typeof supportedLanguages[number], "javascript">;
 
@@ -18,7 +18,7 @@ export interface ExecutorSettings {
 	shellFileExtension: string;
 	shellInject: string;
 	groovyPath: string;
-	groovyArgs: any;
+	groovyArgs: string;
 	groovyFileExtension: string;
 	groovyInject: string;
 	golangPath: string,
@@ -94,7 +94,7 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.nodePath)
 				.onChange(async (value) => {
-					let sanitized = this.sanitizePath(value);
+					const sanitized = this.sanitizePath(value);
 					this.plugin.settings.nodePath = sanitized;
 					console.log('Node path set to: ' + sanitized);
 					await this.plugin.saveSettings();
@@ -119,7 +119,7 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.javaPath)
 				.onChange(async (value) => {
-					let sanitized = this.sanitizePath(value);
+					const sanitized = this.sanitizePath(value);
 					this.plugin.settings.javaPath = sanitized;
 					console.log('Java path set to: ' + sanitized);
 					await this.plugin.saveSettings();
@@ -153,7 +153,7 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.pythonPath)
 				.onChange(async (value) => {
-					let sanitized = this.sanitizePath(value);
+					const sanitized = this.sanitizePath(value);
 					this.plugin.settings.pythonPath = sanitized;
 					console.log('Python path set to: ' + sanitized);
 					await this.plugin.saveSettings();
@@ -178,7 +178,7 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.golangPath)
 				.onChange(async (value) => {
-					let sanitized = this.sanitizePath(value);
+					const sanitized = this.sanitizePath(value);
 					this.plugin.settings.golangPath = sanitized;
 					console.log('Golang path set to: ' + sanitized);
 					await this.plugin.saveSettings();
@@ -194,7 +194,7 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.cargoPath)
 				.onChange(async (value) => {
-					let sanitized = this.sanitizePath(value);
+					const sanitized = this.sanitizePath(value);
 					this.plugin.settings.cargoPath = sanitized;
 					console.log('Cargo path set to: ' + sanitized);
 					await this.plugin.saveSettings();
@@ -247,7 +247,7 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.shellPath)
 				.onChange(async (value) => {
-					let sanitized = this.sanitizePath(value);
+					const sanitized = this.sanitizePath(value);
 					this.plugin.settings.shellPath = sanitized;
 					console.log('Shell path set to: ' + sanitized);
 					await this.plugin.saveSettings();
@@ -282,7 +282,7 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.powershellPath)
 				.onChange(async (value) => {
-					let sanitized = this.sanitizePath(value);
+					const sanitized = this.sanitizePath(value);
 					this.plugin.settings.powershellPath = sanitized;
 					console.log('Powershell path set to: ' + sanitized);
 					await this.plugin.saveSettings();
@@ -334,7 +334,7 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.groovyPath)
 				.onChange(async (value) => {
-					let sanitized = this.sanitizePath(value);
+					const sanitized = this.sanitizePath(value);
 					this.plugin.settings.groovyPath = sanitized;
 					console.log('Groovy path set to: ' + sanitized);
 					await this.plugin.saveSettings();
@@ -368,7 +368,7 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.RPath)
 				.onChange(async (value) => {
-					let sanitized = this.sanitizePath(value);
+					const sanitized = this.sanitizePath(value);
 					this.plugin.settings.RPath = sanitized;
 					console.log('R path set to: ' + sanitized);
 					await this.plugin.saveSettings();
@@ -392,7 +392,7 @@ export class SettingsTab extends PluginSettingTab {
 			.addText(text => text
 				.setValue(this.plugin.settings.kotlinPath)
 				.onChange(async (value) => {
-					let sanitized = this.sanitizePath(value);
+					const sanitized = this.sanitizePath(value);
 					this.plugin.settings.kotlinPath = sanitized;
 					console.log('Kotlin path set to: ' + sanitized);
 					await this.plugin.saveSettings();
@@ -411,7 +411,7 @@ export class SettingsTab extends PluginSettingTab {
 
 	private sanitizePath(path: string): string {
 		path = path.replace(/\\/g, '/');
-		path.replace(/['"`]/, '');
+		path = path.replace(/['"`]/, '');
 		path = path.trim();
 
 		return path
@@ -422,12 +422,16 @@ export class SettingsTab extends PluginSettingTab {
 			.setName(`Inject ${languageAlt} code`)
 			.setDesc(`Code to add to the top of every ${languageAlt} code block before running.`)
 			.setClass('settings-code-input-box')
-			.addTextArea(textarea => textarea
-				.setValue(this.plugin.settings[`${language}Inject` as keyof ExecutorSettings])
-				.onChange(async (value) => {
-					(this.plugin.settings[`${language}Inject` as keyof ExecutorSettings] as string) = value;
-					console.log(`${language} inject set to ${value}`);
-					await this.plugin.saveSettings();
-				}));
+			.addTextArea(textarea => {
+				// @ts-ignore
+				const val = this.plugin.settings[`${language}Inject`];
+				return textarea
+					.setValue(val)
+					.onChange(async (value) => {
+						(this.plugin.settings[`${language}Inject` as keyof ExecutorSettings] as string) = value;
+						console.log(`${language} inject set to ${value}`);
+						await this.plugin.saveSettings();
+					});
+			});
 	}
 }
