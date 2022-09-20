@@ -371,8 +371,10 @@ export class SettingsTab extends PluginSettingTab {
 			.setDesc(`Code to add to the top of every ${languageAlt} code block before running.`)
 			.setClass('settings-code-input-box')
 			.addTextArea(textarea => {
+				// @ts-ignore
+				const val = this.plugin.settings[`${language}Inject` as keyof ExecutorSettings as string]
 				return textarea
-					.setValue(this.plugin.settings[`${language}Inject` as keyof ExecutorSettings as string])
+					.setValue(val)
 					.onChange(async (value) => {
 						(this.plugin.settings[`${language}Inject` as keyof ExecutorSettings] as string) = value;
 						console.log(`${language} inject set to ${value}`);
