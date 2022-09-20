@@ -1,58 +1,6 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
-import type {supportedLanguages} from "./main";
 import ExecuteCodePlugin from "./main";
-
-export type ExecutorSettingsLanguages = Exclude<typeof supportedLanguages[number], "javascript">;
-
-export interface ExecutorSettings {
-	timeout: number;
-	nodePath: string;
-	nodeArgs: string;
-	jsInject: string;
-	pythonPath: string;
-	pythonArgs: string;
-	pythonEmbedPlots: boolean;
-	pythonInject: string;
-	shellPath: string;
-	shellArgs: string;
-	shellFileExtension: string;
-	shellInject: string;
-	groovyPath: string;
-	groovyArgs: string;
-	groovyFileExtension: string;
-	groovyInject: string;
-	golangPath: string,
-	golangArgs: string,
-	golangFileExtension: string,
-	goInject: string;
-	javaPath: string,
-	javaArgs: string,
-	javaFileExtension: string,
-	javaInject: string;
-	maxPrologAnswers: number;
-	prologInject: string;
-	powershellPath: string;
-	powershellArgs: string;
-	powershellFileExtension: string;
-	powershellInject: string;
-	cargoPath: string;
-	cargoArgs: string;
-	rustInject: string;
-	cppRunner: string;
-	cppInject: string;
-	clingPath: string;
-	clingArgs: string;
-	clingStd: string;
-	rustFileExtension: string,
-	RPath: string;
-	RArgs: string;
-	REmbedPlots: boolean;
-	rInject: string;
-	kotlinPath: string;
-	kotlinArgs: string;
-	kotlinFileExtension: string;
-	kotlinInject: string;
-}
+import {ExecutorSettings, ExecutorSettingsLanguages} from "./Settings";
 
 export class SettingsTab extends PluginSettingTab {
 	plugin: ExecuteCodePlugin;
@@ -423,10 +371,8 @@ export class SettingsTab extends PluginSettingTab {
 			.setDesc(`Code to add to the top of every ${languageAlt} code block before running.`)
 			.setClass('settings-code-input-box')
 			.addTextArea(textarea => {
-				// @ts-ignore
-				const val = this.plugin.settings[`${language}Inject`];
 				return textarea
-					.setValue(val)
+					.setValue(this.plugin.settings[`${language}Inject` as keyof ExecutorSettings as string])
 					.onChange(async (value) => {
 						(this.plugin.settings[`${language}Inject` as keyof ExecutorSettings] as string) = value;
 						console.log(`${language} inject set to ${value}`);

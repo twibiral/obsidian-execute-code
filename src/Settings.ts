@@ -1,4 +1,56 @@
-import {ExecutorSettings} from "./SettingsTab";
+import {supportedLanguages} from "./main";
+
+export type ExecutorSettingsLanguages = Exclude<typeof supportedLanguages[number], "javascript">;
+
+export interface ExecutorSettings {
+	timeout: number;
+	nodePath: string;
+	nodeArgs: string;
+	jsInject: string;
+	pythonPath: string;
+	pythonArgs: string;
+	pythonEmbedPlots: boolean;
+	pythonInject: string;
+	shellPath: string;
+	shellArgs: string;
+	shellFileExtension: string;
+	shellInject: string;
+	groovyPath: string;
+	groovyArgs: string;
+	groovyFileExtension: string;
+	groovyInject: string;
+	golangPath: string,
+	golangArgs: string,
+	golangFileExtension: string,
+	goInject: string;
+	javaPath: string,
+	javaArgs: string,
+	javaFileExtension: string,
+	javaInject: string;
+	maxPrologAnswers: number;
+	prologInject: string;
+	powershellPath: string;
+	powershellArgs: string;
+	powershellFileExtension: string;
+	powershellInject: string;
+	cargoPath: string;
+	cargoArgs: string;
+	rustInject: string;
+	cppRunner: string;
+	cppInject: string;
+	clingPath: string;
+	clingArgs: string;
+	clingStd: string;
+	rustFileExtension: string,
+	RPath: string;
+	RArgs: string;
+	REmbedPlots: boolean;
+	rInject: string;
+	kotlinPath: string;
+	kotlinArgs: string;
+	kotlinFileExtension: string;
+	kotlinInject: string;
+}
 
 export const DEFAULT_SETTINGS: ExecutorSettings = {
 	timeout: 10000,
