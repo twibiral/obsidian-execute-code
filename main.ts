@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as os from "os"
 import * as child_process from "child_process";
 import {Outputter} from "./Outputter";
+import type {ExecutorSettingsLanguages} from "./SettingsTab";
 import {ExecutorSettings, SettingsTab} from "./SettingsTab";
 import {
 	addInlinePlotsToPython,
@@ -15,7 +16,6 @@ import {
 } from "./Magic";
 // @ts-ignore
 import * as prolog from "tau-prolog";
-import type {ExecutorSettingsLanguages} from "./SettingsTab";
 
 export const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
 	"java", "powershell", "kotlin"] as const;
@@ -155,7 +155,9 @@ export default class ExecuteCodePlugin extends Plugin {
 
 	// Transform a language name, to enable working with multiple language aliases, for example
 	private transformLanguage(language: string) {
-		return language.replace("javascript", "js");
+		return language
+			.replace("javascript", "js")
+			.replace("bash", "shell");
 	}
 
 	private async injectCode(srcCode: string, _language: ExecutorSettingsLanguages) {
