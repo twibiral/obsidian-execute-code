@@ -44,7 +44,7 @@ export interface ExecutorSettings {
 	RPath: string;
 	RArgs: string;
 	REmbedPlots: boolean;
-	RInject: string;
+	rInject: string;
 	kotlinPath: string;
 	kotlinArgs: string;
 	kotlinFileExtension: string;
@@ -360,8 +360,8 @@ export class SettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 		new Setting(containerEl)
-			.setName('R path')
-			.setDesc('The path to your R installation.')
+			.setName('Rscript path')
+			.setDesc('The path to your Rscript installation. Ensure you provide the Rscript binary instead of the ordinary R binary.')
 			.addText(text => text
 				.setValue(this.plugin.settings.RPath)
 				.onChange(async (value) => {
@@ -379,7 +379,7 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('R args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
-		this.makeInjectSetting("R", "R");
+		this.makeInjectSetting("r", "R");
 
 		// ========== Kotlin ==========
 		containerEl.createEl('h3', {text: 'Kotlin Settings'});
@@ -414,15 +414,15 @@ export class SettingsTab extends PluginSettingTab {
 		return path
 	}
 
-	private makeInjectSetting(language: string, languageAlt: string) {
+	private makeInjectSetting(language: string, languageAlt: string) { // TODO better type safety not just string
 		new Setting(this.containerEl)
 			.setName(`Inject ${languageAlt} code`)
 			.setDesc(`Code to add to the top of every ${languageAlt} code block before running.`)
 			.setClass('settings-code-input-box')
 			.addTextArea(textarea => textarea
-				.setValue(this.plugin.settings[`${language}Inject` as keyof ExecutorSettings])
+				.setValue(this.plugin.settings[`${language}Inject` as keyof ExecutorSettings]) // TODO better type safety
 				.onChange(async (value) => {
-					(this.plugin.settings[`${language}Inject` as keyof ExecutorSettings] as string) = value;
+					(this.plugin.settings[`${language}Inject` as keyof ExecutorSettings] as string) = value; // TODO better type safety
 					console.log(`${language} inject set to ${value}`);
 					await this.plugin.saveSettings();
 				}));
