@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Support for global code injections (thanks to @milan338).
+- Support for Pre- and Post-Blocks that are executed before/after each code block in the same note (thanks to @milan338)
+  .
+
 ### Changed
 
 - Improved C++ support by switching from JSCPP to Cling (thanks to @milan338).
