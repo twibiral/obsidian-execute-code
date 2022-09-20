@@ -15,9 +15,11 @@ import {
 } from "./Magic";
 // @ts-ignore
 import * as prolog from "tau-prolog";
+import type {ExecutorSettingsLanguages} from "./SettingsTab";
 
-const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
-	"java", "powershell", "kotlin"];
+export const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
+	"java", "powershell", "kotlin"] as const;
+const languagePrefixes = ["run", "pre", "post"];
 
 const buttonText = "Run";
 
@@ -29,27 +31,36 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	timeout: 10000,
 	nodePath: "node",
 	nodeArgs: "",
+	jsInject: "",
 	pythonPath: "python",
 	pythonArgs: "",
 	pythonEmbedPlots: true,
+	pythonInject: "",
 	shellPath: "bash",
 	shellArgs: "",
 	shellFileExtension: "sh",
+	shellInject: "",
 	groovyPath: "groovy",
 	groovyArgs: "",
 	groovyFileExtension: "groovy",
+	groovyInject: "",
 	golangPath: "go",
 	golangArgs: "run",
 	golangFileExtension: "go",
+	goInject: "",
 	javaPath: "java",
 	javaArgs: "-ea",
 	javaFileExtension: "java",
+	javaInject: "",
 	maxPrologAnswers: 15,
+	prologInject: "",
 	powershellPath: "powershell",
 	powershellArgs: "-file",
 	powershellFileExtension: "ps1",
+	powershellInject: "",
 	cargoPath: "cargo",
 	cargoArgs: "run",
+	rustInject: "",
 	cppRunner: "cling",
 	cppInject: "",
 	clingPath: "cling",
@@ -59,9 +70,11 @@ const DEFAULT_SETTINGS: ExecutorSettings = {
 	RPath: "Rscript",
 	RArgs: "",
 	REmbedPlots: true,
+	rInject: "",
 	kotlinPath: "kotlinc",
 	kotlinArgs: "-script",
 	kotlinFileExtension: "kts",
+	kotlinInject: "",
 }
 
 export default class ExecuteCodePlugin extends Plugin {
@@ -79,8 +92,10 @@ export default class ExecuteCodePlugin extends Plugin {
 		// live preview renderers
 		supportedLanguages.forEach(l => {
 			console.debug(`Registering renderer for ${l}.`)
-			this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, _ctx) => {
-				await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + '\n```', el, '', null)
+			languagePrefixes.forEach(prefix => {
+				this.registerMarkdownCodeBlockProcessor(`${prefix}-${l}`, async (src, el, _ctx) => {
+					await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, '', null);
+				});
 			})
 		})
 	}
@@ -124,135 +139,198 @@ export default class ExecuteCodePlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
+	// Perform magic on source code to insert title etc
+	private transformCode(srcCode: string) {
+		let ret = srcCode;
+		const vars = this.getVaultVariables();
+		if (vars) {
+			ret = insertVaultPath(ret, vars.vaultPath);
+			ret = insertNotePath(ret, vars.filePath);
+			ret = insertNoteTitle(ret, vars.fileName);
+		} else {
+			console.warn(`Could not load all Vault variables! ${vars}`)
+		}
+		return ret;
+	}
+
+	// Transform a language name, to enable working with multiple language aliases, for example
+	private transformLanguage(language: string) {
+		return language.replace("javascript", "js");
+	}
+
+	private async injectCode(srcCode: string, _language: ExecutorSettingsLanguages) {
+		let prependSrcCode = "";
+		let appendSrcCode = "";
+
+		const language = this.transformLanguage(_language);
+		const preLangName = `pre-${language}`;
+		const postLangName = `post-${language}`;
+
+		// We need to get access to all code blocks on the page so we can grab the pre / post blocks above
+		// Obsidian unloads code blocks not in view, so instead we load the raw document file and traverse line-by-line
+		const activeFile = this.app.workspace.getActiveFile();
+		const fileContents = await this.app.vault.read(activeFile);
+
+		let insideCodeBlock = false;
+		let isLanguageEqual = false;
+		let currentLanguage = "";
+		let currentCode = "";
+
+		for (const line of fileContents.split('\n')) {
+			if (line.startsWith("```")) {
+				if (insideCodeBlock) {
+					// Stop traversal once we've reached the code block being run
+					const srcCodeTrimmed = srcCode.trim();
+					const currentCodeTrimmed = currentCode.trim();
+					if (isLanguageEqual && srcCodeTrimmed.length === currentCodeTrimmed.length && srcCodeTrimmed === currentCodeTrimmed)
+						break;
+					if (currentLanguage === preLangName)
+						prependSrcCode += `${currentCode}\n`;
+					else if (currentLanguage === postLangName)
+						appendSrcCode += `${currentCode}\n`;
+					currentLanguage = "";
+					currentCode = "";
+					insideCodeBlock = false;
+				}
+				else {
+					currentLanguage = this.transformLanguage(line.split("```")[1].trim().split(" ")[0]);
+					// Don't check code blocks from a different language
+					isLanguageEqual = /[^-]*$/.exec(language)[0] ===  /[^-]*$/.exec(currentLanguage)[0];
+					insideCodeBlock = true;
+				}
+			}
+			else if (insideCodeBlock)
+				currentCode += `${line}\n`;
+		}
+
+		const realLanguage = /[^-]*$/.exec(language)[0];
+		const injectedCode = `${this.settings[`${realLanguage}Inject` as keyof ExecutorSettings]}\n${prependSrcCode}\n${srcCode}\n${appendSrcCode}`;
+		return this.transformCode(injectedCode);
+	}
+
 	private addRunButtons(element: HTMLElement) {
 		element.querySelectorAll("code")
 			.forEach((codeBlock: HTMLElement) => {
 				const language = codeBlock.className.toLowerCase();
-				if (!language && !language.contains("language-"))
+				if (!language || !language.contains("language-"))
 					return;
 
 				const pre = codeBlock.parentElement as HTMLPreElement;
 				const parent = pre.parentElement as HTMLDivElement;
 
-				let srcCode = codeBlock.getText();	// get source code and perform magic to insert title etc
-				const vars = this.getVaultVariables();
-				if (vars) {
-					srcCode = insertVaultPath(srcCode, vars.vaultPath);
-					srcCode = insertNotePath(srcCode, vars.filePath);
-					srcCode = insertNoteTitle(srcCode, vars.fileName);
-				} else {
-					console.warn(`Could not load all Vault variables! ${vars}`)
-				}
+				const srcCode = codeBlock.getText();
 
 				if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
 					&& !parent.classList.contains(hasButtonClass)) { // unsupported language
-
+					const out = new Outputter(codeBlock);
 					parent.classList.add(hasButtonClass);
 					const button = this.createRunButton();
 					pre.appendChild(button);
-
-					const out = new Outputter(codeBlock);
-
 					this.addListenerToButton(language, srcCode, button, out);
 				}
-
-
-			})
+			});
 	}
 
 	private addListenerToButton(language: string, srcCode: string, button: HTMLButtonElement, out: Outputter) {
 		if (language.contains("language-js") || language.contains("language-javascript")) {
-			srcCode = addMagicToJS(srcCode);
-
-			button.addEventListener("click", () => {
+			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				this.runCode(srcCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
+				let transformedCode = await this.injectCode(srcCode, "js");
+				transformedCode = addMagicToJS(transformedCode);
+				this.runCode(transformedCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
 			});
 
 		} else if (language.contains("java")) {
-			button.addEventListener("click", () => {
+			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				this.runCode(srcCode, out, button, this.settings.javaPath, this.settings.javaArgs, this.settings.javaFileExtension);
+				const transformedCode = await this.injectCode(srcCode, "java");
+				this.runCode(transformedCode, out, button, this.settings.javaPath, this.settings.javaArgs, this.settings.javaFileExtension);
 			});
 
 		} else if (language.contains("language-python")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 
+				let transformedCode = await this.injectCode(srcCode, "python");
 				if (this.settings.pythonEmbedPlots)	// embed plots into html which shows them in the note
-					srcCode = addInlinePlotsToPython(srcCode);
+					transformedCode = addInlinePlotsToPython(transformedCode);
+				transformedCode = addMagicToPython(transformedCode);
 
-				srcCode = addMagicToPython(srcCode);
-
-				this.runCode(srcCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
+				this.runCode(transformedCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
 			});
 
 		} else if (language.contains("language-shell") || language.contains("language-bash")) {
-			button.addEventListener("click", () => {
+			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				this.runCode(srcCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
+				const transformedCode = await this.injectCode(srcCode, "shell");
+				this.runCode(transformedCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
 			});
 
 		} else if (language.contains("language-powershell")) {
-			button.addEventListener("click", () => {
+			button.addEventListener("click",async  () => {
 				button.className = runButtonDisabledClass;
-				this.runCode(srcCode, out, button, this.settings.powershellPath, this.settings.powershellArgs, this.settings.powershellFileExtension);
+				const transformedCode = await this.injectCode(srcCode, "powershell");
+				this.runCode(transformedCode, out, button, this.settings.powershellPath, this.settings.powershellArgs, this.settings.powershellFileExtension);
 			});
 
 		} else if (language.contains("language-cpp")) {
-			button.addEventListener("click", () => {
+			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				out.clear();
-				const cppCode = `${this.settings.cppInject}\n${srcCode}`;
-				this.runCode(cppCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp");
+				const transformedCode = await this.injectCode(srcCode, "cpp");
+				this.runCode(transformedCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp");
 				button.className = runButtonClass;
-			})
+			});
 
 		} else if (language.contains("language-prolog")) {
-			button.addEventListener("click", () => {
+			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				out.clear();
 
-				const prologCode = srcCode.split(/\n+%+\s*query\n+/);
+				const prologCode = (await this.injectCode(srcCode, "prolog")).split(/\n+%+\s*query\n+/);
 				if (prologCode.length < 2) return;	// no query found
 
 				this.runPrologCode(prologCode, out);
 
 				button.className = runButtonClass;
-			})
+			});
 
 		} else if (language.contains("language-groovy")) {
-			button.addEventListener("click", () => {
+			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				this.runCodeInShell(srcCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
+				const transformedCode = await this.injectCode(srcCode, "groovy");
+				this.runCodeInShell(transformedCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
 			});
 
 		} else if (language.contains("language-rust")) {
-			button.addEventListener("click", () => {
+			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-
-				this.runCode(srcCode, out, button, this.settings.cargoPath, this.settings.cargoArgs, this.settings.rustFileExtension);
+				const transformedCode = await this.injectCode(srcCode, "rust");
+				this.runCode(transformedCode, out, button, this.settings.cargoPath, this.settings.cargoArgs, this.settings.rustFileExtension);
 			});
 
 		} else if (language.contains("language-r")) {
-			button.addEventListener("click", () => {
+			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 
-				srcCode = addInlinePlotsToR(srcCode);
-				console.log(srcCode);
+				let transformedCode = await this.injectCode(srcCode, "r");
+				transformedCode = addInlinePlotsToR(srcCode);
 
-				this.runCode(srcCode, out, button, this.settings.RPath, this.settings.RArgs, "R");
+				this.runCode(transformedCode, out, button, this.settings.RPath, this.settings.RArgs, "R");
 			});
+
 		} else if (language.contains("language-go")) {
-			button.addEventListener("click", () => {
+			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-
-				this.runCode(srcCode, out, button, this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension);
+				const transformedCode = await this.injectCode(srcCode, "go");
+				this.runCode(transformedCode, out, button, this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension);
 			});
+
 		} else if (language.contains("language-kotlin")) {
-			button.addEventListener("click", () => {
+			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				this.runCodeInShell(srcCode, out, button, this.settings.kotlinPath, this.settings.kotlinArgs, this.settings.kotlinFileExtension);
+				const transformedCode = await this.injectCode(srcCode, "kotlin");
+				this.runCodeInShell(transformedCode, out, button, this.settings.kotlinPath, this.settings.kotlinArgs, this.settings.kotlinFileExtension);
 			});
 		}
 	}

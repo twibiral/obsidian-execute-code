@@ -1,31 +1,43 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
 import ExecuteCodePlugin from "./main";
+import type {supportedLanguages} from "./main";
+
+export type ExecutorSettingsLanguages = Exclude<typeof supportedLanguages[number], "javascript">;
 
 export interface ExecutorSettings {
 	timeout: number;
 	nodePath: string;
 	nodeArgs: string;
+	jsInject: string;
 	pythonPath: string;
 	pythonArgs: string;
 	pythonEmbedPlots: boolean;
+	pythonInject: string;
 	shellPath: string;
 	shellArgs: string;
 	shellFileExtension: string;
+	shellInject: string;
 	groovyPath: string;
 	groovyArgs: any;
 	groovyFileExtension: string;
+	groovyInject: string;
 	golangPath: string,
 	golangArgs: string,
 	golangFileExtension: string,
+	goInject: string;
 	javaPath: string,
 	javaArgs: string,
 	javaFileExtension: string,
+	javaInject: string;
 	maxPrologAnswers: number;
+	prologInject: string;
 	powershellPath: string;
 	powershellArgs: string;
 	powershellFileExtension: string;
+	powershellInject: string;
 	cargoPath: string;
 	cargoArgs: string;
+	rustInject: string;
 	cppRunner: string;
 	cppInject: string;
 	clingPath: string;
@@ -35,9 +47,11 @@ export interface ExecutorSettings {
 	RPath: string;
 	RArgs: string;
 	REmbedPlots: boolean;
+	rInject: string;
 	kotlinPath: string;
 	kotlinArgs: string;
 	kotlinFileExtension: string;
+	kotlinInject: string;
 }
 
 export class SettingsTab extends PluginSettingTab {
@@ -54,8 +68,9 @@ export class SettingsTab extends PluginSettingTab {
 
 		containerEl.createEl('h2', {text: 'Settings for the Code Execution Plugin.'});
 
-		// ========== Timeout ==========
-		containerEl.createEl('h3', {text: 'Timout Settings'});
+
+		// ========== General ==========
+		containerEl.createEl('h3', {text: 'General Settings'});
 		new Setting(containerEl)
 			.setName('Timeout (in seconds)')
 			.setDesc('The time after which a program gets shut down automatically. This is to prevent infinite loops. ')
@@ -68,6 +83,8 @@ export class SettingsTab extends PluginSettingTab {
 					}
 					await this.plugin.saveSettings();
 				}));
+
+		// TODO setting per language that requires main function if main function should be implicitly made or not, if not, non-main blocks will not have a run button
 
 
 		// ========== JavaScript / Node ==========
@@ -91,6 +108,7 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Node args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+		this.makeInjectSetting("js", "JavaScript");
 
 
 		// ========== Java ==========
@@ -115,6 +133,7 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Java args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+		this.makeInjectSetting("java", "Java");
 
 
 		// ========== Python ==========
@@ -148,6 +167,7 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Python args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+		this.makeInjectSetting("python", "Python");
 
 
 		// ========== Golang =========
@@ -163,6 +183,7 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Golang path set to: ' + sanitized);
 					await this.plugin.saveSettings();
 				}));
+		this.makeInjectSetting("go", "Golang");
 
 
 		// ========== Rust ===========
@@ -178,21 +199,11 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Cargo path set to: ' + sanitized);
 					await this.plugin.saveSettings();
 				}));
+		this.makeInjectSetting("rust", "Rust");
 
 
 		// ========== C++ ===========
 		containerEl.createEl('h3', {text: 'C++ Settings'});
-		new Setting(containerEl)
-			.setName('Inject C++ code')
-			.setDesc('Code to add to the top of every C++ code block before running. Can be #include, #define, using directives, etc.')
-			.setClass('settings-code-input-box')
-			.addTextArea(textarea => textarea
-				.setValue(this.plugin.settings.cppInject)
-				.onChange(async (value) => {
-					this.plugin.settings.cppInject = value;
-					console.log('C++ inject set to: ' + value);
-					await this.plugin.saveSettings();
-				}));
 		new Setting(containerEl)
 			.setName('Cling path')
 			.setDesc('The path to your Cling installation.')
@@ -225,6 +236,7 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Cling std set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+		this.makeInjectSetting("cpp", "C++");
 
 
 		// ========== Shell ==========
@@ -259,6 +271,7 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Shell file extension set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+		this.makeInjectSetting("shell", "Shell");
 
 
 		// ========== Powershell ==========
@@ -293,6 +306,7 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Powershell file extension set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+		this.makeInjectSetting("powershell", "Powershell");
 
 
 		// ========== Prolog ==========
@@ -309,6 +323,7 @@ export class SettingsTab extends PluginSettingTab {
 					}
 					await this.plugin.saveSettings();
 				}));
+		this.makeInjectSetting("prolog", "Prolog");
 
 
 		// ========== Groovy ==========
@@ -333,6 +348,7 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Groovy args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+		this.makeInjectSetting("groovy", "Groovy");
 
 
 		// ========== R ==========
@@ -347,8 +363,8 @@ export class SettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 		new Setting(containerEl)
-			.setName('R path')
-			.setDesc('The path to your R installation.')
+			.setName('Rscript path')
+			.setDesc('The path to your Rscript installation. Ensure you provide the Rscript binary instead of the ordinary R binary.')
 			.addText(text => text
 				.setValue(this.plugin.settings.RPath)
 				.onChange(async (value) => {
@@ -366,6 +382,7 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('R args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+		this.makeInjectSetting("r", "R");
 
 		// ========== Kotlin ==========
 		containerEl.createEl('h3', {text: 'Kotlin Settings'});
@@ -389,6 +406,7 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Kotlin args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+		this.makeInjectSetting("kotlin", "Kotlin");
 	}
 
 	private sanitizePath(path: string): string {
@@ -397,5 +415,19 @@ export class SettingsTab extends PluginSettingTab {
 		path = path.trim();
 
 		return path
+	}
+
+	private makeInjectSetting(language: ExecutorSettingsLanguages, languageAlt: string) {
+		new Setting(this.containerEl)
+			.setName(`Inject ${languageAlt} code`)
+			.setDesc(`Code to add to the top of every ${languageAlt} code block before running.`)
+			.setClass('settings-code-input-box')
+			.addTextArea(textarea => textarea
+				.setValue(this.plugin.settings[`${language}Inject` as keyof ExecutorSettings])
+				.onChange(async (value) => {
+					(this.plugin.settings[`${language}Inject` as keyof ExecutorSettings] as string) = value;
+					console.log(`${language} inject set to ${value}`);
+					await this.plugin.saveSettings();
+				}));
 	}
 }

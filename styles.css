@@ -6,6 +6,7 @@ button.run-code-button {
     right: 0;
     margin: 5px;
     padding: 5px 20px 5px 20px;
+	z-index: 100;
 }
 
 button.clear-button {
@@ -16,6 +17,7 @@ button.clear-button {
     left: 0;
     margin: 5px;
     padding: 5px 20px 5px 20px;
+	z-index: 100;
 }
 
 pre:hover .run-code-button {
