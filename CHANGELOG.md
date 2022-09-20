@@ -145,7 +145,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
-- Fix issue #9. Works now on MacOS too. (Thanks to @rmchale)
+- Fix issue #9. Works now on macOS too. (Thanks to @rmchale)
 
 ## [0.5.1] - 2022-05-22
 
