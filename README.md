@@ -5,15 +5,19 @@ blocks in supported languages. Clicking them results in the code of the block be
 result of the execution is showed.
 
 The result is shown only after the execution is finished. It is not possible to enter text on the command line into the
-executed programm now.
+executed program now.
 
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
-The following [languages are supported](#supported-programming-languages): CPP, Golang, Groovy, Kotlin, Java, JavaScript,
+The following [languages are supported](#supported-programming-languages): CPP, Golang, Groovy, Kotlin, Java,
+JavaScript,
 Prolog, Rust, Python, R, Shell & Powershell.
 
 Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands) that help you to
 access paths in obsidian or show images in your notes.
+
+You can create code blocks that are executed before or after each code block of the same language and
+define [global code injections](#global-code-injection-and-reusing-code-blocks).
 
 ## Supported programming languages
 
@@ -152,8 +156,9 @@ access paths in obsidian or show images in your notes.
 
 - Rust
 	- Requirements: Cargo is installed and correct path is set in the settings(`cargo` binary is available).
-    - `cargo-eval` is installed. Install using `cargo install cargo-eval`.
-    - Import statements and external crates is supported by `cargo-eval`. Read their [documentation](https://github.com/reitermarkus/cargo-eval).
+	- `cargo-eval` is installed. Install using `cargo install cargo-eval`.
+	- Import statements and external crates is supported by `cargo-eval`. Read
+	  their [documentation](https://github.com/reitermarkus/cargo-eval).
 	- Every code block must a main function.
   ```rust
 	  fn main() {
@@ -214,6 +219,34 @@ print("Hello", name)
         hello("Eve")
 `````` 
 
+## Global Code Injection and Reusing Code Blocks
+
+Sometimes it is helpful to have code that is executed before or after each other block of the same language. This plugin
+supports this in two ways:
+
+### Global Injection in the Settings
+
+All languages have a 'global inject' option in the settings that allows defining code to be added to the top of
+every single code block on a per-language basis. Code reuse fully works with all languages, and all existing magic
+commands, including showing images, and inline plot outputs. This can be used to define e.g. often used functions or
+import your favourite packages or libraries.
+
+### Note-wide Pre- and Post-Code Blocks
+
+You can add `Pre` before the language name to create a block that is executed before each following code block:
+
+```
+```pre-python
+import pandas as pd
+``````
+
+This code block is added before each python block you define below in the note and import the pandas package.
+
+`Post` blocks work the same way but the code in post blocks is executed _after_ your other code blocks.
+
+Pre-/Post-blocks will only apply to code blocks defined below them, and will only apply to code blocks from the same
+language.
+
 ## Installation
 
 In your vault go to Settings > Community plugins > Browse and search for "Execute Code". Select the plugin, install it
@@ -224,12 +257,18 @@ or
 Follow [this link](https://obsidian.md/plugins?search=execute%20code#) and click "Open in Obsidian".
 
 ## Warning
-Do not execute code from sources you don't know or code you don't understand. Executing code can cause irrepairable damage.
+
+Do not execute code from sources you don't know or code you don't understand. Executing code can cause irreparable
+damage.
 
 ## Known Problems
-- Missing when `run` button after switching the theme: Try to close and reopen your notes and wait for a few minutes. It seems like obsidian doesn't call the postprocessors after the theme switch.
+
+- Missing when `run` button after switching the theme: Try to close and reopen your notes and wait for a few minutes. It
+  seems like obsidian doesn't call the postprocessors after the theme switch.
+- Pre- / Post-blocks may not be executed if the file contains duplicate code blocks.
 
 ## Future Work
+
 - Find better way to show that the program is running (for example a loading sign).
 - Notebook Mode similar to Jupyter
 - Global Declarations that make method and variable definitions available to subsequent code blocks
@@ -238,14 +277,15 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 - Test if this plugin works in combination with dataview.
 
 ## Contribution
+
 All contributions are welcome. Just create a merge request or email me: tim.wibiral(at)uni-ulm.de
 
 The bullet points in Future Work are a good starting point if you want to help.
 
-## Contributers
+## Contributors
 
 <a href="https://github.com/twibiral/obsidian-execute-code/graphs/contributors">
-  <img alt="List of contributers to this project." src="https://contrib.rocks/image?repo=twibiral/obsidian-execute-code" />
+  <img alt="List of contributors to this project." src="https://contrib.rocks/image?repo=twibiral/obsidian-execute-code" />
 </a>
 
 <sub>Made with [contrib.rocks](https://contrib.rocks).</sub>
