@@ -1,0 +1,56 @@
+button.run-code-button {
+    display: none;
+    color: var(--text-muted);
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 5px;
+    padding: 5px 20px 5px 20px;
+	z-index: 100;
+}
+
+button.clear-button {
+    display: none;
+    color: var(--text-muted);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: 5px;
+    padding: 5px 20px 5px 20px;
+	z-index: 100;
+}
+
+pre:hover .run-code-button {
+    display: block;
+}
+
+pre:hover .clear-button {
+    display: block;
+}
+
+.run-button-disabled {
+    display: none;
+}
+
+pre:hover .run-button-disabled {
+    display: none;
+}
+
+code.language-output span.stdout {
+	color: var(--text-muted);
+}
+
+code.language-output span.stderr {
+	color: red;
+}
+
+code.language-output hr {
+	margin: 0 0 1em;
+}
+
+.settings-code-input-box textarea, .settings-code-input-box input {
+    min-width: 400px;
+	min-height: 100px;
+    font-family: monospace;
+    resize: vertical; 
+}
