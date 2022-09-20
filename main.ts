@@ -93,8 +93,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			console.debug(`Registering renderer for ${l}.`)
 			languagePrefixes.forEach(prefix => {
 				this.registerMarkdownCodeBlockProcessor(`${prefix}-${l}`, async (src, el, _ctx) => {
-					// TODO have to add newline when in editing mode
-					await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + '```', el, '', null);
+					await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, '', null);
 				});
 			})
 		})
@@ -139,6 +138,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
+	// TODO refactor this so inject code calls getSrcCode all the time at the end
 	private getSrcCode(codeBlock: HTMLElement) {
 		let srcCode = codeBlock.getText();	// get source code and perform magic to insert title etc
 		const vars = this.getVaultVariables();
@@ -174,7 +174,9 @@ export default class ExecuteCodePlugin extends Plugin {
 			if (line.startsWith("```")) {
 				if (insideCodeBlock) {
 					// Stop traversal once we've reached the code block being run
-					if (isLanguageEqual && srcCode.length === currentCode.length && srcCode === currentCode)
+					const srcCodeTrimmed = srcCode.trim();
+					const currentCodeTrimmed = currentCode.trim();
+					if (isLanguageEqual && srcCodeTrimmed.length === currentCodeTrimmed.length && srcCodeTrimmed === currentCodeTrimmed)
 						break;
 					if (currentLanguage === preLangName)
 						prependSrcCode += `${currentCode}\n`;
@@ -219,16 +221,8 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				// TODO If don't have main function and requires main function, pressing run put the entire code block in a main function
 
-				const isSupportedLanguage = supportedLanguages.some((lang) => {
-					if (language.contains(`language-${lang}`))
-						return true;
-					for (const prefix of languagePrefixes) {
-						if (language.contains(`language-${prefix}-${lang}`))
-							return true;
-					}
-					return false;
-				});
-				if (isSupportedLanguage && !parent.classList.contains(hasButtonClass)) {
+				if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
+					&& !parent.classList.contains(hasButtonClass)) { // unsupported language
 					const out = new Outputter(codeBlock);
 					parent.classList.add(hasButtonClass);
 					const button = this.createRunButton();
