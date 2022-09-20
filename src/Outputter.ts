@@ -48,6 +48,7 @@ export class Outputter {
 
 		// make visible again:
 		this.outputElement.style.display = "block";
+		this.clearButton.style.display = "block"
 	}
 
 	writeErr(text: string) {
@@ -66,6 +67,7 @@ export class Outputter {
 
 		// make visible again:
 		this.outputElement.style.display = "block";
+		this.clearButton.style.display = "block"
 	}
 
 	private getParentElement() {
