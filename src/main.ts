@@ -1,20 +1,18 @@
-import {FileSystemAdapter, MarkdownRenderer, MarkdownView, Notice, Plugin} from 'obsidian';
+import {MarkdownRenderer, Notice, Plugin} from 'obsidian';
 import * as fs from "fs";
 import * as os from "os"
 import * as child_process from "child_process";
 
 import {Outputter} from "./Outputter";
-import type {ExecutorSettings, ExecutorSettingsLanguages} from "./Settings";
+import type {ExecutorSettings} from "./Settings";
 import {DEFAULT_SETTINGS} from "./Settings";
 import {SettingsTab} from "./SettingsTab";
+import {injectCode} from './TransformCode';
 import {
 	addInlinePlotsToPython,
 	addInlinePlotsToR,
 	addMagicToJS,
 	addMagicToPython,
-	insertNotePath,
-	insertNoteTitle,
-	insertVaultPath
 } from "./Magic";
 
 // @ts-ignore
@@ -22,7 +20,7 @@ import * as prolog from "tau-prolog";
 
 export const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
 	"java", "powershell", "kotlin"] as const;
-const languagePrefixes = ["run", "pre", "post"];
+const languagePrefixes = ["run", "pre", "post"]; // TODO remove
 
 const buttonText = "Run";
 
@@ -49,7 +47,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		// live preview renderers
 		supportedLanguages.forEach(l => {
 			console.debug(`Registering renderer for ${l}.`)
-			languagePrefixes.forEach(prefix => {
+			languagePrefixes.forEach(prefix => { // TODO make only for run- prefix
 				this.registerMarkdownCodeBlockProcessor(`${prefix}-${l}`, async (src, el, _ctx) => {
 					await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, '', null);
 				});
@@ -106,93 +104,6 @@ export default class ExecuteCodePlugin extends Plugin {
 	}
 
 	/**
-	 * Perform magic on source code (parse the magic commands) to insert note path, title, vault path, etc.
-	 *
-	 * @param srcCode Code with magic commands.
-	 * @returns The input code with magic commands replaced.
-	 */
-	private transformCode(srcCode: string) {
-		let ret = srcCode;
-		const vars = this.getVaultVariables();
-		if (vars) {
-			ret = insertVaultPath(ret, vars.vaultPath);
-			ret = insertNotePath(ret, vars.filePath);
-			ret = insertNoteTitle(ret, vars.fileName);
-		} else {
-			console.warn(`Could not load all Vault variables! ${vars}`)
-		}
-		return ret;
-	}
-
-	/**
-	 * Transform a language name, to enable working with multiple language aliases, for example "js" and "javascript".
-	 *
-	 * @param language A language name or shortcut (e.g. 'js', 'python' or 'shell')
-	 * @returns The same language shortcut for every alias of the language.
-	 */
-	private getLanguageAlias(language: string) {
-		return language
-			.replace("javascript", "js")
-			.replace("bash", "shell");
-	}
-
-	/**
-	 * Takes the source code of a code block and adds all relevant pre-/post-blocks and global code injections.
-	 *
-	 * @param srcCode The source code of the code block.
-	 * @param _language The language of the code block.
-	 * @returns
-	 */
-	private async injectCode(srcCode: string, _language: ExecutorSettingsLanguages) {
-		let prependSrcCode = "";
-		let appendSrcCode = "";
-
-		const language = this.getLanguageAlias(_language);
-		const preLangName = `pre-${language}`;
-		const postLangName = `post-${language}`;
-
-		// We need to get access to all code blocks on the page so we can grab the pre / post blocks above
-		// Obsidian unloads code blocks not in view, so instead we load the raw document file and traverse line-by-line
-		const activeFile = this.app.workspace.getActiveFile();
-		const fileContents = await this.app.vault.read(activeFile);
-
-		let insideCodeBlock = false;
-		let isLanguageEqual = false;
-		let currentLanguage = "";
-		let currentCode = "";
-
-		for (const line of fileContents.split('\n')) {
-			if (line.startsWith("```")) {
-				if (insideCodeBlock) {
-					// Stop traversal once we've reached the code block being run
-					const srcCodeTrimmed = srcCode.trim();
-					const currentCodeTrimmed = currentCode.trim();
-					if (isLanguageEqual && srcCodeTrimmed.length === currentCodeTrimmed.length && srcCodeTrimmed === currentCodeTrimmed)
-						break;
-					if (currentLanguage === preLangName)
-						prependSrcCode += `${currentCode}\n`;
-					else if (currentLanguage === postLangName)
-						appendSrcCode += `${currentCode}\n`;
-					currentLanguage = "";
-					currentCode = "";
-					insideCodeBlock = false;
-				} else {
-					currentLanguage = this.getLanguageAlias(line.split("```")[1].trim().split(" ")[0]);
-					// Don't check code blocks from a different language
-					isLanguageEqual = /[^-]*$/.exec(language)[0] === /[^-]*$/.exec(currentLanguage)[0];
-					insideCodeBlock = true;
-				}
-			} else if (insideCodeBlock) {
-				currentCode += `${line}\n`;
-			}
-		}
-
-		const realLanguage = /[^-]*$/.exec(language)[0];
-		const injectedCode = `${this.settings[`${realLanguage}Inject` as keyof ExecutorSettings]}\n${prependSrcCode}\n${srcCode}\n${appendSrcCode}`;
-		return this.transformCode(injectedCode);
-	}
-
-	/**
 	 * Add a button to each code block that allows the user to run the code. The button is only added if the code block
 	 * utilizes a language that is supported by this plugin.
 	 *
@@ -234,7 +145,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		if (language.contains("language-js") || language.contains("language-javascript")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				let transformedCode = await this.injectCode(srcCode, "js");
+				let transformedCode = await injectCode(this.app, srcCode, this.settings, "js");
 				transformedCode = addMagicToJS(transformedCode);
 				this.runCode(transformedCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
 			});
@@ -242,7 +153,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language.contains("language-java")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await this.injectCode(srcCode, "java");
+				const transformedCode = await injectCode(this.app, srcCode, this.settings, "java");
 				this.runCode(transformedCode, out, button, this.settings.javaPath, this.settings.javaArgs, this.settings.javaFileExtension);
 			});
 
@@ -250,7 +161,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 
-				let transformedCode = await this.injectCode(srcCode, "python");
+				let transformedCode = await injectCode(this.app, srcCode, this.settings, "python");
 				if (this.settings.pythonEmbedPlots)	// embed plots into html which shows them in the note
 					transformedCode = addInlinePlotsToPython(transformedCode);
 				transformedCode = addMagicToPython(transformedCode);
@@ -261,14 +172,14 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language.contains("language-shell") || language.contains("language-bash")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await this.injectCode(srcCode, "shell");
+				const transformedCode = await injectCode(this.app, srcCode, this.settings, "shell");
 				this.runCodeInShell(transformedCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
 			});
 
 		} else if (language.contains("language-powershell")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await this.injectCode(srcCode, "powershell");
+				const transformedCode = await injectCode(this.app, srcCode, this.settings, "powershell");
 				this.runCodeInShell(transformedCode, out, button, this.settings.powershellPath, this.settings.powershellArgs, this.settings.powershellFileExtension);
 			});
 
@@ -276,7 +187,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				out.clear();
-				const transformedCode = await this.injectCode(srcCode, "cpp");
+				const transformedCode = await injectCode(this.app, srcCode, this.settings, "cpp");
 				this.runCode(transformedCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp");
 				button.className = runButtonClass;
 			});
@@ -286,7 +197,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				out.clear();
 
-				const prologCode = (await this.injectCode(srcCode, "prolog")).split(/\n+%+\s*query\n+/);
+				const prologCode = (await injectCode(this.app, srcCode, this.settings, "prolog")).split(/\n+%+\s*query\n+/);
 				if (prologCode.length < 2) return;	// no query found
 
 				this.runPrologCode(prologCode[0], prologCode[1], out);
@@ -297,14 +208,14 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language.contains("language-groovy")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await this.injectCode(srcCode, "groovy");
+				const transformedCode = await injectCode(this.app, srcCode, this.settings, "groovy");
 				this.runCodeInShell(transformedCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
 			});
 
 		} else if (language.contains("language-rust")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await this.injectCode(srcCode, "rust");
+				const transformedCode = await injectCode(this.app, srcCode, this.settings, "rust");
 				this.runCode(transformedCode, out, button, this.settings.cargoPath, this.settings.cargoArgs, this.settings.rustFileExtension);
 			});
 
@@ -312,7 +223,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 
-				let transformedCode = await this.injectCode(srcCode, "r");
+				let transformedCode = await injectCode(this.app, srcCode, this.settings, "r");
 				transformedCode = addInlinePlotsToR(srcCode);
 
 				this.runCode(transformedCode, out, button, this.settings.RPath, this.settings.RArgs, "R");
@@ -321,43 +232,16 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language.contains("language-go")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await this.injectCode(srcCode, "go");
+				const transformedCode = await injectCode(this.app, srcCode, this.settings, "go");
 				this.runCode(transformedCode, out, button, this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension);
 			});
 
 		} else if (language.contains("language-kotlin")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await this.injectCode(srcCode, "kotlin");
+				const transformedCode = await injectCode(this.app, srcCode, this.settings, "kotlin");
 				this.runCodeInShell(transformedCode, out, button, this.settings.kotlinPath, this.settings.kotlinArgs, this.settings.kotlinFileExtension);
 			});
-		}
-	}
-
-	/**
-	 * Tries to get the active view from obsidian and returns a dictionary containing the file name, folder path,
-	 * file path, and vault path of the currently opened / focused note.
-	 *
-	 * @returns { fileName: string; folder: string; filePath: string; vaultPath: string } A dictionary containing the
-	 * file name, folder path, file path, and vault path of the currently opened / focused note.
-	 */
-	private getVaultVariables(): { fileName: string; folder: string; filePath: string; vaultPath: string } {
-		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
-		if (activeView == null) {
-			return null;
-		}
-
-		const adapter = app.vault.adapter as FileSystemAdapter;
-		const vaultPath = adapter.getBasePath();
-		const folder = activeView.file.parent.path;
-		const fileName = activeView.file.name
-		const filePath = activeView.file.path
-
-		return {
-			vaultPath: vaultPath,
-			folder: folder,
-			fileName: fileName,
-			filePath: filePath,
 		}
 	}
 
