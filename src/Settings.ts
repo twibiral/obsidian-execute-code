@@ -1,7 +1,12 @@
 import {supportedLanguages} from "./main";
 
+
 export type ExecutorSettingsLanguages = Exclude<typeof supportedLanguages[number], "javascript">;
 
+
+/**
+ * Interface that contains all the settings for the extension.
+ */
 export interface ExecutorSettings {
 	timeout: number;
 	nodePath: string;
@@ -52,6 +57,10 @@ export interface ExecutorSettings {
 	kotlinInject: string;
 }
 
+
+/**
+ * The default settings for the extensions as implementation of the ExecutorSettings interface.
+ */
 export const DEFAULT_SETTINGS: ExecutorSettings = {
 	timeout: 10000,
 	nodePath: "node",
