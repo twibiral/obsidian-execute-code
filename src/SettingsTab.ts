@@ -2,6 +2,13 @@ import {App, PluginSettingTab, Setting} from "obsidian";
 import ExecuteCodePlugin from "./main";
 import {ExecutorSettings, ExecutorSettingsLanguages} from "./Settings";
 
+
+/**
+ * This class is responsible for creating a settings tab in the settings menu. The settings tab is showed in the
+ * regular obsidian settings menu.
+ *
+ * The {@link display} functions build the html page that is showed in the settings.
+ */
 export class SettingsTab extends PluginSettingTab {
 	plugin: ExecuteCodePlugin;
 
@@ -10,6 +17,9 @@ export class SettingsTab extends PluginSettingTab {
 		this.plugin = plugin;
 	}
 
+	/**
+	 *  Builds the html page that is showed in the settings.
+	 */
 	display() {
 		const {containerEl} = this;
 		containerEl.empty();
