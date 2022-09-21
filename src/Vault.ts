@@ -11,7 +11,7 @@ import type {App, FileSystemAdapter} from "obsidian";
  */
 export function getVaultVariables(app: App) {
 	const activeView = app.workspace.getActiveViewOfType(MarkdownView);
-	if (activeView == null) {
+	if (activeView === null) {
 		return null;
 	}
 

@@ -20,7 +20,6 @@ import * as prolog from "tau-prolog";
 
 export const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
 	"java", "powershell", "kotlin"] as const;
-const languagePrefixes = ["run", "pre", "post"]; // TODO remove
 
 const buttonText = "Run";
 
@@ -47,11 +46,9 @@ export default class ExecuteCodePlugin extends Plugin {
 		// live preview renderers
 		supportedLanguages.forEach(l => {
 			console.debug(`Registering renderer for ${l}.`)
-			languagePrefixes.forEach(prefix => { // TODO make only for run- prefix
-				this.registerMarkdownCodeBlockProcessor(`${prefix}-${l}`, async (src, el, _ctx) => {
-					await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, '', null);
-				});
-			})
+			this.registerMarkdownCodeBlockProcessor(`$run-${l}`, async (src, el, _ctx) => {
+				await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, '', null);
+			});
 		})
 	}
 
