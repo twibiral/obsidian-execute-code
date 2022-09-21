@@ -239,7 +239,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				this.runCode(transformedCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
 			});
 
-		} else if (language.contains("java")) {
+		} else if (language.contains("language-java")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await this.injectCode(srcCode, "java");
@@ -262,14 +262,14 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await this.injectCode(srcCode, "shell");
-				this.runCode(transformedCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
+				this.runCodeInShell(transformedCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
 			});
 
 		} else if (language.contains("language-powershell")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await this.injectCode(srcCode, "powershell");
-				this.runCode(transformedCode, out, button, this.settings.powershellPath, this.settings.powershellArgs, this.settings.powershellFileExtension);
+				this.runCodeInShell(transformedCode, out, button, this.settings.powershellPath, this.settings.powershellArgs, this.settings.powershellFileExtension);
 			});
 
 		} else if (language.contains("language-cpp")) {
