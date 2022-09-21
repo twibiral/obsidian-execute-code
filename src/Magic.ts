@@ -22,14 +22,37 @@ const NOTE_TITLE_REGEX = /@title/g;
 const PYTHON_PLOT_REGEX = /^(plt|matplotlib.pyplot|pyplot)\.show\(\)/gm;
 const R_PLOT_REGEX = /^plot\(.*\)/gm;
 
+/**
+ * Parses the source code for the @vault command and replaces it with the vault path.
+ *
+ * @param source The source code to parse.
+ * @param vaultPath The path of the vault.
+ * @returns The transformed source code.
+ */
 export function insertVaultPath(source: string, vaultPath: string): string {
 	return source.replace(VAULT_REGEX, `"app://local/${vaultPath.replace(/\\/g, "/")}"`);
 }
 
+
+/**
+ * Parses the source code for the @note command and replaces it with the note path.
+ *
+ * @param source The source code to parse.
+ * @param notePath The path of the vault.
+ * @returns The transformed source code.
+ */
 export function insertNotePath(source: string, notePath: string): string {
 	return source.replace(CURRENT_NOTE_REGEX, `"app://local/${notePath.replace(/\\/g, "/")}"`);
 }
 
+
+/**
+ * Parses the source code for the @vault command and replaces it with the vault path.
+ *
+ * @param source The source code to parse.
+ * @param noteTitle The path of the vault.
+ * @returns The transformed source code.
+ */
 export function insertNoteTitle(source: string, noteTitle: string): string {
 	let t = "";
 	if (noteTitle.contains("."))
@@ -38,11 +61,51 @@ export function insertNoteTitle(source: string, noteTitle: string): string {
 	return source.replace(NOTE_TITLE_REGEX, `"${t}"`);
 }
 
+
+/**
+ * Add the @show command to python. @show is only supported in python and javascript.
+ *
+ * @param source The source code to parse.
+ * @returns The transformed source code.
+ */
+export function addMagicToPython(source: string): string {
+	source = pythonParseShowImage(source);
+	return source;
+}
+
+
+/**
+ * Add the @show command to javascript. @show is only supported in python and javascript.
+ *
+ * @param source The source code to parse.
+ * @returns The transformed source code.
+ */
+export function addMagicToJS(source: string): string {
+	source = jsParseShowImage(source);
+	return source;
+}
+
+
+/**
+ * Parses some python code and changes it to display plots in the note instead of opening a new window.
+ * Only supports normal plots generated with the `plt.show(...)` function.
+ *
+ * @param source The source code to parse.
+ * @returns The transformed source code.
+ */
 export function addInlinePlotsToPython(source: string): string {
 	const showPlot = `import io; import sys; __obsidian_execute_code_temp_pyplot_var__=io.BytesIO(); plt.plot(); plt.savefig(__obsidian_execute_code_temp_pyplot_var__, format='svg'); plt.close(); sys.stdout.buffer.write(__obsidian_execute_code_temp_pyplot_var__.getvalue())`;
 	return source.replace(PYTHON_PLOT_REGEX, showPlot);
 }
 
+
+/**
+ * Parses some R code and changes it to display plots in the note instead of opening a new window.
+ * Only supports normal plots generated with the `plot(...)` function.
+ *
+ * @param source The source code to parse.
+ * @returns The transformed source code.
+ */
 export function addInlinePlotsToR(source: string): string {
 	const matches = source.matchAll(R_PLOT_REGEX);
 	for (const match of matches) {
@@ -56,17 +119,11 @@ export function addInlinePlotsToR(source: string): string {
 	return source;
 }
 
-export function addMagicToPython(source: string): string {
-	source = pythonParseShowImage(source);
-	return source;
-}
 
-export function addMagicToJS(source: string): string {
-	source = jsParseShowImage(source);
-	return source;
-}
-
-
+/**
+ * Parses the PYTHON code for the @show command and replaces it with the image.
+ * @param source The source code to parse.
+ */
 function pythonParseShowImage(source: string): string {
 	const matches = source.matchAll(SHOW_REGEX);
 	for (const match of matches) {
@@ -82,6 +139,11 @@ function pythonParseShowImage(source: string): string {
 	return source;
 }
 
+
+/**
+ * Parses the JAVASCRIPT code for the @show command and replaces it with the image.
+ * @param source The source code to parse.
+ */
 function jsParseShowImage(source: string): string {
 	const matches = source.matchAll(SHOW_REGEX);
 	for (const match of matches) {
@@ -98,6 +160,16 @@ function jsParseShowImage(source: string): string {
 	return source;
 }
 
+
+/**
+ * Builds the image string that is used to display the image in the note based on the configurations for
+ * height, width and alignment.
+ *
+ * @param imagePath The path to the image.
+ * @param width The image width.
+ * @param height The image height.
+ * @param alignment The image alignment.
+ */
 function buildMagicShowImage(imagePath: string, width: string = "0", height: string = "0", alignment: string = "center"): string {
 	if (imagePath.contains("+")) {
 		let splittedPath = imagePath.replace(/['"]/g, "").split("+");
