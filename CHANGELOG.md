@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.15.2] - 2022-09-21
+
+### Changed
+
+- Changed project structure: Added node config and build files to root dir.
+- Added documentation for every function.
+- Fixed shell support.
+
 ## [0.15.1] - 2022-09-20
 
 ### Changed
