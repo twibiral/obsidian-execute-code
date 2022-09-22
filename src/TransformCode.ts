@@ -206,8 +206,7 @@ export class CodeInjector {
 			return srcCode;
 		}
 
-		const fileContents = activeView.data;
-		this.parseFile(fileContents, srcCode, language);
+		this.parseFile(activeView.data, srcCode, language);
 		
 		const realLanguage = /[^-]*$/.exec(language)[0];
 		let injectedCode = `${this.namedImportSrcCode}\n${srcCode}`;
