@@ -7,13 +7,12 @@ import type {ExecutorSettings, ExecutorSettingsLanguages} from "./Settings";
  * Arguments for code blocks, specified next to the language identifier as JSON
  * @example ```python {"export": "pre"}
  * @example ```cpp {"ignoreExport": ["post"]}
- * @example ```js {"import": ["helper", "linkedList:listNode", {"tree": ["treeNode"]}]}
  */
 interface CodeBlockArgs {
 	label?: string;
-	import?: (string | {[document: string]: string[]})[];
+	import?: string[];
 	export?: "pre" | "post";
-	ignoreExport?: ("pre" | "post" | "global")[] | "all";
+	ignoreExports?: ("pre" | "post" | "global")[] | "all";
 }
 
 /**
@@ -77,8 +76,13 @@ function getCodeBlockLanguage(firstLineOfCode: string) {
 	return getLanguageAlias(firstLineOfCode.split("```")[1].trim().split(" ")[0].split("{")[0])
 }
 
+/**
+ * Inject code and run code transformations on a source code block
+ */
 export class CodeInjector {
 	private app: App;
+	private settings: ExecutorSettings;
+	private language: ExecutorSettingsLanguages;
 
 	private prependSrcCode = "";
 	private appendSrcCode = "";
@@ -87,46 +91,45 @@ export class CodeInjector {
 	private mainArgs: CodeBlockArgs = {};
 
 	private namedExports: Record<string, string> = {};
-	private exportsFromDocuments: Record<string, Record<string, string>> = {};
 	
 	/**
 	 * @param app The current app handle (this.app from ExecuteCodePlugin).
+	 * @param settings The current app settings.
+	 * @param language The language of the code block e.g. python, js, cpp.
 	 */
-	constructor(app: App) {
+	constructor(app: App, settings: ExecutorSettings, language: ExecutorSettingsLanguages) {
 		this.app = app;
+		this.settings = settings;
+		this.language = language;
 	}	
 
 	/**
 	 * Handles adding named imports to code blocks
 	 * 
-	 * @param namedImports TODO
-	 * @param language TODO
+	 * @param namedImports Populate prependable source code with named imports
+	 * @returns If an error occurred
 	 */
-	private async handleNamedImports(namedImports: CodeBlockArgs['import'], language: ExecutorSettingsLanguages) {
+	private async handleNamedImports(namedImports: CodeBlockArgs['import']) {
 		for (const namedImport of namedImports) {
-			// Non-object entry - local import
-			if (typeof namedImport === "string") {
-				// Named export doesn't exist
-				if (!this.namedExports.hasOwnProperty(namedImport)) {
-					new Notice(`Named export ${namedImport} does not exist but was imported`);
-					return true;
-				}
-				this.namedImportSrcCode += `${this.namedExports[namedImport]}\n`;
+			// Named export doesn't exist
+			if (!this.namedExports.hasOwnProperty(namedImport)) {
+				new Notice(`Named export ${namedImport} does not exist but was imported`);
+				return true;
 			}
-			
+			this.namedImportSrcCode += `${this.namedExports[namedImport]}\n`;
 		}
 		return false;
 	}
 
 	/**
-	 * TODO
-	 * @param fileContents 
-	 * @param language 
-	 * @param isOriginalFile 
-	 * @param srcCode 
+	 * Parse a markdown file
+	 * 
+	 * @param fileContents The contents of the file to parse
+	 * @param srcCode The original source code of the code block being run
+	 * @param language The programming language of the code block being run
 	 * @returns 
 	 */
-	private async parseFile(fileContents: string, language: ExecutorSettingsLanguages, isOriginalFile = false, srcCode = "") {
+	private async parseFile(fileContents: string, srcCode: string, language: ExecutorSettingsLanguages) {
 		let currentArgs: CodeBlockArgs = {};
 		let insideCodeBlock = false;
 		let isLanguageEqual = false;
@@ -140,18 +143,16 @@ export class CodeInjector {
 				if (insideCodeBlock) {
 					// Stop traversal once we've reached the code block being run
 					// Only do this for the original file the user is running
-					if (isOriginalFile) {
-						const srcCodeTrimmed = srcCode.trim();
-						const currentCodeTrimmed = currentCode.trim();
-						if (isLanguageEqual && srcCodeTrimmed.length === currentCodeTrimmed.length && srcCodeTrimmed === currentCodeTrimmed) {
-							this.mainArgs = getArgs(currentFirstLine);
-							// Get named imports
-							if (this.mainArgs.import) {
-								const err = this.handleNamedImports(this.mainArgs.import, language);
-								if (err) return "";
-							}
-							break;
+					const srcCodeTrimmed = srcCode.trim();
+					const currentCodeTrimmed = currentCode.trim();
+					if (isLanguageEqual && srcCodeTrimmed.length === currentCodeTrimmed.length && srcCodeTrimmed === currentCodeTrimmed) {
+						this.mainArgs = getArgs(currentFirstLine);
+						// Get named imports
+						if (this.mainArgs.import) {
+							const err = this.handleNamedImports(this.mainArgs.import);
+							if (err) return "";
 						}
+						break;
 					}
 					// Named export
 					if (currentArgs.label) {
@@ -193,15 +194,10 @@ export class CodeInjector {
 	 * Takes the source code of a code block and adds all relevant pre-/post-blocks and global code injections.
 	 *
 	 * @param srcCode The source code of the code block.
-	 * @param settings The current app settings.
-	 * @param _language The language of the code block e.g. python, js, cpp.
 	 * @returns The source code of a code block with all relevant pre/post blocks and global code injections.
 	 */
-	public async injectCode(srcCode: string, settings: ExecutorSettings, _language: ExecutorSettingsLanguages) {
-	
-		console.time('injectCode');
-	
-		const language = getLanguageAlias(_language);
+	public async injectCode(srcCode: string) {
+		const language = getLanguageAlias(this.language);
 	
 		// We need to get access to all code blocks on the page so we can grab the pre / post blocks above
 		// Obsidian unloads code blocks not in view, so instead we load the raw document file and traverse line-by-line
@@ -211,22 +207,20 @@ export class CodeInjector {
 		}
 
 		const fileContents = activeView.data;
-		this.parseFile(fileContents, language, true, srcCode);
+		this.parseFile(fileContents, srcCode, language);
 		
 		const realLanguage = /[^-]*$/.exec(language)[0];
 		let injectedCode = `${this.namedImportSrcCode}\n${srcCode}`;
-		if (!this.mainArgs.ignoreExport)
-			injectedCode = `${settings[`${realLanguage}Inject` as keyof ExecutorSettings]}\n${this.prependSrcCode}\n${injectedCode}\n${this.appendSrcCode}`;
-		else if (this.mainArgs.ignoreExport !== "all") {
-			if (!this.mainArgs.ignoreExport.contains("pre"))
+		if (!this.mainArgs.ignoreExports)
+			injectedCode = `${this.settings[`${realLanguage}Inject` as keyof ExecutorSettings]}\n${this.prependSrcCode}\n${injectedCode}\n${this.appendSrcCode}`;
+		else if (this.mainArgs.ignoreExports !== "all") {
+			if (!this.mainArgs.ignoreExports.contains("pre"))
 				injectedCode = `${this.prependSrcCode}\n${injectedCode}`;
-			if (!this.mainArgs.ignoreExport.contains("post"))
+			if (!this.mainArgs.ignoreExports.contains("post"))
 				injectedCode = `${injectedCode}\n${this.appendSrcCode}`;
-			if (!this.mainArgs.ignoreExport.contains("global"))
-				injectedCode = `${settings[`${realLanguage}Inject` as keyof ExecutorSettings]}\n${injectedCode}`;
+			if (!this.mainArgs.ignoreExports.contains("global"))
+				injectedCode = `${this.settings[`${realLanguage}Inject` as keyof ExecutorSettings]}\n${injectedCode}`;
 		}
-	
-		console.timeEnd('injectCode');
 	
 		return transformCode(this.app, injectedCode);
 	}	
