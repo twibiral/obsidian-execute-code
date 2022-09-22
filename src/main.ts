@@ -20,7 +20,7 @@ import {
 // @ts-ignore
 import * as prolog from "tau-prolog";
 
-export const supportedLanguages = ["js", "javascript", "ts", "typescript", "lua", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
+export const supportedLanguages = ["js", "javascript", "ts", "typescript", "cs", "csharp", "lua", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
 	"java", "powershell", "kotlin"] as const;
 const languagePrefixes = ["run", "pre", "post"];
 
@@ -344,6 +344,13 @@ export default class ExecuteCodePlugin extends Plugin {
 				let transformedCode = await this.injectCode(srcCode, "lua");
 				console.debug(`runCodeInShell ${this.settings.luaPath} ${this.settings.luaArgs} ${"lua"}`)
 				this.runCodeInShell(transformedCode, out, button, this.settings.luaPath, this.settings.luaArgs, "lua");
+			});
+		} else if (language.contains("language-cs")) {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				let transformedCode = await this.injectCode(srcCode, "lua");
+				console.log(`runCodeInShell ${this.settings.csPath} ${this.settings.csArgs} ${"cs"}`)
+				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, "csx");
 			});
 		}
 	}

@@ -38,9 +38,15 @@ define [global code injections](#global-code-injection-and-reusing-code-blocks).
 	```
 
 - Lua
-	- Requirements: install lua and config system path
+	- Requirements: install lua and config lua path
     ```lua
-    print('hello world')
+    print('Hello, World!')
+	```
+
+- CSharp
+	- Requirements: install dotnet core sdk and `dotnet tool install -g dotnet-script`, then config dotnet-script fullpath.
+    ```cs
+    Console.WriteLine("Hello, World!");
 	```
 
 - Python

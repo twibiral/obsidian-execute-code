@@ -18,6 +18,9 @@ export interface ExecutorSettings {
 	luaPath: string;
 	luaArgs: string;
 	luaInject: string;
+	csPath: string;
+	csArgs: string;
+	csInject: string;
 	pythonPath: string;
 	pythonArgs: string;
 	pythonEmbedPlots: boolean;
@@ -78,6 +81,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	luaPath: "lua",
 	luaArgs: "",
 	luaInject: "",
+	csPath: "dotnet-script",
+	csArgs: "",
+	csInject: "",
 	pythonPath: "python",
 	pythonArgs: "",
 	pythonEmbedPlots: true,
