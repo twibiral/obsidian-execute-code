@@ -91,6 +91,29 @@ export class SettingsTab extends PluginSettingTab {
 				}));
 		this.makeInjectSetting("ts", "TypeScript");
 
+		// ========== Lua ==========
+		containerEl.createEl('h3', {text: 'Lua Settings'});
+		new Setting(containerEl)
+			.setName('lua path')
+			.addText(text => text
+				.setValue(this.plugin.settings.luaPath)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.luaPath = sanitized;
+					console.log('lua path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Lua arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.luaArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.luaArgs = value;
+					console.log('Lua args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		this.makeInjectSetting("lua", "Lua");
+
 		// ========== Java ==========
 		containerEl.createEl('h3', {text: 'Java Settings'});
 		new Setting(containerEl)

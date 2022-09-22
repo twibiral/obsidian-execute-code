@@ -15,6 +15,9 @@ export interface ExecutorSettings {
 	tsPath: string;
 	tsArgs: string;
 	tsInject: string;
+	luaPath: string;
+	luaArgs: string;
+	luaInject: string;
 	pythonPath: string;
 	pythonArgs: string;
 	pythonEmbedPlots: boolean;
@@ -72,6 +75,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	tsPath: "ts-node",
 	tsArgs: "",
 	tsInject: "",
+	luaPath: "lua",
+	luaArgs: "",
+	luaInject: "",
 	pythonPath: "python",
 	pythonArgs: "",
 	pythonEmbedPlots: true,

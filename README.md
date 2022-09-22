@@ -31,11 +31,17 @@ define [global code injections](#global-code-injection-and-reusing-code-blocks).
     ```
 
 - TypeScript
-    - Requirements: Node.js installed then npm install typescript and ts-node.
+	- Requirements: Node.js installed then npm install typescript and ts-node.
     ```ts
     let message: string = 'Hello, World!';  
     console.log(message);
-    ```
+	```
+
+- Lua
+	- Requirements: install lua and config system path
+    ```lua
+    print('hello world')
+	```
 
 - Python
 	- Requirements: Python is installed and the correct path is set in the settings.
