@@ -10,7 +10,7 @@ executed program now.
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
 The following [languages are supported](#supported-programming-languages): CPP, Golang, Groovy, Kotlin, Java,
-JavaScript, Prolog, Rust, Python, R, Shell & Powershell.
+JavaScript, TypeScript, Lua, CSharp, Prolog, Rust, Python, R, Shell & Powershell.
 
 Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands) that help you to
 access paths in obsidian or show images in your notes.
