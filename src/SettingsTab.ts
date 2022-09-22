@@ -68,6 +68,28 @@ export class SettingsTab extends PluginSettingTab {
 				}));
 		this.makeInjectSetting("js", "JavaScript");
 
+		// ========== TypeScript ==========
+		containerEl.createEl('h3', {text: 'TypeScript Settings'});
+		new Setting(containerEl)
+			.setName('ts-node path')
+			.addText(text => text
+				.setValue(this.plugin.settings.tsPath)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.tsPath = sanitized;
+					console.log('ts-node path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('TypeScript arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.tsArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.tsArgs = value;
+					console.log('TypeScript args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		this.makeInjectSetting("ts", "TypeScript");
 
 		// ========== Java ==========
 		containerEl.createEl('h3', {text: 'Java Settings'});

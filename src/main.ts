@@ -20,7 +20,7 @@ import {
 // @ts-ignore
 import * as prolog from "tau-prolog";
 
-export const supportedLanguages = ["js", "javascript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
+export const supportedLanguages = ["js", "javascript", "ts", "typescript", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
 	"java", "powershell", "kotlin"] as const;
 const languagePrefixes = ["run", "pre", "post"];
 
@@ -330,6 +330,13 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await this.injectCode(srcCode, "kotlin");
 				this.runCodeInShell(transformedCode, out, button, this.settings.kotlinPath, this.settings.kotlinArgs, this.settings.kotlinFileExtension);
+			});
+		} else if (language.contains("language-ts")) {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				let transformedCode = await this.injectCode(srcCode, "ts");
+				console.debug(`runCodeInShell ${this.settings.tsPath} ${this.settings.tsArgs} ${"ts"}`)
+				this.runCodeInShell(transformedCode, out, button, this.settings.tsPath, this.settings.tsArgs, "ts");
 			});
 		}
 	}

@@ -12,6 +12,9 @@ export interface ExecutorSettings {
 	nodePath: string;
 	nodeArgs: string;
 	jsInject: string;
+	tsPath: string;
+	tsArgs: string;
+	tsInject: string;
 	pythonPath: string;
 	pythonArgs: string;
 	pythonEmbedPlots: boolean;
@@ -66,6 +69,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	nodePath: "node",
 	nodeArgs: "",
 	jsInject: "",
+	tsPath: "ts-node",
+	tsArgs: "",
+	tsInject: "",
 	pythonPath: "python",
 	pythonArgs: "",
 	pythonEmbedPlots: true,
