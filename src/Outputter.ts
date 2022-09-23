@@ -8,13 +8,17 @@ export class Outputter extends EventEmitter {
 	lastPrintElem: HTMLSpanElement;
 	lastPrinted: string;
 	
+	doInput: boolean
 	inputElement: HTMLInputElement;
 	
 	hadPreviouslyPrinted: boolean;
 
-	constructor (codeBlock: HTMLElement) {
-		super()
+	constructor (codeBlock: HTMLElement, doInput: boolean) {
+		super();
 		
+		console.log("i do input: ", doInput);
+		
+		this.doInput = doInput;
 		this.codeBlockElement = codeBlock;
 		this.hadPreviouslyPrinted = false;
 	}
@@ -92,7 +96,7 @@ export class Outputter extends EventEmitter {
 		this.outputElement.classList.add("language-output");
 
 		this.outputElement.appendChild(hr);
-		this.addInputElement();
+		if (this.doInput) this.addInputElement();
 		parentEl.appendChild(this.outputElement);
 	}
 	
@@ -160,7 +164,7 @@ export class Outputter extends EventEmitter {
 		if (!this.outputElement) this.addOutputElement();
 		
 		this.outputElement.style.display = "block";
-		this.inputElement.style.display = "inline";
+		if (this.inputElement) this.inputElement.style.display = "inline";
 		this.clearButton.className = "clear-button";
 	}
 }
