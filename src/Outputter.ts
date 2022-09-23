@@ -63,6 +63,11 @@ export class Outputter extends EventEmitter {
 		}
 	}
 
+	closeInput() {		
+		if(this.inputElement)
+			this.inputElement.style.display = "none";
+	}
+
 	private getParentElement() {
 		return this.codeBlockElement.parentElement as HTMLDivElement;
 	}
@@ -132,8 +137,11 @@ export class Outputter extends EventEmitter {
 		const stdElem = document.createElement("span");
 		stdElem.addClass(streamId);
 
-		this.outputElement.appendChild(stdElem);
-
+		if(this.inputElement) {
+			this.outputElement.insertBefore(stdElem, this.inputElement);
+		} else {
+			this.outputElement.appendChild(stdElem);
+		}
 		this.lastPrintElem = stdElem;
 
 		return stdElem
@@ -152,6 +160,7 @@ export class Outputter extends EventEmitter {
 		if (!this.outputElement) this.addOutputElement();
 		
 		this.outputElement.style.display = "block";
+		this.inputElement.style.display = "inline";
 		this.clearButton.className = "clear-button";
 	}
 }
