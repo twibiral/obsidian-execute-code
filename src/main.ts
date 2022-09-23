@@ -133,6 +133,8 @@ export default class ExecuteCodePlugin extends Plugin {
 	private getLanguageAlias(language: string) {
 		return language
 			.replace("javascript", "js")
+			.replace("typescript", "ts")
+			.replace("csharp", "cs")
 			.replace("bash", "shell");
 	}
 
