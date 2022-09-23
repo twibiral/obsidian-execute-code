@@ -26,6 +26,7 @@ export class Outputter extends EventEmitter {
 					this.outputElement.removeChild(child);
 			}
 		}
+		this.lastPrintElem = null;
 		this.hadPreviouslyPrinted = false;
 		this.lastPrinted = "";
 
