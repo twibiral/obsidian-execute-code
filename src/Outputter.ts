@@ -1,13 +1,20 @@
-export class Outputter {
+import { EventEmitter } from "events";
+
+
+export class Outputter extends EventEmitter {
 	codeBlockElement: HTMLElement;
 	outputElement: HTMLElement;
 	clearButton: HTMLButtonElement;
 	lastPrintElem: HTMLSpanElement;
 	lastPrinted: string;
 	
+	inputElement: HTMLInputElement;
+	
 	hadPreviouslyPrinted: boolean;
 
 	constructor (codeBlock: HTMLElement) {
+		super()
+		
 		this.codeBlockElement = codeBlock;
 		this.hadPreviouslyPrinted = false;
 	}
@@ -24,6 +31,8 @@ export class Outputter {
 
 		if (this.clearButton)
 			this.clearButton.className = "clear-button-disabled";
+			
+		this.closeInput();
 	}
 
 	delete() {
@@ -80,7 +89,28 @@ export class Outputter {
 		this.outputElement.classList.add("language-output");
 
 		this.outputElement.appendChild(hr);
+		this.addInputElement();
 		parentEl.appendChild(this.outputElement);
+	}
+	
+	private addInputElement() {
+		this.inputElement = document.createElement("input");
+		this.inputElement.classList.add("interactive-stdin");
+		this.inputElement.addEventListener("keypress", (e) => {
+			if (e.key == "Enter") {
+				this.processInput(this.inputElement.value + "\n");
+				this.inputElement.value = "";
+			}
+		})
+		
+		
+		this.outputElement.appendChild(this.inputElement);
+	}
+	
+	private processInput(input: string) {
+		this.addStdin().appendText(input);		
+		
+		this.emit("data", input);
 	}
 	
 	private addStdin(): HTMLSpanElement {

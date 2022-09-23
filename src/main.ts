@@ -551,9 +551,15 @@ export default class ExecuteCodePlugin extends Plugin {
 			outputter.writeErr(data.toString());
 		});
 
+		outputter.on("data", (data: string) => {
+			child.stdin.write(data);
+		});
+
 		child.on('close', (code) => {
 			button.className = runButtonClass;
 			new Notice(code === 0 ? "Done!" : "Error!");
+			
+			outputter.closeInput();
 
 			fs.promises.rm(fileName)
 				.catch((err) => {
