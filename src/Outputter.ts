@@ -2,24 +2,25 @@ export class Outputter {
 	codeBlockElement: HTMLElement;
 	outputElement: HTMLElement;
 	clearButton: HTMLButtonElement;
-	stdoutElem: HTMLSpanElement;
-	stderrElem: HTMLSpanElement;
-	stdoutText: string;
-	stderrText: string;
+	lastPrintElem: HTMLSpanElement;
+	lastPrinted: string;
+	
+	hadPreviouslyPrinted: boolean;
 
 	constructor (codeBlock: HTMLElement) {
 		this.codeBlockElement = codeBlock;
-		this.stdoutText = "";
-		this.stderrText = "";
+		this.hadPreviouslyPrinted = false;
 	}
 
 	clear() {
 		if (this.outputElement) {
-			this.stdoutElem.setText("");
-			this.stderrElem.setText("");
+			for (const child of Array.from(this.outputElement.children)) {
+				if (child instanceof HTMLSpanElement)
+					this.outputElement.removeChild(child);
+			}
 		}
-		this.stdoutText = "";
-		this.stderrText = "";
+		this.hadPreviouslyPrinted = false;
+		this.lastPrinted = "";
 
 		if (this.clearButton)
 			this.clearButton.className = "clear-button-disabled";
@@ -35,46 +36,24 @@ export class Outputter {
 		this.clear()
 	}
 
-	write(text: string) {
-		if (!this.outputElement) {
-			this.addOutputElement();
-		}
-
-		if (!this.clearButton) {
-			this.addClearButton();
-		}
-
-		this.stdoutText += text;
-
+	write(text: string) {		
 		// Keep output field and clear button invisible if no text was printed.
-		if (!this.stderrText && !this.stdoutText) return;
+		if(this.textPrinted(text)) {
+			this.addStdout().innerHTML += text;
 
-		this.stdoutElem.innerHTML = this.stdoutText;
-
-		// make visible again:
-		this.outputElement.style.display = "block";
-		this.clearButton.className = "clear-button";
+			// make visible again:
+			this.makeOutputVisible();
+		}
 	}
 
 	writeErr(text: string) {
-		if (!this.outputElement) {
-			this.addOutputElement();
-		}
-
-		if (!this.clearButton) {
-			this.addClearButton();
-		}
-
-		this.stderrText += text;
-
 		// Keep output field and clear button invisible if no text was printed.
-		if (!this.stderrText && !this.stdoutText) return;
+		if(this.textPrinted(text)) {
+			this.addStderr().appendText(text);
 
-		this.stderrElem.setText(this.stderrText);
-
-		// make visible again:
-		this.outputElement.style.display = "block";
-		this.clearButton.className = "clear-button";
+			// make visible again:
+			this.makeOutputVisible()
+		}
 	}
 
 	private getParentElement() {
@@ -100,15 +79,55 @@ export class Outputter {
 		this.outputElement = document.createElement("code");
 		this.outputElement.classList.add("language-output");
 
-		this.stdoutElem = document.createElement("span");
-		this.stdoutElem.addClass("stdout");
-
-		this.stderrElem = document.createElement("span");
-		this.stderrElem.addClass("stderr");
-
 		this.outputElement.appendChild(hr);
-		this.outputElement.appendChild(this.stdoutElem);
-		this.outputElement.appendChild(this.stderrElem);
 		parentEl.appendChild(this.outputElement);
+	}
+	
+	private addStderr(): HTMLSpanElement {
+		if (!this.outputElement) this.addOutputElement();
+		
+		if(this.lastPrintElem)
+			if (this.lastPrintElem.classList.contains("stderr")) return this.lastPrintElem;
+		
+		const stderrElem = document.createElement("span");
+		stderrElem.addClass("stderr");
+		
+		this.outputElement.appendChild(stderrElem);
+		
+		this.lastPrintElem = stderrElem;
+		
+		return stderrElem
+	}
+	
+	private addStdout(): HTMLSpanElement {
+		if (!this.outputElement) this.addOutputElement();
+		
+		if (this.lastPrintElem)
+			if(this.lastPrintElem.classList.contains("stdout")) return this.lastPrintElem;
+		
+		const stdoutElem = document.createElement("span");
+		stdoutElem.addClass("stdout");
+
+		this.outputElement.appendChild(stdoutElem);
+
+		this.lastPrintElem = stdoutElem;
+
+		return stdoutElem
+	}
+	private textPrinted(text: string) {
+		if(this.hadPreviouslyPrinted) return true;
+		
+		if(text == "") return false;
+		
+		this.hadPreviouslyPrinted = true;
+		return true;
+	}
+	
+	private makeOutputVisible() {
+		if (!this.clearButton) this.addClearButton();
+		if (!this.outputElement) this.addOutputElement();
+		
+		this.outputElement.style.display = "block";
+		this.clearButton.className = "clear-button";
 	}
 }
