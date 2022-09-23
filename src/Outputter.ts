@@ -83,36 +83,32 @@ export class Outputter {
 		parentEl.appendChild(this.outputElement);
 	}
 	
+	private addStdin(): HTMLSpanElement {
+		return this.addStreamSegmentElement("stdin");
+	}
+	
 	private addStderr(): HTMLSpanElement {
-		if (!this.outputElement) this.addOutputElement();
-		
-		if(this.lastPrintElem)
-			if (this.lastPrintElem.classList.contains("stderr")) return this.lastPrintElem;
-		
-		const stderrElem = document.createElement("span");
-		stderrElem.addClass("stderr");
-		
-		this.outputElement.appendChild(stderrElem);
-		
-		this.lastPrintElem = stderrElem;
-		
-		return stderrElem
+		return this.addStreamSegmentElement("stderr");
 	}
 	
 	private addStdout(): HTMLSpanElement {
+		return this.addStreamSegmentElement("stdout");
+	}
+	
+	private addStreamSegmentElement(streamId: "stderr" | "stdout" | "stdin"): HTMLSpanElement {
 		if (!this.outputElement) this.addOutputElement();
-		
+
 		if (this.lastPrintElem)
-			if(this.lastPrintElem.classList.contains("stdout")) return this.lastPrintElem;
-		
-		const stdoutElem = document.createElement("span");
-		stdoutElem.addClass("stdout");
+			if (this.lastPrintElem.classList.contains(streamId)) return this.lastPrintElem;
 
-		this.outputElement.appendChild(stdoutElem);
+		const stdElem = document.createElement("span");
+		stdElem.addClass(streamId);
 
-		this.lastPrintElem = stdoutElem;
+		this.outputElement.appendChild(stdElem);
 
-		return stdoutElem
+		this.lastPrintElem = stdElem;
+
+		return stdElem
 	}
 	private textPrinted(text: string) {
 		if(this.hadPreviouslyPrinted) return true;
