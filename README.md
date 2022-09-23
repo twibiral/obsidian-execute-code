@@ -31,11 +31,11 @@ define [global code injections](#global-code-injection-and-reusing-code-blocks).
     ```
 
 - TypeScript
-	- Requirements: Node.js installed then npm install typescript and ts-node.
-    ```ts
-    let message: string = 'Hello, World!';  
-    console.log(message);
-	```
+	- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`.
+    ```ts  
+    let message: string = 'Hello, World!';    
+    console.log(message);  
+   ```  
 
 - Lua
 	- Requirements: install lua and config lua path
@@ -44,10 +44,10 @@ define [global code injections](#global-code-injection-and-reusing-code-blocks).
 	```
 
 - CSharp
-	- Requirements: install dotnet core sdk and `dotnet tool install -g dotnet-script`, then config dotnet-script fullpath.
-    ```cs
-    Console.WriteLine("Hello, World!");
-	```
+	- Requirements: install dotnet core sdk and run in command line `dotnet tool install -g dotnet-script`, then config dotnet-script fullpath.
+    ```cs 
+    Console.WriteLine("Hello, World!");  
+   ```  
 
 - Python
 	- Requirements: Python is installed and the correct path is set in the settings.
