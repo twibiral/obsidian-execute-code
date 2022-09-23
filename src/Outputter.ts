@@ -40,9 +40,6 @@ export class Outputter extends EventEmitter {
 		if(this.outputElement)
 			this.outputElement.style.display = "none";
 
-		if(this.clearButton)
-			this.clearButton.className = "clear-button-disabled";
-
 		this.clear()
 	}
 
