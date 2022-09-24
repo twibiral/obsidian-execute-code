@@ -41,6 +41,16 @@ export class SettingsTab extends PluginSettingTab {
 					}
 					await this.plugin.saveSettings();
 				}));
+		new Setting(containerEl)
+			.setName('Allow Input')
+			.setDesc('Whether or not to include a stdin input box when running blocks. In order to apply changes to this, Obsidian must be refreshed. ')
+			.addToggle(text => text
+				.setValue(this.plugin.settings.allowInput)
+				.onChange(async (value) => {
+					console.log('Allow Input set to: ' + value);
+					this.plugin.settings.allowInput = value
+					await this.plugin.saveSettings();
+				}));
 
 		// TODO setting per language that requires main function if main function should be implicitly made or not, if not, non-main blocks will not have a run button
 

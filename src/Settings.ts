@@ -9,6 +9,7 @@ export type ExecutorSettingsLanguages = Exclude<typeof supportedLanguages[number
  */
 export interface ExecutorSettings {
 	timeout: number;
+	allowInput: boolean;
 	nodePath: string;
 	nodeArgs: string;
 	jsInject: string;
@@ -72,6 +73,7 @@ export interface ExecutorSettings {
  */
 export const DEFAULT_SETTINGS: ExecutorSettings = {
 	timeout: 10000,
+	allowInput: true,
 	nodePath: "node",
 	nodeArgs: "",
 	jsInject: "",
