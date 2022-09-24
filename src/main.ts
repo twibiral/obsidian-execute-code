@@ -214,7 +214,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
 					&& !parent.classList.contains(hasButtonClass)) { // unsupported language
-					const out = new Outputter(codeBlock);
+					const out = new Outputter(codeBlock, this.settings.allowInput);
 					parent.classList.add(hasButtonClass);
 					const button = this.createRunButton();
 					pre.appendChild(button);
@@ -574,9 +574,15 @@ export default class ExecuteCodePlugin extends Plugin {
 			outputter.writeErr(data.toString());
 		});
 
+		outputter.on("data", (data: string) => {
+			child.stdin.write(data);
+		});
+
 		child.on('close', (code) => {
 			button.className = runButtonClass;
 			new Notice(code === 0 ? "Done!" : "Error!");
+			
+			outputter.closeInput();
 
 			fs.promises.rm(fileName)
 				.catch((err) => {
