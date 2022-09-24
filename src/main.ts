@@ -355,21 +355,18 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				let transformedCode = await this.injectCode(srcCode, "ts");
-				console.debug(`runCodeInShell ${this.settings.tsPath} ${this.settings.tsArgs} ${"ts"}`)
 				this.runCodeInShell(transformedCode, out, button, this.settings.tsPath, this.settings.tsArgs, "ts");
 			});
 		} else if (language == "lua") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				let transformedCode = await this.injectCode(srcCode, "lua");
-				console.debug(`runCodeInShell ${this.settings.luaPath} ${this.settings.luaArgs} ${"lua"}`)
 				this.runCodeInShell(transformedCode, out, button, this.settings.luaPath, this.settings.luaArgs, "lua");
 			});
 		} else if (language == "cs") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				let transformedCode = await this.injectCode(srcCode, "lua");
-				console.log(`runCodeInShell ${this.settings.csPath} ${this.settings.csArgs} ${"cs"}`)
 				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, "csx");
 			});
 		}
@@ -494,6 +491,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	private runCodeInShell(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
 		new Notice("Running...");
 		const [tempFileName] = this.getTempFile(ext)
+		console.debug(`runCodeInShell ${cmd} ${cmdArgs} ${ext}`)
 		console.debug(`Execute ${cmd} ${cmdArgs} ${tempFileName}`);
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
