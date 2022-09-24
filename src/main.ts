@@ -1,4 +1,4 @@
-import {FileSystemAdapter, MarkdownRenderer, MarkdownView, Notice, Plugin} from 'obsidian';
+import {FileSystemAdapter, FileView, MarkdownRenderer, MarkdownView, Notice, Plugin} from 'obsidian';
 import * as fs from "fs";
 import * as os from "os"
 import * as child_process from "child_process";
@@ -41,7 +41,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		await this.loadSettings();
 		this.addSettingTab(new SettingsTab(this.app, this));
 
-		this.addRunButtons(document.body);
+		this.iterateOpenFilesAndAddRunButtons();
 		this.registerMarkdownPostProcessor((element, _context) => {
 			this.addRunButtons(element);
 		});
@@ -103,6 +103,19 @@ export default class ExecuteCodePlugin extends Plugin {
 	 */
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+	
+	/**
+	 * Adds run buttons to each open file. This is more robust and quicker than scanning
+	 * the entire document, even though it requires more iteration, because it doesn't
+	 * search the whole document.
+	 */
+	private iterateOpenFilesAndAddRunButtons() {
+		this.app.workspace.iterateRootLeaves(leaf => {
+			if (leaf.view instanceof FileView) {
+				this.addRunButtons(leaf.view.contentEl);
+			}
+		})
 	}
 
 	/**
