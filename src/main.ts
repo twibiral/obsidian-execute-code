@@ -231,7 +231,9 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				const srcCode = codeBlock.getText();
 				
-				const cannonicalLanguage = supportedLanguages.find((lang => language.contains(`language-${lang}`)));
+				const cannonicalLanguage = this.getLanguageAlias(
+					supportedLanguages.find((lang => language.contains(`language-${lang}`)))
+				) as LanguageId;
 
 				if (cannonicalLanguage // if the language is supported 
 					&& !parent.classList.contains(hasButtonClass)) { // & this block hasn't been buttonified already
