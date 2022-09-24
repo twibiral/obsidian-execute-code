@@ -23,6 +23,9 @@ export class Outputter extends EventEmitter {
 		this.hadPreviouslyPrinted = false;
 	}
 
+	/**
+	 * Clears the output log.
+	 */
 	clear() {
 		if (this.outputElement) {
 			for (const child of Array.from(this.outputElement.children)) {
@@ -40,6 +43,9 @@ export class Outputter extends EventEmitter {
 		this.closeInput();
 	}
 
+	/**
+	 * Hides the output and clears the log. Visually, restores the code block to its initial state.
+	 */
 	delete() {
 		if(this.outputElement)
 			this.outputElement.style.display = "none";
@@ -47,6 +53,10 @@ export class Outputter extends EventEmitter {
 		this.clear()
 	}
 
+	/**
+	 * Add a segment of stdout data to the outputter
+	 * @param text The stdout data in question
+	 */
 	write(text: string) {		
 		// Keep output field and clear button invisible if no text was printed.
 		if(this.textPrinted(text)) {
@@ -57,6 +67,10 @@ export class Outputter extends EventEmitter {
 		}
 	}
 
+	/**
+	 * Add a segment of stderr data to the outputter
+	 * @param text The stderr data in question
+	 */
 	writeErr(text: string) {
 		// Keep output field and clear button invisible if no text was printed.
 		if(this.textPrinted(text)) {
@@ -67,6 +81,9 @@ export class Outputter extends EventEmitter {
 		}
 	}
 
+	/**
+	 * Hide the input element. Stop accepting input from the user.
+	 */
 	closeInput() {		
 		if(this.inputElement)
 			this.inputElement.style.display = "none";
@@ -100,6 +117,9 @@ export class Outputter extends EventEmitter {
 		parentEl.appendChild(this.outputElement);
 	}
 	
+	/**
+	 * Add an interactive input element to the outputter
+	 */
 	private addInputElement() {
 		this.inputElement = document.createElement("input");
 		this.inputElement.classList.add("interactive-stdin");
@@ -114,6 +134,11 @@ export class Outputter extends EventEmitter {
 		this.outputElement.appendChild(this.inputElement);
 	}
 	
+	/**
+	 * Ensure that input from a user gets echoed to the outputter before being emitted to event subscribers.
+	 * 
+	 * @param input a line of input from the user. In most applications, should end with a newline.
+	 */
 	private processInput(input: string) {
 		this.addStdin().appendText(input);		
 		
@@ -132,6 +157,16 @@ export class Outputter extends EventEmitter {
 		return this.addStreamSegmentElement("stdout");
 	}
 	
+	/**
+	 * Creates a wrapper element for a segment of a standard stream. 
+	 * In order to intermingle the streams as they are output to, segments
+	 * are more effective than one-element-for-each. 
+	 * 
+	 * If the last segment was of the same stream, it will be returned instead.
+	 * 
+	 * @param streamId The standard stream's name (stderr, stdout, or stdin)
+	 * @returns the wrapper `span` element
+	 */
 	private addStreamSegmentElement(streamId: "stderr" | "stdout" | "stdin"): HTMLSpanElement {
 		if (!this.outputElement) this.addOutputElement();
 
@@ -150,6 +185,16 @@ export class Outputter extends EventEmitter {
 
 		return stdElem
 	}
+	
+	/**
+	 * Checks if either:
+	 * - this outputter has printed something before. 
+	 * - the given `text` is non-empty.
+	 * If `text` is non-empty, this function will assume that it gets printed later.
+	 * 
+	 * @param text Text which is to be printed
+	 * @returns Whether text has been printed or will be printed
+	 */
 	private textPrinted(text: string) {
 		if(this.hadPreviouslyPrinted) return true;
 		
@@ -159,6 +204,11 @@ export class Outputter extends EventEmitter {
 		return true;
 	}
 	
+	/**
+	 * Restores output elements after the outputter has been `delete()`d or `clear()`d. 
+	 * @see {@link delete()}
+	 * @see {@link clear()}
+	 */
 	private makeOutputVisible() {
 		if (!this.clearButton) this.addClearButton();
 		if (!this.outputElement) this.addOutputElement();
