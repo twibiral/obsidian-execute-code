@@ -4,7 +4,7 @@ import * as os from "os"
 import * as child_process from "child_process";
 
 import {Outputter} from "./Outputter";
-import type {ExecutorSettings, ExecutorSettingsLanguages} from "./Settings";
+import type {ExecutorSettings} from "./Settings";
 import {DEFAULT_SETTINGS} from "./Settings";
 import {SettingsTab} from "./SettingsTab";
 import {
@@ -20,11 +20,14 @@ import {
 // @ts-ignore
 import * as prolog from "tau-prolog";
 
-export const supportedLanguages = ["js", "javascript", "ts", "typescript", "cs", "csharp", "lua", "python", "cpp",
+const languageAliases = ["javascript", "typescript", "bash", "csharp"] as const;
+const cannonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
 	"prolog", "shell", "bash", "groovy", "r", "go", "rust", "java", "powershell", "kotlin"] as const;
+const supportedLanguages = [...languageAliases, ...cannonicalLanguages] as const;
 const languagePrefixes = ["run", "pre", "post"];
 
-type languageId = typeof supportedLanguages[number];
+type SupportedLanguage = typeof supportedLanguages[number];
+export type LanguageId = typeof cannonicalLanguages[number];
 
 const buttonText = "Run";
 
@@ -160,7 +163,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * @param _language The language of the code block.
 	 * @returns
 	 */
-	private async injectCode(srcCode: string, _language: ExecutorSettingsLanguages) {
+	private async injectCode(srcCode: string, _language: LanguageId) {
 		let prependSrcCode = "";
 		let appendSrcCode = "";
 
@@ -250,7 +253,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * @param button The button element to which the listener is added.
 	 * @param out The {@link Outputter} object that is used to display the output of the code.
 	 */
-	private addListenerToButton(language: languageId, srcCode: string, button: HTMLButtonElement, out: Outputter) {
+	private addListenerToButton(language: LanguageId, srcCode: string, button: HTMLButtonElement, out: Outputter) {
 		if (language == "js") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;

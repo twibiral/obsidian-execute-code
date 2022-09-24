@@ -1,7 +1,3 @@
-import {supportedLanguages} from "./main";
-
-
-export type ExecutorSettingsLanguages = Exclude<typeof supportedLanguages[number], "javascript">;
 
 
 /**

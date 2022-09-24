@@ -1,6 +1,6 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
-import ExecuteCodePlugin from "./main";
-import {ExecutorSettings, ExecutorSettingsLanguages} from "./Settings";
+import ExecuteCodePlugin, { LanguageId } from "./main";
+import {ExecutorSettings} from "./Settings";
 
 
 /**
@@ -453,7 +453,7 @@ export class SettingsTab extends PluginSettingTab {
 		return path
 	}
 
-	private makeInjectSetting(language: ExecutorSettingsLanguages, languageAlt: string) {
+	private makeInjectSetting(language: LanguageId, languageAlt: string) {
 		new Setting(this.containerEl)
 			.setName(`Inject ${languageAlt} code`)
 			.setDesc(`Code to add to the top of every ${languageAlt} code block before running.`)
