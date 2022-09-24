@@ -214,7 +214,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * @param element The parent element (i.e. the currently showed html page / note).
 	 */
 	private addRunButtons(element: HTMLElement) {
-		element.querySelectorAll("code")
+		Array.from(element.getElementsByTagName("code"))
 			.forEach((codeBlock: HTMLElement) => {
 				const language = codeBlock.className.toLowerCase();
 				if (!language || !language.contains("language-"))
