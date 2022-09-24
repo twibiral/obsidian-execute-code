@@ -24,6 +24,8 @@ export const supportedLanguages = ["js", "javascript", "ts", "typescript", "cs",
 	"prolog", "shell", "bash", "groovy", "r", "go", "rust", "java", "powershell", "kotlin"] as const;
 const languagePrefixes = ["run", "pre", "post"];
 
+type languageId = typeof supportedLanguages[number];
+
 const buttonText = "Run";
 
 const runButtonClass = "run-code-button";
@@ -225,14 +227,16 @@ export default class ExecuteCodePlugin extends Plugin {
 				const parent = pre.parentElement as HTMLDivElement;
 
 				const srcCode = codeBlock.getText();
+				
+				const cannonicalLanguage = supportedLanguages.find((lang => language.contains(`language-${lang}`)));
 
-				if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
-					&& !parent.classList.contains(hasButtonClass)) { // unsupported language
+				if (cannonicalLanguage // if the language is supported 
+					&& !parent.classList.contains(hasButtonClass)) { // & this block hasn't been buttonified already
 					const out = new Outputter(codeBlock, this.settings.allowInput);
 					parent.classList.add(hasButtonClass);
 					const button = this.createRunButton();
 					pre.appendChild(button);
-					this.addListenerToButton(language, srcCode, button, out);
+					this.addListenerToButton(cannonicalLanguage, srcCode, button, out);
 				}
 			});
 	}
@@ -246,8 +250,8 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * @param button The button element to which the listener is added.
 	 * @param out The {@link Outputter} object that is used to display the output of the code.
 	 */
-	private addListenerToButton(language: string, srcCode: string, button: HTMLButtonElement, out: Outputter) {
-		if (language.contains("language-js") || language.contains("language-javascript")) {
+	private addListenerToButton(language: languageId, srcCode: string, button: HTMLButtonElement, out: Outputter) {
+		if (language == "js") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				let transformedCode = await this.injectCode(srcCode, "js");
@@ -255,14 +259,14 @@ export default class ExecuteCodePlugin extends Plugin {
 				this.runCode(transformedCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
 			});
 
-		} else if (language.contains("language-java")) {
+		} else if (language == "java") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await this.injectCode(srcCode, "java");
 				this.runCode(transformedCode, out, button, this.settings.javaPath, this.settings.javaArgs, this.settings.javaFileExtension);
 			});
 
-		} else if (language.contains("language-python")) {
+		} else if (language == "python") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 
@@ -274,21 +278,21 @@ export default class ExecuteCodePlugin extends Plugin {
 				this.runCode(transformedCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
 			});
 
-		} else if (language.contains("language-shell") || language.contains("language-bash")) {
+		} else if (language == "shell") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await this.injectCode(srcCode, "shell");
 				this.runCodeInShell(transformedCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
 			});
 
-		} else if (language.contains("language-powershell")) {
+		} else if (language == "powershell") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await this.injectCode(srcCode, "powershell");
 				this.runCodeInShell(transformedCode, out, button, this.settings.powershellPath, this.settings.powershellArgs, this.settings.powershellFileExtension);
 			});
 
-		} else if (language.contains("language-cpp")) {
+		} else if (language == "cpp") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				out.clear();
@@ -297,7 +301,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonClass;
 			});
 
-		} else if (language.contains("language-prolog")) {
+		} else if (language == "prolog") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				out.clear();
@@ -310,21 +314,21 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonClass;
 			});
 
-		} else if (language.contains("language-groovy")) {
+		} else if (language == "groovy") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await this.injectCode(srcCode, "groovy");
 				this.runCodeInShell(transformedCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
 			});
 
-		} else if (language.contains("language-rust")) {
+		} else if (language == "rust") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await this.injectCode(srcCode, "rust");
 				this.runCode(transformedCode, out, button, this.settings.cargoPath, this.settings.cargoArgs, this.settings.rustFileExtension);
 			});
 
-		} else if (language.contains("language-r")) {
+		} else if (language == "r") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 
@@ -334,34 +338,34 @@ export default class ExecuteCodePlugin extends Plugin {
 				this.runCode(transformedCode, out, button, this.settings.RPath, this.settings.RArgs, "R");
 			});
 
-		} else if (language.contains("language-go")) {
+		} else if (language == "go") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await this.injectCode(srcCode, "go");
 				this.runCode(transformedCode, out, button, this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension);
 			});
 
-		} else if (language.contains("language-kotlin")) {
+		} else if (language == "kotlin") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await this.injectCode(srcCode, "kotlin");
 				this.runCodeInShell(transformedCode, out, button, this.settings.kotlinPath, this.settings.kotlinArgs, this.settings.kotlinFileExtension);
 			});
-		} else if (language.contains("language-ts")) {
+		} else if (language == "ts") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				let transformedCode = await this.injectCode(srcCode, "ts");
 				console.debug(`runCodeInShell ${this.settings.tsPath} ${this.settings.tsArgs} ${"ts"}`)
 				this.runCodeInShell(transformedCode, out, button, this.settings.tsPath, this.settings.tsArgs, "ts");
 			});
-		} else if (language.contains("language-lua")) {
+		} else if (language == "lua") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				let transformedCode = await this.injectCode(srcCode, "lua");
 				console.debug(`runCodeInShell ${this.settings.luaPath} ${this.settings.luaArgs} ${"lua"}`)
 				this.runCodeInShell(transformedCode, out, button, this.settings.luaPath, this.settings.luaArgs, "lua");
 			});
-		} else if (language.contains("language-cs")) {
+		} else if (language == "cs") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				let transformedCode = await this.injectCode(srcCode, "lua");
