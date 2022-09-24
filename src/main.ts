@@ -20,8 +20,8 @@ import {
 // @ts-ignore
 import * as prolog from "tau-prolog";
 
-export const supportedLanguages = ["js", "javascript", "ts", "typescript", "cs", "csharp", "lua", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust",
-	"java", "powershell", "kotlin"] as const;
+export const supportedLanguages = ["js", "javascript", "ts", "typescript", "cs", "csharp", "lua", "python", "cpp",
+	"prolog", "shell", "bash", "groovy", "r", "go", "rust", "java", "powershell", "kotlin"] as const;
 const languagePrefixes = ["run", "pre", "post"];
 
 const buttonText = "Run";
