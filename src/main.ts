@@ -43,7 +43,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 		this.iterateOpenFilesAndAddRunButtons();
 		this.registerMarkdownPostProcessor((element, _context) => {
-			this.addRunButtons(element);
+			this.addRunButtons(element, _context.sourcePath);
 		});
 
 		// live preview renderers
@@ -113,7 +113,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	private iterateOpenFilesAndAddRunButtons() {
 		this.app.workspace.iterateRootLeaves(leaf => {
 			if (leaf.view instanceof FileView) {
-				this.addRunButtons(leaf.view.contentEl);
+				this.addRunButtons(leaf.view.contentEl, leaf.view.file.path);
 			}
 		})
 	}
@@ -212,8 +212,9 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * utilizes a language that is supported by this plugin.
 	 *
 	 * @param element The parent element (i.e. the currently showed html page / note).
+	 * @param file An identifier for the currently showed note
 	 */
-	private addRunButtons(element: HTMLElement) {
+	private addRunButtons(element: HTMLElement, file: string) {
 		Array.from(element.getElementsByTagName("code"))
 			.forEach((codeBlock: HTMLElement) => {
 				const language = codeBlock.className.toLowerCase();
