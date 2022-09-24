@@ -22,155 +22,175 @@ define [global code injections](#global-code-injection-and-reusing-code-blocks).
 
 - JavaScript
 	- Requirements: Node.js is installed and the correct path is set in the settings.
-    ```javascript
-    function hello(name){
-        console.log(`Hello ${name}!`);
-    }
-	
-    hello("Bob")
-    ```
+
+```javascript
+function hello(name) {
+	console.log(`Hello ${name}!`);
+}
+
+hello("Bob")
+```
 
 - TypeScript
-	- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`.
-    ```ts  
-    let message: string = 'Hello, World!';    
-    console.log(message);  
-   ```  
+	- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`
+	  . (`-g` means global install)
+	- Problems: If you use your global node.js installation and it doesn't work try to set your `ts-node` path in the
+	  settings to `npx ts-node` instead of `ts-node`.
 
-- Lua
-	- Requirements: install lua and config lua path
-    ```lua
-    print('Hello, World!')
-	```
+```ts  
+let message: string = 'Hello, World!';
+console.log(message);  
+```
 
 - CSharp
-	- Requirements: install dotnet core sdk and run in command line `dotnet tool install -g dotnet-script`, then config dotnet-script fullpath.
-    ```cs 
-    Console.WriteLine("Hello, World!");  
-   ```  
+	- Requirements: install dotnet core sdk and run in command line `dotnet tool install -g dotnet-script`, then config
+	  dotnet-script fullpath.
+
+```cs 
+Console.WriteLine("Hello, World!");  
+```  
 
 - Python
 	- Requirements: Python is installed and the correct path is set in the settings.
-    ```python
-    def hello(name):
-        print("Hello", name)
 
-    if __name__ == "__main__":
-        hello("Eve")
-    ```
+```python
+def hello(name):
+	print("Hello", name)
+
+if __name__ == "__main__":
+	hello("Eve")
+```
 
 	- Plots with matplotlib/seaborn are embedded in the note by default. You can turn this off in the settings.
-    ```python
-    import seaborn as sns
-    import matplotlib.pyplot as plt
-    sns.set_style("darkgrid")
-    iris = sns.load_dataset('iris')
-    sns.FacetGrid(iris, hue ="species",
-        height = 5).map(plt.scatter,
-        'sepal_length',
-        'petal_length').add_legend()
 
-    plt.show()
-	```
-  ![Example of an embedded plot.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/plotting_example.png?raw=true)
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+sns.set_style("darkgrid")
+iris = sns.load_dataset('iris')
+sns.FacetGrid(iris, hue ="species", height = 5)
+			  .map(plt.scatter, 'sepal_length', 'petal_length')
+			  .add_legend()
+
+plt.show()
+```
+
+![Example of an embedded plot.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/plotting_example.png?raw=true)
 
 - R
 	- Requirements: R is installed and the correct path is set in the settings.
-    ```r
-    hello <- function(name){
-        print(paste("Hello", name, sep = " "))
-    }
-	
-    hello("Bob")
-    ```
+
+```r
+hello <- function(name){
+	print(paste("Hello", name, sep = " "))
+}
+
+hello("Bob")
+```
 	- Plots can be embedded in the note by default. You can turn this off in the settings.
-    ```r
-	y = c(12, 15, 28, 17, 18)
-	x = 1:length(y)
-	plot(x, y, type="l")
-    ```
+
+```r
+y = c(12, 15, 28, 17, 18)
+x = 1:length(y)
+plot(x, y, type="l")
+```
 
 - Java
 	- Requirements: Java **11 or higher** is installed and the correct path is set in the settings.
-  ```java
-  public class HelloWorld {
-	  public static void main(String[] args) {
-		  System.out.println("Hello World!");
-	  }
-  }
-  ```
 
-- CPP
+```java
+public class HelloWorld {
+	public static void main(String[] args) {
+		System.out.println("Hello World!");
+	}
+}
+ ```
+
+- Lua
+	- Requirements: install lua and config lua path
+
+```lua
+print('Hello, World!')
+```
+
+- C++
 	- Requirements: [Cling](https://github.com/root-project/cling) is installed and correct path is set in the settings.
 	- Every code block must contain a main function.
-    ```cpp
-    #include <iostream>
-	#include <string>
 
-    using namespace std;
+```cpp
+#include <iostream>
+#include <string>
 
-    void hello(string name) {
-        cout << "Hello " << name << "!\n";
-    }
+using namespace std;
 
-    int main() {
-        hello("Alice");
-        return 0;
-    }
-    ```
+void hello(string name) {
+	cout << "Hello " << name << "!\n";
+}
+
+int main() {
+	hello("Alice");
+	return 0;
+}
+```
 
 - Shell
-	- Requirements: Set the path to your preferred shell in the settings. Default is Bash
-    ```shell
-    echo "Hello World!"
-    ls -la
-    ```
+	- Requirements: Set the path to your preferred shell in the settings. Default is Bash. (Only on Linux and macOS)
+
+```shell
+echo "Hello World!"
+ls -la
+```
 
 - Powershell
-  ```powershell
-  echo "Hello World!"
-  ```
+	- Requirements: Set the path to your preferred shell in the settings. Default is Powershell. (Only on Windows)
+
+```powershell
+echo "Hello World!"
+ ```
 
 - Prolog
 	- Requirements: NO requirements, works with [Tau-Prolog](https://github.com/tau-prolog/tau-prolog).
 	- Important: Add your queries after a line "`% query`" in the code block like in the following
-    ```prolog
-    likes(john, pizza).
-    likes(john, cheese).
-    likes(jane, beer).
-	
-    % query
-    likes(john, X).
-    ```
+
+```prolog
+likes(john, pizza).
+likes(john, cheese).
+likes(jane, beer).
+
+% query
+likes(john, X).
+```
 
 - Groovy
 	- Requirements: Groovy is installed and the correct path is set in the settings.
-  ```groovy
-		def hello(name){  
-			 println "Hello ${name}!" 
-		}  
-		  
-		def helloClosure = {  
-		   println "Hello ${it}!" 
-		}  
-		  
-		hello("Bob")
-		  
-		helloClosure "Bob"
-	```
+
+```groovy
+def hello(name){  
+	println "Hello ${name}!" 
+}  
+  
+def helloClosure = {  
+	println "Hello ${it}!" 
+}  
+  
+hello("Bob")
+  
+helloClosure "Bob"
+```
 
 - Golang
 	- Requirements: Golang is installed and correct path is set in the settings(`go` binary is available).
 	- Every code block must contain package declaration and a main function.
-  ```go
-	  package main
+
+```go
+package main
+
+import "fmt"
   
-	  import "fmt"
-  
-	  func main() {
-		  fmt.Println("Hello World")
-	  }
-  ```
+func main() {
+	fmt.Println("Hello World")
+}
+ ```
 
 - Rust
 	- Requirements: Cargo is installed and correct path is set in the settings(`cargo` binary is available).
@@ -178,20 +198,23 @@ define [global code injections](#global-code-injection-and-reusing-code-blocks).
 	- Import statements and external crates is supported by `cargo-eval`. Read
 	  their [documentation](https://github.com/reitermarkus/cargo-eval).
 	- Every code block must a main function.
-  ```rust
-	  fn main() {
-		  println!("Hello World");
-	  }
-  ```
+
+```rust
+fn main() {
+	println!("Hello World");
+}
+ ```
+
 - Kotlin
 	- Requirements: Kotlin is installed and correct path is set in the settings.
-  ```kotlin
-  hello(name: String) {
-      println("Hello $name!")
-  }
 
-  hello("Bob")
-  ```
+```kotlin
+hello(name: String) {
+	println("Hello $name!")
+}
+
+hello("Bob")
+```
 
 - Squiggle: For Squiggle support look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle)
   by @jqhoogland.
@@ -215,8 +238,7 @@ The following magic commands are supported:
 - `@title`: Inserts the note title as string.
 - `@show(ImagePath)`: Displays an image at the given path in the note.
 - `@show(ImagePath, Width, Height)`: Displays an image at the given path in the note.
-- `@show(ImagePath, Width, Height, Alignment[center|left|right])`: Displays an image at the given path in the
-  note.
+- `@show(ImagePath, Width, Height, Alignment[center|left|right])`: Displays an image at the given path in the note.
 
 (`@show(...)` is only supported for JavaScript and Python yet.)
 
@@ -244,10 +266,10 @@ supports this in two ways:
 
 ### Global Injection in the Settings
 
-All languages have a 'global inject' option in the settings that allows defining code to be added to the top of
-every single code block on a per-language basis. Code reuse fully works with all languages, and all existing magic
-commands, including showing images, and inline plot outputs. This can be used to define e.g. often used functions or
-import your favourite packages or libraries.
+All languages have a 'global inject' option in the settings that allows defining code to be added to the top of every
+single code block on a per-language basis. Code reuse fully works with all languages, and all existing magic commands,
+including showing images, and inline plot outputs. This can be used to define e.g. often used functions or import your
+favourite packages or libraries.
 
 ### Note-wide Pre- and Post-Code Blocks
 
@@ -289,7 +311,6 @@ damage.
 
 - Find better way to show that the program is running (for example a loading sign).
 - Notebook Mode similar to Jupyter
-- Global Declarations that make method and variable definitions available to subsequent code blocks
 - Key combination to execute all code blocks in a file
 - Error warning when the execution fails (e.g. when python isn't installed)
 - Test if this plugin works in combination with dataview.
