@@ -8,9 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
-- Support for TypeScript
-- Support for C#
-- Support for Lua
+- Support for TypeScript (Thanks to @qiaogaojian)
+- Support for C# (Thanks to @qiaogaojian)
+- Support for Lua (Thanks to @qiaogaojian)
 
 ## [0.15.2] - 2022-09-21
 
