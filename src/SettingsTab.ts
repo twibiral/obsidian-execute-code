@@ -420,6 +420,7 @@ export class SettingsTab extends PluginSettingTab {
 				}));
 		this.makeInjectSetting("r", "R");
 
+
 		// ========== Kotlin ==========
 		containerEl.createEl('h3', {text: 'Kotlin Settings'});
 		new Setting(containerEl)
@@ -443,6 +444,31 @@ export class SettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 		this.makeInjectSetting("kotlin", "Kotlin");
+
+
+		// ========== Mathematica ==========
+		containerEl.createEl('h3', {text: 'Wolfram Mathematica Settings'});
+		new Setting(containerEl)
+			.setName('Mathematica path')
+			.setDesc('The path to your Mathematica installation.')
+			.addText(text => text
+				.setValue(this.plugin.settings.kotlinPath)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.mathematicaPath = sanitized;
+					console.log('Mathematica path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Mathematica arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.kotlinArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.mathematicaArgs = value;
+					console.log('Kotlin args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		this.makeInjectSetting("mathematica", "Mathematica");
 	}
 
 	private sanitizePath(path: string): string {

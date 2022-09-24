@@ -65,6 +65,10 @@ export interface ExecutorSettings {
 	kotlinArgs: string;
 	kotlinFileExtension: string;
 	kotlinInject: string;
+	mathematicaPath: string;
+	mathematicaArgs: string;
+	mathematicaFileExtension: string;
+	mathematicaInject: string;
 }
 
 
@@ -129,4 +133,8 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	kotlinArgs: "-script",
 	kotlinFileExtension: "kts",
 	kotlinInject: "",
+	mathematicaPath: "wolframscript",
+	mathematicaArgs: "",
+	mathematicaFileExtension: "wls",
+	mathematicaInject: ""
 }

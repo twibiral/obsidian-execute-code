@@ -20,8 +20,7 @@ import {
 // @ts-ignore
 import * as prolog from "tau-prolog";
 
-export const supportedLanguages = ["js", "javascript", "ts", "typescript", "cs", "csharp", "lua", "python", "cpp",
-	"prolog", "shell", "bash", "groovy", "r", "go", "rust", "java", "powershell", "kotlin"] as const;
+export const supportedLanguages = ["js", "javascript", "ts", "typescript", "cs", "csharp", "lua", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust", "java", "powershell", "kotlin", "wolfram", "mathematica", "nb", "wl"] as const;
 const languagePrefixes = ["run", "pre", "post"];
 
 const buttonText = "Run";
@@ -135,7 +134,10 @@ export default class ExecuteCodePlugin extends Plugin {
 			.replace("javascript", "js")
 			.replace("typescript", "ts")
 			.replace("csharp", "cs")
-			.replace("bash", "shell");
+			.replace("bash", "shell")
+			.replace("wolfram", "mathematica")
+			.replace("nb", "mathematica")
+			.replace("wl", "mathematica");
 	}
 
 	/**
@@ -353,6 +355,15 @@ export default class ExecuteCodePlugin extends Plugin {
 				let transformedCode = await this.injectCode(srcCode, "lua");
 				console.log(`runCodeInShell ${this.settings.csPath} ${this.settings.csArgs} ${"cs"}`)
 				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, "csx");
+			});
+			// "wolfram", "mathematica", "nb", "wl"
+		} else if (language.contains("language-wolfram") || language.contains("language-mathematica")
+			|| language.contains("language-nb") || language.contains("language-wl")) {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				let transformedCode = await this.injectCode(srcCode, "mathematica");
+				console.log(`runCodeInShell ${this.settings.mathematicaPath} ${this.settings.mathematicaArgs} ${"mathematica"}`)
+				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, this.settings.mathematicaFileExtension);
 			});
 		}
 	}
