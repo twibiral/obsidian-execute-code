@@ -19,6 +19,7 @@ import {
 
 // @ts-ignore
 import * as prolog from "tau-prolog";
+import NonInteractiveCodeExecutor from './executors/NonInteractiveCodeExecutor';
 
 const languageAliases = ["javascript", "typescript", "bash", "csharp"] as const;
 const cannonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
@@ -461,25 +462,9 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * @param ext The file extension of the temporary file. Should correspond to the language of the code. (e.g. py, ...)
 	 */
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
-		new Notice("Running...");
-		const [tempFileName, fileId] = this.getTempFile(ext)
-		console.debug(`Execute ${cmd} ${cmdArgs} ${tempFileName}`);
-		if (ext === "cpp")
-			codeBlockContent = codeBlockContent.replace(/main\(\)/g, `temp_${fileId}()`);
-		fs.promises.writeFile(tempFileName, codeBlockContent)
-			.then(() => {
-				const args = cmdArgs ? cmdArgs.split(" ") : [];
-				args.push(tempFileName);
-
-				console.debug(`Execute ${cmd} ${args.join(" ")}`);
-				const child = child_process.spawn(cmd, args);
-
-				this.handleChildOutput(child, outputter, button, tempFileName);
-			})
-			.catch((err) => {
-				this.notifyError(cmd, cmdArgs, tempFileName, err, outputter);
-				button.className = runButtonClass;
-			});
+		new NonInteractiveCodeExecutor(false).run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(()=> {
+			button.className = runButtonClass;
+		});
 	}
 
 	/**
@@ -494,25 +479,9 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * @param ext The file extension of the temporary file. Should correspond to the language of the code. (e.g. py, ...)
 	 */
 	private runCodeInShell(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
-		new Notice("Running...");
-		const [tempFileName] = this.getTempFile(ext)
-		console.debug(`runCodeInShell ${cmd} ${cmdArgs} ${ext}`)
-		console.debug(`Execute ${cmd} ${cmdArgs} ${tempFileName}`);
-
-		fs.promises.writeFile(tempFileName, codeBlockContent)
-			.then(() => {
-				const args = cmdArgs ? cmdArgs.split(" ") : [];
-				args.push(tempFileName);
-
-				console.debug(`Execute ${cmd} ${args.join(" ")}`);
-				const child = child_process.spawn(cmd, args, {shell: true});
-
-				this.handleChildOutput(child, outputter, button, tempFileName);
-			})
-			.catch((err) => {
-				this.notifyError(cmd, cmdArgs, tempFileName, err, outputter);
-				button.className = runButtonClass;
-			});
+		new NonInteractiveCodeExecutor(true).run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
+			button.className = runButtonClass;
+		});
 	}
 
 	/**
