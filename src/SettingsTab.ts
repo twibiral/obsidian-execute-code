@@ -68,6 +68,74 @@ export class SettingsTab extends PluginSettingTab {
 				}));
 		this.makeInjectSetting("js", "JavaScript");
 
+		// ========== TypeScript ==========
+		containerEl.createEl('h3', {text: 'TypeScript Settings'});
+		new Setting(containerEl)
+			.setName('ts-node path')
+			.addText(text => text
+				.setValue(this.plugin.settings.tsPath)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.tsPath = sanitized;
+					console.log('ts-node path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('TypeScript arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.tsArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.tsArgs = value;
+					console.log('TypeScript args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		this.makeInjectSetting("ts", "TypeScript");
+
+		// ========== Lua ==========
+		containerEl.createEl('h3', {text: 'Lua Settings'});
+		new Setting(containerEl)
+			.setName('lua path')
+			.addText(text => text
+				.setValue(this.plugin.settings.luaPath)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.luaPath = sanitized;
+					console.log('lua path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Lua arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.luaArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.luaArgs = value;
+					console.log('Lua args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		this.makeInjectSetting("lua", "Lua");
+
+		// ========== CSharp ==========
+		containerEl.createEl('h3', {text: 'CSharp Settings'});
+		new Setting(containerEl)
+			.setName('dotnet path')
+			.addText(text => text
+				.setValue(this.plugin.settings.csPath)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.csPath = sanitized;
+					console.log('dotnet path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('CSharp arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.csArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.csArgs = value;
+					console.log('CSharp args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		this.makeInjectSetting("cs", "CSharp");
 
 		// ========== Java ==========
 		containerEl.createEl('h3', {text: 'Java Settings'});

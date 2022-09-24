@@ -10,7 +10,7 @@ executed program now.
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
 The following [languages are supported](#supported-programming-languages): CPP, Golang, Groovy, Kotlin, Java,
-JavaScript, Prolog, Rust, Python, R, Shell & Powershell.
+JavaScript, TypeScript, Lua, CSharp, Prolog, Rust, Python, R, Shell & Powershell.
 
 Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands) that help you to
 access paths in obsidian or show images in your notes.
@@ -29,6 +29,25 @@ define [global code injections](#global-code-injection-and-reusing-code-blocks).
 	
     hello("Bob")
     ```
+
+- TypeScript
+	- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`.
+    ```ts  
+    let message: string = 'Hello, World!';    
+    console.log(message);  
+   ```  
+
+- Lua
+	- Requirements: install lua and config lua path
+    ```lua
+    print('Hello, World!')
+	```
+
+- CSharp
+	- Requirements: install dotnet core sdk and run in command line `dotnet tool install -g dotnet-script`, then config dotnet-script fullpath.
+    ```cs 
+    Console.WriteLine("Hello, World!");  
+   ```  
 
 - Python
 	- Requirements: Python is installed and the correct path is set in the settings.
