@@ -1,22 +1,16 @@
 # Obsidian Execute Code Plugin
 
-This plugin allows you to execute code snippets in code blocks in your notes. The plugin adds a 'run' button for code
-blocks in supported languages. Clicking them results in the code of the block being executed. After the execution the
-result of the execution is showed.
+This plugin allows you to execute code snippets in code blocks in your notes. The plugin adds a 'run' button for code blocks in supported languages. Clicking them results in the code of the block being executed. After the execution the result of the execution is showed.
 
-The result is shown only after the execution is finished. It is not possible to enter text on the command line into the
-executed program now.
+The result is shown only after the execution is finished. It is not possible to enter text on the command line into the executed program now.
 
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
-The following [languages are supported](#supported-programming-languages): CPP, Golang, Groovy, Kotlin, Java,
-JavaScript, TypeScript, Lua, CSharp, Prolog, Rust, Python, R, Shell & Powershell.
+The following [languages are supported](#supported-programming-languages): CPP, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lua, CSharp, Prolog, Rust, Python, R, Shell & Powershell.
 
-Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands) that help you to
-access paths in obsidian or show images in your notes.
+Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands) that help you to access paths in obsidian or show images in your notes.
 
-You can create code blocks that are executed before or after each code block of the same language and
-define [global code injections](#global-code-injection-and-reusing-code-blocks).
+You can create code blocks that are executed before or after each code block of the same language and define [global code injections](#global-code-injection-and-reusing-code-blocks).
 
 ## Supported programming languages
 
@@ -32,10 +26,8 @@ hello("Bob")
 ```
 
 - TypeScript
-	- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`
-	  . (`-g` means global install)
-	- Problems: If you use your global node.js installation and it doesn't work try to set your `ts-node` path in the
-	  settings to `npx ts-node` instead of `ts-node`.
+	- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`. (`-g` means global install)
+	- Problems: If you use your global node.js installation and it doesn't work try to set your `ts-node` path in the settings to `npx ts-node` instead of `ts-node`.
 
 ```ts  
 let message: string = 'Hello, World!';
@@ -43,8 +35,7 @@ console.log(message);
 ```
 
 - CSharp
-	- Requirements: install dotnet core sdk and run in command line `dotnet tool install -g dotnet-script`, then config
-	  dotnet-script fullpath.
+	- Requirements: install dotnet core sdk and run in command line `dotnet tool install -g dotnet-script`, then config dotnet-script fullpath.
 
 ```cs 
 Console.WriteLine("Hello, World!");  
@@ -216,8 +207,7 @@ hello(name: String) {
 hello("Bob")
 ```
 
-- Squiggle: For Squiggle support look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle)
-  by @jqhoogland.
+- Squiggle: For Squiggle support look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle) by @jqhoogland.
 
 Support for the following is planned:
 
@@ -228,8 +218,7 @@ Open for suggestions.
 
 ## Magic Commands
 
-Magic commands are some meta commands that can be used in the code block. They are processed by the plugin before the
-source code is executed.
+Magic commands are some meta commands that can be used in the code block. They are processed by the plugin before the source code is executed.
 
 The following magic commands are supported:
 
@@ -246,8 +235,7 @@ The following magic commands are supported:
 
 ## Running in Preview
 
-Adding `run-` before the language name in the code blocks (as in the example below) renders the code block in the
-preview already.
+Adding `run-` before the language name in the code blocks (as in the example below) renders the code block in the preview already.
 This allows you to execute the code in the preview.
 
 ```
@@ -261,15 +249,11 @@ print("Hello", name)
 
 ## Global Code Injection and Reusing Code Blocks
 
-Sometimes it is helpful to have code that is executed before or after each other block of the same language. This plugin
-supports this in two ways:
+Sometimes it is helpful to have code that is executed before or after each other block of the same language. This plugin supports this in two ways:
 
 ### Global Injection in the Settings
 
-All languages have a 'global inject' option in the settings that allows defining code to be added to the top of every
-single code block on a per-language basis. Code reuse fully works with all languages, and all existing magic commands,
-including showing images, and inline plot outputs. This can be used to define e.g. often used functions or import your
-favourite packages or libraries.
+All languages have a 'global inject' option in the settings that allows defining code to be added to the top of every single code block on a per-language basis. Code reuse fully works with all languages, and all existing magic commands, including showing images, and inline plot outputs. This can be used to define e.g. often used functions or import your favourite packages or libraries.
 
 ### Note-wide Pre- and Post-Code Blocks
 
@@ -284,13 +268,11 @@ This code block is added before each python block you define below in the note a
 
 `Post` blocks work the same way but the code in post blocks is executed _after_ your other code blocks.
 
-Pre-/Post-blocks will only apply to code blocks defined below them, and will only apply to code blocks from the same
-language.
+Pre-/Post-blocks will only apply to code blocks defined below them, and will only apply to code blocks from the same language.
 
 ## Installation
 
-In your vault go to Settings > Community plugins > Browse and search for "Execute Code". Select the plugin, install it
-and activate it.
+In your vault go to Settings > Community plugins > Browse and search for "Execute Code". Select the plugin, install it and activate it.
 
 or
 
@@ -298,13 +280,11 @@ Follow [this link](https://obsidian.md/plugins?search=execute%20code#) and click
 
 ## Warning
 
-Do not execute code from sources you don't know or code you don't understand. Executing code can cause irreparable
-damage.
+Do not execute code from sources you don't know or code you don't understand. Executing code can cause irreparable damage.
 
 ## Known Problems
 
-- Missing when `run` button after switching the theme: Try to close and reopen your notes and wait for a few minutes. It
-  seems like obsidian doesn't call the postprocessors after the theme switch.
+- Missing when `run` button after switching the theme: Try to close and reopen your notes and wait for a few minutes. It seems like obsidian doesn't call the postprocessors after the theme switch.
 - Pre- / Post-blocks may not be executed if the file contains duplicate code blocks.
 
 ## Future Work
