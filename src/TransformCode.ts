@@ -24,7 +24,11 @@ interface CodeBlockArgs {
 function getLanguageAlias(language: string) {
 	return language
 		.replace("javascript", "js")
-		.replace("bash", "shell") as ExecutorSettingsLanguages;
+		.replace("typescript", "ts")
+		.replace("csharp", "cs")
+		.replace("wolfram", "mathematica")
+		.replace("nb", "mathematica")
+		.replace("wl", "mathematica") as ExecutorSettingsLanguages;
 }
 
 /**
