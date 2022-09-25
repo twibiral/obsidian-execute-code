@@ -238,33 +238,37 @@ export default class ExecuteCodePlugin extends Plugin {
 				const transformedCode = await new CodeInjector(this.app, this.settings, "kotlin").injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.kotlinPath, this.settings.kotlinArgs, this.settings.kotlinFileExtension);
 			});
+			
 		} else if (language.contains("language-ts")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				let transformedCode = await this.injectCode(srcCode, "ts");
+				const transformedCode = await new CodeInjector(this.app, this.settings, "ts").injectCode(srcCode);
 				console.debug(`runCodeInShell ${this.settings.tsPath} ${this.settings.tsArgs} ${"ts"}`)
 				this.runCodeInShell(transformedCode, out, button, this.settings.tsPath, this.settings.tsArgs, "ts");
 			});
+
 		} else if (language.contains("language-lua")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				let transformedCode = await this.injectCode(srcCode, "lua");
+				const transformedCode = await new CodeInjector(this.app, this.settings, "lua").injectCode(srcCode);
 				console.debug(`runCodeInShell ${this.settings.luaPath} ${this.settings.luaArgs} ${"lua"}`)
 				this.runCodeInShell(transformedCode, out, button, this.settings.luaPath, this.settings.luaArgs, "lua");
 			});
+
 		} else if (language.contains("language-cs")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				let transformedCode = await this.injectCode(srcCode, "lua");
+				const transformedCode = await new CodeInjector(this.app, this.settings, "cs").injectCode(srcCode);
 				console.log(`runCodeInShell ${this.settings.csPath} ${this.settings.csArgs} ${"cs"}`)
 				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, "csx");
 			});
-			// "wolfram", "mathematica", "nb", "wl"
+
+		// "wolfram", "mathematica", "nb", "wl"
 		} else if (language.contains("language-wolfram") || language.contains("language-mathematica")
 			|| language.contains("language-nb") || language.contains("language-wl")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				let transformedCode = await this.injectCode(srcCode, "mathematica");
+				const transformedCode = await new CodeInjector(this.app, this.settings, "mathematica").injectCode(srcCode);
 				console.log(`runCodeInShell ${this.settings.mathematicaPath} ${this.settings.mathematicaArgs} ${"mathematica"}`)
 				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, this.settings.mathematicaFileExtension);
 			});
