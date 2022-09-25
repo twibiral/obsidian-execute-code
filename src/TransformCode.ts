@@ -1,7 +1,7 @@
 import {App, MarkdownView, Notice} from "obsidian";
 import {insertNotePath, insertNoteTitle, insertVaultPath} from "./Magic";
 import {getVaultVariables} from "./Vault";
-import type {ExecutorSettings, ExecutorSettingsLanguages} from "./Settings";
+import type {ExecutorSettings, ExecutorSettingsLanguage as ExecutorSettingsLanguage} from "./Settings";
 
 /**
  * Arguments for code blocks, specified next to the language identifier as JSON
@@ -28,7 +28,7 @@ function getLanguageAlias(language: string) {
 		.replace("csharp", "cs")
 		.replace("wolfram", "mathematica")
 		.replace("nb", "mathematica")
-		.replace("wl", "mathematica") as ExecutorSettingsLanguages;
+		.replace("wl", "mathematica") as ExecutorSettingsLanguage;
 }
 
 /**
@@ -86,7 +86,7 @@ function getCodeBlockLanguage(firstLineOfCode: string) {
 export class CodeInjector {
 	private app: App;
 	private settings: ExecutorSettings;
-	private language: ExecutorSettingsLanguages;
+	private language: ExecutorSettingsLanguage;
 
 	private prependSrcCode = "";
 	private appendSrcCode = "";
@@ -101,7 +101,7 @@ export class CodeInjector {
 	 * @param settings The current app settings.
 	 * @param language The language of the code block e.g. python, js, cpp.
 	 */
-	constructor(app: App, settings: ExecutorSettings, language: ExecutorSettingsLanguages) {
+	constructor(app: App, settings: ExecutorSettings, language: ExecutorSettingsLanguage) {
 		this.app = app;
 		this.settings = settings;
 		this.language = language;
@@ -133,7 +133,7 @@ export class CodeInjector {
 	 * @param language The programming language of the code block being run
 	 * @returns 
 	 */
-	private async parseFile(fileContents: string, srcCode: string, language: ExecutorSettingsLanguages) {
+	private async parseFile(fileContents: string, srcCode: string, language: ExecutorSettingsLanguage) {
 		let currentArgs: CodeBlockArgs = {};
 		let insideCodeBlock = false;
 		let isLanguageEqual = false;

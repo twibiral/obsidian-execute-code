@@ -1,7 +1,7 @@
 import {supportedLanguages} from "./main";
 
 
-export type ExecutorSettingsLanguages = Exclude<typeof supportedLanguages[number], "javascript">;
+export type ExecutorSettingsLanguage = Exclude<typeof supportedLanguages[number], "javascript">;
 
 
 /**
