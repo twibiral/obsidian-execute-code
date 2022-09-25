@@ -1,6 +1,7 @@
 import {App, MarkdownView, Notice} from "obsidian";
 import {insertNotePath, insertNoteTitle, insertVaultPath} from "./Magic";
 import {getVaultVariables} from "./Vault";
+import * as JSON5 from "json5";
 import type {ExecutorSettings, ExecutorSettingsLanguage as ExecutorSettingsLanguage} from "./Settings";
 
 /**
@@ -10,9 +11,9 @@ import type {ExecutorSettings, ExecutorSettingsLanguage as ExecutorSettingsLangu
  */
 interface CodeBlockArgs {
 	label?: string;
-	import?: string[];
+	import?: string | string[];
 	export?: "pre" | "post";
-	ignoreExports?: ("pre" | "post" | "global")[] | "all";
+	ignore?: (CodeBlockArgs["export"] | "global")[] | CodeBlockArgs["export"] | "global" | "all";
 }
 
 /**
@@ -62,7 +63,17 @@ function getArgs(firstLineOfCode: string): CodeBlockArgs {
 	if (!firstLineOfCode.contains("{") && !firstLineOfCode.contains("}"))
 		return {};
 	try {
-		return JSON.parse(`{${firstLineOfCode.substring(firstLineOfCode.indexOf("{") + 1)}`);
+		let args = firstLineOfCode.substring(firstLineOfCode.indexOf("{") + 1).trim();
+		// Transform custom syntax to JSON5
+		args = args.replace(/=/g, ":");
+		// Handle unnamed export arg - either pre / post at the beginning of the args without any arg name
+		if (args.startsWith("pre"))
+			args = `{export: "pre"${args.substring(args.indexOf("pre") + 3)}`;
+		else if (args.startsWith("post"))
+			args = `{export: "post"${args.substring(args.indexOf("post") + 4)}`;
+		else
+			args = `{${args}`;
+		return JSON5.parse(args);
 	}
 	catch (err) {
 		new Notice(`Failed to parse code block args:\n${err}`);
@@ -114,13 +125,22 @@ export class CodeInjector {
 	 * @returns If an error occurred
 	 */
 	private async handleNamedImports(namedImports: CodeBlockArgs['import']) {
-		for (const namedImport of namedImports) {
+		const handleNamedImport = (namedImport: string) => {
 			// Named export doesn't exist
 			if (!this.namedExports.hasOwnProperty(namedImport)) {
 				new Notice(`Named export ${namedImport} does not exist but was imported`);
 				return true;
 			}
 			this.namedImportSrcCode += `${this.namedExports[namedImport]}\n`;
+			return false;
+		}
+		// Single import
+		if (!Array.isArray(namedImports))
+			return handleNamedImport(namedImports);
+		// Multiple imports
+		for (const namedImport of namedImports) {
+			const err = handleNamedImport(namedImport);
+			if (err) return true;
 		}
 		return false;
 	}
@@ -213,18 +233,23 @@ export class CodeInjector {
 		this.parseFile(activeView.data, srcCode, language);
 		
 		const realLanguage = /[^-]*$/.exec(language)[0];
+		const globalInject = this.settings[`${realLanguage}Inject` as keyof ExecutorSettings];
 		let injectedCode = `${this.namedImportSrcCode}\n${srcCode}`;
-		if (!this.mainArgs.ignoreExports)
-			injectedCode = `${this.settings[`${realLanguage}Inject` as keyof ExecutorSettings]}\n${this.prependSrcCode}\n${injectedCode}\n${this.appendSrcCode}`;
-		else if (this.mainArgs.ignoreExports !== "all") {
-			if (!this.mainArgs.ignoreExports.contains("pre"))
-				injectedCode = `${this.prependSrcCode}\n${injectedCode}`;
-			if (!this.mainArgs.ignoreExports.contains("post"))
-				injectedCode = `${injectedCode}\n${this.appendSrcCode}`;
-			if (!this.mainArgs.ignoreExports.contains("global"))
-				injectedCode = `${this.settings[`${realLanguage}Inject` as keyof ExecutorSettings]}\n${injectedCode}`;
+		if (!this.mainArgs.ignore)
+			injectedCode = `${globalInject}\n${this.prependSrcCode}\n${injectedCode}\n${this.appendSrcCode}`;
+		else {
+			// Handle single ignore
+			if (!Array.isArray(this.mainArgs.ignore) && this.mainArgs.ignore !== "all")
+				this.mainArgs.ignore = [this.mainArgs.ignore];
+			if (this.mainArgs.ignore !== "all") {
+				if (!this.mainArgs.ignore.contains("pre"))
+					injectedCode = `${this.prependSrcCode}\n${injectedCode}`;
+				if (!this.mainArgs.ignore.contains("post"))
+					injectedCode = `${injectedCode}\n${this.appendSrcCode}`;
+				if (!this.mainArgs.ignore.contains("global"))
+					injectedCode = `${globalInject}\n${injectedCode}`;
+			}
 		}
-	
 		return transformCode(this.app, injectedCode);
 	}	
 }
