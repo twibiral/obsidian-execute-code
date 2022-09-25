@@ -9,9 +9,19 @@ export type ExecutorSettingsLanguages = Exclude<typeof supportedLanguages[number
  */
 export interface ExecutorSettings {
 	timeout: number;
+	allowInput: boolean;
 	nodePath: string;
 	nodeArgs: string;
 	jsInject: string;
+	tsPath: string;
+	tsArgs: string;
+	tsInject: string;
+	luaPath: string;
+	luaArgs: string;
+	luaInject: string;
+	csPath: string;
+	csArgs: string;
+	csInject: string;
 	pythonPath: string;
 	pythonArgs: string;
 	pythonEmbedPlots: boolean;
@@ -55,6 +65,10 @@ export interface ExecutorSettings {
 	kotlinArgs: string;
 	kotlinFileExtension: string;
 	kotlinInject: string;
+	mathematicaPath: string;
+	mathematicaArgs: string;
+	mathematicaFileExtension: string;
+	mathematicaInject: string;
 }
 
 
@@ -63,9 +77,19 @@ export interface ExecutorSettings {
  */
 export const DEFAULT_SETTINGS: ExecutorSettings = {
 	timeout: 10000,
+	allowInput: true,
 	nodePath: "node",
 	nodeArgs: "",
 	jsInject: "",
+	tsPath: "ts-node",
+	tsArgs: "",
+	tsInject: "",
+	luaPath: "lua",
+	luaArgs: "",
+	luaInject: "",
+	csPath: "dotnet-script",
+	csArgs: "",
+	csInject: "",
 	pythonPath: "python",
 	pythonArgs: "",
 	pythonEmbedPlots: true,
@@ -109,4 +133,8 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	kotlinArgs: "-script",
 	kotlinFileExtension: "kts",
 	kotlinInject: "",
+	mathematicaPath: "wolframscript",
+	mathematicaArgs: "",
+	mathematicaFileExtension: "wls",
+	mathematicaInject: ""
 }

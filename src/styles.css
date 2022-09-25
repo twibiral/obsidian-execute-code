@@ -50,3 +50,7 @@ code.language-output hr {
     font-family: monospace;
     resize: vertical; 
 }
+
+input.interactive-stdin {
+    font: inherit;
+}

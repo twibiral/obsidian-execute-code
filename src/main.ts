@@ -119,7 +119,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				if (supportedLanguages.some((lang) => language.contains(`language-${lang}`))
 					&& !parent.classList.contains(hasButtonClass)) { // unsupported language
-					const out = new Outputter(codeBlock);
+					const out = new Outputter(codeBlock, this.settings.allowInput);
 					parent.classList.add(hasButtonClass);
 					const button = this.createRunButton();
 					pre.appendChild(button);
@@ -237,6 +237,36 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, "kotlin").injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.kotlinPath, this.settings.kotlinArgs, this.settings.kotlinFileExtension);
+			});
+		} else if (language.contains("language-ts")) {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				let transformedCode = await this.injectCode(srcCode, "ts");
+				console.debug(`runCodeInShell ${this.settings.tsPath} ${this.settings.tsArgs} ${"ts"}`)
+				this.runCodeInShell(transformedCode, out, button, this.settings.tsPath, this.settings.tsArgs, "ts");
+			});
+		} else if (language.contains("language-lua")) {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				let transformedCode = await this.injectCode(srcCode, "lua");
+				console.debug(`runCodeInShell ${this.settings.luaPath} ${this.settings.luaArgs} ${"lua"}`)
+				this.runCodeInShell(transformedCode, out, button, this.settings.luaPath, this.settings.luaArgs, "lua");
+			});
+		} else if (language.contains("language-cs")) {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				let transformedCode = await this.injectCode(srcCode, "lua");
+				console.log(`runCodeInShell ${this.settings.csPath} ${this.settings.csArgs} ${"cs"}`)
+				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, "csx");
+			});
+			// "wolfram", "mathematica", "nb", "wl"
+		} else if (language.contains("language-wolfram") || language.contains("language-mathematica")
+			|| language.contains("language-nb") || language.contains("language-wl")) {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				let transformedCode = await this.injectCode(srcCode, "mathematica");
+				console.log(`runCodeInShell ${this.settings.mathematicaPath} ${this.settings.mathematicaArgs} ${"mathematica"}`)
+				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, this.settings.mathematicaFileExtension);
 			});
 		}
 	}
@@ -431,9 +461,15 @@ export default class ExecuteCodePlugin extends Plugin {
 			outputter.writeErr(data.toString());
 		});
 
+		outputter.on("data", (data: string) => {
+			child.stdin.write(data);
+		});
+
 		child.on('close', (code) => {
 			button.className = runButtonClass;
 			new Notice(code === 0 ? "Done!" : "Error!");
+			
+			outputter.closeInput();
 
 			fs.promises.rm(fileName)
 				.catch((err) => {

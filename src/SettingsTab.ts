@@ -41,6 +41,16 @@ export class SettingsTab extends PluginSettingTab {
 					}
 					await this.plugin.saveSettings();
 				}));
+		new Setting(containerEl)
+			.setName('Allow Input')
+			.setDesc('Whether or not to include a stdin input box when running blocks. In order to apply changes to this, Obsidian must be refreshed. ')
+			.addToggle(text => text
+				.setValue(this.plugin.settings.allowInput)
+				.onChange(async (value) => {
+					console.log('Allow Input set to: ' + value);
+					this.plugin.settings.allowInput = value
+					await this.plugin.saveSettings();
+				}));
 
 		// TODO setting per language that requires main function if main function should be implicitly made or not, if not, non-main blocks will not have a run button
 
@@ -68,6 +78,74 @@ export class SettingsTab extends PluginSettingTab {
 				}));
 		this.makeInjectSetting("js", "JavaScript");
 
+		// ========== TypeScript ==========
+		containerEl.createEl('h3', {text: 'TypeScript Settings'});
+		new Setting(containerEl)
+			.setName('ts-node path')
+			.addText(text => text
+				.setValue(this.plugin.settings.tsPath)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.tsPath = sanitized;
+					console.log('ts-node path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('TypeScript arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.tsArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.tsArgs = value;
+					console.log('TypeScript args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		this.makeInjectSetting("ts", "TypeScript");
+
+		// ========== Lua ==========
+		containerEl.createEl('h3', {text: 'Lua Settings'});
+		new Setting(containerEl)
+			.setName('lua path')
+			.addText(text => text
+				.setValue(this.plugin.settings.luaPath)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.luaPath = sanitized;
+					console.log('lua path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Lua arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.luaArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.luaArgs = value;
+					console.log('Lua args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		this.makeInjectSetting("lua", "Lua");
+
+		// ========== CSharp ==========
+		containerEl.createEl('h3', {text: 'CSharp Settings'});
+		new Setting(containerEl)
+			.setName('dotnet path')
+			.addText(text => text
+				.setValue(this.plugin.settings.csPath)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.csPath = sanitized;
+					console.log('dotnet path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('CSharp arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.csArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.csArgs = value;
+					console.log('CSharp args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		this.makeInjectSetting("cs", "CSharp");
 
 		// ========== Java ==========
 		containerEl.createEl('h3', {text: 'Java Settings'});
@@ -342,6 +420,7 @@ export class SettingsTab extends PluginSettingTab {
 				}));
 		this.makeInjectSetting("r", "R");
 
+
 		// ========== Kotlin ==========
 		containerEl.createEl('h3', {text: 'Kotlin Settings'});
 		new Setting(containerEl)
@@ -365,6 +444,31 @@ export class SettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 		this.makeInjectSetting("kotlin", "Kotlin");
+
+
+		// ========== Mathematica ==========
+		containerEl.createEl('h3', {text: 'Wolfram Mathematica Settings'});
+		new Setting(containerEl)
+			.setName('Mathematica path')
+			.setDesc('The path to your Mathematica installation.')
+			.addText(text => text
+				.setValue(this.plugin.settings.kotlinPath)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.mathematicaPath = sanitized;
+					console.log('Mathematica path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Mathematica arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.kotlinArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.mathematicaArgs = value;
+					console.log('Kotlin args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		this.makeInjectSetting("mathematica", "Mathematica");
 	}
 
 	private sanitizePath(path: string): string {

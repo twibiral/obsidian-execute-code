@@ -1,80 +1,92 @@
-export class Outputter {
+import { EventEmitter } from "events";
+
+
+export class Outputter extends EventEmitter {
 	codeBlockElement: HTMLElement;
 	outputElement: HTMLElement;
 	clearButton: HTMLButtonElement;
-	stdoutElem: HTMLSpanElement;
-	stderrElem: HTMLSpanElement;
-	stdoutText: string;
-	stderrText: string;
+	lastPrintElem: HTMLSpanElement;
+	lastPrinted: string;
+	
+	doInput: boolean
+	inputElement: HTMLInputElement;
+	
+	hadPreviouslyPrinted: boolean;
 
-	constructor (codeBlock: HTMLElement) {
+	constructor (codeBlock: HTMLElement, doInput: boolean) {
+		super();
+		
+		console.log("i do input: ", doInput);
+		
+		this.doInput = doInput;
 		this.codeBlockElement = codeBlock;
-		this.stdoutText = "";
-		this.stderrText = "";
+		this.hadPreviouslyPrinted = false;
 	}
 
+	/**
+	 * Clears the output log.
+	 */
 	clear() {
 		if (this.outputElement) {
-			this.stdoutElem.setText("");
-			this.stderrElem.setText("");
+			for (const child of Array.from(this.outputElement.children)) {
+				if (child instanceof HTMLSpanElement)
+					this.outputElement.removeChild(child);
+			}
 		}
-		this.stdoutText = "";
-		this.stderrText = "";
+		this.lastPrintElem = null;
+		this.hadPreviouslyPrinted = false;
+		this.lastPrinted = "";
 
 		if (this.clearButton)
 			this.clearButton.className = "clear-button-disabled";
+			
+		this.closeInput();
 	}
 
+	/**
+	 * Hides the output and clears the log. Visually, restores the code block to its initial state.
+	 */
 	delete() {
 		if(this.outputElement)
 			this.outputElement.style.display = "none";
 
-		if(this.clearButton)
-			this.clearButton.className = "clear-button-disabled";
-
 		this.clear()
 	}
 
-	write(text: string) {
-		if (!this.outputElement) {
-			this.addOutputElement();
-		}
-
-		if (!this.clearButton) {
-			this.addClearButton();
-		}
-
-		this.stdoutText += text;
-
+	/**
+	 * Add a segment of stdout data to the outputter
+	 * @param text The stdout data in question
+	 */
+	write(text: string) {		
 		// Keep output field and clear button invisible if no text was printed.
-		if (!this.stderrText && !this.stdoutText) return;
+		if(this.textPrinted(text)) {
+			this.addStdout().innerHTML += text;
 
-		this.stdoutElem.innerHTML = this.stdoutText;
-
-		// make visible again:
-		this.outputElement.style.display = "block";
-		this.clearButton.className = "clear-button";
+			// make visible again:
+			this.makeOutputVisible();
+		}
 	}
 
+	/**
+	 * Add a segment of stderr data to the outputter
+	 * @param text The stderr data in question
+	 */
 	writeErr(text: string) {
-		if (!this.outputElement) {
-			this.addOutputElement();
-		}
-
-		if (!this.clearButton) {
-			this.addClearButton();
-		}
-
-		this.stderrText += text;
-
 		// Keep output field and clear button invisible if no text was printed.
-		if (!this.stderrText && !this.stdoutText) return;
+		if(this.textPrinted(text)) {
+			this.addStderr().appendText(text);
 
-		this.stderrElem.setText(this.stderrText);
+			// make visible again:
+			this.makeOutputVisible()
+		}
+	}
 
-		// make visible again:
-		this.outputElement.style.display = "block";
-		this.clearButton.className = "clear-button";
+	/**
+	 * Hide the input element. Stop accepting input from the user.
+	 */
+	closeInput() {		
+		if(this.inputElement)
+			this.inputElement.style.display = "none";
 	}
 
 	private getParentElement() {
@@ -100,15 +112,109 @@ export class Outputter {
 		this.outputElement = document.createElement("code");
 		this.outputElement.classList.add("language-output");
 
-		this.stdoutElem = document.createElement("span");
-		this.stdoutElem.addClass("stdout");
-
-		this.stderrElem = document.createElement("span");
-		this.stderrElem.addClass("stderr");
-
 		this.outputElement.appendChild(hr);
-		this.outputElement.appendChild(this.stdoutElem);
-		this.outputElement.appendChild(this.stderrElem);
+		if (this.doInput) this.addInputElement();
 		parentEl.appendChild(this.outputElement);
+	}
+	
+	/**
+	 * Add an interactive input element to the outputter
+	 */
+	private addInputElement() {
+		this.inputElement = document.createElement("input");
+		this.inputElement.classList.add("interactive-stdin");
+		this.inputElement.addEventListener("keypress", (e) => {
+			if (e.key == "Enter") {
+				this.processInput(this.inputElement.value + "\n");
+				this.inputElement.value = "";
+			}
+		})
+		
+		
+		this.outputElement.appendChild(this.inputElement);
+	}
+	
+	/**
+	 * Ensure that input from a user gets echoed to the outputter before being emitted to event subscribers.
+	 * 
+	 * @param input a line of input from the user. In most applications, should end with a newline.
+	 */
+	private processInput(input: string) {
+		this.addStdin().appendText(input);		
+		
+		this.emit("data", input);
+	}
+	
+	private addStdin(): HTMLSpanElement {
+		return this.addStreamSegmentElement("stdin");
+	}
+	
+	private addStderr(): HTMLSpanElement {
+		return this.addStreamSegmentElement("stderr");
+	}
+	
+	private addStdout(): HTMLSpanElement {
+		return this.addStreamSegmentElement("stdout");
+	}
+	
+	/**
+	 * Creates a wrapper element for a segment of a standard stream. 
+	 * In order to intermingle the streams as they are output to, segments
+	 * are more effective than one-element-for-each. 
+	 * 
+	 * If the last segment was of the same stream, it will be returned instead.
+	 * 
+	 * @param streamId The standard stream's name (stderr, stdout, or stdin)
+	 * @returns the wrapper `span` element
+	 */
+	private addStreamSegmentElement(streamId: "stderr" | "stdout" | "stdin"): HTMLSpanElement {
+		if (!this.outputElement) this.addOutputElement();
+
+		if (this.lastPrintElem)
+			if (this.lastPrintElem.classList.contains(streamId)) return this.lastPrintElem;
+
+		const stdElem = document.createElement("span");
+		stdElem.addClass(streamId);
+
+		if(this.inputElement) {
+			this.outputElement.insertBefore(stdElem, this.inputElement);
+		} else {
+			this.outputElement.appendChild(stdElem);
+		}
+		this.lastPrintElem = stdElem;
+
+		return stdElem
+	}
+	
+	/**
+	 * Checks if either:
+	 * - this outputter has printed something before. 
+	 * - the given `text` is non-empty.
+	 * If `text` is non-empty, this function will assume that it gets printed later.
+	 * 
+	 * @param text Text which is to be printed
+	 * @returns Whether text has been printed or will be printed
+	 */
+	private textPrinted(text: string) {
+		if(this.hadPreviouslyPrinted) return true;
+		
+		if(text == "") return false;
+		
+		this.hadPreviouslyPrinted = true;
+		return true;
+	}
+	
+	/**
+	 * Restores output elements after the outputter has been `delete()`d or `clear()`d. 
+	 * @see {@link delete()}
+	 * @see {@link clear()}
+	 */
+	private makeOutputVisible() {
+		if (!this.clearButton) this.addClearButton();
+		if (!this.outputElement) this.addOutputElement();
+		
+		this.outputElement.style.display = "block";
+		if (this.inputElement) this.inputElement.style.display = "inline";
+		this.clearButton.className = "clear-button";
 	}
 }
