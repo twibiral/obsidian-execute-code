@@ -6,6 +6,8 @@ export default abstract class Executor {
     
     abstract run(code: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string): Promise<void>
     
+    abstract stop(): Promise<void>
+    
     /**
      * Creates new Notice that is displayed in the top right corner for a few seconds and contains an error message.
      * Additionally, the error is logged to the console and showed in the output panel ({@link Outputter}).

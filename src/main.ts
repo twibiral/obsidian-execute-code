@@ -97,6 +97,10 @@ export default class ExecuteCodePlugin extends Plugin {
 		document
 			.querySelectorAll(".language-output")
 			.forEach((out: HTMLElement) => out.remove());
+			
+		for(const executor of this.executors) {
+			executor.stop();
+		}
 
 		console.log("Unloaded plugin: Execute Code");
 	}

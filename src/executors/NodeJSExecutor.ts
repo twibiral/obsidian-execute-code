@@ -21,6 +21,15 @@ export default class PythonExecutor extends AsyncExecutor {
         //send a newline so that the intro message won't be buffered
         this.dismissIntroMessage();
     }
+    
+    stop(): Promise<void> {
+        return new Promise((resolve, reject) => {
+           this.process.kill();
+           this.process.on("close", () => {
+                resolve();
+           });
+        });
+    }
 
     async dismissIntroMessage() {
         this.addJobToQueue((resolve, reject) => {            

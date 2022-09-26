@@ -13,6 +13,10 @@ export default class NonInteractiveCodeExecutor extends Executor {
         this.usesShell = usesShell;
     }
     
+    stop(): Promise<void> {
+        return Promise.resolve();
+    }
+    
     async run(codeBlockContent: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
         new Notice("Running...");
         const [tempFileName, fileId] = this.getTempFile(ext)
