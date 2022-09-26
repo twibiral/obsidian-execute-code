@@ -21,6 +21,7 @@ export default class ExecutorContainer {
     
     private createExecutorFor(language: LanguageId) {
         switch (language) {
+            case "js": return new NodeJSExecutor(this.plugin.settings);
             case "python": return new PythonExecutor(this.plugin.settings);
         }
         return new NonInteractiveCodeExecutor(false);
