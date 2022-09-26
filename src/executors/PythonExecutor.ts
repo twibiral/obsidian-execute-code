@@ -38,14 +38,11 @@ export default class PythonExecutor extends AsyncExecutor {
             outputter.clear();
 
             let writeToStdout = (data: any) => {
-                console.log(data.toString());
                 outputter.write(data.toString());
             };
 
             let writeToStderr = (data: any) => {
                 const stringData = data.toString();
-
-                console.log(stringData);
 
                 const removedPrompts = stringData.replace(/(^((\.\.\.|>>>) )+)|(((\.\.\.|>>>) )+$)/g, "")
 
@@ -57,7 +54,6 @@ export default class PythonExecutor extends AsyncExecutor {
                         this.process.stdout.removeListener("data", writeToStdout);
                         this.process.stderr.removeListener("data", writeToStderr);
                         resolve();
-                        console.log("done!");
                     }, 100);
                 }
             }
