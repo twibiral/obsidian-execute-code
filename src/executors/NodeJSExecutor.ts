@@ -56,6 +56,10 @@ export default class PythonExecutor extends AsyncExecutor {
                 const requiredPrompts = Array.from(trimmedCode.matchAll(/\n/g)).length;
 
                 outputter.clear();
+                
+                outputter.on("data", (data: string) => {
+                    this.process.stdin.write(data);
+                });
 
                 let writeToStderr = (data: any) => {
                     outputter.writeErr(data.toString());

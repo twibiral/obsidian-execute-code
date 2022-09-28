@@ -47,13 +47,19 @@ export default class PythonExecutor extends AsyncExecutor {
             
             outputter.clear();
             
+            outputter.on("data", (data: string) => {
+                this.process.stdin.write(data);
+            });
 
             let writeToStdout = (data: any) => {
+                console.log(data);
                 outputter.write(data.toString());
             };
 
             let writeToStderr = (data: any) => {
                 const stringData = data.toString();
+                
+                console.log(data);
 
                 const removedPrompts = stringData.replace(/(^((\.\.\.|>>>) )+)|(((\.\.\.|>>>) )+$)/g, "")
 

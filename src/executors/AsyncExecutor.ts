@@ -15,7 +15,10 @@ export default abstract class AsyncExecutor extends Executor {
         this.runningTask = new Promise((resolve, reject) => {
             previousJob.finally(async () => {
                 try {
-                    await new Promise(promiseCallback);
+                    await new Promise((innerResolve, innerReject) => {
+                        this.once("close", () => innerResolve(undefined));
+                        promiseCallback(innerResolve, innerReject);
+                    });
                     resolve();
                 } catch(e) {
                     reject(e);
