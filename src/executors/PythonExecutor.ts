@@ -46,14 +46,9 @@ export default class PythonExecutor extends AsyncExecutor {
             
             outputter.clear();
             
-            let removeListenerOnNextStdout = false;
 
             let writeToStdout = (data: any) => {
                 outputter.write(data.toString());
-                
-                if (removeListenerOnNextStdout) {
-                    this.process.stdout.removeListener("data", writeToStdout);
-                }
             };
 
             let writeToStderr = (data: any) => {
@@ -65,9 +60,11 @@ export default class PythonExecutor extends AsyncExecutor {
 
                 if (stringData.endsWith(">>> ")) {
                     //wait a little bit for the stdout to flush
-                    removeListenerOnNextStdout = true;
-                    this.process.stderr.removeListener("data", writeToStderr);
-                    resolve();
+                    setTimeout(() => {
+                        this.process.stdout.removeListener("data", writeToStdout)
+                        this.process.stderr.removeListener("data", writeToStderr);
+                        resolve();
+                    }, 200);
                 }
             }
 
