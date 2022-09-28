@@ -61,6 +61,10 @@ export interface ExecutorSettings {
 	kotlinArgs: string;
 	kotlinFileExtension: string;
 	kotlinInject: string;
+	mathematicaPath: string;
+	mathematicaArgs: string;
+	mathematicaFileExtension: string;
+	mathematicaInject: string;
 	
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -78,6 +82,7 @@ export interface ExecutorSettings {
 	javaInteractive: boolean;
 	powershellInteractive: boolean;
 	kotlinInteractive: boolean;
+	mathematicaInteractive: boolean;
 }
 
 
@@ -142,6 +147,10 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	kotlinArgs: "-script",
 	kotlinFileExtension: "kts",
 	kotlinInject: "",
+	mathematicaPath: "wolframscript",
+	mathematicaArgs: "",
+	mathematicaFileExtension: "wls",
+	mathematicaInject: "",
 	
 	jsInteractive: true,
 	tsInteractive: false,
@@ -158,5 +167,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	rustInteractive: false,
 	javaInteractive: false,
 	powershellInteractive: false,
-	kotlinInteractive: false
+	kotlinInteractive: false,
+	mathematicaInteractive: true,
+
 }

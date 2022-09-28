@@ -23,9 +23,9 @@ import NonInteractiveCodeExecutor from './executors/NonInteractiveCodeExecutor';
 import ExecutorContainer from './ExecutorContainer';
 import ExecutorManagerView, { EXECUTOR_MANAGER_OPEN_VIEW_COMMAND_ID, EXECUTOR_MANAGER_VIEW_ID } from './ExecutorManagerView';
 
-const languageAliases = ["javascript", "typescript", "bash", "csharp"] as const;
+const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl"] as const;
 const cannonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
-	"prolog", "shell", "groovy", "r", "go", "rust", "java", "powershell", "kotlin"] as const;
+	"prolog", "shell", "groovy", "r", "go", "rust", "java", "powershell", "kotlin", "mathematica"] as const;
 const supportedLanguages = [...languageAliases, ...cannonicalLanguages] as const;
 const languagePrefixes = ["run", "pre", "post"];
 
@@ -174,7 +174,10 @@ export default class ExecuteCodePlugin extends Plugin {
 			.replace("javascript", "js")
 			.replace("typescript", "ts")
 			.replace("csharp", "cs")
-			.replace("bash", "shell");
+			.replace("bash", "shell")
+			.replace("wolfram", "mathematica")
+			.replace("nb", "mathematica")
+			.replace("wl", "mathematica");
 	}
 
 	/**
@@ -395,6 +398,14 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				let transformedCode = await this.injectCode(srcCode, "lua");
 				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, "csx", language, file);
+			});
+			// "wolfram", "mathematica", "nb", "wl"
+		} else if (language == "mathematica") {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				let transformedCode = await this.injectCode(srcCode, "mathematica");
+				console.log(`runCodeInShell ${this.settings.mathematicaPath} ${this.settings.mathematicaArgs} ${"mathematica"}`)
+				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, this.settings.mathematicaFileExtension, language, file);
 			});
 		}
 	}

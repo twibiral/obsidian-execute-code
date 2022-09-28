@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [Unreleased]
+### Added
+- Support for Wolfram Mathematica
+
 ## [0.17.0] - 2022-09-24
 ### Added
 - Support for interactive input blocks. That means code blocks can now read from stdin. (Thanks to @chlohal)
