@@ -56,10 +56,8 @@ export default class PythonExecutor extends AsyncExecutor {
 
             let writeToStdout = (data: any) => {
                 let str = data.toString();
-                console.log(JSON.stringify(str), finishSigil);
                 
                 if (str.endsWith(finishSigil)) {
-                    console.log(JSON.stringify(str));
                     str = str.substring(0, str.length - finishSigil.length);
                     console.log(str);
                     
