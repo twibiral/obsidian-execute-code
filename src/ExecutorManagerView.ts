@@ -1,4 +1,4 @@
-import { ItemView, Workspace, WorkspaceLeaf } from "obsidian";
+import { getIcon, ItemView, Workspace, WorkspaceLeaf } from "obsidian";
 import { basename } from "path";
 import ExecutorContainer from "./ExecutorContainer";
 import Executor from "./executors/Executor";
@@ -72,8 +72,6 @@ export default class ExecutorManagerView extends ItemView {
     }
     
     private addExecutorElement(executor: Executor) {
-        
-        console.log("adding!");
         const li = document.createElement("li");
         
         const simpleName = basename(executor.file);
@@ -88,6 +86,11 @@ export default class ExecutorManagerView extends ItemView {
             li.remove();
             this.updateEmptyState();
         });
+        
+        const button = document.createElement("button");
+        button.addEventListener("click", () => executor.stop());
+        button.appendText("Stop");
+        li.appendChild(button);
         
         this.list.appendChild(li);
         this.updateEmptyState();

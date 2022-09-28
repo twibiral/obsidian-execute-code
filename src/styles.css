@@ -70,6 +70,7 @@ input.interactive-stdin {
     border-radius: 4px;
     display: flex;
     flex-direction: column;
+    margin-bottom: 0.5em;
 }
 
 .manage-executors-view small {

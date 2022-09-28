@@ -23,13 +23,19 @@ export default class ExecutorContainer extends EventEmitter implements Iterable<
     
     getExecutorFor(file: string, language: LanguageId) {
         if (!this.executors[language]) this.executors[language] = {}
-        if (!this.executors[language][file]) {
-            this.executors[language][file] = this.createExecutorFor(file, language);
-            const exe = this.executors[language][file];
-            if (!(exe instanceof NonInteractiveCodeExecutor)) this.emit("add", exe);
-        }        
+        if (!this.executors[language][file]) this.setExecutorInExecutorsObject(file, language);
         
         return this.executors[language][file];
+    }
+    
+    private setExecutorInExecutorsObject(file: string, language: LanguageId) {
+        const exe = this.createExecutorFor(file, language);
+        if (!(exe instanceof NonInteractiveCodeExecutor)) this.emit("add", exe);
+        exe.on("close", () => {
+            delete this.executors[language][file];
+        });
+        
+        this.executors[language][file] = this.createExecutorFor(file, language);
     }
     
     private createExecutorFor(file: string, language: LanguageId) {
