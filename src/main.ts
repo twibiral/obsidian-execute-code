@@ -19,13 +19,14 @@ import {
 
 // @ts-ignore
 import * as prolog from "tau-prolog";
+import runAllCodeBlocks from './runAllCodeBlocks';
 
 export const supportedLanguages = ["js", "javascript", "ts", "typescript", "cs", "csharp", "lua", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust", "java", "powershell", "kotlin", "wolfram", "mathematica", "nb", "wl"] as const;
 const languagePrefixes = ["run", "pre", "post"];
 
 const buttonText = "Run";
 
-const runButtonClass = "run-code-button";
+export const runButtonClass = "run-code-button";
 const runButtonDisabledClass = "run-button-disabled";
 const hasButtonClass = "has-run-code-button";
 
@@ -53,6 +54,12 @@ export default class ExecuteCodePlugin extends Plugin {
 					await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, '', null);
 				});
 			})
+		})
+		
+		this.addCommand({
+			id: "run-all-code-blocks-in-file",
+			name: "Run all Code Blocks in Current File",
+			callback: () => runAllCodeBlocks(this.app.workspace)
 		})
 	}
 
