@@ -76,6 +76,15 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Node args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+		new Setting(containerEl)
+			.setName("Run Javascript blocks in Notebook Mode")
+			.addToggle((toggle) => toggle
+				.setValue(this.plugin.settings.jsInteractive)
+				.onChange(async (value) => {
+					this.plugin.settings.jsInteractive = value;
+					await this.plugin.saveSettings();
+				})
+			)
 		this.makeInjectSetting("js", "JavaScript");
 
 		// ========== TypeScript ==========
@@ -203,6 +212,15 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Python args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+		new Setting(containerEl)
+			.setName("Run Python blocks in Notebook Mode")
+			.addToggle((toggle) => toggle
+				.setValue(this.plugin.settings.pythonInteractive)
+				.onChange(async (value) => {
+					this.plugin.settings.pythonInteractive = value;
+					await this.plugin.saveSettings();
+				})
+			)
 		this.makeInjectSetting("python", "Python");
 
 
