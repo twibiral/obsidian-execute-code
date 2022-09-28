@@ -9,8 +9,8 @@ export default class PythonExecutor extends AsyncExecutor {
 
     process: ChildProcessWithoutNullStreams
 
-    constructor(settings: ExecutorSettings) {
-        super();
+    constructor(settings: ExecutorSettings, file: string) {
+        super(file, "js");
 
         const args = settings.nodeArgs ? settings.nodeArgs.split(" ") : [];
 
@@ -28,6 +28,7 @@ export default class PythonExecutor extends AsyncExecutor {
            this.process.on("close", () => {
                 resolve();
            });
+           this.emit("close");
         });
     }
 

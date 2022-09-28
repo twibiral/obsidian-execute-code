@@ -3,12 +3,13 @@ import * as fs from "fs";
 import * as child_process from "child_process";
 import Executor from "./Executor";
 import { Outputter } from "src/Outputter";
+import { LanguageId } from "src/main";
 
 export default class NonInteractiveCodeExecutor extends Executor {
     usesShell: boolean
     
-    constructor(usesShell: boolean) {
-        super()
+    constructor(usesShell: boolean, file: string, language: LanguageId) {
+        super(file, language);
         
         this.usesShell = usesShell;
     }

@@ -21,6 +21,7 @@ import {
 import * as prolog from "tau-prolog";
 import NonInteractiveCodeExecutor from './executors/NonInteractiveCodeExecutor';
 import ExecutorContainer from './ExecutorContainer';
+import ExecutorManagerView, { EXECUTOR_MANAGER_OPEN_VIEW_COMMAND_ID, EXECUTOR_MANAGER_VIEW_ID } from './ExecutorManagerView';
 
 const languageAliases = ["javascript", "typescript", "bash", "csharp"] as const;
 const cannonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
@@ -64,7 +65,18 @@ export default class ExecuteCodePlugin extends Plugin {
 					await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, '', null);
 				});
 			})
-		})
+		});
+		
+		//executor manager
+
+		this.registerView(
+			EXECUTOR_MANAGER_VIEW_ID, (leaf) => new ExecutorManagerView(leaf, this.executors)
+		);
+		this.addCommand({
+			id: EXECUTOR_MANAGER_OPEN_VIEW_COMMAND_ID,
+			name: "Open Code Runtime Management",
+			callback: () => ExecutorManagerView.activate(this.app.workspace)
+		});
 	}
 
 	/**

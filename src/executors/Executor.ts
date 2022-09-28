@@ -1,8 +1,18 @@
 import { Notice } from "obsidian";
 import { Outputter } from "src/Outputter";
 import * as os from "os";
+import { LanguageId } from "src/main";
+import { EventEmitter } from "stream";
 
-export default abstract class Executor {
+export default abstract class Executor extends EventEmitter {
+    language: LanguageId;
+    file: string;
+    
+    constructor(file: string, language: LanguageId) {
+        super();
+        this.file = file;
+        this.language = language;
+    }
     
     abstract run(code: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string): Promise<void>
     
