@@ -1,4 +1,4 @@
-import { getIcon, ItemView, Workspace, WorkspaceLeaf } from "obsidian";
+import { ExtraButtonComponent, ItemView, setIcon, Workspace, WorkspaceLeaf } from "obsidian";
 import { basename } from "path";
 import ExecutorContainer from "./ExecutorContainer";
 import Executor from "./executors/Executor";
@@ -78,9 +78,9 @@ export default class ExecutorManagerView extends ItemView {
         
         const langElem = document.createElement("small");
         langElem.textContent = executor.language;
-        li.appendChild(langElem)
+        li.appendChild(langElem);
         
-        li.appendText(simpleName);
+        li.appendChild(this.createFilenameRowElem(simpleName));
         
         executor.on("close", () => {
             li.remove();
@@ -89,11 +89,19 @@ export default class ExecutorManagerView extends ItemView {
         
         const button = document.createElement("button");
         button.addEventListener("click", () => executor.stop());
-        button.appendText("Stop");
+        setIcon(button, "trash");
+        button.setAttribute("aria-label", "Stop Runtime");
         li.appendChild(button);
         
         this.list.appendChild(li);
         this.updateEmptyState();
+    }
+    
+    private createFilenameRowElem(text: string) {
+        const fElem = document.createElement("span");
+        fElem.textContent = text;
+        fElem.classList.add("filename");
+        return fElem;
     }
 
     async onClose() {
