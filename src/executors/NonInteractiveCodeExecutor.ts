@@ -40,6 +40,16 @@ export default class NonInteractiveCodeExecutor extends Executor {
         }
     }
 
+    /**
+     * Handles the output of a child process and redirects stdout and stderr to the given {@link Outputter} element.
+     * Removes the temporary file after the code execution. Creates a new Notice after the code execution.
+     *
+     * @param child The child process to handled.
+     * @param outputter The {@link Outputter} that should be used to display the output of the code.
+     * @param button The button that was clicked to execute the code. Is re-enabled after the code execution.
+     * @param fileName The name of the temporary file that was created for the code execution.
+     * @returns a promise that will resolve when the child proces finishes 
+     */
     private handleChildOutput(child: child_process.ChildProcessWithoutNullStreams, outputter: Outputter, fileName: string) {
         return new Promise((reject, resolve) => {
             outputter.clear();

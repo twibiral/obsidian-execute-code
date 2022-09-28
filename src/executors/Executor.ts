@@ -14,8 +14,20 @@ export default abstract class Executor extends EventEmitter {
         this.language = language;
     }
     
+    /**
+     * Run the given `code` and add all output to the `Outputter`. Resolves the promise once the code is done running.
+     * 
+     * @param code code to run
+     * @param outputter outputter to use for showing output to the user
+     * @param cmd command to run (not used by all executors)
+     * @param cmdArgs arguments for command to run (not used by all executors)
+     * @param ext file extension for the programming language (not used by all executors)
+     */
     abstract run(code: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string): Promise<void>
     
+    /**
+     * Exit the runtime for the code. 
+     */
     abstract stop(): Promise<void>
     
     /**

@@ -33,6 +33,9 @@ export default class ExecutorManagerView extends ItemView {
         return "command-glyph";
     }
 
+    /**
+     * Set up the HTML of the view
+     */
     async onOpen() {
         const container = this.contentEl;
         container.empty();
@@ -53,6 +56,9 @@ export default class ExecutorManagerView extends ItemView {
         this.addEmptyState();
     }
     
+    /**
+     * Add the empty state element to the view. Also update the empty state element
+     */
     private addEmptyState() {
         this.emptyStateElement = document.createElement("div");
         this.emptyStateElement.classList.add("empty-state");
@@ -63,6 +69,9 @@ export default class ExecutorManagerView extends ItemView {
         this.updateEmptyState();
     }
     
+    /**
+     * If the list of runtimes is empty, then show the empty-state; otherwise, hide it.
+     */
     private updateEmptyState() {
         if(this.list.childElementCount == 0) {
             this.emptyStateElement.style.display = "block";
@@ -71,6 +80,11 @@ export default class ExecutorManagerView extends ItemView {
         }
     }
     
+    /**
+     * Creates and adds a manager widget list-item for a given executor.
+     * 
+     * @param executor an executor to create a manager widget for
+     */
     private addExecutorElement(executor: Executor) {
         const li = document.createElement("li");
         
@@ -97,6 +111,12 @@ export default class ExecutorManagerView extends ItemView {
         this.updateEmptyState();
     }
     
+    /**
+     * A helper method to create a file-name label for use in 
+     * runtime management widgets
+     * @param text text content for the filename label
+     * @returns the filename label's html element
+     */
     private createFilenameRowElem(text: string) {
         const fElem = document.createElement("span");
         fElem.textContent = text;
@@ -108,6 +128,11 @@ export default class ExecutorManagerView extends ItemView {
         
     }
     
+    /**
+     * Open the view. Ensure that there may only be one view at a time.
+     * If there isn't one created, then create a new one.
+     * @param workspace the workspace of the Obsidian app
+     */
     static async activate(workspace: Workspace) {
         workspace.detachLeavesOfType(EXECUTOR_MANAGER_VIEW_ID);
 

@@ -21,6 +21,10 @@ export default class PythonExecutor extends AsyncExecutor {
         this.dismissIntroMessage();
     }
     
+    /**
+     * Close the runtime.
+     * @returns A promise that resolves once the runtime is fully closed
+     */
     stop(): Promise<void> {
         return new Promise((resolve, reject) => {
             this.process.kill();
@@ -31,6 +35,9 @@ export default class PythonExecutor extends AsyncExecutor {
         });
     }
 
+    /**
+     * Swallows and rejects the "Welcome to Python v..." message that shows at startup
+     */
     async dismissIntroMessage() {
         this.addJobToQueue((resolve, reject) => {
             this.process.stdin.write("\n");
@@ -41,6 +48,15 @@ export default class PythonExecutor extends AsyncExecutor {
         });
     }
 
+    /**
+     * Run some Python code
+     * @param code code to run
+     * @param outputter outputter to use
+     * @param cmd Not used
+     * @param cmdArgs Not used
+     * @param ext Not used
+     * @returns A promise that resolves once the code is done running
+     */
     async run(code: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
         return this.addJobToQueue((resolve, reject) => {
             const finishSigil = `SIGIL_BLOCK_DONE${Math.random()}_${Date.now()}_${code.length}`;

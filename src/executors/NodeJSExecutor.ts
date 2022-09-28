@@ -22,6 +22,10 @@ export default class PythonExecutor extends AsyncExecutor {
         this.dismissIntroMessage();
     }
     
+    /**
+     * Close the runtime.
+     * @returns A promise that resolves once the runtime is fully closed
+     */
     stop(): Promise<void> {
         return new Promise((resolve, reject) => {
            this.process.kill();
@@ -32,6 +36,9 @@ export default class PythonExecutor extends AsyncExecutor {
         });
     }
 
+    /**
+     * Swallows and does not output the "Welcome to Node.js v..." message that shows at startup
+     */
     async dismissIntroMessage() {
         this.addJobToQueue((resolve, reject) => {            
             let stdoutBuffers = 0;
@@ -47,6 +54,15 @@ export default class PythonExecutor extends AsyncExecutor {
         });
     }
 
+    /**
+     * Run some NodeJS code
+     * @param code code to run
+     * @param outputter outputter to use
+     * @param cmd Not used
+     * @param cmdArgs Not used
+     * @param ext Not used
+     * @returns A promise that resolves once the code is done running
+     */
     async run(code: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
         return this.addJobToQueue((resolve, reject) => {
             
