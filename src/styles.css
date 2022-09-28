@@ -54,3 +54,46 @@ code.language-output hr {
 input.interactive-stdin {
     font: inherit;
 }
+.manage-executors-view h3 {
+    margin: 1em;
+}
+
+.manage-executors-view ul {
+    margin: 1em;
+    padding: 0;
+    list-style-type: none;
+}
+
+.manage-executors-view ul li {
+    padding: 0.5em;
+    background: var(--background-primary-alt);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.manage-executors-view small {
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 0.1ch;
+}
+
+.manage-executors-view li:hover button {
+    position: absolute;
+    right: 0.25em;
+    top: 0.25em;
+    height: 100%;
+}
+
+.manage-executors-view li:hover button {
+    display: block;
+}
+
+.manage-executors-view>div {
+    position: relative;
+}
+
+.manage-executors-view .empty-state {
+    color: var(--text-muted);
+    padding: 0.5em;
+}

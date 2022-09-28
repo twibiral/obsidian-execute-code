@@ -10,6 +10,7 @@ export default class ExecutorManagerView extends ItemView {
     executors: ExecutorContainer;
     
     list: HTMLUListElement
+    emptyStateElement: HTMLDivElement;
     
     constructor(leaf: WorkspaceLeaf, executors: ExecutorContainer) {
         super(leaf);
@@ -18,7 +19,7 @@ export default class ExecutorManagerView extends ItemView {
         
         this.executors.on("add", (executor) => {
             this.addExecutorElement(executor);
-        })
+        });
     }
     
     getViewType(): string {
@@ -33,18 +34,40 @@ export default class ExecutorManagerView extends ItemView {
     }
 
     async onOpen() {
-        const container = this.containerEl.children[1];
+        const container = this.contentEl;
         container.empty();
+        
+        container.classList.add("manage-executors-view");
         
         let header = document.createElement("h3");
         header.textContent = "Runtimes";
         container.appendChild(header);
         
         this.list = document.createElement("ul");
-        container.appendChild(this.list);
+        container.appendChild(document.createElement("div")).appendChild(this.list);
         
         for(const executor of this.executors) {
             this.addExecutorElement(executor);
+        }
+        
+        this.addEmptyState();
+    }
+    
+    private addEmptyState() {
+        this.emptyStateElement = document.createElement("div");
+        this.emptyStateElement.classList.add("empty-state");
+        this.emptyStateElement.textContent = "There are currently no runtimes online. Run some code blocks, and their runtimes will appear here.";
+        
+        this.list.parentElement.appendChild(this.emptyStateElement);
+        
+        this.updateEmptyState();
+    }
+    
+    private updateEmptyState() {
+        if(this.list.childElementCount == 0) {
+            this.emptyStateElement.style.display = "block";
+        } else {
+            this.emptyStateElement.style.display = "none";
         }
     }
     
@@ -55,13 +78,19 @@ export default class ExecutorManagerView extends ItemView {
         
         const simpleName = basename(executor.file);
         
-        li.appendText(simpleName + "/" + executor.language);
+        const langElem = document.createElement("small");
+        langElem.textContent = executor.language;
+        li.appendChild(langElem)
+        
+        li.appendText(simpleName);
         
         executor.on("close", () => {
             li.remove();
+            this.updateEmptyState();
         });
         
         this.list.appendChild(li);
+        this.updateEmptyState();
     }
 
     async onClose() {

@@ -487,7 +487,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {
 		const executor = this.settings[`${language}Interactive`] 
 			? this.executors.getExecutorFor(file, language)
-			: new NonInteractiveCodeExecutor(false);
+			: new NonInteractiveCodeExecutor(false, file, language);
 			
 		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(()=> {
 			button.className = runButtonClass;
@@ -509,7 +509,11 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * @param file The address of the file which the code originates from
 	 */
 	private runCodeInShell(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {
-		new NonInteractiveCodeExecutor(true).run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
+		const executor = this.settings[`${language}Interactive`]
+			? this.executors.getExecutorFor(file, language)
+			: new NonInteractiveCodeExecutor(true, file, language);
+		
+		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
 			button.className = runButtonClass;
 		});
 	}
