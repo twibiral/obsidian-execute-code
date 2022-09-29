@@ -25,6 +25,8 @@ function hello(name) {
 hello("Bob")
 ```
 
+	- By default, Javascript runs in Notebook Mode. You can turn this off in the settings.
+
 - TypeScript
 	- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`. (`-g` means global install)
 	- Problems: If you use your global node.js installation and it doesn't work try to set your `ts-node` path in the settings to `npx ts-node` instead of `ts-node`.
@@ -52,6 +54,7 @@ if __name__ == "__main__":
 	hello("Eve")
 ```
 
+	- By default, Python runs in Notebook Mode. You can turn this off in the settings.
 	- Plots with matplotlib/seaborn are embedded in the note by default. You can turn this off in the settings.
 
 ```python
@@ -256,7 +259,7 @@ print("Hello", name)
 
 ## Global Code Injection and Reusing Code Blocks
 
-Sometimes it is helpful to have code that is executed before or after each other block of the same language. This plugin supports this in two ways:
+Sometimes it is helpful to have code that is executed before or after each other block of the same language. This plugin supports this in a few different ways:
 
 ### Global Injection in the Settings
 
@@ -276,6 +279,28 @@ This code block is added before each python block you define below in the note a
 `Post` blocks work the same way but the code in post blocks is executed _after_ your other code blocks.
 
 Pre-/Post-blocks will only apply to code blocks defined below them, and will only apply to code blocks from the same language.
+
+### Notebook Mode
+
+A few languages (currently JS and Python) support *Notebook Mode*. If a language is using Notebook Mode (configurable in Settings), then all code blocks in a given file will execute in the same environment.
+
+Variables functions, etc. defined in one code block will be available in other code blocks. Code blocks are executed on demand; the order of code blocks in the file does not affect the order in which they are executed:
+
+```
+```js
+console.log(f)
+```
+```js
+let f = 3;
+``````
+
+Running the first code block, then the second, then the first again will give:
+
+```
+Uncaught ReferenceError: f is not defined
+undefined
+3
+```
 
 ## Installation
 
