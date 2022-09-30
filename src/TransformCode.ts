@@ -70,14 +70,20 @@ function getArgs(firstLineOfCode: string): CodeBlockArgs {
 		args = args.replace(/=/g, ":");
 		// Handle unnamed export arg - pre / post at the beginning of the args without any arg name
 		const exports: ExportType[] = [];
-		if (args.contains("pre,")) {
-			args = args.replace("pre,", "");
-			exports.push("pre");
+		const handleUnnamedExport = (exportName: ExportType) => {
+			let i = args.indexOf(exportName);
+			while (i !== -1) {
+				const nextChar = args[i + exportName.length];
+				if (nextChar !== `"` && nextChar !== `'`) {
+					// Remove from args string
+					args = args.substring(0, i) + args.substring(i + exportName.length + (nextChar === "}" ? 0 : 1));
+					exports.push(exportName);
+				}
+				i = args.indexOf(exportName, i + 1);
+			}
 		}
-		if (args.contains("post,")) {
-			args = args.replace("post,", "");
-			exports.push("post");
-		}
+		handleUnnamedExport("pre");
+		handleUnnamedExport("post");
 		args = `{export: ['${exports.join("', '")}'], ${args}`;
 		return JSON5.parse(args);
 	}
@@ -134,7 +140,7 @@ export class CodeInjector {
 		const handleNamedImport = (namedImport: string) => {
 			// Named export doesn't exist
 			if (!this.namedExports.hasOwnProperty(namedImport)) {
-				new Notice(`Named export ${namedImport} does not exist but was imported`);
+				new Notice(`Named export "${namedImport}" does not exist but was imported`);
 				return true;
 			}
 			this.namedImportSrcCode += `${this.namedExports[namedImport]}\n`;
