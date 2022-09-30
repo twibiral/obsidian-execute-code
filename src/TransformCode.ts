@@ -4,6 +4,8 @@ import {getVaultVariables} from "./Vault";
 import * as JSON5 from "json5";
 import type {ExecutorSettings, ExecutorSettingsLanguage as ExecutorSettingsLanguage} from "./Settings";
 
+type ExportType = "pre" | "post";
+
 /**
  * Arguments for code blocks, specified next to the language identifier as JSON
  * @example ```python {"export": "pre"}
@@ -12,8 +14,8 @@ import type {ExecutorSettings, ExecutorSettingsLanguage as ExecutorSettingsLangu
 interface CodeBlockArgs {
 	label?: string;
 	import?: string | string[];
-	export?: "pre" | "post";
-	ignore?: (CodeBlockArgs["export"] | "global")[] | CodeBlockArgs["export"] | "global" | "all";
+	export?: ExportType | ExportType[];
+	ignore?: (ExportType | "global")[] | ExportType | "global" | "all";
 }
 
 /**
@@ -66,13 +68,17 @@ function getArgs(firstLineOfCode: string): CodeBlockArgs {
 		let args = firstLineOfCode.substring(firstLineOfCode.indexOf("{") + 1).trim();
 		// Transform custom syntax to JSON5
 		args = args.replace(/=/g, ":");
-		// Handle unnamed export arg - either pre / post at the beginning of the args without any arg name
-		if (args.startsWith("pre"))
-			args = `{export: "pre"${args.substring(args.indexOf("pre") + 3)}`;
-		else if (args.startsWith("post"))
-			args = `{export: "post"${args.substring(args.indexOf("post") + 4)}`;
-		else
-			args = `{${args}`;
+		// Handle unnamed export arg - pre / post at the beginning of the args without any arg name
+		const exports: ExportType[] = [];
+		if (args.contains("pre,")) {
+			args = args.replace("pre,", "");
+			exports.push("pre");
+		}
+		if (args.contains("post,")) {
+			args = args.replace("post,", "");
+			exports.push("post");
+		}
+		args = `{export: ['${exports.join("', '")}'], ${args}`;
 		return JSON5.parse(args);
 	}
 	catch (err) {
@@ -188,9 +194,11 @@ export class CodeInjector {
 						this.namedExports[currentArgs.label] = currentCode;
 					}
 					// Pre / post export
-					if (currentArgs.export === "pre")
+					if (!Array.isArray(currentArgs.export))
+						currentArgs.export = [currentArgs.export];
+					if (currentArgs.export.contains("pre"))
 						this.prependSrcCode += `${currentCode}\n`;
-					else if (currentArgs.export === "post")
+					if (currentArgs.export.contains("post"))
 						this.appendSrcCode += `${currentCode}\n`;
 					currentLanguage = "";
 					currentCode = "";
