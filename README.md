@@ -207,6 +207,15 @@ hello(name: String) {
 hello("Bob")
 ```
 
+- Haskell
+	- Requirements: Ghci is installed and correct path is set in the settings.
+	- If you have a main function you have to manually call it.
+
+```haskell
+mySum:: Num a => a -> a -> a
+mySum a b = a+b
+```
+
 - Squiggle: For Squiggle support look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle) by @jqhoogland.
 
 Support for the following is planned:
