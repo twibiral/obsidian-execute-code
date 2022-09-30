@@ -443,6 +443,21 @@ export class SettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 		this.makeInjectSetting("kotlin", "Kotlin");
+
+		// ========== Haskell ===========
+		containerEl.createEl('h3', {text: 'Haskell Settings'});
+		new Setting(containerEl)
+			.setName('Ghci Path')
+			.setDesc('The path to your Ghci installation.')
+			.addText(text => text
+				.setValue(this.plugin.settings.ghciPath)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.ghciPath = sanitized;
+					console.log('Ghci path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		this.makeInjectSetting("haskell", "Haskell");
 	}
 
 	private sanitizePath(path: string): string {

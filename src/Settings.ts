@@ -65,6 +65,10 @@ export interface ExecutorSettings {
 	kotlinArgs: string;
 	kotlinFileExtension: string;
 	kotlinInject: string;
+	ghciPath: string;
+	haskellArgs: string;
+	haskellInject: string;
+
 }
 
 
@@ -129,4 +133,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	kotlinArgs: "-script",
 	kotlinFileExtension: "kts",
 	kotlinInject: "",
+	ghciPath: "",
+	haskellArgs: "",
+  	haskellInject: "",
 }
