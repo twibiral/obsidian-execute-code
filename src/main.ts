@@ -366,7 +366,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	 */
 	private runCodeInShell(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
 		new Notice("Running...");
-		const [tempFileName] = this.getTempFile(ext)
+		const [tempFileName] = this.getTempFile(ext);
 		console.debug(`Execute ${cmd} ${cmdArgs} ${tempFileName}`);
 
 		fs.promises.writeFile(tempFileName, codeBlockContent)
