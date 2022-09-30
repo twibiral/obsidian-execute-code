@@ -447,7 +447,7 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== Haskell ===========
 		containerEl.createEl('h3', {text: 'Haskell Settings'});
 		new Setting(containerEl)
-			.setName('Ghci Path')
+			.setName('Ghci path')
 			.setDesc('The path to your Ghci installation.')
 			.addText(text => text
 				.setValue(this.plugin.settings.ghciPath)
@@ -455,6 +455,16 @@ export class SettingsTab extends PluginSettingTab {
 					const sanitized = this.sanitizePath(value);
 					this.plugin.settings.ghciPath = sanitized;
 					console.log('Ghci path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Ghci arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.ghciArgs)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.ghciArgs = sanitized;
+					console.log('Ghci args set to: ' + sanitized);
 					await this.plugin.saveSettings();
 				}));
 		this.makeInjectSetting("haskell", "Haskell");
