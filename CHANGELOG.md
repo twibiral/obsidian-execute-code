@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
-## [Unreleased]
+## [0.18.0]
 ### Added
 - Support for Wolfram Mathematica
+
+### Changed
+- Quickfix for issues #77 and #81 by spawning always with Shell (Problems with spawning processes on Windows. This also affects #75, Security concern with spawning in shell.)
+- Fix for #84
 
 ## [0.17.0] - 2022-09-24
 ### Added
