@@ -240,14 +240,14 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				let transformedCode = await this.injectCode(srcCode, "js");
 				transformedCode = addMagicToJS(transformedCode);
-				this.runCode(transformedCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
+				this.runCodeInShell(transformedCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
 			});
 
 		} else if (language.contains("language-java")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await this.injectCode(srcCode, "java");
-				this.runCode(transformedCode, out, button, this.settings.javaPath, this.settings.javaArgs, this.settings.javaFileExtension);
+				this.runCodeInShell(transformedCode, out, button, this.settings.javaPath, this.settings.javaArgs, this.settings.javaFileExtension);
 			});
 
 		} else if (language.contains("language-python")) {
@@ -259,7 +259,7 @@ export default class ExecuteCodePlugin extends Plugin {
 					transformedCode = addInlinePlotsToPython(transformedCode);
 				transformedCode = addMagicToPython(transformedCode);
 
-				this.runCode(transformedCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
+				this.runCodeInShell(transformedCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
 			});
 
 		} else if (language.contains("language-shell") || language.contains("language-bash")) {
@@ -279,9 +279,8 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language.contains("language-cpp")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				out.clear();
 				const transformedCode = await this.injectCode(srcCode, "cpp");
-				this.runCode(transformedCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp");
+				this.runCodeInShell(transformedCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp");
 				button.className = runButtonClass;
 			});
 
@@ -309,7 +308,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await this.injectCode(srcCode, "rust");
-				this.runCode(transformedCode, out, button, this.settings.cargoPath, this.settings.cargoArgs, this.settings.rustFileExtension);
+				this.runCodeInShell(transformedCode, out, button, this.settings.cargoPath, this.settings.cargoArgs, this.settings.rustFileExtension);
 			});
 
 		} else if (language.contains("language-r")) {
@@ -317,16 +316,16 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 
 				let transformedCode = await this.injectCode(srcCode, "r");
-				transformedCode = addInlinePlotsToR(srcCode);
+				transformedCode = addInlinePlotsToR(transformedCode);
 
-				this.runCode(transformedCode, out, button, this.settings.RPath, this.settings.RArgs, "R");
+				this.runCodeInShell(transformedCode, out, button, this.settings.RPath, this.settings.RArgs, "R");
 			});
 
 		} else if (language.contains("language-go")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await this.injectCode(srcCode, "go");
-				this.runCode(transformedCode, out, button, this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension);
+				this.runCodeInShell(transformedCode, out, button, this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension);
 			});
 
 		} else if (language.contains("language-kotlin")) {
@@ -463,7 +462,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				args.push(tempFileName);
 
 				console.debug(`Execute ${cmd} ${args.join(" ")}`);
-				const child = child_process.spawn(cmd, args);
+				const child = child_process.spawn(`"${cmd}"`, args, {env: process.env});
 
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
@@ -486,16 +485,17 @@ export default class ExecuteCodePlugin extends Plugin {
 	 */
 	private runCodeInShell(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
 		new Notice("Running...");
-		const [tempFileName] = this.getTempFile(ext)
+		const [tempFileName, fileId] = this.getTempFile(ext)
 		console.debug(`Execute ${cmd} ${cmdArgs} ${tempFileName}`);
-
+		if (ext === "cpp")
+			codeBlockContent = codeBlockContent.replace(/main\(\)/g, `temp_${fileId}()`);
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
 				const args = cmdArgs ? cmdArgs.split(" ") : [];
 				args.push(tempFileName);
 
 				console.debug(`Execute ${cmd} ${args.join(" ")}`);
-				const child = child_process.spawn(cmd, args, {shell: true});
+				const child = child_process.spawn(`"${cmd}"`, args, {shell: true, env: process.env});
 
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
