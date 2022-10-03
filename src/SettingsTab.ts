@@ -445,7 +445,6 @@ export class SettingsTab extends PluginSettingTab {
 				}));
 		this.makeInjectSetting("kotlin", "Kotlin");
 
-
 		// ========== Mathematica ==========
 		containerEl.createEl('h3', {text: 'Wolfram Mathematica Settings'});
 		new Setting(containerEl)
@@ -470,6 +469,31 @@ export class SettingsTab extends PluginSettingTab {
 				}));
 		this.makeInjectSetting("mathematica", "Mathematica");
 	}
+  
+  // ========== Haskell ===========
+		containerEl.createEl('h3', {text: 'Haskell Settings'});
+		new Setting(containerEl)
+			.setName('Ghci path')
+			.setDesc('The path to your Ghci installation.')
+			.addText(text => text
+				.setValue(this.plugin.settings.ghciPath)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.ghciPath = sanitized;
+					console.log('Ghci path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Ghci arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.ghciArgs)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.ghciArgs = sanitized;
+					console.log('Ghci args set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		this.makeInjectSetting("haskell", "Haskell");
 
 	private sanitizePath(path: string): string {
 		path = path.replace(/\\/g, '/');
