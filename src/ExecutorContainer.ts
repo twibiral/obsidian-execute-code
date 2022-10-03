@@ -2,7 +2,7 @@ import { EventEmitter } from "events";
 import Executor from "./executors/Executor";
 import NodeJSExecutor from "./executors/NodeJSExecutor";
 import NonInteractiveCodeExecutor from "./executors/NonInteractiveCodeExecutor";
-import PythonExecutor from "./executors/PythonExecutor";
+import PythonExecutor from "./executors/python/PythonExecutor";
 import ExecuteCodePlugin, { LanguageId } from "./main";
 
 export default class ExecutorContainer extends EventEmitter implements Iterable<Executor> {

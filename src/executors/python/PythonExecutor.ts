@@ -2,11 +2,16 @@ import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import ExecuteCodePlugin from "src/main";
 import { Outputter } from "src/Outputter";
 import { ExecutorSettings } from "src/Settings";
-import AsyncExecutor from "./AsyncExecutor";
+import AsyncExecutor from "../AsyncExecutor";
+import wrapPython from "./wrapPython";
 
 export default class PythonExecutor extends AsyncExecutor {
 
     process: ChildProcessWithoutNullStreams
+    
+    printFunctionName: string;
+    localsDictionaryName: string;
+    globalsDictionaryName: string;
 
     constructor(settings: ExecutorSettings, file: string) {
         super(file, "python");
@@ -16,6 +21,13 @@ export default class PythonExecutor extends AsyncExecutor {
         args.unshift("-i");
 
         this.process = spawn(settings.pythonPath, args);
+        
+        //this.process.stdout.on("data", (x) => console.log(x.toString()))
+        //this.process.stderr.on("data", (x) => console.log(x.toString()))
+        
+        this.printFunctionName = `__print_${Math.random().toString().substring(2)}_${Date.now()}`;
+        this.localsDictionaryName = `__locals_${Math.random().toString().substring(2)}_${Date.now()}`;
+        this.globalsDictionaryName = `__locals_${Math.random().toString().substring(2)}_${Date.now()}`;
 
         //send a newline so that the intro message won't be buffered
         this.dismissIntroMessage();
@@ -36,11 +48,19 @@ export default class PythonExecutor extends AsyncExecutor {
     }
 
     /**
-     * Swallows and rejects the "Welcome to Python v..." message that shows at startup
+     * Swallows and does not output the "Welcome to Python v..." message that shows at startup.
+     * Also sets the printFunctionName up correctly.
      */
     async dismissIntroMessage() {
         this.addJobToQueue((resolve, reject) => {
-            this.process.stdin.write("\n");
+            this.process.stdin.write(
+`from __future__ import print_function
+import sys
+${this.printFunctionName} = print
+
+${this.localsDictionaryName} = {}
+${this.globalsDictionaryName} = {**globals()}
+`.replace(/\r\n/g, "\n"));
 
             this.process.stderr.once("data", (data) => {
                 resolve();
@@ -61,8 +81,17 @@ export default class PythonExecutor extends AsyncExecutor {
         return this.addJobToQueue((resolve, reject) => {
             const finishSigil = `SIGIL_BLOCK_DONE${Math.random()}_${Date.now()}_${code.length}`;
             
+            const wrappedCode = wrapPython(code, 
+                this.globalsDictionaryName,
+                this.localsDictionaryName,
+                this.printFunctionName,
+                finishSigil
+            );
+            
+            console.log(wrappedCode);
+            
             //import print from builtins to circumnavigate the case where the user redefines print
-            this.process.stdin.write(code + `\n\nfrom builtins import print\nprint("${finishSigil}", end = '')\n`);
+            this.process.stdin.write(wrappedCode);
             
             outputter.clear();
             
