@@ -25,7 +25,7 @@ interface CodeBlockArgs {
  * @param language A language name or shortcut (e.g. 'js', 'python' or 'shell').
  * @returns The same language shortcut for every alias of the language.
  */
-function getLanguageAlias(language: string) : LanguageId {
+export function getLanguageAlias(language: string) : LanguageId {
 	return language
 		.replace("javascript", "js")
 		.replace("typescript", "ts")

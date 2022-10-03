@@ -7,7 +7,7 @@ import {Outputter} from "./Outputter";
 import type {ExecutorSettings} from "./Settings";
 import {DEFAULT_SETTINGS} from "./Settings";
 import {SettingsTab} from "./SettingsTab";
-import {CodeInjector} from './TransformCode';
+import {CodeInjector, getLanguageAlias} from './TransformCode';
 import {addInlinePlotsToPython, addInlinePlotsToR, addMagicToJS, addMagicToPython,} from "./Magic";
 
 // @ts-ignore
@@ -138,23 +138,6 @@ export default class ExecuteCodePlugin extends Plugin {
 			}
 		})
 	}
-
-	/**
-	 * Transform a language name, to enable working with multiple language aliases, for example "js" and "javascript".
-	 *
-	 * @param language A language name or shortcut (e.g. 'js', 'python' or 'shell')
-	 * @returns The same language shortcut for every alias of the language.
-	 */
-	private getLanguageAlias(language: string) {
-		return language
-			.replace("javascript", "js")
-			.replace("typescript", "ts")
-			.replace("csharp", "cs")
-			.replace("bash", "shell")
-			.replace("wolfram", "mathematica")
-			.replace("nb", "mathematica")
-			.replace("wl", "mathematica");
-	}
 	
 	/**
 	 * Add a button to each code block that allows the user to run the code. The button is only added if the code block
@@ -175,7 +158,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				const srcCode = codeBlock.getText();
 				
-				const cannonicalLanguage = this.getLanguageAlias(
+				const cannonicalLanguage = getLanguageAlias(
 					supportedLanguages.find((lang => language.contains(`language-${lang}`)))
 				) as LanguageId;
 
