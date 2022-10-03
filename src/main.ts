@@ -21,7 +21,6 @@ const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram"
 const cannonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
 	"prolog", "shell", "groovy", "r", "go", "rust", "java", "powershell", "kotlin", "mathematica"] as const;
 const supportedLanguages = [...languageAliases, ...cannonicalLanguages] as const;
-const languagePrefixes = ["run", "pre", "post"];
 
 
 type SupportedLanguage = typeof supportedLanguages[number];
@@ -55,11 +54,9 @@ export default class ExecuteCodePlugin extends Plugin {
 		// live preview renderers
 		supportedLanguages.forEach(l => {
 			console.debug(`Registering renderer for ${l}.`)
-			languagePrefixes.forEach(prefix => {
-				this.registerMarkdownCodeBlockProcessor(`${prefix}-${l}`, async (src, el, _ctx) => {
+				this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, _ctx) => {
 					await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, '', null);
 				});
-			})
 		});
 		
 		//executor manager
