@@ -2,7 +2,8 @@ import {App, MarkdownView, Notice} from "obsidian";
 import {insertNotePath, insertNoteTitle, insertVaultPath} from "./Magic";
 import {getVaultVariables} from "./Vault";
 import * as JSON5 from "json5";
-import type {ExecutorSettings, ExecutorSettingsLanguage as ExecutorSettingsLanguage} from "./Settings";
+import type {ExecutorSettings} from "./Settings";
+import { LanguageId } from "./main";
 
 type ExportType = "pre" | "post";
 
@@ -24,7 +25,7 @@ interface CodeBlockArgs {
  * @param language A language name or shortcut (e.g. 'js', 'python' or 'shell').
  * @returns The same language shortcut for every alias of the language.
  */
-function getLanguageAlias(language: string) : ExecutorSettingsLanguage {
+export function getLanguageAlias(language: string) : LanguageId {
 	return language
 		.replace("javascript", "js")
 		.replace("typescript", "ts")
@@ -32,7 +33,7 @@ function getLanguageAlias(language: string) : ExecutorSettingsLanguage {
 		.replace("bash", "shell")
 		.replace("wolfram", "mathematica")
 		.replace("nb", "mathematica")
-		.replace("wl", "mathematica") as ExecutorSettingsLanguage;
+		.replace("wl", "mathematica") as LanguageId;
 }
 
 /**
@@ -110,7 +111,7 @@ function getCodeBlockLanguage(firstLineOfCode: string) {
 export class CodeInjector {
 	private app: App;
 	private settings: ExecutorSettings;
-	private language: ExecutorSettingsLanguage;
+	private language: LanguageId;
 
 	private prependSrcCode = "";
 	private appendSrcCode = "";
@@ -125,7 +126,7 @@ export class CodeInjector {
 	 * @param settings The current app settings.
 	 * @param language The language of the code block e.g. python, js, cpp.
 	 */
-	constructor(app: App, settings: ExecutorSettings, language: ExecutorSettingsLanguage) {
+	constructor(app: App, settings: ExecutorSettings, language: LanguageId) {
 		this.app = app;
 		this.settings = settings;
 		this.language = language;
@@ -166,7 +167,7 @@ export class CodeInjector {
 	 * @param language The programming language of the code block being run
 	 * @returns 
 	 */
-	private async parseFile(fileContents: string, srcCode: string, language: ExecutorSettingsLanguage) {
+	private async parseFile(fileContents: string, srcCode: string, language: LanguageId) {
 		let currentArgs: CodeBlockArgs = {};
 		let insideCodeBlock = false;
 		let isLanguageEqual = false;

@@ -1,7 +1,4 @@
-import {supportedLanguages} from "./main";
 
-
-export type ExecutorSettingsLanguage = Exclude<typeof supportedLanguages[number], "javascript">;
 
 
 /**
@@ -69,6 +66,24 @@ export interface ExecutorSettings {
 	mathematicaArgs: string;
 	mathematicaFileExtension: string;
 	mathematicaInject: string;
+	
+	jsInteractive: boolean;
+	tsInteractive: boolean;
+	csInteractive: boolean;
+	luaInteractive: boolean;
+	pythonInteractive: boolean;
+	cppInteractive: boolean;
+	prologInteractive: boolean;
+	shellInteractive: boolean;
+	bashInteractive: boolean;
+	groovyInteractive: boolean;
+	rInteractive: boolean;
+	goInteractive: boolean;
+	rustInteractive: boolean;
+	javaInteractive: boolean;
+	powershellInteractive: boolean;
+	kotlinInteractive: boolean;
+	mathematicaInteractive: boolean;
 }
 
 
@@ -136,5 +151,24 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	mathematicaPath: "wolframscript",
 	mathematicaArgs: "",
 	mathematicaFileExtension: "wls",
-	mathematicaInject: ""
+	mathematicaInject: "",
+	
+	jsInteractive: true,
+	tsInteractive: false,
+	csInteractive: false,
+	luaInteractive: false,
+	pythonInteractive: true,
+	cppInteractive: false,
+	prologInteractive: false,
+	shellInteractive: false,
+	bashInteractive: false,
+	groovyInteractive: false,
+	rInteractive: false,
+	goInteractive: false,
+	rustInteractive: false,
+	javaInteractive: false,
+	powershellInteractive: false,
+	kotlinInteractive: false,
+	mathematicaInteractive: true,
+
 }

@@ -25,6 +25,8 @@ function hello(name) {
 hello("Bob")
 ```
 
+	- By default, Javascript runs in Notebook Mode. You can turn this off in the settings.
+
 - TypeScript
 	- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`. (`-g` means global install)
 	- Problems: If you use your global node.js installation and it doesn't work try to set your `ts-node` path in the settings to `npx ts-node` instead of `ts-node`.
@@ -52,6 +54,7 @@ if __name__ == "__main__":
 	hello("Eve")
 ```
 
+	- By default, Python runs in Notebook Mode. You can turn this off in the settings.
 	- Plots with matplotlib/seaborn are embedded in the note by default. You can turn this off in the settings.
 
 ```python
@@ -245,7 +248,7 @@ The following magic commands are supported:
 Adding `run-` before the language name in the code blocks (as in the example below) renders the code block in the preview already.
 This allows you to execute the code in the preview.
 
-``````
+```
 ```run-python
 def hello(name):
 print("Hello", name)
@@ -254,19 +257,9 @@ print("Hello", name)
         hello("Eve")
 `````` 
 
-## Code Block Arguments
-
-Code blocks support specifying additional arguments in the form `{key='value', otherkey=['val1', 'val2']}`. Add them to code blocks like so:
-
-`````
-```python {label='my label'}
-print('my labelled code block')
-```
-`````
-
 ## Global Code Injection and Reusing Code Blocks
 
-Sometimes it is helpful to have code that is executed before or after each other block of the same language. This plugin supports this in a few ways:
+Sometimes it is helpful to have code that is executed before or after each other block of the same language. This plugin supports this in a few different ways:
 
 ### Global Injection in the Settings
 
@@ -274,67 +267,42 @@ All languages have a 'global inject' option in the settings that allows defining
 
 ### Note-wide Pre- and Post-Code Blocks
 
-You can specify the `pre` argument to create a block that is executed before each following code block:
+You can add `Pre` before the language name to create a block that is executed before each following code block:
 
-``````
-```python {pre}
-import pandas as pd
 ```
+```pre-python
+import pandas as pd
 ``````
 
 This code block is added before each python block you define below in the note and import the pandas package.
 
-`post` blocks work the same way, but the code in post blocks is executed _after_ your other code blocks.
+`Post` blocks work the same way but the code in post blocks is executed _after_ your other code blocks.
 
-Pre/Post blocks will only apply to code blocks defined below them, and will only apply to code blocks from the same language.
+Pre-/Post-blocks will only apply to code blocks defined below them, and will only apply to code blocks from the same language.
 
-You can also have a pre and post block at the same time by specifying `{pre, post}`
+### Notebook Mode
 
-Note, the `pre`/`post` arguments are special in that you don't need to explicitly state a key/value pair, however you can do so if you wish:
+A few languages (currently JS and Python) support *Notebook Mode*. If a language is using Notebook Mode (configurable in Settings), then all code blocks in a given file will execute in the same environment.
 
-`{pre}` is equivalent to `{export='pre'}`, `{pre, post}` is equivalent to `{export=['pre', 'post']}`.
+Variables functions, etc. defined in one code block will be available in other code blocks. Code blocks are executed on demand; the order of code blocks in the file does not affect the order in which they are executed:
 
-### Labelled Code Blocks
+```
+```js
+console.log(f)
+```
+```js
+let f = 3;
+``````
 
-You can label specific code blocks with the `label='string'` argument, then import them explicitly in other blocks with the `import='string'` or `import=['string1', 'string2', ...]` argument so they aren't automatically imported as with pre / post blocks:
+Running the first code block, then the second, then the first again will give:
 
-`````
-```python {label='block 1'}
-print('running block 1')
+```
+Uncaught ReferenceError: f is not defined
+undefined
+3
 ```
 
-```python {label='block 2'}
-print('running block 2')
-```
-
-```python {import=['block 1', 'block 2']}
-print('should run block 1 and 2')
-```
-`````
-
-Labelled code blocks will be executed before the code block being run, however after global injects and pre blocks.
-
-### Ignoring Code Exports
-
-In case you want to manually ignore specific exports in a code block like pre / post / global exports, you can do so with the `ignore` argument that accepts either `pre`, `post`, `global`, an array of any of these 3, or `all` to ignore all exports:
-
-`````
-```python {pre}
-print('running pre block')
-```
-
-```python {post}
-print('running post block')
-```
-
-```python {ignore='all'}
-print('should not run any global injects or pre / post blocks')
-```
-
-```python {ignore=['global', 'pre']}
-print('should not run any pre blocks or global injects')
-```
-`````
+To manage the open runtimes for Notebook Mode, you can use the `Open Code Runtime Management` command in the command palette. From this sidebar window, you can stop kernels.
 
 ## Installation
 
