@@ -302,6 +302,8 @@ undefined
 3
 ```
 
+To manage the open runtimes for Notebook Mode, you can use the `Open Code Runtime Management` command in the command palette. From this sidebar window, you can stop kernels.
+
 ## Installation
 
 In your vault go to Settings > Community plugins > Browse and search for "Execute Code". Select the plugin, install it and activate it.
