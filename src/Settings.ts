@@ -1,7 +1,7 @@
 import {supportedLanguages} from "./main";
 
 
-export type ExecutorSettingsLanguages = Exclude<typeof supportedLanguages[number], "javascript">;
+export type ExecutorSettingsLanguage = Exclude<typeof supportedLanguages[number], "javascript">;
 
 
 /**
@@ -68,7 +68,10 @@ export interface ExecutorSettings {
 	ghciPath: string;
 	ghciArgs: string;
 	haskellInject: string;
-
+	mathematicaPath: string;
+	mathematicaArgs: string;
+	mathematicaFileExtension: string;
+	mathematicaInject: string;
 }
 
 
@@ -135,5 +138,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	kotlinInject: "",
 	ghciPath: "",
 	ghciArgs: "",
-  	haskellInject: "",
+  haskellInject: "",
+	mathematicaPath: "wolframscript",
+	mathematicaArgs: "",
+	mathematicaFileExtension: "wls",
+	mathematicaInject: ""
 }

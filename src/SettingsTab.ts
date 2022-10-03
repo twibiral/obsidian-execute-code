@@ -1,6 +1,6 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
 import ExecuteCodePlugin from "./main";
-import {ExecutorSettings, ExecutorSettingsLanguages} from "./Settings";
+import {ExecutorSettings, ExecutorSettingsLanguage} from "./Settings";
 
 
 /**
@@ -420,6 +420,7 @@ export class SettingsTab extends PluginSettingTab {
 				}));
 		this.makeInjectSetting("r", "R");
 
+
 		// ========== Kotlin ==========
 		containerEl.createEl('h3', {text: 'Kotlin Settings'});
 		new Setting(containerEl)
@@ -444,7 +445,32 @@ export class SettingsTab extends PluginSettingTab {
 				}));
 		this.makeInjectSetting("kotlin", "Kotlin");
 
-		// ========== Haskell ===========
+		// ========== Mathematica ==========
+		containerEl.createEl('h3', {text: 'Wolfram Mathematica Settings'});
+		new Setting(containerEl)
+			.setName('Mathematica path')
+			.setDesc('The path to your Mathematica installation.')
+			.addText(text => text
+				.setValue(this.plugin.settings.kotlinPath)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.mathematicaPath = sanitized;
+					console.log('Mathematica path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Mathematica arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.kotlinArgs)
+				.onChange(async (value) => {
+					this.plugin.settings.mathematicaArgs = value;
+					console.log('Kotlin args set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		this.makeInjectSetting("mathematica", "Mathematica");
+	}
+  
+  // ========== Haskell ===========
 		containerEl.createEl('h3', {text: 'Haskell Settings'});
 		new Setting(containerEl)
 			.setName('Ghci path')
@@ -468,7 +494,6 @@ export class SettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 		this.makeInjectSetting("haskell", "Haskell");
-	}
 
 	private sanitizePath(path: string): string {
 		path = path.replace(/\\/g, '/');
@@ -478,7 +503,7 @@ export class SettingsTab extends PluginSettingTab {
 		return path
 	}
 
-	private makeInjectSetting(language: ExecutorSettingsLanguages, languageAlt: string) {
+	private makeInjectSetting(language: ExecutorSettingsLanguage, languageAlt: string) {
 		new Setting(this.containerEl)
 			.setName(`Inject ${languageAlt} code`)
 			.setDesc(`Code to add to the top of every ${languageAlt} code block before running.`)

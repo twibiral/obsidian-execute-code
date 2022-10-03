@@ -1,28 +1,21 @@
-import {FileSystemAdapter, MarkdownRenderer, MarkdownView, Notice, Plugin} from 'obsidian';
+import {MarkdownRenderer, Notice, Plugin} from 'obsidian';
 import * as fs from "fs";
 import * as os from "os"
 import * as child_process from "child_process";
 
 import {Outputter} from "./Outputter";
-import type {ExecutorSettings, ExecutorSettingsLanguages} from "./Settings";
+import type {ExecutorSettings} from "./Settings";
 import {DEFAULT_SETTINGS} from "./Settings";
 import {SettingsTab} from "./SettingsTab";
-import {
-	addInlinePlotsToPython,
-	addInlinePlotsToR,
-	addMagicToJS,
-	addMagicToPython,
-	insertNotePath,
-	insertNoteTitle,
-	insertVaultPath
-} from "./Magic";
+import {CodeInjector} from './TransformCode';
+import {addInlinePlotsToPython, addInlinePlotsToR, addMagicToJS, addMagicToPython,} from "./Magic";
 
 // @ts-ignore
 import * as prolog from "tau-prolog";
 
-export const supportedLanguages = ["js", "javascript", "ts", "typescript", "cs", "csharp", "lua", "python", "cpp",
-	"prolog", "shell", "bash", "groovy", "r", "go", "rust", "java", "powershell", "kotlin", "haskell"] as const;
-const languagePrefixes = ["run", "pre", "post"];
+
+export const supportedLanguages = ["js", "javascript", "ts", "typescript", "cs", "csharp", "lua", "python", "cpp", "prolog", "shell", "bash", "groovy", "r", "go", "rust", "java", "powershell", "kotlin", "wolfram", "mathematica", "haskell", "nb", "wl"] as const;
+
 
 const buttonText = "Run";
 
@@ -49,11 +42,9 @@ export default class ExecuteCodePlugin extends Plugin {
 		// live preview renderers
 		supportedLanguages.forEach(l => {
 			console.debug(`Registering renderer for ${l}.`)
-			languagePrefixes.forEach(prefix => {
-				this.registerMarkdownCodeBlockProcessor(`${prefix}-${l}`, async (src, el, _ctx) => {
-					await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, '', null);
-				});
-			})
+			this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, _ctx) => {
+				await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, '', null);
+			});
 		})
 	}
 
@@ -106,95 +97,6 @@ export default class ExecuteCodePlugin extends Plugin {
 	}
 
 	/**
-	 * Perform magic on source code (parse the magic commands) to insert note path, title, vault path, etc.
-	 *
-	 * @param srcCode Code with magic commands.
-	 * @returns The input code with magic commands replaced.
-	 */
-	private transformCode(srcCode: string) {
-		let ret = srcCode;
-		const vars = this.getVaultVariables();
-		if (vars) {
-			ret = insertVaultPath(ret, vars.vaultPath);
-			ret = insertNotePath(ret, vars.filePath);
-			ret = insertNoteTitle(ret, vars.fileName);
-		} else {
-			console.warn(`Could not load all Vault variables! ${vars}`)
-		}
-		return ret;
-	}
-
-	/**
-	 * Transform a language name, to enable working with multiple language aliases, for example "js" and "javascript".
-	 *
-	 * @param language A language name or shortcut (e.g. 'js', 'python' or 'shell')
-	 * @returns The same language shortcut for every alias of the language.
-	 */
-	private getLanguageAlias(language: string) {
-		return language
-			.replace("javascript", "js")
-			.replace("typescript", "ts")
-			.replace("csharp", "cs")
-			.replace("bash", "shell");
-	}
-
-	/**
-	 * Takes the source code of a code block and adds all relevant pre-/post-blocks and global code injections.
-	 *
-	 * @param srcCode The source code of the code block.
-	 * @param _language The language of the code block.
-	 * @returns
-	 */
-	private async injectCode(srcCode: string, _language: ExecutorSettingsLanguages) {
-		let prependSrcCode = "";
-		let appendSrcCode = "";
-
-		const language = this.getLanguageAlias(_language);
-		const preLangName = `pre-${language}`;
-		const postLangName = `post-${language}`;
-
-		// We need to get access to all code blocks on the page so we can grab the pre / post blocks above
-		// Obsidian unloads code blocks not in view, so instead we load the raw document file and traverse line-by-line
-		const activeFile = this.app.workspace.getActiveFile();
-		const fileContents = await this.app.vault.read(activeFile);
-
-		let insideCodeBlock = false;
-		let isLanguageEqual = false;
-		let currentLanguage = "";
-		let currentCode = "";
-
-		for (const line of fileContents.split('\n')) {
-			if (line.startsWith("```")) {
-				if (insideCodeBlock) {
-					// Stop traversal once we've reached the code block being run
-					const srcCodeTrimmed = srcCode.trim();
-					const currentCodeTrimmed = currentCode.trim();
-					if (isLanguageEqual && srcCodeTrimmed.length === currentCodeTrimmed.length && srcCodeTrimmed === currentCodeTrimmed)
-						break;
-					if (currentLanguage === preLangName)
-						prependSrcCode += `${currentCode}\n`;
-					else if (currentLanguage === postLangName)
-						appendSrcCode += `${currentCode}\n`;
-					currentLanguage = "";
-					currentCode = "";
-					insideCodeBlock = false;
-				} else {
-					currentLanguage = this.getLanguageAlias(line.split("```")[1].trim().split(" ")[0]);
-					// Don't check code blocks from a different language
-					isLanguageEqual = /[^-]*$/.exec(language)[0] === /[^-]*$/.exec(currentLanguage)[0];
-					insideCodeBlock = true;
-				}
-			} else if (insideCodeBlock) {
-				currentCode += `${line}\n`;
-			}
-		}
-
-		const realLanguage = /[^-]*$/.exec(language)[0];
-		const injectedCode = `${this.settings[`${realLanguage}Inject` as keyof ExecutorSettings]}\n${prependSrcCode}\n${srcCode}\n${appendSrcCode}`;
-		return this.transformCode(injectedCode);
-	}
-
-	/**
 	 * Add a button to each code block that allows the user to run the code. The button is only added if the code block
 	 * utilizes a language that is supported by this plugin.
 	 *
@@ -236,50 +138,49 @@ export default class ExecuteCodePlugin extends Plugin {
 		if (language.contains("language-js") || language.contains("language-javascript")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				let transformedCode = await this.injectCode(srcCode, "js");
+				let transformedCode = await new CodeInjector(this.app, this.settings, "js").injectCode(srcCode);
 				transformedCode = addMagicToJS(transformedCode);
-				this.runCode(transformedCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
+				this.runCodeInShell(transformedCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js");
 			});
 
 		} else if (language.contains("language-java")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await this.injectCode(srcCode, "java");
-				this.runCode(transformedCode, out, button, this.settings.javaPath, this.settings.javaArgs, this.settings.javaFileExtension);
+				const transformedCode = await new CodeInjector(this.app, this.settings, "java").injectCode(srcCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.javaPath, this.settings.javaArgs, this.settings.javaFileExtension);
 			});
 
 		} else if (language.contains("language-python")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 
-				let transformedCode = await this.injectCode(srcCode, "python");
+				let transformedCode = await new CodeInjector(this.app, this.settings, "python").injectCode(srcCode);
 				if (this.settings.pythonEmbedPlots)	// embed plots into html which shows them in the note
 					transformedCode = addInlinePlotsToPython(transformedCode);
 				transformedCode = addMagicToPython(transformedCode);
 
-				this.runCode(transformedCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
+				this.runCodeInShell(transformedCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py");
 			});
 
 		} else if (language.contains("language-shell") || language.contains("language-bash")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await this.injectCode(srcCode, "shell");
+				const transformedCode = await new CodeInjector(this.app, this.settings, "shell").injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension);
 			});
 
 		} else if (language.contains("language-powershell")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await this.injectCode(srcCode, "powershell");
+				const transformedCode = await new CodeInjector(this.app, this.settings, "powershell").injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.powershellPath, this.settings.powershellArgs, this.settings.powershellFileExtension);
 			});
 
 		} else if (language.contains("language-cpp")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				out.clear();
-				const transformedCode = await this.injectCode(srcCode, "cpp");
-				this.runCode(transformedCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp");
+				const transformedCode = await new CodeInjector(this.app, this.settings, "cpp").injectCode(srcCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp");
 				button.className = runButtonClass;
 			});
 
@@ -288,7 +189,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				out.clear();
 
-				const prologCode = (await this.injectCode(srcCode, "prolog")).split(/\n+%+\s*query\n+/);
+				const prologCode = (await new CodeInjector(this.app, this.settings, "prolog").injectCode(srcCode)).split(/\n+%+\s*query\n+/);
 				if (prologCode.length < 2) return;	// no query found
 
 				this.runPrologCode(prologCode[0], prologCode[1], out);
@@ -299,93 +200,80 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language.contains("language-groovy")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await this.injectCode(srcCode, "groovy");
+				const transformedCode = await new CodeInjector(this.app, this.settings, "groovy").injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension);
 			});
 
 		} else if (language.contains("language-rust")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await this.injectCode(srcCode, "rust");
-				this.runCode(transformedCode, out, button, this.settings.cargoPath, this.settings.cargoArgs, this.settings.rustFileExtension);
+				const transformedCode = await new CodeInjector(this.app, this.settings, "rust").injectCode(srcCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.cargoPath, this.settings.cargoArgs, this.settings.rustFileExtension);
 			});
 
 		} else if (language.contains("language-r")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 
-				let transformedCode = await this.injectCode(srcCode, "r");
-				transformedCode = addInlinePlotsToR(srcCode);
+				let transformedCode = await new CodeInjector(this.app, this.settings, "r").injectCode(srcCode);
+				transformedCode = addInlinePlotsToR(transformedCode);
 
-				this.runCode(transformedCode, out, button, this.settings.RPath, this.settings.RArgs, "R");
+				this.runCodeInShell(transformedCode, out, button, this.settings.RPath, this.settings.RArgs, "R");
 			});
 
 		} else if (language.contains("language-go")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await this.injectCode(srcCode, "go");
-				this.runCode(transformedCode, out, button, this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension);
+				const transformedCode = await new CodeInjector(this.app, this.settings, "go").injectCode(srcCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension);
 			});
 
 		} else if (language.contains("language-kotlin")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await this.injectCode(srcCode, "kotlin");
+				const transformedCode = await new CodeInjector(this.app, this.settings, "kotlin").injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.kotlinPath, this.settings.kotlinArgs, this.settings.kotlinFileExtension);
 			});
+
 		} else if (language.contains("language-ts")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				let transformedCode = await this.injectCode(srcCode, "ts");
+				const transformedCode = await new CodeInjector(this.app, this.settings, "ts").injectCode(srcCode);
 				console.debug(`runCodeInShell ${this.settings.tsPath} ${this.settings.tsArgs} ${"ts"}`)
 				this.runCodeInShell(transformedCode, out, button, this.settings.tsPath, this.settings.tsArgs, "ts");
 			});
+
 		} else if (language.contains("language-lua")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				let transformedCode = await this.injectCode(srcCode, "lua");
+				const transformedCode = await new CodeInjector(this.app, this.settings, "lua").injectCode(srcCode);
 				console.debug(`runCodeInShell ${this.settings.luaPath} ${this.settings.luaArgs} ${"lua"}`)
 				this.runCodeInShell(transformedCode, out, button, this.settings.luaPath, this.settings.luaArgs, "lua");
 			});
+
 		} else if (language.contains("language-cs")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				let transformedCode = await this.injectCode(srcCode, "lua");
+				const transformedCode = await new CodeInjector(this.app, this.settings, "cs").injectCode(srcCode);
 				console.log(`runCodeInShell ${this.settings.csPath} ${this.settings.csArgs} ${"cs"}`)
 				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, "csx");
 			});
+      
 		} else if (language.contains("language-haskell") || language.contains("language-hs")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await this.injectCode(srcCode, "haskell");
 				this.runCode(transformedCode, out, button, this.settings.ghciPath, this.settings.haskellArgs, "hs");
 			});
-	}
-
-	/**
-	 * Tries to get the active view from obsidian and returns a dictionary containing the file name, folder path,
-	 * file path, and vault path of the currently opened / focused note.
-	 *
-	 * @returns { fileName: string; folder: string; filePath: string; vaultPath: string } A dictionary containing the
-	 * file name, folder path, file path, and vault path of the currently opened / focused note.
-	 */
-	private getVaultVariables(): { fileName: string; folder: string; filePath: string; vaultPath: string } {
-		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
-		if (activeView == null) {
-			return null;
-		}
-
-		const adapter = app.vault.adapter as FileSystemAdapter;
-		const vaultPath = adapter.getBasePath();
-		const folder = activeView.file.parent.path;
-		const fileName = activeView.file.name
-		const filePath = activeView.file.path
-
-		return {
-			vaultPath: vaultPath,
-			folder: folder,
-			fileName: fileName,
-			filePath: filePath,
+      
+		} else if (language.contains("language-wolfram") || language.contains("language-mathematica")
+			|| language.contains("language-nb") || language.contains("language-wl")) {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				const transformedCode = await new CodeInjector(this.app, this.settings, "mathematica").injectCode(srcCode);
+				console.log(`runCodeInShell ${this.settings.mathematicaPath} ${this.settings.mathematicaArgs} ${"mathematica"}`)
+				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, this.settings.mathematicaFileExtension);
+			});
 		}
 	}
 
@@ -457,7 +345,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				args.push(tempFileName);
 
 				console.debug(`Execute ${cmd} ${args.join(" ")}`);
-				const child = child_process.spawn(cmd, args);
+				const child = child_process.spawn(`"${cmd}"`, args, {env: process.env});
 
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
@@ -480,16 +368,17 @@ export default class ExecuteCodePlugin extends Plugin {
 	 */
 	private runCodeInShell(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string) {
 		new Notice("Running...");
-		const [tempFileName] = this.getTempFile(ext)
+		const [tempFileName, fileId] = this.getTempFile(ext);
 		console.debug(`Execute ${cmd} ${cmdArgs} ${tempFileName}`);
-
+		if (ext === "cpp")
+			codeBlockContent = codeBlockContent.replace(/main\(\)/g, `temp_${fileId}()`);
 		fs.promises.writeFile(tempFileName, codeBlockContent)
 			.then(() => {
 				const args = cmdArgs ? cmdArgs.split(" ") : [];
 				args.push(tempFileName);
 
 				console.debug(`Execute ${cmd} ${args.join(" ")}`);
-				const child = child_process.spawn(cmd, args, {shell: true});
+				const child = child_process.spawn(`"${cmd}"`, args, {shell: true, env: process.env});
 
 				this.handleChildOutput(child, outputter, button, tempFileName);
 			})
