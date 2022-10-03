@@ -216,6 +216,7 @@ hello("Bob")
 ```haskell
 mySum:: Num a => a -> a -> a
 mySum a b = a+b
+```
 
 - Wolfram Mathematica
 	- Requirements: Mathematica is installed and correct path is set in the settings.
