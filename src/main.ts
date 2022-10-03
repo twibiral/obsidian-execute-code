@@ -262,7 +262,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language.contains("language-haskell") || language.contains("language-hs")) {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await this.injectCode(srcCode, "haskell");
+				 const transformedCode = await new CodeInjector(this.app, this.settings, "haskell").injectCode(srcCode);
 				this.runCode(transformedCode, out, button, this.settings.ghciPath, this.settings.haskellArgs, "hs");
 			});
       
