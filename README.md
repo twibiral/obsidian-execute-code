@@ -14,8 +14,10 @@ You can create code blocks that are executed before or after each code block of 
 
 ## Supported programming languages
 
-- JavaScript
-	- Requirements: Node.js is installed and the correct path is set in the settings.
+<details>
+<summary>JavaScript</summary>
+
+- Requirements: Node.js is installed and the correct path is set in the settings.
 
 ```javascript
 function hello(name) {
@@ -25,26 +27,36 @@ function hello(name) {
 hello("Bob")
 ```
 
-	- By default, Javascript runs in Notebook Mode. You can turn this off in the settings.
+- By default, Javascript runs in Notebook Mode. You can turn this off in the settings.
 
-- TypeScript
-	- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`. (`-g` means global install)
-	- Problems: If you use your global node.js installation and it doesn't work try to set your `ts-node` path in the settings to `npx ts-node` instead of `ts-node`.
+</details>
+	
+<details>
+<summary>TypeScript</summary>
+
+- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`. (`-g` means global install)
+- Problems: If you use your global node.js installation and it doesn't work try to set your `ts-node` path in the settings to `npx ts-node` instead of `ts-node`.
 
 ```ts  
 let message: string = 'Hello, World!';
 console.log(message);  
 ```
+</details>
 
-- CSharp
-	- Requirements: install dotnet core sdk and run in command line `dotnet tool install -g dotnet-script`, then config dotnet-script fullpath.
+<details>
+<summary>CSharp</summary>
+
+- Requirements: install dotnet core sdk and run in command line `dotnet tool install -g dotnet-script`, then config dotnet-script fullpath.
 
 ```cs 
 Console.WriteLine("Hello, World!");  
 ```  
+</details>
 
-- Python
-	- Requirements: Python is installed and the correct path is set in the settings.
+<details>
+<summary>Python</summary>
+
+- Requirements: Python is installed and the correct path is set in the settings.
 
 ```python
 def hello(name):
@@ -54,8 +66,8 @@ if __name__ == "__main__":
 	hello("Eve")
 ```
 
-	- By default, Python runs in Notebook Mode. You can turn this off in the settings.
-	- Plots with matplotlib/seaborn are embedded in the note by default. You can turn this off in the settings.
+- By default, Python runs in Notebook Mode. You can turn this off in the settings.
+- Plots with matplotlib/seaborn are embedded in the note by default. You can turn this off in the settings.
 
 ```python
 import seaborn as sns
@@ -63,16 +75,19 @@ import matplotlib.pyplot as plt
 sns.set_style("darkgrid")
 iris = sns.load_dataset('iris')
 sns.FacetGrid(iris, hue ="species", height = 5)
-			  .map(plt.scatter, 'sepal_length', 'petal_length')
-			  .add_legend()
+		.map(plt.scatter, 'sepal_length', 'petal_length')
+		.add_legend()
 
 plt.show()
 ```
 
 ![Example of an embedded plot.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/plotting_example.png?raw=true)
+</details>	
 
-- R
-	- Requirements: R is installed and the correct path is set in the settings.
+<details>
+<summary>R</summary>
+
+- Requirements: R is installed and the correct path is set in the settings.
 
 ```r
 hello <- function(name){
@@ -88,9 +103,12 @@ y = c(12, 15, 28, 17, 18)
 x = 1:length(y)
 plot(x, y, type="l")
 ```
+</details>
 
-- Java
-	- Requirements: Java **11 or higher** is installed and the correct path is set in the settings.
+<details>
+<summary>Java</summary>
+
+- Requirements: Java **11 or higher** is installed and the correct path is set in the settings.
 
 ```java
 public class HelloWorld {
@@ -98,18 +116,24 @@ public class HelloWorld {
 		System.out.println("Hello World!");
 	}
 }
- ```
+```
+</details>
 
-- Lua
-	- Requirements: install lua and config lua path
+<details>
+<summary>Lua</summary>
+
+- Requirements: install lua and config lua path
 
 ```lua
 print('Hello, World!')
 ```
+</details>
 
-- C++
-	- Requirements: [Cling](https://github.com/root-project/cling) is installed and correct path is set in the settings.
-	- Every code block must contain a main function.
+<details>
+<summary>C++</summary>
+
+- Requirements: [Cling](https://github.com/root-project/cling) is installed and correct path is set in the settings.
+- Every code block must contain a main function.
 
 ```cpp
 #include <iostream>
@@ -126,25 +150,34 @@ int main() {
 	return 0;
 }
 ```
+</details>
 
-- Shell
-	- Requirements: Set the path to your preferred shell in the settings. Default is Bash. (Only on Linux and macOS)
+<details>
+<summary>Shell</summary>
+
+- Requirements: Set the path to your preferred shell in the settings. Default is Bash. (Only on Linux and macOS)
 
 ```shell
 echo "Hello World!"
 ls -la
 ```
+</details>
 
-- Powershell
-	- Requirements: Set the path to your preferred shell in the settings. Default is Powershell. (Only on Windows)
+<details>
+<summary>Powershell</summary>
+
+- Requirements: Set the path to your preferred shell in the settings. Default is Powershell. (Only on Windows)
 
 ```powershell
 echo "Hello World!"
- ```
+```
+</details>
 
-- Prolog
-	- Requirements: NO requirements, works with [Tau-Prolog](https://github.com/tau-prolog/tau-prolog).
-	- Important: Add your queries after a line "`% query`" in the code block like in the following
+<details>
+<summary>Prolog</summary>
+
+- Requirements: NO requirements, works with [Tau-Prolog](https://github.com/tau-prolog/tau-prolog).
+- Important: Add your queries after a line "`% query`" in the code block like in the following
 
 ```prolog
 likes(john, pizza).
@@ -154,15 +187,18 @@ likes(jane, beer).
 % query
 likes(john, X).
 ```
+</details>
 
-- Groovy
-	- Requirements: Groovy is installed and the correct path is set in the settings.
+<details>
+<summary>Groovy</summary>
+
+- Requirements: Groovy is installed and the correct path is set in the settings.
 
 ```groovy
 def hello(name){  
 	println "Hello ${name}!" 
 }  
-  
+
 def helloClosure = {  
 	println "Hello ${it}!" 
 }  
@@ -171,36 +207,45 @@ hello("Bob")
   
 helloClosure "Bob"
 ```
+</details>
 
-- Golang
-	- Requirements: Golang is installed and correct path is set in the settings(`go` binary is available).
-	- Every code block must contain package declaration and a main function.
+<details>
+<summary>Golang</summary>
+
+- Requirements: Golang is installed and correct path is set in the settings(`go` binary is available).
+- Every code block must contain package declaration and a main function.
 
 ```go
 package main
 
 import "fmt"
-  
+
 func main() {
 	fmt.Println("Hello World")
 }
- ```
+```
+</details>
 
-- Rust
-	- Requirements: Cargo is installed and correct path is set in the settings(`cargo` binary is available).
-	- `cargo-eval` is installed. Install using `cargo install cargo-eval`.
-	- Import statements and external crates is supported by `cargo-eval`. Read
-	  their [documentation](https://github.com/reitermarkus/cargo-eval).
-	- Every code block must a main function.
+<details>
+<summary>Rust</summary>
+
+- Requirements: Cargo is installed and correct path is set in the settings(`cargo` binary is available).
+- `cargo-eval` is installed. Install using `cargo install cargo-eval`.
+- Import statements and external crates is supported by `cargo-eval`. Read
+	their [documentation](https://github.com/reitermarkus/cargo-eval).
+- Every code block must a main function.
 
 ```rust
 fn main() {
 	println!("Hello World");
 }
- ```
+```
+</details>
 
-- Kotlin
-	- Requirements: Kotlin is installed and correct path is set in the settings.
+<details>
+<summary>Kotlin</summary>
+
+- Requirements: Kotlin is installed and correct path is set in the settings.
 
 ```kotlin
 hello(name: String) {
@@ -209,15 +254,20 @@ hello(name: String) {
 
 hello("Bob")
 ```
+</details>
 
-- Wolfram Mathematica
-	- Requirements: Mathematica is installed and correct path is set in the settings.
-    - You can add `-cloud` as argument in the settings to use the Wolfram Cloud instead of the local installation.
+<details>
+<summary>Wolfram Mathematica</summary>
+
+- Requirements: Mathematica is installed and correct path is set in the settings.
+- You can add `-cloud` as argument in the settings to use the Wolfram Cloud instead of the local installation.
+
 ```mathematica
 Print["Hello, World!"];
 ```
+</details>
 
-- Squiggle: For Squiggle support look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle) by @jqhoogland.
+Squiggle: For Squiggle support take a look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle) by @jqhoogland.
 
 Support for the following is planned:
 
@@ -248,7 +298,7 @@ The following magic commands are supported:
 Adding `run-` before the language name in the code blocks (as in the example below) renders the code block in the preview already.
 This allows you to execute the code in the preview.
 
-```
+``````
 ```run-python
 def hello(name):
 print("Hello", name)
@@ -257,9 +307,19 @@ print("Hello", name)
         hello("Eve")
 `````` 
 
+## Code Block Arguments
+
+Code blocks support specifying additional arguments in the form `{key='value', otherkey=['val1', 'val2']}`. Add them to code blocks like so:
+
+`````
+```python {label='my label'}
+print('my labelled code block')
+```
+`````
+
 ## Global Code Injection and Reusing Code Blocks
 
-Sometimes it is helpful to have code that is executed before or after each other block of the same language. This plugin supports this in a few different ways:
+Sometimes it is helpful to have code that is executed before or after each other block of the same language. This plugin supports this in a few ways:
 
 ### Global Injection in the Settings
 
@@ -267,18 +327,67 @@ All languages have a 'global inject' option in the settings that allows defining
 
 ### Note-wide Pre- and Post-Code Blocks
 
-You can add `Pre` before the language name to create a block that is executed before each following code block:
+You can specify the `pre` argument to create a block that is executed before each following code block:
 
-```
-```pre-python
+``````
+```python {pre}
 import pandas as pd
+```
 ``````
 
 This code block is added before each python block you define below in the note and import the pandas package.
 
-`Post` blocks work the same way but the code in post blocks is executed _after_ your other code blocks.
+`post` blocks work the same way, but the code in post blocks is executed _after_ your other code blocks.
 
-Pre-/Post-blocks will only apply to code blocks defined below them, and will only apply to code blocks from the same language.
+Pre/Post blocks will only apply to code blocks defined below them, and will only apply to code blocks from the same language.
+
+You can also have a pre and post block at the same time by specifying `{pre, post}`
+
+Note, the `pre`/`post` arguments are special in that you don't need to explicitly state a key/value pair, however you can do so if you wish:
+
+`{pre}` is equivalent to `{export='pre'}`, `{pre, post}` is equivalent to `{export=['pre', 'post']}`.
+
+### Labelled Code Blocks
+
+You can label specific code blocks with the `label='string'` argument, then import them explicitly in other blocks with the `import='string'` or `import=['string1', 'string2', ...]` argument so they aren't automatically imported as with pre / post blocks:
+
+`````
+```python {label='block 1'}
+print('running block 1')
+```
+
+```python {label='block 2'}
+print('running block 2')
+```
+
+```python {import=['block 1', 'block 2']}
+print('should run block 1 and 2')
+```
+`````
+
+Labelled code blocks will be executed before the code block being run, however after global injects and pre blocks.
+
+### Ignoring Code Exports
+
+In case you want to manually ignore specific exports in a code block like pre / post / global exports, you can do so with the `ignore` argument that accepts either `pre`, `post`, `global`, an array of any of these 3, or `all` to ignore all exports:
+
+`````
+```python {pre}
+print('running pre block')
+```
+
+```python {post}
+print('running post block')
+```
+
+```python {ignore='all'}
+print('should not run any global injects or pre / post blocks')
+```
+
+```python {ignore=['global', 'pre']}
+print('should not run any pre blocks or global injects')
+```
+`````
 
 ### Notebook Mode
 
@@ -303,6 +412,8 @@ undefined
 ```
 
 To manage the open runtimes for Notebook Mode, you can use the `Open Code Runtime Management` command in the command palette. From this sidebar window, you can stop kernels.
+
+
 
 ## Installation
 

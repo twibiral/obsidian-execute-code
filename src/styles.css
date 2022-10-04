@@ -32,6 +32,10 @@ pre:hover .run-button-disabled, pre:hover .clear-button-disabled {
 	display: none;
 }
 
+pre:hover code.language-output {
+    margin-bottom: 23px;
+}
+
 code.language-output span.stdout {
 	color: var(--text-muted);
 }
@@ -54,6 +58,7 @@ code.language-output hr {
 input.interactive-stdin {
     font: inherit;
 }
+
 .manage-executors-view h3 {
     margin: 1em;
 }
