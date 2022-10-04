@@ -15,252 +15,252 @@ You can create code blocks that are executed before or after each code block of 
 ## Supported programming languages
 
 <details>
-	<summary>JavaScript</summary>
+<summary>JavaScript</summary>
 
-  	- Requirements: Node.js is installed and the correct path is set in the settings.
+- Requirements: Node.js is installed and the correct path is set in the settings.
 
-	```javascript
-	function hello(name) {
-		console.log(`Hello ${name}!`);
-	}
+```javascript
+function hello(name) {
+	console.log(`Hello ${name}!`);
+}
 
-	hello("Bob")
-	```
+hello("Bob")
+```
 </details>
 	
 <details>
-	<summary>TypeScript</summary>
+<summary>TypeScript</summary>
 
-  	- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`. (`-g` means global install)
-  	- Problems: If you use your global node.js installation and it doesn't work try to set your `ts-node` path in the settings to `npx ts-node` instead of `ts-node`.
+- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`. (`-g` means global install)
+- Problems: If you use your global node.js installation and it doesn't work try to set your `ts-node` path in the settings to `npx ts-node` instead of `ts-node`.
 
-  	```ts  
-  	let message: string = 'Hello, World!';
-  	console.log(message);  
-  	```
+```ts  
+let message: string = 'Hello, World!';
+console.log(message);  
+```
 </details>
 
 <details>
-	<summary>CSharp</summary>
+<summary>CSharp</summary>
 
-	- Requirements: install dotnet core sdk and run in command line `dotnet tool install -g dotnet-script`, then config dotnet-script fullpath.
+- Requirements: install dotnet core sdk and run in command line `dotnet tool install -g dotnet-script`, then config dotnet-script fullpath.
 
-	```cs 
-	Console.WriteLine("Hello, World!");  
-	```  
+```cs 
+Console.WriteLine("Hello, World!");  
+```  
 </details>
 
 <details>
-	<summary>Python</summary>
+<summary>Python</summary>
 
-	- Requirements: Python is installed and the correct path is set in the settings.
+- Requirements: Python is installed and the correct path is set in the settings.
 
-	```python
-	def hello(name):
-		print("Hello", name)
+```python
+def hello(name):
+print("Hello", name)
 
-	if __name__ == "__main__":
-		hello("Eve")
-	```
+if __name__ == "__main__":
+hello("Eve")
+```
 
-		- Plots with matplotlib/seaborn are embedded in the note by default. You can turn this off in the settings.
+- Plots with matplotlib/seaborn are embedded in the note by default. You can turn this off in the settings.
 
-	```python
-	import seaborn as sns
-	import matplotlib.pyplot as plt
-	sns.set_style("darkgrid")
-	iris = sns.load_dataset('iris')
-	sns.FacetGrid(iris, hue ="species", height = 5)
-				.map(plt.scatter, 'sepal_length', 'petal_length')
-				.add_legend()
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+sns.set_style("darkgrid")
+iris = sns.load_dataset('iris')
+sns.FacetGrid(iris, hue ="species", height = 5)
+		.map(plt.scatter, 'sepal_length', 'petal_length')
+		.add_legend()
 
-	plt.show()
-	```
+plt.show()
+```
 
-	![Example of an embedded plot.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/plotting_example.png?raw=true)
+![Example of an embedded plot.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/plotting_example.png?raw=true)
 </details>	
 
 <details>
-	<summary>R</summary>
+<summary>R</summary>
 
-	- Requirements: R is installed and the correct path is set in the settings.
+- Requirements: R is installed and the correct path is set in the settings.
 
-	```r
-	hello <- function(name){
-		print(paste("Hello", name, sep = " "))
+```r
+hello <- function(name){
+	print(paste("Hello", name, sep = " "))
+}
+
+hello("Bob")
+```
+- Plots can be embedded in the note by default. You can turn this off in the settings.
+
+```r
+y = c(12, 15, 28, 17, 18)
+x = 1:length(y)
+plot(x, y, type="l")
+```
+</details>
+
+<details>
+<summary>Java</summary>
+
+- Requirements: Java **11 or higher** is installed and the correct path is set in the settings.
+
+```java
+public class HelloWorld {
+	public static void main(String[] args) {
+		System.out.println("Hello World!");
 	}
-
-	hello("Bob")
-	```
-		- Plots can be embedded in the note by default. You can turn this off in the settings.
-
-	```r
-	y = c(12, 15, 28, 17, 18)
-	x = 1:length(y)
-	plot(x, y, type="l")
-	```
+}
+```
 </details>
 
 <details>
-	<summary>Java</summary>
+<summary>Lua</summary>
 
-	- Requirements: Java **11 or higher** is installed and the correct path is set in the settings.
+- Requirements: install lua and config lua path
 
-	```java
-	public class HelloWorld {
-		public static void main(String[] args) {
-			System.out.println("Hello World!");
-		}
-	}
-	```
+```lua
+print('Hello, World!')
+```
 </details>
 
 <details>
-	<summary>Lua</summary>
+<summary>C++</summary>
 
-	- Requirements: install lua and config lua path
+- Requirements: [Cling](https://github.com/root-project/cling) is installed and correct path is set in the settings.
+- Every code block must contain a main function.
 
-	```lua
-	print('Hello, World!')
-	```
+```cpp
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+void hello(string name) {
+	cout << "Hello " << name << "!\n";
+}
+
+int main() {
+	hello("Alice");
+	return 0;
+}
+```
 </details>
 
 <details>
-	<summary>C++</summary>
+<summary>Shell</summary>
 
-	- Requirements: [Cling](https://github.com/root-project/cling) is installed and correct path is set in the settings.
-	- Every code block must contain a main function.
+- Requirements: Set the path to your preferred shell in the settings. Default is Bash. (Only on Linux and macOS)
 
-	```cpp
-	#include <iostream>
-	#include <string>
-
-	using namespace std;
-
-	void hello(string name) {
-		cout << "Hello " << name << "!\n";
-	}
-
-	int main() {
-		hello("Alice");
-		return 0;
-	}
-	```
+```shell
+echo "Hello World!"
+ls -la
+```
 </details>
 
 <details>
-	<summary>Shell</summary>
+<summary>Powershell</summary>
 
-	- Requirements: Set the path to your preferred shell in the settings. Default is Bash. (Only on Linux and macOS)
+- Requirements: Set the path to your preferred shell in the settings. Default is Powershell. (Only on Windows)
 
-	```shell
-	echo "Hello World!"
-	ls -la
-	```
+```powershell
+echo "Hello World!"
+```
 </details>
 
 <details>
-	<summary>Powershell</summary>
+<summary>Prolog</summary>
 
-	- Requirements: Set the path to your preferred shell in the settings. Default is Powershell. (Only on Windows)
+- Requirements: NO requirements, works with [Tau-Prolog](https://github.com/tau-prolog/tau-prolog).
+- Important: Add your queries after a line "`% query`" in the code block like in the following
 
-	```powershell
-	echo "Hello World!"
-	```
+```prolog
+likes(john, pizza).
+likes(john, cheese).
+likes(jane, beer).
+
+% query
+likes(john, X).
+```
 </details>
 
 <details>
-	<summary>Prolog</summary>
+<summary>Groovy</summary>
 
-	- Requirements: NO requirements, works with [Tau-Prolog](https://github.com/tau-prolog/tau-prolog).
-	- Important: Add your queries after a line "`% query`" in the code block like in the following
+- Requirements: Groovy is installed and the correct path is set in the settings.
 
-	```prolog
-	likes(john, pizza).
-	likes(john, cheese).
-	likes(jane, beer).
+```groovy
+def hello(name){  
+	println "Hello ${name}!" 
+}  
 
-	% query
-	likes(john, X).
-	```
+def helloClosure = {  
+	println "Hello ${it}!" 
+}  
+
+hello("Bob")
+
+helloClosure "Bob"
+```
 </details>
 
 <details>
-	<summary>Groovy</summary>
+<summary>Golang</summary>
 
-	- Requirements: Groovy is installed and the correct path is set in the settings.
+- Requirements: Golang is installed and correct path is set in the settings(`go` binary is available).
+- Every code block must contain package declaration and a main function.
 
-	```groovy
-	def hello(name){  
-		println "Hello ${name}!" 
-	}  
-	
-	def helloClosure = {  
-		println "Hello ${it}!" 
-	}  
-	
-	hello("Bob")
-	
-	helloClosure "Bob"
-	```
+```go
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("Hello World")
+}
+```
 </details>
 
 <details>
-	<summary>Golang</summary>
+<summary>Rust</summary>
 
-	- Requirements: Golang is installed and correct path is set in the settings(`go` binary is available).
-	- Every code block must contain package declaration and a main function.
+- Requirements: Cargo is installed and correct path is set in the settings(`cargo` binary is available).
+- `cargo-eval` is installed. Install using `cargo install cargo-eval`.
+- Import statements and external crates is supported by `cargo-eval`. Read
+	their [documentation](https://github.com/reitermarkus/cargo-eval).
+- Every code block must a main function.
 
-	```go
-	package main
-
-	import "fmt"
-	
-	func main() {
-		fmt.Println("Hello World")
-	}
-	```
+```rust
+fn main() {
+	println!("Hello World");
+}
+```
 </details>
 
 <details>
-	<summary>Rust</summary>
+<summary>Kotlin</summary>
 
-	- Requirements: Cargo is installed and correct path is set in the settings(`cargo` binary is available).
-	- `cargo-eval` is installed. Install using `cargo install cargo-eval`.
-	- Import statements and external crates is supported by `cargo-eval`. Read
-	  their [documentation](https://github.com/reitermarkus/cargo-eval).
-	- Every code block must a main function.
+- Requirements: Kotlin is installed and correct path is set in the settings.
 
-	```rust
-	fn main() {
-		println!("Hello World");
-	}
-	```
+```kotlin
+hello(name: String) {
+	println("Hello $name!")
+}
+
+hello("Bob")
+```
 </details>
 
 <details>
-	<summary>Kotlin</summary>
+<summary>Wolfram Mathematica</summary>
 
-	- Requirements: Kotlin is installed and correct path is set in the settings.
+- Requirements: Mathematica is installed and correct path is set in the settings.
+- You can add `-cloud` as argument in the settings to use the Wolfram Cloud instead of the local installation.
 
-	```kotlin
-	hello(name: String) {
-		println("Hello $name!")
-	}
-
-	hello("Bob")
-	```
-</details>
-
-<details>
-	<summary>Wolfram Mathematica</summary>
-
-	- Requirements: Mathematica is installed and correct path is set in the settings.
-    - You can add `-cloud` as argument in the settings to use the Wolfram Cloud instead of the local installation.
-
-	```mathematica
-	Print["Hello, World!"];
-	```
+```mathematica
+Print["Hello, World!"];
+```
 </details>
 
 Squiggle: For Squiggle support look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle) by @jqhoogland.
