@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - 'Notebook Mode' for Python and JavaScript utilizing their respective REPL. (Thanks to @chlohal)
+- Add command to run all blocks in a given file to the command palette. (Thanks to @chlohal)
 
 ### Changed
 
