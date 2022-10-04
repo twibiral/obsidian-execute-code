@@ -16,6 +16,7 @@ import NonInteractiveCodeExecutor from './executors/NonInteractiveCodeExecutor';
 import ExecutorContainer from './ExecutorContainer';
 import ExecutorManagerView, { EXECUTOR_MANAGER_OPEN_VIEW_COMMAND_ID, EXECUTOR_MANAGER_VIEW_ID } from './ExecutorManagerView';
 
+import runAllCodeBlocks from './runAllCodeBlocks';
 
 const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl"] as const;
 const cannonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
@@ -28,7 +29,7 @@ export type LanguageId = typeof cannonicalLanguages[number];
 
 const buttonText = "Run";
 
-const runButtonClass = "run-code-button";
+export const runButtonClass = "run-code-button";
 const runButtonDisabledClass = "run-button-disabled";
 const hasButtonClass = "has-run-code-button";
 
@@ -43,7 +44,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 		this.addSettingTab(new SettingsTab(this.app, this));
-		
+
 		this.executors = new ExecutorContainer(this);
 
 		this.iterateOpenFilesAndAddRunButtons();
@@ -58,7 +59,7 @@ export default class ExecuteCodePlugin extends Plugin {
 					await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, '', null);
 				});
 		});
-		
+
 		//executor manager
 
 		this.registerView(
@@ -69,6 +70,12 @@ export default class ExecuteCodePlugin extends Plugin {
 			name: "Open Code Runtime Management",
 			callback: () => ExecutorManagerView.activate(this.app.workspace)
 		});
+
+		this.addCommand({
+			id: "run-all-code-blocks-in-file",
+			name: "Run all Code Blocks in Current File",
+			callback: () => runAllCodeBlocks(this.app.workspace)
+		})
 	}
 
 	/**
@@ -101,7 +108,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		document
 			.querySelectorAll(".language-output")
 			.forEach((out: HTMLElement) => out.remove());
-			
+
 		for(const executor of this.executors) {
 			executor.stop();
 		}
@@ -122,7 +129,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
-	
+
 	/**
 	 * Adds run buttons to each open file. This is more robust and quicker than scanning
 	 * the entire document, even though it requires more iteration, because it doesn't
@@ -135,7 +142,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			}
 		})
 	}
-	
+
 	/**
 	 * Add a button to each code block that allows the user to run the code. The button is only added if the code block
 	 * utilizes a language that is supported by this plugin.
@@ -154,12 +161,12 @@ export default class ExecuteCodePlugin extends Plugin {
 				const parent = pre.parentElement as HTMLDivElement;
 
 				const srcCode = codeBlock.getText();
-				
+
 				const cannonicalLanguage = getLanguageAlias(
 					supportedLanguages.find((lang => language.contains(`language-${lang}`)))
 				) as LanguageId;
 
-				if (cannonicalLanguage // if the language is supported 
+				if (cannonicalLanguage // if the language is supported
 					&& !parent.classList.contains(hasButtonClass)) { // & this block hasn't been buttonified already
 					const out = new Outputter(codeBlock, this.settings.allowInput);
 					parent.classList.add(hasButtonClass);
@@ -213,7 +220,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension, language, file);				
+				this.runCodeInShell(transformedCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension, language, file);
 			});
 
 		} else if (language === "powershell") {
@@ -373,10 +380,10 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * @param file The address of the file which the code originates from
 	 */
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {
-		const executor = this.settings[`${language}Interactive`] 
+		const executor = this.settings[`${language}Interactive`]
 			? this.executors.getExecutorFor(file, language)
 			: new NonInteractiveCodeExecutor(false, file, language);
-			
+
 		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(()=> {
 			button.className = runButtonClass;
 			outputter.closeInput();
@@ -400,7 +407,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		const executor = this.settings[`${language}Interactive`]
 			? this.executors.getExecutorFor(file, language)
 			: new NonInteractiveCodeExecutor(true, file, language);
-		
+
 		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
 			button.className = runButtonClass;
 		});
