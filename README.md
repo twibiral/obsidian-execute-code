@@ -14,8 +14,10 @@ You can create code blocks that are executed before or after each code block of 
 
 ## Supported programming languages
 
-- JavaScript
-	- Requirements: Node.js is installed and the correct path is set in the settings.
+<details>
+<summary>JavaScript</summary>
+
+- Requirements: Node.js is installed and the correct path is set in the settings.
 
 ```javascript
 function hello(name) {
@@ -24,35 +26,44 @@ function hello(name) {
 
 hello("Bob")
 ```
+</details>
+	
+<details>
+<summary>TypeScript</summary>
 
-- TypeScript
-	- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`. (`-g` means global install)
-	- Problems: If you use your global node.js installation and it doesn't work try to set your `ts-node` path in the settings to `npx ts-node` instead of `ts-node`.
+- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`. (`-g` means global install)
+- Problems: If you use your global node.js installation and it doesn't work try to set your `ts-node` path in the settings to `npx ts-node` instead of `ts-node`.
 
 ```ts  
 let message: string = 'Hello, World!';
 console.log(message);  
 ```
+</details>
 
-- CSharp
-	- Requirements: install dotnet core sdk and run in command line `dotnet tool install -g dotnet-script`, then config dotnet-script fullpath.
+<details>
+<summary>CSharp</summary>
+
+- Requirements: install dotnet core sdk and run in command line `dotnet tool install -g dotnet-script`, then config dotnet-script fullpath.
 
 ```cs 
 Console.WriteLine("Hello, World!");  
 ```  
+</details>
 
-- Python
-	- Requirements: Python is installed and the correct path is set in the settings.
+<details>
+<summary>Python</summary>
+
+- Requirements: Python is installed and the correct path is set in the settings.
 
 ```python
 def hello(name):
-	print("Hello", name)
+print("Hello", name)
 
 if __name__ == "__main__":
-	hello("Eve")
+hello("Eve")
 ```
 
-	- Plots with matplotlib/seaborn are embedded in the note by default. You can turn this off in the settings.
+- Plots with matplotlib/seaborn are embedded in the note by default. You can turn this off in the settings.
 
 ```python
 import seaborn as sns
@@ -60,16 +71,19 @@ import matplotlib.pyplot as plt
 sns.set_style("darkgrid")
 iris = sns.load_dataset('iris')
 sns.FacetGrid(iris, hue ="species", height = 5)
-			  .map(plt.scatter, 'sepal_length', 'petal_length')
-			  .add_legend()
+		.map(plt.scatter, 'sepal_length', 'petal_length')
+		.add_legend()
 
 plt.show()
 ```
 
 ![Example of an embedded plot.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/plotting_example.png?raw=true)
+</details>	
 
-- R
-	- Requirements: R is installed and the correct path is set in the settings.
+<details>
+<summary>R</summary>
+
+- Requirements: R is installed and the correct path is set in the settings.
 
 ```r
 hello <- function(name){
@@ -78,16 +92,19 @@ hello <- function(name){
 
 hello("Bob")
 ```
-	- Plots can be embedded in the note by default. You can turn this off in the settings.
+- Plots can be embedded in the note by default. You can turn this off in the settings.
 
 ```r
 y = c(12, 15, 28, 17, 18)
 x = 1:length(y)
 plot(x, y, type="l")
 ```
+</details>
 
-- Java
-	- Requirements: Java **11 or higher** is installed and the correct path is set in the settings.
+<details>
+<summary>Java</summary>
+
+- Requirements: Java **11 or higher** is installed and the correct path is set in the settings.
 
 ```java
 public class HelloWorld {
@@ -95,18 +112,24 @@ public class HelloWorld {
 		System.out.println("Hello World!");
 	}
 }
- ```
+```
+</details>
 
-- Lua
-	- Requirements: install lua and config lua path
+<details>
+<summary>Lua</summary>
+
+- Requirements: install lua and config lua path
 
 ```lua
 print('Hello, World!')
 ```
+</details>
 
-- C++
-	- Requirements: [Cling](https://github.com/root-project/cling) is installed and correct path is set in the settings.
-	- Every code block must contain a main function.
+<details>
+<summary>C++</summary>
+
+- Requirements: [Cling](https://github.com/root-project/cling) is installed and correct path is set in the settings.
+- Every code block must contain a main function.
 
 ```cpp
 #include <iostream>
@@ -123,25 +146,34 @@ int main() {
 	return 0;
 }
 ```
+</details>
 
-- Shell
-	- Requirements: Set the path to your preferred shell in the settings. Default is Bash. (Only on Linux and macOS)
+<details>
+<summary>Shell</summary>
+
+- Requirements: Set the path to your preferred shell in the settings. Default is Bash. (Only on Linux and macOS)
 
 ```shell
 echo "Hello World!"
 ls -la
 ```
+</details>
 
-- Powershell
-	- Requirements: Set the path to your preferred shell in the settings. Default is Powershell. (Only on Windows)
+<details>
+<summary>Powershell</summary>
+
+- Requirements: Set the path to your preferred shell in the settings. Default is Powershell. (Only on Windows)
 
 ```powershell
 echo "Hello World!"
- ```
+```
+</details>
 
-- Prolog
-	- Requirements: NO requirements, works with [Tau-Prolog](https://github.com/tau-prolog/tau-prolog).
-	- Important: Add your queries after a line "`% query`" in the code block like in the following
+<details>
+<summary>Prolog</summary>
+
+- Requirements: NO requirements, works with [Tau-Prolog](https://github.com/tau-prolog/tau-prolog).
+- Important: Add your queries after a line "`% query`" in the code block like in the following
 
 ```prolog
 likes(john, pizza).
@@ -151,53 +183,65 @@ likes(jane, beer).
 % query
 likes(john, X).
 ```
+</details>
 
-- Groovy
-	- Requirements: Groovy is installed and the correct path is set in the settings.
+<details>
+<summary>Groovy</summary>
+
+- Requirements: Groovy is installed and the correct path is set in the settings.
 
 ```groovy
 def hello(name){  
 	println "Hello ${name}!" 
 }  
-  
+
 def helloClosure = {  
 	println "Hello ${it}!" 
 }  
-  
+
 hello("Bob")
-  
+
 helloClosure "Bob"
 ```
+</details>
 
-- Golang
-	- Requirements: Golang is installed and correct path is set in the settings(`go` binary is available).
-	- Every code block must contain package declaration and a main function.
+<details>
+<summary>Golang</summary>
+
+- Requirements: Golang is installed and correct path is set in the settings(`go` binary is available).
+- Every code block must contain package declaration and a main function.
 
 ```go
 package main
 
 import "fmt"
-  
+
 func main() {
 	fmt.Println("Hello World")
 }
- ```
+```
+</details>
 
-- Rust
-	- Requirements: Cargo is installed and correct path is set in the settings(`cargo` binary is available).
-	- `cargo-eval` is installed. Install using `cargo install cargo-eval`.
-	- Import statements and external crates is supported by `cargo-eval`. Read
-	  their [documentation](https://github.com/reitermarkus/cargo-eval).
-	- Every code block must a main function.
+<details>
+<summary>Rust</summary>
+
+- Requirements: Cargo is installed and correct path is set in the settings(`cargo` binary is available).
+- `cargo-eval` is installed. Install using `cargo install cargo-eval`.
+- Import statements and external crates is supported by `cargo-eval`. Read
+	their [documentation](https://github.com/reitermarkus/cargo-eval).
+- Every code block must a main function.
 
 ```rust
 fn main() {
 	println!("Hello World");
 }
- ```
+```
+</details>
 
-- Kotlin
-	- Requirements: Kotlin is installed and correct path is set in the settings.
+<details>
+<summary>Kotlin</summary>
+
+- Requirements: Kotlin is installed and correct path is set in the settings.
 
 ```kotlin
 hello(name: String) {
@@ -206,15 +250,20 @@ hello(name: String) {
 
 hello("Bob")
 ```
+</details>
 
-- Wolfram Mathematica
-	- Requirements: Mathematica is installed and correct path is set in the settings.
-    - You can add `-cloud` as argument in the settings to use the Wolfram Cloud instead of the local installation.
+<details>
+<summary>Wolfram Mathematica</summary>
+
+- Requirements: Mathematica is installed and correct path is set in the settings.
+- You can add `-cloud` as argument in the settings to use the Wolfram Cloud instead of the local installation.
+
 ```mathematica
 Print["Hello, World!"];
 ```
+</details>
 
-- Squiggle: For Squiggle support look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle) by @jqhoogland.
+Squiggle: For Squiggle support look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle) by @jqhoogland.
 
 Support for the following is planned:
 
@@ -238,7 +287,7 @@ The following magic commands are supported:
 
 (`@show(...)` is only supported for JavaScript and Python yet.)
 
-![Example how to use the magic commands.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/magic_example.png?raw=true)
+<img src="https://github.com/twibiral/obsidian-execute-code/blob/master/images/magic_example.png?raw=true" alt="Example how to use the magic commands" width="700"/>
 
 ## Running in Preview
 
@@ -312,21 +361,13 @@ print('should run block 1 and 2')
 ```
 `````
 
-Labelled code blocks will be executed before the code block being run, however after global injects and pre blocks.
+Labelled code blocks will be executed before the code block being run, however after global injects and pre blocks. They will be imported in the same order they appear in the array.
 
 ### Ignoring Code Exports
 
 In case you want to manually ignore specific exports in a code block like pre / post / global exports, you can do so with the `ignore` argument that accepts either `pre`, `post`, `global`, an array of any of these 3, or `all` to ignore all exports:
 
 `````
-```python {pre}
-print('running pre block')
-```
-
-```python {post}
-print('running post block')
-```
-
 ```python {ignore='all'}
 print('should not run any global injects or pre / post blocks')
 ```
