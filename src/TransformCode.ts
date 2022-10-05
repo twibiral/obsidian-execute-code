@@ -3,7 +3,7 @@ import {insertNotePath, insertNoteTitle, insertVaultPath} from "./Magic";
 import {getVaultVariables} from "./Vault";
 import * as JSON5 from "json5";
 import type {ExecutorSettings} from "./Settings";
-import { LanguageId } from "./main";
+import { cannonicalLanguages, LanguageId } from "./main";
 
 type ExportType = "pre" | "post";
 
@@ -25,8 +25,10 @@ interface CodeBlockArgs {
  * @param language A language name or shortcut (e.g. 'js', 'python' or 'shell').
  * @returns The same language shortcut for every alias of the language.
  */
-export function getLanguageAlias(language: string) : LanguageId {
-	return language
+export function getLanguageAlias(language: string | undefined) : LanguageId | undefined {
+	if(typeof language !== "string") return undefined;
+	
+	const replaced = language
 		.replace("javascript", "js")
 		.replace("typescript", "ts")
 		.replace("csharp", "cs")
@@ -34,6 +36,9 @@ export function getLanguageAlias(language: string) : LanguageId {
 		.replace("wolfram", "mathematica")
 		.replace("nb", "mathematica")
 		.replace("wl", "mathematica") as LanguageId;
+		
+	if(cannonicalLanguages.includes(replaced)) return replaced;
+	else return undefined;
 }
 
 /**
