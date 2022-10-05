@@ -8,17 +8,15 @@ export class Outputter extends EventEmitter {
 	lastPrintElem: HTMLSpanElement;
 	lastPrinted: string;
 	
-	doInput: boolean
 	inputElement: HTMLInputElement;
 	
 	hadPreviouslyPrinted: boolean;
+	inputState: "NOT_DOING" | "OPEN" | "CLOSED" | "INACTIVE";
 
 	constructor (codeBlock: HTMLElement, doInput: boolean) {
 		super();
 		
-		// console.log("i do input: ", doInput);
-		
-		this.doInput = doInput;
+		this.inputState = doInput ? "INACTIVE" : "NOT_DOING";
 		this.codeBlockElement = codeBlock;
 		this.hadPreviouslyPrinted = false;
 	}
@@ -41,6 +39,7 @@ export class Outputter extends EventEmitter {
 			this.clearButton.className = "clear-button-disabled";
 			
 		this.closeInput();
+		this.inputState = "INACTIVE";
 	}
 
 	/**
@@ -85,6 +84,7 @@ export class Outputter extends EventEmitter {
 	 * Hide the input element. Stop accepting input from the user.
 	 */
 	closeInput() {		
+		this.inputState = "CLOSED";
 		if(this.inputElement)
 			this.inputElement.style.display = "none";
 	}
@@ -113,7 +113,7 @@ export class Outputter extends EventEmitter {
 		this.outputElement.classList.add("language-output");
 
 		this.outputElement.appendChild(hr);
-		if (this.doInput) this.addInputElement();
+		if (this.inputState != "NOT_DOING") this.addInputElement();
 		parentEl.appendChild(this.outputElement);
 	}
 	
@@ -213,8 +213,12 @@ export class Outputter extends EventEmitter {
 		if (!this.clearButton) this.addClearButton();
 		if (!this.outputElement) this.addOutputElement();
 		
+		this.inputState = "OPEN";
 		this.outputElement.style.display = "block";
-		if (this.inputElement) this.inputElement.style.display = "inline";
 		this.clearButton.className = "clear-button";
+		
+		setTimeout(() => {
+			if (this.inputState == "OPEN") this.inputElement.style.display = "inline";
+		}, 500)
 	}
 }
