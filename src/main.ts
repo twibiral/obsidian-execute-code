@@ -242,7 +242,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				out.clear();
 				const transformedCode = (await new CodeInjector(this.app, this.settings, language).injectCode(srcCode));
-				console.log("ACCESS LN 245!");
+				
 				this.runCode(transformedCode, out, button, "", "", "", language, file);
 
 				button.className = runButtonClass;

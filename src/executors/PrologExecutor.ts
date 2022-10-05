@@ -41,9 +41,7 @@ export default class PrologExecutor extends Executor {
  */
     private runPrologCode(facts: string, queries: string, out: Outputter) {
         new Notice("Running...");
-        console.log(prolog);
         const session = prolog.create();
-        console.log("created");
         session.consult(facts
             , {
                 success: () => {
