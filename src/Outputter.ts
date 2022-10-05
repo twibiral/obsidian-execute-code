@@ -16,8 +16,6 @@ export class Outputter extends EventEmitter {
 	constructor (codeBlock: HTMLElement, doInput: boolean) {
 		super();
 		
-		// console.log("i do input: ", doInput);
-		
 		this.doInput = doInput;
 		this.codeBlockElement = codeBlock;
 		this.hadPreviouslyPrinted = false;
