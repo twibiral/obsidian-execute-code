@@ -163,7 +163,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				const srcCode = codeBlock.getText();
 
 				const cannonicalLanguage = getLanguageAlias(
-					supportedLanguages.find((lang => language.match(new RegExp(`\\blanguage-${lang}\\b`))))
+					supportedLanguages.find(lang => element.classList.contains(`language-${lang}`))
 				) as LanguageId;
 
 				if (cannonicalLanguage // if the language is supported
