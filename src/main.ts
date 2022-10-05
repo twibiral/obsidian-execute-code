@@ -19,9 +19,9 @@ import ExecutorManagerView, {
 
 import runAllCodeBlocks from './runAllCodeBlocks';
 
-const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl"] as const;
+const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs"] as const;
 const cannonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
-	"prolog", "shell", "groovy", "r", "go", "rust", "java", "powershell", "kotlin", "mathematica"] as const;
+	"prolog", "shell", "groovy", "r", "go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell"] as const;
 const supportedLanguages = [...languageAliases, ...cannonicalLanguages] as const;
 
 
@@ -311,7 +311,13 @@ export default class ExecuteCodePlugin extends Plugin {
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, "csx", language, file);
 			});
-			// "wolfram", "mathematica", "nb", "wl"
+
+		} else if (language === "haskell") {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				 const transformedCode = await new CodeInjector(this.app, this.settings, "haskell").injectCode(srcCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.ghciPath, this.settings.ghciArgs, "hs", language, file);
+			});
 		} else if (language === "mathematica") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
