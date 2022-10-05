@@ -10,6 +10,7 @@ import type {LanguageId} from "src/main";
  * @returns The same language shortcut for every alias of the language.
  */
 export function getLanguageAlias(language: string) : LanguageId {
+	if (language === undefined) return;
 	return language
 		.replace("javascript", "js")
 		.replace("typescript", "ts")
