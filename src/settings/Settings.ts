@@ -66,7 +66,7 @@ export interface ExecutorSettings {
 	mathematicaArgs: string;
 	mathematicaFileExtension: string;
 	mathematicaInject: string;
-	
+
 	jsInteractive: boolean;
 	tsInteractive: boolean;
 	csInteractive: boolean;
@@ -151,12 +151,12 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	kotlinInject: "",
 	ghciPath: "ghci",
 	ghciArgs: "",
-    haskellInject: "",
+	haskellInject: "",
 	mathematicaPath: "wolframscript",
 	mathematicaArgs: "",
 	mathematicaFileExtension: "wls",
 	mathematicaInject: "",
-	
+
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,

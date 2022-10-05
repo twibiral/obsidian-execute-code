@@ -56,9 +56,9 @@ export default class ExecuteCodePlugin extends Plugin {
 		// live preview renderers
 		supportedLanguages.forEach(l => {
 			console.debug(`Registering renderer for ${l}.`)
-				this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, _ctx) => {
-					await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, '', null);
-				});
+			this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, _ctx) => {
+				await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, '', null);
+			});
 		});
 
 		//executor manager
@@ -110,7 +110,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			.querySelectorAll(".language-output")
 			.forEach((out: HTMLElement) => out.remove());
 
-		for(const executor of this.executors) {
+		for (const executor of this.executors) {
 			executor.stop();
 		}
 
@@ -165,7 +165,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				const cannonicalLanguage = getLanguageAlias(
 					supportedLanguages.find((lang => language.contains(`language-${lang}`)))
-				) as LanguageId;
+				);
 
 				if (cannonicalLanguage // if the language is supported
 					&& !parent.classList.contains(hasButtonClass)) { // & this block hasn't been buttonified already
@@ -318,7 +318,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language === "haskell") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				 const transformedCode = await new CodeInjector(this.app, this.settings, "haskell").injectCode(srcCode);
+				const transformedCode = await new CodeInjector(this.app, this.settings, "haskell").injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.ghciPath, this.settings.ghciArgs, "hs", language, file);
 			});
 
@@ -365,7 +365,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			? this.executors.getExecutorFor(file, language, false)
 			: new NonInteractiveCodeExecutor(false, file, language);
 
-		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(()=> {
+		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
 			button.className = runButtonClass;
 			outputter.closeInput();
 		});
