@@ -19,9 +19,9 @@ import ExecutorManagerView, { EXECUTOR_MANAGER_OPEN_VIEW_COMMAND_ID, EXECUTOR_MA
 import runAllCodeBlocks from './runAllCodeBlocks';
 
 const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl"] as const;
-const cannonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
+export const cannonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
 	"prolog", "shell", "groovy", "r", "go", "rust", "java", "powershell", "kotlin", "mathematica"] as const;
-const supportedLanguages = [...languageAliases, ...cannonicalLanguages] as const;
+export const supportedLanguages = [...languageAliases, ...cannonicalLanguages] as const;
 
 
 type SupportedLanguage = typeof supportedLanguages[number];
