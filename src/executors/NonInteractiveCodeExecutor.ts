@@ -32,7 +32,7 @@ export default class NonInteractiveCodeExecutor extends Executor {
             args.push(tempFileName);
 
             console.debug(`Execute ${cmd} ${args.join(" ")}`);
-            const child = child_process.spawn(cmd, args, {shell: this.usesShell});
+            const child = child_process.spawn(cmd, args, {env: process.env, shell: this.usesShell});
 
             await this.handleChildOutput(child, outputter, tempFileName);
         } catch (err) {
@@ -50,40 +50,34 @@ export default class NonInteractiveCodeExecutor extends Executor {
      * @param fileName The name of the temporary file that was created for the code execution.
      * @returns a promise that will resolve when the child proces finishes 
      */
-    private handleChildOutput(child: child_process.ChildProcessWithoutNullStreams, outputter: Outputter, fileName: string) {
-        return new Promise((reject, resolve) => {
-            outputter.clear();
+    private async handleChildOutput(child: child_process.ChildProcessWithoutNullStreams, outputter: Outputter, fileName: string) {
+		outputter.clear();
 
-            child.stdout.on('data', (data) => {
-                outputter.write(data.toString());
-            });
-            child.stderr.on('data', (data) => {
-                outputter.writeErr(data.toString());
-            });
+		child.stdout.on('data', (data) => {
+			outputter.write(data.toString());
+		});
+		child.stderr.on('data', (data) => {
+			outputter.writeErr(data.toString());
+		});
 
-            outputter.on("data", (data: string) => {
-                child.stdin.write(data);
-            });
+		outputter.on("data", (data: string) => {
+			child.stdin.write(data);
+		});
 
-            child.on('close', (code) => {
-                new Notice(code === 0 ? "Done!" : "Error!");
+		child.on('close', (code) => {
+			new Notice(code === 0 ? "Done!" : "Error!");
 
-                outputter.closeInput();
+			outputter.closeInput();
 
-                fs.promises.rm(fileName)
-                    .catch((err) => {
-                        console.error("Error in 'Obsidian Execute Code' Plugin while removing file: " + err);
-                    })
-                    .finally(() => {
-                        resolve();
-                    })
-            });
+			fs.promises.rm(fileName)
+				.catch((err) => {
+					console.error("Error in 'Obsidian Execute Code' Plugin while removing file: " + err);
+				});
+		});
 
-            child.on('error', (err) => {
-                new Notice("Error!");
-                outputter.writeErr(err.toString());
-                resolve();
-            });
-        });
+		child.on('error', (err) => {
+			new Notice("Error!");
+			outputter.writeErr(err.toString());
+		});
     }
 }
