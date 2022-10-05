@@ -9,8 +9,7 @@ import type {CodeBlockArgs} from '../CodeBlockArgs';
 /**
  * Inject code and run code transformations on a source code block
  */
-export class CodeInjector
-{
+export class CodeInjector {
 	private app: App;
 	private settings: ExecutorSettings;
 	private language: LanguageId;
@@ -140,8 +139,7 @@ export class CodeInjector
 	 * @param srcCode The source code of the code block.
 	 * @returns The source code of a code block with all relevant pre/post blocks and global code injections.
 	 */
-	public async injectCode(srcCode: string)
-	{
+	public async injectCode(srcCode: string) {
 		const language = getLanguageAlias(this.language);
 
 		// We need to get access to all code blocks on the page so we can grab the pre / post blocks above
