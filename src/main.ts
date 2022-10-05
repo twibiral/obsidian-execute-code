@@ -293,18 +293,21 @@ export default class ExecuteCodePlugin extends Plugin {
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.kotlinPath, this.settings.kotlinArgs, this.settings.kotlinFileExtension, language, file);
 			});
+
 		} else if (language === "ts") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.tsPath, this.settings.tsArgs, "ts", language, file);
 			});
+
 		} else if (language === "lua") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.luaPath, this.settings.luaArgs, "lua", language, file);
 			});
+
 		} else if (language === "cs") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
@@ -318,6 +321,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				 const transformedCode = await new CodeInjector(this.app, this.settings, "haskell").injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.ghciPath, this.settings.ghciArgs, "hs", language, file);
 			});
+
 		} else if (language === "mathematica") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;

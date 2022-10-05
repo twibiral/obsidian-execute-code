@@ -84,6 +84,7 @@ export interface ExecutorSettings {
 	powershellInteractive: boolean;
 	kotlinInteractive: boolean;
 	mathematicaInteractive: boolean;
+	haskellInteractive: boolean;
 }
 
 
@@ -173,5 +174,5 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	powershellInteractive: false,
 	kotlinInteractive: false,
 	mathematicaInteractive: true,
-
+	haskellInteractive: false
 }

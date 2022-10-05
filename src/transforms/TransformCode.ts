@@ -18,7 +18,8 @@ export function getLanguageAlias(language: string) : LanguageId {
 		.replace("bash", "shell")
 		.replace("wolfram", "mathematica")
 		.replace("nb", "mathematica")
-		.replace("wl", "mathematica") as LanguageId;
+		.replace("wl", "mathematica")
+		.replace("hs", "haskell") as LanguageId;
 }
 
 /**
