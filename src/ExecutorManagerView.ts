@@ -1,4 +1,4 @@
-import { ExtraButtonComponent, ItemView, setIcon, Workspace, WorkspaceLeaf } from "obsidian";
+import { ItemView, setIcon, Workspace, WorkspaceLeaf } from "obsidian";
 import { basename } from "path";
 import ExecutorContainer from "./ExecutorContainer";
 import Executor from "./executors/Executor";
@@ -42,7 +42,7 @@ export default class ExecutorManagerView extends ItemView {
         
         container.classList.add("manage-executors-view");
         
-        let header = document.createElement("h3");
+        const header = document.createElement("h3");
         header.textContent = "Runtimes";
         container.appendChild(header);
         

@@ -98,7 +98,7 @@ ${this.globalsDictionaryName} = {**globals()}
                 this.process.stdin.write(data);
             });
 
-            let writeToStdout = (data: any) => {
+            const writeToStdout = (data: any) => {
                 let str = data.toString();
                 
                 if (str.endsWith(finishSigil)) {
@@ -115,7 +115,7 @@ ${this.globalsDictionaryName} = {**globals()}
                 }
             };
 
-            let writeToStderr = (data: any) => {
+            const writeToStderr = (data: any) => {
                 const removedPrompts = data.toString().replace(/(^((\.\.\.|>>>) )+)|(((\.\.\.|>>>) )+$)/g, "")
 
                 outputter.writeErr(removedPrompts);

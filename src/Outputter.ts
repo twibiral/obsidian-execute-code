@@ -107,7 +107,7 @@ export class Outputter extends EventEmitter {
 	private addOutputElement() {
 		const parentEl = this.getParentElement();
 
-		let hr = document.createElement("hr");
+		const hr = document.createElement("hr");
 
 		this.outputElement = document.createElement("code");
 		this.outputElement.classList.add("language-output");
