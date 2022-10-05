@@ -1,5 +1,5 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
-import ExecuteCodePlugin, { LanguageId } from "src/main";
+import ExecuteCodePlugin, {LanguageId} from "src/main";
 import {ExecutorSettings} from "./Settings";
 
 
@@ -486,9 +486,9 @@ export class SettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 		this.makeInjectSetting("mathematica", "Mathematica");
-	}
-  
-  // ========== Haskell ===========
+
+
+		// ========== Haskell ===========
 		containerEl.createEl('h3', {text: 'Haskell Settings'});
 		new Setting(containerEl)
 			.setName('Ghci path')
@@ -512,6 +512,7 @@ export class SettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 		this.makeInjectSetting("haskell", "Haskell");
+	}
 
 	private sanitizePath(path: string): string {
 		path = path.replace(/\\/g, '/');
