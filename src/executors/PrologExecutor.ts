@@ -1,9 +1,9 @@
 // @ts-ignore
 import * as prolog from "tau-prolog";
-import { Outputter } from "src/Outputter";
+import {Outputter} from "src/Outputter";
 import Executor from "./Executor";
-import { Notice } from "obsidian";
-import { ExecutorSettings } from "src/Settings";
+import {Notice} from "obsidian";
+import {ExecutorSettings} from "src/settings/Settings";
 
 export default class PrologExecutor extends Executor {
     
