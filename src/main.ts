@@ -20,13 +20,13 @@ import ExecutorManagerView, {
 import runAllCodeBlocks from './runAllCodeBlocks';
 
 const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs"] as const;
-const cannonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
+const canonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
 	"prolog", "shell", "groovy", "r", "go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell"] as const;
-const supportedLanguages = [...languageAliases, ...cannonicalLanguages] as const;
+const supportedLanguages = [...languageAliases, ...canonicalLanguages] as const;
 
 
 // type SupportedLanguage = typeof supportedLanguages[number];
-export type LanguageId = typeof cannonicalLanguages[number];
+export type LanguageId = typeof canonicalLanguages[number];
 
 const buttonText = "Run";
 
@@ -111,7 +111,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			.forEach((out: HTMLElement) => out.remove());
 
 		for (const executor of this.executors) {
-			executor.stop();
+			executor.stop().then(_ => { /* do nothing */ });
 		}
 
 		console.log("Unloaded plugin: Execute Code");
@@ -169,17 +169,17 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				const srcCode = codeBlock.getText();
 
-				const cannonicalLanguage = getLanguageAlias(
+				const canonicalLanguage = getLanguageAlias(
 					supportedLanguages.find((lang => language.contains(`language-${lang}`)))
 				);
 
-				if (cannonicalLanguage // if the language is supported
+				if (canonicalLanguage // if the language is supported
 					&& !parent.classList.contains(hasButtonClass)) { // & this block hasn't been buttonified already
 					const out = new Outputter(codeBlock, this.settings.allowInput);
 					parent.classList.add(hasButtonClass);
 					const button = this.createRunButton();
 					pre.appendChild(button);
-					this.addListenerToButton(cannonicalLanguage, srcCode, button, out, file);
+					this.addListenerToButton(canonicalLanguage, srcCode, button, out, file);
 				}
 			});
 	}
@@ -332,7 +332,6 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				console.log(`runCodeInShell ${this.settings.mathematicaPath} ${this.settings.mathematicaArgs} ${"mathematica"}`)
 				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, this.settings.mathematicaFileExtension, language, file);
 			});
 		}
@@ -363,7 +362,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * @param cmd The command that should be used to execute the code. (e.g. python, java, ...)
 	 * @param cmdArgs Additional arguments that should be passed to the command.
 	 * @param ext The file extension of the temporary file. Should correspond to the language of the code. (e.g. py, ...)
-	 * @param language The cannonical ID of the language being ran
+	 * @param language The canonical ID of the language being run
 	 * @param file The address of the file which the code originates from
 	 */
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {
@@ -387,7 +386,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * @param cmd The command that should be used to execute the code. (e.g. python, java, ...)
 	 * @param cmdArgs Additional arguments that should be passed to the command.
 	 * @param ext The file extension of the temporary file. Should correspond to the language of the code. (e.g. py, ...)
-	 * @param language The cannonical ID of the language being ran
+	 * @param language The canonical ID of the language being run
 	 * @param file The address of the file which the code originates from
 	 */
 	private runCodeInShell(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {

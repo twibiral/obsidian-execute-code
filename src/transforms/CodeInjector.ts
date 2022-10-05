@@ -10,9 +10,9 @@ import type {CodeBlockArgs} from '../CodeBlockArgs';
  * Inject code and run code transformations on a source code block
  */
 export class CodeInjector {
-	private app: App;
-	private settings: ExecutorSettings;
-	private language: LanguageId;
+	private readonly app: App;
+	private readonly settings: ExecutorSettings;
+	private readonly language: LanguageId;
 
 	private prependSrcCode = "";
 	private appendSrcCode = "";
@@ -48,7 +48,8 @@ export class CodeInjector {
 		if (activeView === null)
 			return srcCode;
 
-		this.parseFile(activeView.data, srcCode, language);
+		// Is await necessary here? Some object variables get changed in this call -> await probably necessary
+		await this.parseFile(activeView.data, srcCode, language);
 
 		const realLanguage = /[^-]*$/.exec(language)[0];
 		const globalInject = this.settings[`${realLanguage}Inject` as keyof ExecutorSettings];

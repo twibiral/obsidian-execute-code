@@ -18,7 +18,7 @@ export default class PythonExecutor extends AsyncExecutor {
 		this.process = spawn(settings.nodePath, args);
 
 		//send a newline so that the intro message won't be buffered
-		this.dismissIntroMessage();
+		this.dismissIntroMessage().then(() => {/* do nothing */});
 	}
 
 	/**
@@ -39,6 +39,7 @@ export default class PythonExecutor extends AsyncExecutor {
 	 * Swallows and does not output the "Welcome to Node.js v..." message that shows at startup
 	 */
 	async dismissIntroMessage() {
+		// TODO: Does the reject need to be handled? Otherwise it might be removed.
 		this.addJobToQueue((resolve, reject) => {
 			let stdoutBuffers = 0;
 			const listener = () => {

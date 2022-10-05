@@ -21,6 +21,7 @@ export default class PythonExecutor extends AsyncExecutor {
 
 		this.process = spawn(settings.pythonPath, args);
 
+		// TODO: Can this out commented code be removed?
 		//this.process.stdout.on("data", (x) => console.log(x.toString()))
 		//this.process.stderr.on("data", (x) => console.log(x.toString()))
 
@@ -29,7 +30,7 @@ export default class PythonExecutor extends AsyncExecutor {
 		this.globalsDictionaryName = `__locals_${Math.random().toString().substring(2)}_${Date.now()}`;
 
 		//send a newline so that the intro message won't be buffered
-		this.dismissIntroMessage();
+		this.dismissIntroMessage().then(() => { /* do nothing */ });
 	}
 
 	/**
@@ -64,7 +65,7 @@ ${this.globalsDictionaryName} = {**globals()}
 			this.process.stderr.once("data", (data) => {
 				resolve();
 			});
-		});
+		}).then(() => { /* do nothing */ });
 	}
 
 	/**
@@ -77,6 +78,7 @@ ${this.globalsDictionaryName} = {**globals()}
 	 * @returns A promise that resolves once the code is done running
 	 */
 	async run(code: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
+		// TODO: Is handling for reject necessary?
 		return this.addJobToQueue((resolve, reject) => {
 			const finishSigil = `SIGIL_BLOCK_DONE${Math.random()}_${Date.now()}_${code.length}`;
 

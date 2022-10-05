@@ -12,9 +12,7 @@ export default abstract class AsyncExecutor extends Executor {
 	 * A callback is interpreted the same as a promise: it must call the `resolve` or `reject` callbacks to complete the job.
 	 * The returned promise resolves when the job has completed.
 	 */
-	protected async addJobToQueue(
-		promiseCallback: PromiseableCallback
-	): Promise<void> {
+	protected async addJobToQueue(promiseCallback: PromiseableCallback): Promise<void> {
 		const previousJob = this.runningTask;
 
 		this.runningTask = new Promise((resolve, reject) => {
