@@ -33,10 +33,11 @@ export default class ExecutorContainer extends EventEmitter implements Iterable<
      * 
      * @param file file to get an executor for
      * @param language language to get an executor for.
+     * @param needsShell whether or not the language requires a shell
      */
-    getExecutorFor(file: string, language: LanguageId) {
+    getExecutorFor(file: string, language: LanguageId, needsShell: boolean) {
         if (!this.executors[language]) this.executors[language] = {}
-        if (!this.executors[language][file]) this.setExecutorInExecutorsObject(file, language);
+        if (!this.executors[language][file]) this.setExecutorInExecutorsObject(file, language, needsShell);
         
         return this.executors[language][file];
     }
@@ -45,15 +46,16 @@ export default class ExecutorContainer extends EventEmitter implements Iterable<
      * Create an executor and put it into the `executors` dictionary.
      * @param file the file to associate the new executor with
      * @param language the language to associate the new executor with
+     * @param needsShell whether or not the language requires a shell
      */
-    private setExecutorInExecutorsObject(file: string, language: LanguageId) {
-        const exe = this.createExecutorFor(file, language);
+    private setExecutorInExecutorsObject(file: string, language: LanguageId, needsShell: boolean) {
+        const exe = this.createExecutorFor(file, language, needsShell);
         if (!(exe instanceof NonInteractiveCodeExecutor)) this.emit("add", exe);
         exe.on("close", () => {
             delete this.executors[language][file];
         });
         
-        this.executors[language][file] = this.createExecutorFor(file, language);
+        this.executors[language][file] = exe;
     }
     
     /**
@@ -61,13 +63,14 @@ export default class ExecutorContainer extends EventEmitter implements Iterable<
      * 
      * @param file the file to associate the new executor with
      * @param language the language to make an executor for
+     * @param needsShell whether or not the language requires a shell
      * @returns a new executor associated with the given language and file
      */
-    private createExecutorFor(file: string, language: LanguageId) {
+    private createExecutorFor(file: string, language: LanguageId, needsShell: boolean) {
         switch (language) {
             case "js": return new NodeJSExecutor(this.plugin.settings, file);
             case "python": return new PythonExecutor(this.plugin.settings, file);
         }
-        return new NonInteractiveCodeExecutor(false, file, language);
+        return new NonInteractiveCodeExecutor(needsShell, file, language);
     }
 }

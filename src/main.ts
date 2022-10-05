@@ -381,7 +381,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	 */
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {
 		const executor = this.settings[`${language}Interactive`]
-			? this.executors.getExecutorFor(file, language)
+			? this.executors.getExecutorFor(file, language, false)
 			: new NonInteractiveCodeExecutor(false, file, language);
 
 		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(()=> {
@@ -405,7 +405,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	 */
 	private runCodeInShell(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {
 		const executor = this.settings[`${language}Interactive`]
-			? this.executors.getExecutorFor(file, language)
+			? this.executors.getExecutorFor(file, language, true)
 			: new NonInteractiveCodeExecutor(true, file, language);
 
 		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
