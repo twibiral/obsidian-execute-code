@@ -154,7 +154,13 @@ export default class ExecuteCodePlugin extends Plugin {
 	private addRunButtons(element: HTMLElement, file: string) {
 		Array.from(element.getElementsByTagName("code"))
 			.forEach((codeBlock: HTMLElement) => {
+				if (codeBlock.className.match(/^language-\{\w+/i)){
+					codeBlock.className = codeBlock.className.replace(/^language-\{(\w+)/i, "language-$1 {");
+					codeBlock.parentElement.className = codeBlock.className;
+				}
+
 				const language = codeBlock.className.toLowerCase();
+
 				if (!language || !language.contains("language-"))
 					return;
 
