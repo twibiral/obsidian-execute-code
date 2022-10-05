@@ -1,8 +1,7 @@
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import { Outputter } from "src/Outputter";
-import { ExecutorSettings } from "src/Settings";
+import { ExecutorSettings } from "src/settings/Settings";
 import AsyncExecutor from "./AsyncExecutor";
-import Executor from "./Executor";
 
 
 export default class PythonExecutor extends AsyncExecutor {

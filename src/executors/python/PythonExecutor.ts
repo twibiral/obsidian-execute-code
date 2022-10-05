@@ -1,7 +1,6 @@
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
-import ExecuteCodePlugin from "src/main";
 import { Outputter } from "src/Outputter";
-import { ExecutorSettings } from "src/Settings";
+import { ExecutorSettings } from "src/settings/Settings";
 import AsyncExecutor from "../AsyncExecutor";
 import wrapPython from "./wrapPython";
 

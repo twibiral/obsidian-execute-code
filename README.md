@@ -372,14 +372,6 @@ Labelled code blocks will be executed before the code block being run, however a
 In case you want to manually ignore specific exports in a code block like pre / post / global exports, you can do so with the `ignore` argument that accepts either `pre`, `post`, `global`, an array of any of these 3, or `all` to ignore all exports:
 
 `````
-```python {pre}
-print('running pre block')
-```
-
-```python {post}
-print('running post block')
-```
-
 ```python {ignore='all'}
 print('should not run any global injects or pre / post blocks')
 ```

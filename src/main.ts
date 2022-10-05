@@ -1,14 +1,15 @@
-import {FileSystemAdapter, FileView, MarkdownRenderer, MarkdownView, Notice, Plugin} from 'obsidian';
+import {FileView, MarkdownRenderer, Notice, Plugin} from 'obsidian';
 import * as fs from "fs";
 import * as os from "os"
 import * as child_process from "child_process";
 
 import {Outputter} from "./Outputter";
-import type {ExecutorSettings} from "./Settings";
-import {DEFAULT_SETTINGS} from "./Settings";
-import {SettingsTab} from "./SettingsTab";
-import {CodeInjector, getLanguageAlias} from './TransformCode';
-import {addInlinePlotsToPython, addInlinePlotsToR, addMagicToJS, addMagicToPython,} from "./Magic";
+import type {ExecutorSettings} from "./settings/Settings";
+import {DEFAULT_SETTINGS} from "./settings/Settings";
+import {SettingsTab} from "./settings/SettingsTab";
+import {getLanguageAlias} from './transforms/TransformCode';
+import {CodeInjector} from "./transforms/CodeInjector";
+import {addInlinePlotsToPython, addInlinePlotsToR, addMagicToJS, addMagicToPython,} from "./transforms/Magic";
 
 // @ts-ignore
 import * as prolog from "tau-prolog";
@@ -24,7 +25,7 @@ const cannonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
 const supportedLanguages = [...languageAliases, ...cannonicalLanguages] as const;
 
 
-type SupportedLanguage = typeof supportedLanguages[number];
+// type SupportedLanguage = typeof supportedLanguages[number];
 export type LanguageId = typeof cannonicalLanguages[number];
 
 const buttonText = "Run";

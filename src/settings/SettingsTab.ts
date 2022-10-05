@@ -1,5 +1,5 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
-import ExecuteCodePlugin, { LanguageId } from "./main";
+import ExecuteCodePlugin, { LanguageId } from "src/main";
 import {ExecutorSettings} from "./Settings";
 
 

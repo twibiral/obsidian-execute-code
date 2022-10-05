@@ -1,6 +1,3 @@
-
-
-
 /**
  * Interface that contains all the settings for the extension.
  */
