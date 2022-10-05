@@ -58,6 +58,7 @@ export default class PrologExecutor extends Executor {
                                             new Notice("Done!");
                                             console.debug(`Prolog result: ${session.format_answer(answer)}`);
                                             out.write(session.format_answer(answer) + "\n");
+                                            out.closeInput();
                                         },
                                         fail: function () {
                                             /* No more answers */
@@ -68,6 +69,7 @@ export default class PrologExecutor extends Executor {
                                             console.error(err);
                                             answersLeft = false;
                                             out.writeErr(`Error while executing code: ${err}`);
+                                            out.closeInput();
                                         },
                                         limit: function () {
                                             answersLeft = false;
