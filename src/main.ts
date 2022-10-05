@@ -1,7 +1,4 @@
 import {FileView, MarkdownRenderer, Notice, Plugin} from 'obsidian';
-import * as fs from "fs";
-import * as os from "os"
-import * as child_process from "child_process";
 
 import {Outputter} from "./Outputter";
 import type {ExecutorSettings} from "./settings/Settings";
@@ -336,36 +333,6 @@ export default class ExecuteCodePlugin extends Plugin {
 	}
 
 	/**
-	 * Creates a new unique file name for the given file extension. The file path is set to the temp path of the os.
-	 * The file name is the current timestamp: '/{temp_dir}/temp_{timestamp}.{file_extension}'
-	 *
-	 * @param ext The file extension. Should correspond to the language of the code.
-	 * @returns [string, number] The file path and the file name without extension.
-	 */
-	private getTempFile(ext: string): [string, number] {
-		const now = Date.now();
-		return [`${os.tmpdir()}/temp_${now}.${ext}`, now];
-	}
-
-	/**
-	 * Creates new Notice that is displayed in the top right corner for a few seconds and contains an error message.
-	 * Additionally, the error is logged to the console and showed in the output panel ({@link Outputter}).
-	 *
-	 * @param cmd The command that was executed.
-	 * @param cmdArgs The arguments that were passed to the command.
-	 * @param tempFileName The name of the temporary file that contained the code.
-	 * @param err The error that was thrown.
-	 * @param outputter The outputter that should be used to display the error.
-	 * @private
-	 */
-	private notifyError(cmd: string, cmdArgs: string, tempFileName: string, err: any, outputter: Outputter) {
-		const errorMSG = `Error while executing ${cmd} ${cmdArgs} ${tempFileName}: ${err}`
-		console.error(errorMSG);
-		outputter.writeErr(errorMSG);
-		new Notice("Error while executing code!");
-	}
-
-	/**
 	 * Executes the code with the given command and arguments. The code is written to a temporary file and then executed.
 	 * The output of the code is displayed in the output panel ({@link Outputter}).
 	 * If the code execution fails, an error message is displayed and logged.
@@ -473,48 +440,5 @@ export default class ExecuteCodePlugin extends Plugin {
 				}
 			}
 		);
-	}
-
-	/**
-	 * Handles the output of a child process and redirects stdout and stderr to the given {@link Outputter} element.
-	 * Removes the temporary file after the code execution. Creates a new Notice after the code execution.
-	 *
-	 * @param child The child process to handled.
-	 * @param outputter The {@link Outputter} that should be used to display the output of the code.
-	 * @param button The button that was clicked to execute the code. Is re-enabled after the code execution.
-	 * @param fileName The name of the temporary file that was created for the code execution.
-	 */
-	private handleChildOutput(child: child_process.ChildProcessWithoutNullStreams, outputter: Outputter, button: HTMLButtonElement, fileName: string) {
-		outputter.clear();
-
-		child.stdout.on('data', (data) => {
-			outputter.write(data.toString());
-		});
-		child.stderr.on('data', (data) => {
-			outputter.writeErr(data.toString());
-		});
-
-		outputter.on("data", (data: string) => {
-			child.stdin.write(data);
-		});
-
-		child.on('close', (code) => {
-			button.className = runButtonClass;
-			new Notice(code === 0 ? "Done!" : "Error!");
-			
-			outputter.closeInput();
-
-			fs.promises.rm(fileName)
-				.catch((err) => {
-					console.error("Error in 'Obsidian Execute Code' Plugin while removing file: " + err);
-					button.className = runButtonClass;
-				});
-		});
-
-		child.on('error', (err) => {
-			button.className = runButtonClass;
-			new Notice("Error!");
-			outputter.writeErr(err.toString());
-		});
 	}
 }
