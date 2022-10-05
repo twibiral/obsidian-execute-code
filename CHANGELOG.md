@@ -10,11 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - 'Notebook Mode' for Python and JavaScript utilizing their respective REPL. (Thanks to @chlohal)
 - Add command to run all blocks in a given file to the command palette. (Thanks to @chlohal)
+- Support for Haskell. (Thanks to @afonsofrancof)
 
 ### Changed
 
 - Changed syntax for Code injection via pre and post blocks. (Thanks to @milan338)
 - Style of the run and clear buttons. (Thanks to @milan338)
+- Updated the README and create collapsing layout. (Thanks to @milan338)
 
 ## [0.18.0]
 
