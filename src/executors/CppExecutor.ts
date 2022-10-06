@@ -22,8 +22,6 @@ export default class CppExecutor extends NonInteractiveCodeExecutor {
 		this.getTempFile(extension);
 		// Cling expects the main function to have the same name as the file
 		const code = codeBlockContent.replace(/main\(\)/g, `temp_${this.tempFileId}()`);
-		console.log(code);
-
 		super.run(code, outputter, this.clingPath, args, extension);
 	}
 
