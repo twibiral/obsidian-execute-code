@@ -219,8 +219,7 @@ export class SettingsTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.pythonInteractive = value;
 					await this.plugin.saveSettings();
-				})
-			)
+				}));
 		this.makeInjectSetting("python", "Python");
 
 
@@ -288,6 +287,16 @@ export class SettingsTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.clingStd = value;
 					console.log('Cling std set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Use main function')
+			.setDesc('If enabled, will use a main() function as the code block entrypoint.')
+			.addToggle((toggle) => toggle
+				.setValue(this.plugin.settings.cppUseMain)
+				.onChange(async (value) => {
+					this.plugin.settings.cppUseMain = value;
+					console.log('Cpp use main set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
 		this.makeInjectSetting("cpp", "C++");

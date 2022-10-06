@@ -47,6 +47,7 @@ export interface ExecutorSettings {
 	rustInject: string;
 	cppRunner: string;
 	cppInject: string;
+	cppUseMain: boolean;
 	clingPath: string;
 	clingArgs: string;
 	clingStd: string;
@@ -137,6 +138,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	rustInject: "",
 	cppRunner: "cling",
 	cppInject: "",
+	cppUseMain: false,
 	clingPath: "cling",
 	clingArgs: "",
 	clingStd: "c++17",

@@ -38,7 +38,7 @@ export default class NonInteractiveCodeExecutor extends Executor {
 		} catch (err) {
 			this.notifyError(cmd, cmdArgs, tempFileName, err, outputter);
 		}
-		
+
 		this.tempFileId = undefined; // Reset the file id to use a new file next time
 	}
 
@@ -51,7 +51,7 @@ export default class NonInteractiveCodeExecutor extends Executor {
 	 * @param fileName The name of the temporary file that was created for the code execution.
 	 * @returns a promise that will resolve when the child proces finishes
 	 */
-	protected async handleChildOutput(child: child_process.ChildProcessWithoutNullStreams, outputter: Outputter, fileName: string) {
+	protected async handleChildOutput(child: child_process.ChildProcessWithoutNullStreams, outputter: Outputter, fileName: string | undefined) {
 		outputter.clear();
 
 		this.stdoutCb = (data) => {
@@ -72,6 +72,8 @@ export default class NonInteractiveCodeExecutor extends Executor {
 			new Notice(code === 0 ? "Done!" : "Error!");
 
 			outputter.closeInput();
+
+			if (fileName === undefined) return;
 
 			fs.promises.rm(fileName)
 				.catch((err) => {
