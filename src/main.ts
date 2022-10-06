@@ -10,7 +10,6 @@ import {addInlinePlotsToPython, addInlinePlotsToR, addMagicToJS, addMagicToPytho
 
 // @ts-ignore
 import * as prolog from "tau-prolog";
-import NonInteractiveCodeExecutor from './executors/NonInteractiveCodeExecutor';
 import ExecutorContainer from './ExecutorContainer';
 import ExecutorManagerView, {
 	EXECUTOR_MANAGER_OPEN_VIEW_COMMAND_ID,
@@ -240,10 +239,8 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language === "cpp") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				out.clear();
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCode(transformedCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp", language, file);
-				button.className = runButtonClass;
 			});
 
 		} else if (language === "prolog") {
@@ -366,9 +363,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * @param file The address of the file which the code originates from
 	 */
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {
-		const executor = this.settings[`${language}Interactive`]
-			? this.executors.getExecutorFor(file, language, false)
-			: new NonInteractiveCodeExecutor(false, file, language);
+		const executor = this.executors.getExecutorFor(file, language, false);
 
 		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
 			button.className = runButtonClass;
@@ -390,9 +385,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * @param file The address of the file which the code originates from
 	 */
 	private runCodeInShell(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {
-		const executor = this.settings[`${language}Interactive`]
-			? this.executors.getExecutorFor(file, language, true)
-			: new NonInteractiveCodeExecutor(true, file, language);
+		const executor = this.executors.getExecutorFor(file, language, true);
 
 		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
 			button.className = runButtonClass;

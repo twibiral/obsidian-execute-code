@@ -23,7 +23,6 @@ export default class NonInteractiveCodeExecutor extends Executor {
 	async run(codeBlockContent: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
 		new Notice("Running...");
 		const tempFileName = this.getTempFile(ext);
-		this.tempFileId = undefined; // Reset the file id to use a new file next time
 		console.debug(`Execute ${cmd} ${cmdArgs} ${tempFileName}`);
 
 		try {
@@ -39,6 +38,8 @@ export default class NonInteractiveCodeExecutor extends Executor {
 		} catch (err) {
 			this.notifyError(cmd, cmdArgs, tempFileName, err, outputter);
 		}
+		
+		this.tempFileId = undefined; // Reset the file id to use a new file next time
 	}
 
 	/**
