@@ -197,7 +197,10 @@ export class Outputter extends EventEmitter {
 		if(this.escapeHTML) {
 			element.appendChild(document.createTextNode(text));
 		} else {
-			element.innerHTML += text;
+			let content = document.createElement("div");
+			content.innerHTML = text;
+			for(const childElem of Array.from(content.childNodes)) 
+				element.appendChild(childElem);
 		}
 	}
 
