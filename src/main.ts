@@ -1,4 +1,4 @@
-import {FileView, MarkdownRenderer, Notice, Plugin} from 'obsidian';
+import {FileView, MarkdownRenderer, Plugin} from 'obsidian';
 
 import {Outputter} from "./Outputter";
 import type {ExecutorSettings} from "./settings/Settings";
@@ -8,8 +8,6 @@ import {getLanguageAlias} from './transforms/TransformCode';
 import {CodeInjector} from "./transforms/CodeInjector";
 import {addInlinePlotsToPython, addInlinePlotsToR, addMagicToJS, addMagicToPython,} from "./transforms/Magic";
 
-// @ts-ignore
-import * as prolog from "tau-prolog";
 import ExecutorContainer from './ExecutorContainer';
 import ExecutorManagerView, {
 	EXECUTOR_MANAGER_OPEN_VIEW_COMMAND_ID,
@@ -246,13 +244,8 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language === "prolog") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				out.clear();
-
-				const prologCode = (await new CodeInjector(this.app, this.settings, language).injectCode(srcCode)).split(/\n+%+\s*query\n+/);
-				if (prologCode.length < 2) return;	// no query found
-
-				this.runPrologCode(prologCode[0], prologCode[1], out);
-
+				const transformedCode = (await new CodeInjector(this.app, this.settings, language).injectCode(srcCode));
+				this.runCode(transformedCode, out, button, "", "", "", language, file);
 				button.className = runButtonClass;
 			});
 
@@ -364,7 +357,6 @@ export default class ExecuteCodePlugin extends Plugin {
 	 */
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {
 		const executor = this.executors.getExecutorFor(file, language, false);
-
 		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
 			button.className = runButtonClass;
 			outputter.closeInput();
@@ -386,70 +378,8 @@ export default class ExecuteCodePlugin extends Plugin {
 	 */
 	private runCodeInShell(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {
 		const executor = this.executors.getExecutorFor(file, language, true);
-
 		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
 			button.className = runButtonClass;
 		});
-	}
-
-	/**
-	 * Executes a string with prolog code using the TauProlog interpreter.
-	 * All queries must be below a line containing only '% queries'.
-	 *
-	 * @param facts Contains the facts.
-	 * @param queries Contains the queries.
-	 * @param out The {@link Outputter} that should be used to display the output of the code.
-	 */
-	private runPrologCode(facts: string, queries: string, out: Outputter) {
-		new Notice("Running...");
-		const session = prolog.create();
-		session.consult(facts
-			, {
-				success: () => {
-					session.query(queries
-						, {
-							success: async (goal: any) => {
-								console.debug(`Prolog goal: ${goal}`)
-								let answersLeft = true;
-								let counter = 0;
-
-								while (answersLeft && counter < this.settings.maxPrologAnswers) {
-									await session.answer({
-										success: function (answer: any) {
-											new Notice("Done!");
-											console.debug(`Prolog result: ${session.format_answer(answer)}`);
-											out.write(session.format_answer(answer) + "\n");
-										},
-										fail: function () {
-											/* No more answers */
-											answersLeft = false;
-										},
-										error: function (err: any) {
-											new Notice("Error!");
-											console.error(err);
-											answersLeft = false;
-											out.writeErr(`Error while executing code: ${err}`);
-										},
-										limit: function () {
-											answersLeft = false;
-										}
-									});
-									counter++;
-								}
-							},
-							error: (err: any) => {
-								new Notice("Error!");
-								out.writeErr("Query failed.\n")
-								out.writeErr(err.toString());
-							}
-						}
-					)
-				},
-				error: (err: any) => {
-					out.writeErr("Adding facts failed.\n")
-					out.writeErr(err.toString());
-				}
-			}
-		);
 	}
 }
