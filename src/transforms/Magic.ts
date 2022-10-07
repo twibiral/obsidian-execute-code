@@ -137,7 +137,7 @@ function pythonParseShowImage(source: string): string {
 		const alignment = match.groups.align;
 
 		const image = buildMagicShowImage(imagePath.replace(/\\/g, "\\\\"), width, height, alignment);
-		source = source.replace(match[0], "print(\'" + image + "\')");
+		source = source.replace(match[0], "print(\'" + TOGGLE_HTML_SIGIL + image + TOGGLE_HTML_SIGIL + "\')");
 	}
 
 	return source;
@@ -173,7 +173,7 @@ function jsParseShowImage(source: string): string {
 		const alignment = match.groups.align;
 
 		const image = buildMagicShowImage(imagePath.replace(/\\/g, "\\\\"), width, height, alignment);
-		source = source.replace(match[0], "console.log(\'" + image + "\')");
+		source = source.replace(match[0], "console.log(\'" + TOGGLE_HTML_SIGIL + image + TOGGLE_HTML_SIGIL + "\')");
 		console.log(source);
 	}
 
