@@ -115,7 +115,7 @@ export function addInlinePlotsToR(source: string): string {
 	const matches = source.matchAll(R_PLOT_REGEX);
 	for (const match of matches) {
 		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/");
-		const substitute = `png("${tempFile}"); ${match[0]}; dev.off(); cat('<img src="app://local/${tempFile}" align="center">')`;
+		const substitute = `png("${tempFile}"); ${match[0]}; dev.off(); cat('${TOGGLE_HTML_SIGIL}<img src="app://local/${tempFile}" align="center">${TOGGLE_HTML_SIGIL}')`;
 
 		source = source.replace(match[0], substitute);
 	}
