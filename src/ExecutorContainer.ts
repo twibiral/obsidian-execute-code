@@ -80,10 +80,13 @@ export default class ExecutorContainer extends EventEmitter implements Iterable<
 	 */
 	private createExecutorFor(file: string, language: LanguageId, needsShell: boolean) {
 		// Interactive language executor
-		if (this.plugin.settings[`${language}Interactive`])
+		if (this.plugin.settings[`${language}Interactive`]) {
+			if (!(language in interactiveExecutors))
+				throw new Error(`Attempted to use interactive executor for '${language}' but no such executor exists`);
 			return new interactiveExecutors[language](this.plugin.settings, file);
+		}
 		// Custom non-interactive language executor
-		else if (Object.keys(nonInteractiveExecutors).contains(language))
+		else if (language in nonInteractiveExecutors)
 			return new nonInteractiveExecutors[language](this.plugin.settings, file);
 		// Generic non-interactive language executor
 		return new NonInteractiveCodeExecutor(needsShell, file, language);
