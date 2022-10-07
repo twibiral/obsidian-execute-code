@@ -66,7 +66,7 @@ export class Outputter extends EventEmitter {
 		
 		// Keep output field and clear button invisible if no text was printed.
 		if (this.textPrinted(text)) {
-			this.addStdout().innerHTML += text;
+			this.escapeAwareAppend(this.addStdout(), text);
 
 			// make visible again:
 			this.makeOutputVisible();
@@ -191,6 +191,14 @@ export class Outputter extends EventEmitter {
 		this.lastPrintElem = stdElem;
 
 		return stdElem
+	}
+	
+	private escapeAwareAppend(element: HTMLElement, text: string) {
+		if(this.escapeHTML) {
+			element.textContent += text;
+		} else {
+			element.innerHTML += text;
+		}
 	}
 
 	/**
