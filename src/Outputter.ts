@@ -249,18 +249,6 @@ export class Outputter extends EventEmitter {
 		this.hadPreviouslyPrinted = true;
 		return true;
 	}
-	
-	/**
-	 * Checks if the text contains the output sanitization sigil. If it does,
-	 * toggles santization.
-	 * 
-	 * @param text Text which is to be printed
-	 */
-	private checkOutputSigil(text: string) {
-		if (text.contains(this.toggleHtmlSigil)) {
-			this.escapeHTML = !this.escapeHTML;
-		}
-	}
 
 	/**
 	 * Restores output elements after the outputter has been `delete()`d or `clear()`d.
