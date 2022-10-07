@@ -195,7 +195,7 @@ export class Outputter extends EventEmitter {
 	
 	private escapeAwareAppend(element: HTMLElement, text: string) {
 		if(this.escapeHTML) {
-			element.textContent += text;
+			element.appendChild(document.createTextNode(text));
 		} else {
 			element.innerHTML += text;
 		}
