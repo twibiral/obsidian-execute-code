@@ -18,10 +18,10 @@ import ExecutorManagerView, {
 
 import runAllCodeBlocks from './runAllCodeBlocks';
 
-const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs"] as const;
-const canonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
+export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs"] as const;
+export const canonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
 	"prolog", "shell", "groovy", "r", "go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell"] as const;
-const supportedLanguages = [...languageAliases, ...canonicalLanguages] as const;
+export const supportedLanguages = [...languageAliases, ...canonicalLanguages] as const;
 
 
 // type SupportedLanguage = typeof supportedLanguages[number];
@@ -169,8 +169,8 @@ export default class ExecuteCodePlugin extends Plugin {
 				const srcCode = codeBlock.getText();
 
 				const canonicalLanguage = getLanguageAlias(
-					supportedLanguages.find((lang => language.contains(`language-${lang}`)))
-				);
+					supportedLanguages.find(lang => language.contains(`language-${lang}`))
+				) as LanguageId;
 
 				if (canonicalLanguage // if the language is supported
 					&& !parent.classList.contains(hasButtonClass)) { // & this block hasn't been buttonified already
