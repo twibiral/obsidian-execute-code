@@ -1,5 +1,6 @@
 import {EventEmitter} from "events";
 
+export const TOGGLE_HTML_SIGIL = `TOGGLE_HTML_${Math.random().toString(16).substring(2)}`;
 
 export class Outputter extends EventEmitter {
 	codeBlockElement: HTMLElement;
@@ -10,10 +11,10 @@ export class Outputter extends EventEmitter {
 
 	inputElement: HTMLInputElement;
 
-	toggleHtmlSigil: string
 	escapeHTML: boolean
 	hadPreviouslyPrinted: boolean;
 	inputState: "NOT_DOING" | "OPEN" | "CLOSED" | "INACTIVE";
+
 
 	constructor(codeBlock: HTMLElement, doInput: boolean) {
 		super();
@@ -22,7 +23,6 @@ export class Outputter extends EventEmitter {
 		this.codeBlockElement = codeBlock;
 		this.hadPreviouslyPrinted = false;
 		this.escapeHTML = true;
-		this.toggleHtmlSigil = `TOGGLE_HTML_${Math.random().toString(16).substring(2)}`;
 	}
 
 	/**
@@ -75,13 +75,13 @@ export class Outputter extends EventEmitter {
 	private processSigilsAndWriteText(text: string) {
 		//Loop around, removing HTML toggling sigils
 		while (true) {
-			let index = text.indexOf(this.toggleHtmlSigil);
+			let index = text.indexOf(TOGGLE_HTML_SIGIL);
 			if (index == -1) break;
 
 			if (index != 0) this.writeRaw(text.substring(0, index));
 			this.escapeHTML = !this.escapeHTML;
 
-			text = text.substring(index + this.toggleHtmlSigil.length);
+			text = text.substring(index + TOGGLE_HTML_SIGIL.length);
 		}
 		this.writeRaw(text);
 	}
@@ -243,7 +243,7 @@ export class Outputter extends EventEmitter {
 	private textPrinted(text: string) {
 		if (this.hadPreviouslyPrinted) return true;
 
-		if (text.contains(this.toggleHtmlSigil)) return false;
+		if (text.contains(TOGGLE_HTML_SIGIL)) return false;
 		if (text == "") return false;
 
 		this.hadPreviouslyPrinted = true;
