@@ -22,7 +22,7 @@ export class Outputter extends EventEmitter {
 		this.codeBlockElement = codeBlock;
 		this.hadPreviouslyPrinted = false;
 		this.escapeHTML = true;
-		this.toggleHtmlSigil = `\x1FTOGGLE_HTML_${Math.random().toString(16).substring(2)}\n`;
+		this.toggleHtmlSigil = `TOGGLE_HTML_${Math.random().toString(16).substring(2)}`;
 	}
 
 	/**
