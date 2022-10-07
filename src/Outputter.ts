@@ -61,6 +61,9 @@ export class Outputter extends EventEmitter {
 	 * @param text The stdout data in question
 	 */
 	write(text: string) {
+		//if we see the output sigil, toggle escaping
+		this.checkOutputSigil(text);
+		
 		// Keep output field and clear button invisible if no text was printed.
 		if (this.textPrinted(text)) {
 			this.addStdout().innerHTML += text;
@@ -206,6 +209,18 @@ export class Outputter extends EventEmitter {
 
 		this.hadPreviouslyPrinted = true;
 		return true;
+	}
+	
+	/**
+	 * Checks if the text contains the output sanitization sigil. If it does,
+	 * toggles santization.
+	 * 
+	 * @param text Text which is to be printed
+	 */
+	private checkOutputSigil(text: string) {
+		if (text.contains(this.toggleHtmlSigil)) {
+			this.escapeHTML = !this.escapeHTML;
+		}
 	}
 
 	/**
