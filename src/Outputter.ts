@@ -61,9 +61,36 @@ export class Outputter extends EventEmitter {
 	 * @param text The stdout data in question
 	 */
 	write(text: string) {
-		//if we see the output sigil, toggle escaping
-		this.checkOutputSigil(text);
+		this.processSigilsAndWriteText(text);
 		
+	}
+	
+	/**
+	 * Add a segment of stdout data to the outputter,
+	 * processing `toggleHtmlSigil`s along the way.
+	 * `toggleHtmlSigil`s may be interleaved with text and HTML
+	 * in any way; this method will correctly interpret them.
+	 * @param text The stdout data in question
+	 */
+	private processSigilsAndWriteText(text: string) {
+		//Loop around, removing HTML toggling sigils
+		while (true) {
+			let index = text.indexOf(this.toggleHtmlSigil);
+			if (index == -1) break;
+
+			if (index != 0) this.writeRaw(text.substring(0, index));
+			this.escapeHTML = !this.escapeHTML;
+
+			text = text.substring(index + this.toggleHtmlSigil.length);
+		}
+		this.writeRaw(text);
+	}
+	
+	/**
+	 * Writes a segment of stdout data without caring about the HTML sigil
+	 * @param text The stdout data in question
+	 */
+	private writeRaw(text: string) {
 		// Keep output field and clear button invisible if no text was printed.
 		if (this.textPrinted(text)) {
 			this.escapeAwareAppend(this.addStdout(), text);
