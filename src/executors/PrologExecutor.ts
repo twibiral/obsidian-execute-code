@@ -17,14 +17,15 @@ export default class PrologExecutor extends Executor {
 	}
 
 	async run(code: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string): Promise<void> {
-		let prologCode = code.split(/\n+%+\s*query\n+/);
+		const prologCode = code.split(/\n+%+\s*query\n+/);
 
 		if (prologCode.length < 2) return;	// no query found
 
 		//Prolog does not support input
 		outputter.closeInput();
+		outputter.clear();
 
-		return this.runPrologCode(prologCode[0], prologCode[1], outputter);
+		this.runPrologCode(prologCode[0], prologCode[1], outputter);
 	}
 
 	async stop() {
