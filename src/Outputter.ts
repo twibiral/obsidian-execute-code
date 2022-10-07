@@ -10,6 +10,7 @@ export class Outputter extends EventEmitter {
 
 	inputElement: HTMLInputElement;
 
+	toggleHtmlSigil: string
 	escapeHTML: boolean
 	hadPreviouslyPrinted: boolean;
 	inputState: "NOT_DOING" | "OPEN" | "CLOSED" | "INACTIVE";
@@ -21,6 +22,7 @@ export class Outputter extends EventEmitter {
 		this.codeBlockElement = codeBlock;
 		this.hadPreviouslyPrinted = false;
 		this.escapeHTML = true;
+		this.toggleHtmlSigil = `\x1FTOGGLE_HTML_${Math.random().toString(16).substring(2)}\n`;
 	}
 
 	/**
