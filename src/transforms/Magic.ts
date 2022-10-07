@@ -91,10 +91,11 @@ export function addMagicToJS(source: string): string {
  * Only supports normal plots generated with the `plt.show(...)` function.
  *
  * @param source The source code to parse.
+ * @param toggleHtmlSigil The meta-command to allow and disallow HTML
  * @returns The transformed source code.
  */
-export function addInlinePlotsToPython(source: string): string {
-	const showPlot = `import io; import sys; __obsidian_execute_code_temp_pyplot_var__=io.BytesIO(); plt.plot(); plt.savefig(__obsidian_execute_code_temp_pyplot_var__, format='svg'); plt.close(); sys.stdout.buffer.write(__obsidian_execute_code_temp_pyplot_var__.getvalue())`;
+export function addInlinePlotsToPython(source: string, toggleHtmlSigil: string): string {
+	const showPlot = `import io; import sys; __obsidian_execute_code_temp_pyplot_var__=io.BytesIO(); plt.plot(); plt.savefig(__obsidian_execute_code_temp_pyplot_var__, format='svg'); plt.close(); sys.stdout.write(${JSON.stringify(toggleHtmlSigil)}); sys.stdout.flush(); sys.stdout.buffer.write(__obsidian_execute_code_temp_pyplot_var__.getvalue()); sys.stdout.flush(); sys.stdout.write(${JSON.stringify(toggleHtmlSigil)}); sys.stdout.flush()`;
 	return source.replace(PYTHON_PLOT_REGEX, showPlot);
 }
 

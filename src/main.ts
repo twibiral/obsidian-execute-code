@@ -217,7 +217,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				let transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				if (this.settings.pythonEmbedPlots)	// embed plots into html which shows them in the note
-					transformedCode = addInlinePlotsToPython(transformedCode);
+					transformedCode = addInlinePlotsToPython(transformedCode, out.toggleHtmlSigil);
 				transformedCode = addMagicToPython(transformedCode);
 
 				this.runCode(transformedCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py", language, file);
