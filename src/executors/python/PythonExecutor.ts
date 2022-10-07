@@ -105,7 +105,6 @@ ${this.globalsDictionaryName} = {**globals()}
 
 				if (str.endsWith(finishSigil)) {
 					str = str.substring(0, str.length - finishSigil.length);
-					console.log(str);
 
 					this.process.stdout.removeListener("data", writeToStdout)
 					this.process.stderr.removeListener("data", writeToStderr);
