@@ -297,8 +297,9 @@ The following magic commands are supported:
 - `@show(ImagePath)`: Displays an image at the given path in the note.
 - `@show(ImagePath, Width, Height)`: Displays an image at the given path in the note.
 - `@show(ImagePath, Width, Height, Alignment[center|left|right])`: Displays an image at the given path in the note.
+- `@html(HtmlSource)`: Displays HTML in the note
 
-(`@show(...)` is only supported for JavaScript and Python yet.)
+(`@show(...)` and `@html(...)` are only supported for JavaScript and Python yet.)
 
 ![Example how to use the magic commands.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/magic_example.png?raw=true)
 
