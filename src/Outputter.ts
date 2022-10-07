@@ -10,6 +10,7 @@ export class Outputter extends EventEmitter {
 
 	inputElement: HTMLInputElement;
 
+	escapeHTML: boolean
 	hadPreviouslyPrinted: boolean;
 	inputState: "NOT_DOING" | "OPEN" | "CLOSED" | "INACTIVE";
 
@@ -19,6 +20,7 @@ export class Outputter extends EventEmitter {
 		this.inputState = doInput ? "INACTIVE" : "NOT_DOING";
 		this.codeBlockElement = codeBlock;
 		this.hadPreviouslyPrinted = false;
+		this.escapeHTML = true;
 	}
 
 	/**
