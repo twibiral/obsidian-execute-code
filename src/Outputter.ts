@@ -205,6 +205,7 @@ export class Outputter extends EventEmitter {
 	private textPrinted(text: string) {
 		if (this.hadPreviouslyPrinted) return true;
 
+		if (text.contains(this.toggleHtmlSigil)) return false;
 		if (text == "") return false;
 
 		this.hadPreviouslyPrinted = true;
