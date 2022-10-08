@@ -76,9 +76,9 @@ export class Outputter extends EventEmitter {
 		//Loop around, removing HTML toggling sigils
 		while (true) {
 			let index = text.indexOf(TOGGLE_HTML_SIGIL);
-			if (index == -1) break;
+			if (index === -1) break;
 
-			if (index != 0) this.writeRaw(text.substring(0, index));
+			if (index > 0) this.writeRaw(text.substring(0, index));
 			this.escapeHTML = !this.escapeHTML;
 
 			text = text.substring(index + TOGGLE_HTML_SIGIL.length);
@@ -244,7 +244,7 @@ export class Outputter extends EventEmitter {
 		if (this.hadPreviouslyPrinted) return true;
 
 		if (text.contains(TOGGLE_HTML_SIGIL)) return false;
-		if (text == "") return false;
+		if (text === "") return false;
 
 		this.hadPreviouslyPrinted = true;
 		return true;
@@ -264,7 +264,7 @@ export class Outputter extends EventEmitter {
 		this.clearButton.className = "clear-button";
 
 		setTimeout(() => {
-			if (this.inputState == "OPEN") this.inputElement.style.display = "inline";
+			if (this.inputState === "OPEN") this.inputElement.style.display = "inline";
 		}, 500)
 	}
 }
