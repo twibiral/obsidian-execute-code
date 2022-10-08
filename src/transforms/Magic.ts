@@ -112,7 +112,6 @@ export function addInlinePlotsToR(source: string): string {
 		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/");
 		const substitute = `png("${tempFile}"); ${match[0]}; dev.off(); cat('<img src="app://local/${tempFile}" align="center">')`;
 
-
 		source = source.replace(match[0], substitute);
 	}
 
@@ -154,7 +153,6 @@ function jsParseShowImage(source: string): string {
 
 		const image = buildMagicShowImage(imagePath.replace(/\\/g, "\\\\"), width, height, alignment);
 		source = source.replace(match[0], "console.log(\'" + image + "\')");
-		console.log(source);
 	}
 
 	return source;

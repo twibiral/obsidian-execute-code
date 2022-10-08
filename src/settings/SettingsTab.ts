@@ -1,6 +1,6 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
-import ExecuteCodePlugin from "./main";
-import {ExecutorSettings, ExecutorSettingsLanguages} from "./Settings";
+import ExecuteCodePlugin, {LanguageId} from "src/main";
+import {ExecutorSettings} from "./Settings";
 
 
 /**
@@ -76,6 +76,15 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Node args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+		new Setting(containerEl)
+			.setName("Run Javascript blocks in Notebook Mode")
+			.addToggle((toggle) => toggle
+				.setValue(this.plugin.settings.jsInteractive)
+				.onChange(async (value) => {
+					this.plugin.settings.jsInteractive = value;
+					await this.plugin.saveSettings();
+				})
+			)
 		this.makeInjectSetting("js", "JavaScript");
 
 		// ========== TypeScript ==========
@@ -203,6 +212,14 @@ export class SettingsTab extends PluginSettingTab {
 					console.log('Python args set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
+		new Setting(containerEl)
+			.setName("Run Python blocks in Notebook Mode")
+			.addToggle((toggle) => toggle
+				.setValue(this.plugin.settings.pythonInteractive)
+				.onChange(async (value) => {
+					this.plugin.settings.pythonInteractive = value;
+					await this.plugin.saveSettings();
+				}));
 		this.makeInjectSetting("python", "Python");
 
 
@@ -270,6 +287,16 @@ export class SettingsTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.clingStd = value;
 					console.log('Cling std set to: ' + value);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Use main function')
+			.setDesc('If enabled, will use a main() function as the code block entrypoint.')
+			.addToggle((toggle) => toggle
+				.setValue(this.plugin.settings.cppUseMain)
+				.onChange(async (value) => {
+					this.plugin.settings.cppUseMain = value;
+					console.log('Cpp use main set to: ' + value);
 					await this.plugin.saveSettings();
 				}));
 		this.makeInjectSetting("cpp", "C++");
@@ -445,7 +472,6 @@ export class SettingsTab extends PluginSettingTab {
 				}));
 		this.makeInjectSetting("kotlin", "Kotlin");
 
-
 		// ========== Mathematica ==========
 		containerEl.createEl('h3', {text: 'Wolfram Mathematica Settings'});
 		new Setting(containerEl)
@@ -469,6 +495,32 @@ export class SettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 		this.makeInjectSetting("mathematica", "Mathematica");
+
+
+		// ========== Haskell ===========
+		containerEl.createEl('h3', {text: 'Haskell Settings'});
+		new Setting(containerEl)
+			.setName('Ghci path')
+			.setDesc('The path to your Ghci installation.')
+			.addText(text => text
+				.setValue(this.plugin.settings.ghciPath)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.ghciPath = sanitized;
+					console.log('Ghci path set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Ghci arguments')
+			.addText(text => text
+				.setValue(this.plugin.settings.ghciArgs)
+				.onChange(async (value) => {
+					const sanitized = this.sanitizePath(value);
+					this.plugin.settings.ghciArgs = sanitized;
+					console.log('Ghci args set to: ' + sanitized);
+					await this.plugin.saveSettings();
+				}));
+		this.makeInjectSetting("haskell", "Haskell");
 	}
 
 	private sanitizePath(path: string): string {
@@ -479,7 +531,7 @@ export class SettingsTab extends PluginSettingTab {
 		return path
 	}
 
-	private makeInjectSetting(language: ExecutorSettingsLanguages, languageAlt: string) {
+	private makeInjectSetting(language: LanguageId, languageAlt: string) {
 		new Setting(this.containerEl)
 			.setName(`Inject ${languageAlt} code`)
 			.setDesc(`Code to add to the top of every ${languageAlt} code block before running.`)
