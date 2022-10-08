@@ -12,3 +12,10 @@ writeFileSync("manifest.json", JSON.stringify(manifest, null, "\t"));
 let versions = JSON.parse(readFileSync("versions.json", "utf8"));
 versions[targetVersion] = minAppVersion;
 writeFileSync("versions.json", JSON.stringify(versions, null, "\t"));
+
+// Update version in CHANGELOG
+const changelog = readFileSync("CHANGELOG.md", "utf8");
+const newChangelog = changelog.replace(/^## \[Unreleased\]/m, `## [${targetVersion}]`);
+writeFileSync("CHANGELOG.md", newChangelog);
+
+console.log(`Updated version to ${targetVersion} and minAppVersion to ${minAppVersion} in manifest.json, versions.json and CHANGELOG.md`);
