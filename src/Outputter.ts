@@ -44,6 +44,8 @@ export class Outputter extends EventEmitter {
 
 		this.closeInput();
 		this.inputState = "INACTIVE";
+		
+		this.escapeHTML = true;
 	}
 
 	/**
