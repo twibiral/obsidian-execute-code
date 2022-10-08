@@ -4,7 +4,18 @@ import NodeJSExecutor from "./executors/NodeJSExecutor";
 import NonInteractiveCodeExecutor from "./executors/NonInteractiveCodeExecutor";
 import PrologExecutor from "./executors/PrologExecutor";
 import PythonExecutor from "./executors/python/PythonExecutor";
+import CppExecutor from './executors/CppExecutor';
 import ExecuteCodePlugin, {LanguageId} from "./main";
+
+const interactiveExecutors: Partial<Record<LanguageId, any>> = {
+	"js": NodeJSExecutor,
+	"python": PythonExecutor
+};
+
+const nonInteractiveExecutors: Partial<Record<LanguageId, any>> = {
+	"prolog": PrologExecutor,
+	"cpp": CppExecutor
+};
 
 export default class ExecutorContainer extends EventEmitter implements Iterable<Executor> {
 	executors: { [key in LanguageId]?: { [key: string]: Executor } } = {}
@@ -68,27 +79,16 @@ export default class ExecutorContainer extends EventEmitter implements Iterable<
 	 * @returns a new executor associated with the given language and file
 	 */
 	private createExecutorFor(file: string, language: LanguageId, needsShell: boolean) {
-		if (this.plugin.settings[`${language}Interactive`] || this.isAlwaysInteractive(language)) {
-			switch (language) {
-				case "js":
-					return new NodeJSExecutor(this.plugin.settings, file);
-				case "python":
-					return new PythonExecutor(this.plugin.settings, file);
-				case "prolog":
-					return new PrologExecutor(this.plugin.settings, file);
-			}
+		// Interactive language executor
+		if (this.plugin.settings[`${language}Interactive`]) {
+			if (!(language in interactiveExecutors))
+				throw new Error(`Attempted to use interactive executor for '${language}' but no such executor exists`);
+			return new interactiveExecutors[language](this.plugin.settings, file);
 		}
+		// Custom non-interactive language executor
+		else if (language in nonInteractiveExecutors)
+			return new nonInteractiveExecutors[language](this.plugin.settings, file);
+		// Generic non-interactive language executor
 		return new NonInteractiveCodeExecutor(needsShell, file, language);
-	}
-
-	/**
-	 * Checks if a language is ALWAYS interactive. __This will override a user's choice__
-	 * @param language the language to check
-	 * @returns whether the language should unconditionally be interactive
-	 */
-	private isAlwaysInteractive(language: LanguageId) {
-		return [
-			"prolog"
-		].contains(language);
 	}
 }

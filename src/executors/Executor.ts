@@ -7,6 +7,7 @@ import {EventEmitter} from "stream";
 export default abstract class Executor extends EventEmitter {
 	language: LanguageId;
 	file: string;
+	tempFileId: string | undefined = undefined;
 
 	constructor(file: string, language: LanguageId) {
 		super();
@@ -51,12 +52,15 @@ export default abstract class Executor extends EventEmitter {
 	/**
 	 * Creates a new unique file name for the given file extension. The file path is set to the temp path of the os.
 	 * The file name is the current timestamp: '/{temp_dir}/temp_{timestamp}.{file_extension}'
+	 * this.tempFileId will be updated, accessible to other methods
+	 * Once finished using this value, remember to set it to undefined to generate a new file
 	 *
 	 * @param ext The file extension. Should correspond to the language of the code.
-	 * @returns [string, number] The file path and the file name without extension.
+	 * @returns The temporary file path
 	 */
-	protected getTempFile(ext: string): [string, number] {
-		const now = Date.now();
-		return [`${os.tmpdir()}/temp_${now}.${ext}`, now];
+	protected getTempFile(ext: string) {
+		if (this.tempFileId === undefined)
+			this.tempFileId = Date.now().toString();
+		return `${os.tmpdir()}/temp_${this.tempFileId}.${ext}`;
 	}
 }
