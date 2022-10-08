@@ -89,8 +89,6 @@ ${this.globalsDictionaryName} = {**globals()}
 				finishSigil
 			);
 
-			console.log(wrappedCode);
-
 			//import print from builtins to circumnavigate the case where the user redefines print
 			this.process.stdin.write(wrappedCode);
 

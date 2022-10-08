@@ -7,6 +7,8 @@ import {LanguageId} from "src/main";
 
 export default class NonInteractiveCodeExecutor extends Executor {
 	usesShell: boolean
+	stdoutCb: (chunk: any) => void
+	stderrCb: (chunk: any) => void
 
 	constructor(usesShell: boolean, file: string, language: LanguageId) {
 		super(file, language);
@@ -20,24 +22,24 @@ export default class NonInteractiveCodeExecutor extends Executor {
 
 	async run(codeBlockContent: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
 		new Notice("Running...");
-		const [tempFileName, fileId] = this.getTempFile(ext)
+		const tempFileName = this.getTempFile(ext);
 		console.debug(`Execute ${cmd} ${cmdArgs} ${tempFileName}`);
-		if (ext === "cpp")
-			codeBlockContent = codeBlockContent.replace(/main\(\)/g, `temp_${fileId}()`);
 
 		try {
 			await fs.promises.writeFile(tempFileName, codeBlockContent);
-
+			
 			const args = cmdArgs ? cmdArgs.split(" ") : [];
 			args.push(tempFileName);
-
+			
 			console.debug(`Execute ${cmd} ${args.join(" ")}`);
 			const child = child_process.spawn(cmd, args, {env: process.env, shell: this.usesShell});
-
+			
 			await this.handleChildOutput(child, outputter, tempFileName);
 		} catch (err) {
 			this.notifyError(cmd, cmdArgs, tempFileName, err, outputter);
 		}
+
+		this.tempFileId = undefined; // Reset the file id to use a new file next time
 	}
 
 	/**
@@ -49,15 +51,18 @@ export default class NonInteractiveCodeExecutor extends Executor {
 	 * @param fileName The name of the temporary file that was created for the code execution.
 	 * @returns a promise that will resolve when the child proces finishes
 	 */
-	private async handleChildOutput(child: child_process.ChildProcessWithoutNullStreams, outputter: Outputter, fileName: string) {
+	protected async handleChildOutput(child: child_process.ChildProcessWithoutNullStreams, outputter: Outputter, fileName: string | undefined) {
 		outputter.clear();
 
-		child.stdout.on('data', (data) => {
+		this.stdoutCb = (data) => {
 			outputter.write(data.toString());
-		});
-		child.stderr.on('data', (data) => {
+		};
+		this.stderrCb = (data) => {
 			outputter.writeErr(data.toString());
-		});
+		};
+
+		child.stdout.on('data', this.stdoutCb);
+		child.stderr.on('data', this.stderrCb);
 
 		outputter.on("data", (data: string) => {
 			child.stdin.write(data);
@@ -67,6 +72,8 @@ export default class NonInteractiveCodeExecutor extends Executor {
 			new Notice(code === 0 ? "Done!" : "Error!");
 
 			outputter.closeInput();
+
+			if (fileName === undefined) return;
 
 			fs.promises.rm(fileName)
 				.catch((err) => {
