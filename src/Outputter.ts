@@ -11,6 +11,7 @@ export class Outputter extends EventEmitter {
 
 	inputElement: HTMLInputElement;
 
+	htmlBuffer: string
 	escapeHTML: boolean
 	hadPreviouslyPrinted: boolean;
 	inputState: "NOT_DOING" | "OPEN" | "CLOSED" | "INACTIVE";
@@ -23,6 +24,7 @@ export class Outputter extends EventEmitter {
 		this.codeBlockElement = codeBlock;
 		this.hadPreviouslyPrinted = false;
 		this.escapeHTML = true;
+		this.htmlBuffer = "";
 	}
 
 	/**
@@ -81,7 +83,9 @@ export class Outputter extends EventEmitter {
 			if (index === -1) break;
 
 			if (index > 0) this.writeRaw(text.substring(0, index));
+			
 			this.escapeHTML = !this.escapeHTML;
+			this.writeHTMLBuffer(this.addStdout());
 
 			text = text.substring(index + TOGGLE_HTML_SIGIL.length);
 		}
@@ -222,14 +226,36 @@ export class Outputter extends EventEmitter {
 		return stdElem
 	}
 	
+	/**
+	 * Appends some text to a given element. Respects `this.escapeHTML` for whether or not to escape HTML.
+	 * If not escaping HTML, appends the text to the HTML buffer to ensure that the whole HTML segment is recieved
+	 * before parsing it.
+	 * @param element Element to append to
+	 * @param text text to append
+	 */
 	private escapeAwareAppend(element: HTMLElement, text: string) {
 		if(this.escapeHTML) {
 			element.appendChild(document.createTextNode(text));
 		} else {
+			this.htmlBuffer += text;
+		}
+	}
+	
+	/**
+	 * Parses the HTML buffer and appends its elements to a given parent element.
+	 * Erases the HTML buffer afterwards.
+	 * @param element element to append to
+	 */
+	private writeHTMLBuffer(element: HTMLElement) {
+		if(this.htmlBuffer != "") {
+			this.makeOutputVisible();
+			
 			let content = document.createElement("div");
-			content.innerHTML = text;
-			for(const childElem of Array.from(content.childNodes)) 
+			content.innerHTML = this.htmlBuffer;
+			for (const childElem of Array.from(content.childNodes))
 				element.appendChild(childElem);
+				
+			this.htmlBuffer = "";
 		}
 	}
 
