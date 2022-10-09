@@ -1,9 +1,14 @@
 export default (code: string, globalsName: string, localsName: string, printName: string, finishSigil: string) =>
 /*python*/`
-${code.contains("matplotlib") ? /*python*/`
+${code.contains("matplotlib") ?
+/*python*/`
 try:
     import matplotlib
-    matplotlib.use('svg')
+except:
+    pass
+
+try:
+    matplotlib.use('agg')
 except:
     pass
 ` : ""}
