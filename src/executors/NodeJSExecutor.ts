@@ -66,12 +66,11 @@ export default class PythonExecutor extends AsyncExecutor {
 	async run(code: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
 		return this.addJobToQueue((resolve, reject) => {
 
-			const trimmedCode = code.trim() + "\n";
-			this.process.stdin.write(trimmedCode, () => {
-				let prompts = 0;
-				const requiredPrompts = Array.from(trimmedCode.matchAll(/\n/g)).length;
-
-				outputter.clear();
+			const wrappedCode = `
+			try { eval(${JSON.stringify(code)}); } catch(e) { console.error(e); }
+			`;
+			
+			outputter.clear();
 
 				outputter.on("data", (data: string) => {
 					this.process.stdin.write(data);
