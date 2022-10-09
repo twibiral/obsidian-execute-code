@@ -13,7 +13,7 @@ export default class PythonExecutor extends AsyncExecutor {
 
 		const args = settings.nodeArgs ? settings.nodeArgs.split(" ") : [];
 
-		args.unshift("-i");
+		args.unshift(`-e`, `require("repl").start()`);
 
 		this.process = spawn(settings.nodePath, args);
 
