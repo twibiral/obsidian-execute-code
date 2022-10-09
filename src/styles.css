@@ -75,19 +75,19 @@ pre:hover code.language-output {
 }
 
 :not(.use-custom-output-color) code.language-output span.stdout {
-	color: var(--text-muted);
+	color: var(--text-muted) !important;
 }
 
 .use-custom-output-color code.language-output span.stdout {
-    color: var(--code-output-text-color);
+    color: var(--code-output-text-color) !important;
 }
 
 :not(.use-custom-error-color) code.language-output span.stderr {
-	color: red;
+	color: red !important;
 }
 
 .use-custom-error-color code.language-output span.stderr {
-	color: var(--code-error-text-color);
+	color: var(--code-error-text-color) !important;
 }
 
 code.language-output hr {
