@@ -1,5 +1,6 @@
 import {insertNotePath, insertNoteTitle, insertVaultPath} from "./Magic";
 import {getVaultVariables} from "src/Vault";
+import {canonicalLanguages} from 'src/main';
 import type {App} from "obsidian";
 import type {LanguageId} from "src/main";
 
@@ -9,9 +10,9 @@ import type {LanguageId} from "src/main";
  * @param language A language name or shortcut (e.g. 'js', 'python' or 'shell').
  * @returns The same language shortcut for every alias of the language.
  */
-export function getLanguageAlias(language: string) : LanguageId {
-	if (language === undefined) return;
-	return language
+export function getLanguageAlias(language: string | undefined): LanguageId | undefined {
+	if (language === undefined) return undefined;
+	const replaced = language
 		.replace("javascript", "js")
 		.replace("typescript", "ts")
 		.replace("csharp", "cs")
@@ -20,6 +21,9 @@ export function getLanguageAlias(language: string) : LanguageId {
 		.replace("nb", "mathematica")
 		.replace("wl", "mathematica")
 		.replace("hs", "haskell") as LanguageId;
+	if (canonicalLanguages.includes(replaced))
+		return replaced;
+	return undefined;
 }
 
 /**
@@ -44,7 +48,7 @@ export function transformMagicCommands(app: App, srcCode: string) {
 
 /**
  * Extract the language from the first line of a code block.
- * 
+ *
  * @param firstLineOfCode The first line of a code block that contains the language name.
  * @returns The language of the code block.
  */

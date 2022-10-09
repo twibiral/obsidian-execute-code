@@ -47,6 +47,7 @@ export interface ExecutorSettings {
 	rustInject: string;
 	cppRunner: string;
 	cppInject: string;
+	cppUseMain: boolean;
 	clingPath: string;
 	clingArgs: string;
 	clingStd: string;
@@ -68,7 +69,7 @@ export interface ExecutorSettings {
 	mathematicaArgs: string;
 	mathematicaFileExtension: string;
 	mathematicaInject: string;
-	
+
 	jsInteractive: boolean;
 	tsInteractive: boolean;
 	csInteractive: boolean;
@@ -139,6 +140,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	rustInject: "",
 	cppRunner: "cling",
 	cppInject: "",
+	cppUseMain: false,
 	clingPath: "cling",
 	clingArgs: "",
 	clingStd: "c++17",
@@ -155,12 +157,12 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	ghcPath: "ghc",
 	ghciPath: "ghci",
 	useGhci: false,
-    haskellInject: "",
+  haskellInject: "",
 	mathematicaPath: "wolframscript",
 	mathematicaArgs: "",
 	mathematicaFileExtension: "wls",
 	mathematicaInject: "",
-	
+
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,

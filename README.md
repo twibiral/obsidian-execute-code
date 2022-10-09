@@ -98,7 +98,7 @@ hello <- function(name){
 
 hello("Bob")
 ```
-	- Plots can be embedded in the note by default. You can turn this off in the settings.
+- Plots can be embedded in the note by default. You can turn this off in the settings.
 
 ```r
 y = c(12, 15, 28, 17, 18)
@@ -124,7 +124,7 @@ public class HelloWorld {
 <details>
 <summary>Lua</summary>
 
-- Requirements: install lua and config lua path
+- Requirements: install lua and config lua path.
 
 ```lua
 print('Hello, World!')
@@ -135,7 +135,7 @@ print('Hello, World!')
 <summary>C++</summary>
 
 - Requirements: [Cling](https://github.com/root-project/cling) is installed and correct path is set in the settings.
-- Every code block must contain a main function.
+- Code will be executed line-by-line without needing a main function.
 
 ```cpp
 #include <iostream>
@@ -147,9 +147,16 @@ void hello(string name) {
 	cout << "Hello " << name << "!\n";
 }
 
-int main() {
-	hello("Alice");
-	return 0;
+hello("Alice);
+```
+
+- Main functions can be used as an entrypoint by toggling the option in settings.
+
+```cpp
+#include <iostream>
+
+void main() {
+	std::cout << "Hello, World!" << std::endl;
 }
 ```
 </details>

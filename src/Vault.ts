@@ -1,5 +1,5 @@
-import {MarkdownView} from "obsidian";
 import type {App, FileSystemAdapter} from "obsidian";
+import {MarkdownView} from "obsidian";
 
 /**
  * Tries to get the active view from obsidian and returns a dictionary containing the file name, folder path,

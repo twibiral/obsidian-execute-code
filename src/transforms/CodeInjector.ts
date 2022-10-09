@@ -1,18 +1,18 @@
+import type {App} from "obsidian";
 import {MarkdownView, Notice} from "obsidian";
 import {ExecutorSettings} from "src/settings/Settings";
 import {getCodeBlockLanguage, getLanguageAlias, transformMagicCommands} from './TransformCode';
 import {getArgs} from "src/CodeBlockArgs";
-import type {App} from "obsidian";
-import type {LanguageId } from "src/main";
+import type {LanguageId} from "src/main";
 import type {CodeBlockArgs} from '../CodeBlockArgs';
 
 /**
  * Inject code and run code transformations on a source code block
  */
 export class CodeInjector {
-	private app: App;
-	private settings: ExecutorSettings;
-	private language: LanguageId;
+	private readonly app: App;
+	private readonly settings: ExecutorSettings;
+	private readonly language: LanguageId;
 
 	private prependSrcCode = "";
 	private appendSrcCode = "";
@@ -31,6 +31,45 @@ export class CodeInjector {
 		this.app = app;
 		this.settings = settings;
 		this.language = language;
+	}
+
+	/**
+	 * Takes the source code of a code block and adds all relevant pre-/post-blocks and global code injections.
+	 *
+	 * @param srcCode The source code of the code block.
+	 * @returns The source code of a code block with all relevant pre/post blocks and global code injections.
+	 */
+	public async injectCode(srcCode: string) {
+		const language = getLanguageAlias(this.language);
+
+		// We need to get access to all code blocks on the page so we can grab the pre / post blocks above
+		// Obsidian unloads code blocks not in view, so instead we load the raw document file and traverse line-by-line
+		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+		if (activeView === null)
+			return srcCode;
+
+		// Is await necessary here? Some object variables get changed in this call -> await probably necessary
+		await this.parseFile(activeView.data, srcCode, language);
+
+		const realLanguage = /[^-]*$/.exec(language)[0];
+		const globalInject = this.settings[`${realLanguage}Inject` as keyof ExecutorSettings];
+		let injectedCode = `${this.namedImportSrcCode}\n${srcCode}`;
+		if (!this.mainArgs.ignore)
+			injectedCode = `${globalInject}\n${this.prependSrcCode}\n${injectedCode}\n${this.appendSrcCode}`;
+		else {
+			// Handle single ignore
+			if (!Array.isArray(this.mainArgs.ignore) && this.mainArgs.ignore !== "all")
+				this.mainArgs.ignore = [this.mainArgs.ignore];
+			if (this.mainArgs.ignore !== "all") {
+				if (!this.mainArgs.ignore.contains("pre"))
+					injectedCode = `${this.prependSrcCode}\n${injectedCode}`;
+				if (!this.mainArgs.ignore.contains("post"))
+					injectedCode = `${injectedCode}\n${this.appendSrcCode}`;
+				if (!this.mainArgs.ignore.contains("global"))
+					injectedCode = `${globalInject}\n${injectedCode}`;
+			}
+		}
+		return transformMagicCommands(this.app, injectedCode);
 	}
 
 	/**
@@ -126,48 +165,9 @@ export class CodeInjector {
 					}
 					insideCodeBlock = true;
 				}
-			}
-			else if (insideCodeBlock && isLanguageEqual) {
+			} else if (insideCodeBlock && isLanguageEqual) {
 				currentCode += `${line}\n`;
 			}
 		}
-	}
-
-	/**
-	 * Takes the source code of a code block and adds all relevant pre-/post-blocks and global code injections.
-	 *
-	 * @param srcCode The source code of the code block.
-	 * @returns The source code of a code block with all relevant pre/post blocks and global code injections.
-	 */
-	public async injectCode(srcCode: string) {
-		const language = getLanguageAlias(this.language);
-
-		// We need to get access to all code blocks on the page so we can grab the pre / post blocks above
-		// Obsidian unloads code blocks not in view, so instead we load the raw document file and traverse line-by-line
-		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
-		if (activeView === null)
-			return srcCode;
-
-		this.parseFile(activeView.data, srcCode, language);
-
-		const realLanguage = /[^-]*$/.exec(language)[0];
-		const globalInject = this.settings[`${realLanguage}Inject` as keyof ExecutorSettings];
-		let injectedCode = `${this.namedImportSrcCode}\n${srcCode}`;
-		if (!this.mainArgs.ignore)
-			injectedCode = `${globalInject}\n${this.prependSrcCode}\n${injectedCode}\n${this.appendSrcCode}`;
-		else {
-			// Handle single ignore
-			if (!Array.isArray(this.mainArgs.ignore) && this.mainArgs.ignore !== "all")
-				this.mainArgs.ignore = [this.mainArgs.ignore];
-			if (this.mainArgs.ignore !== "all") {
-				if (!this.mainArgs.ignore.contains("pre"))
-					injectedCode = `${this.prependSrcCode}\n${injectedCode}`;
-				if (!this.mainArgs.ignore.contains("post"))
-					injectedCode = `${injectedCode}\n${this.appendSrcCode}`;
-				if (!this.mainArgs.ignore.contains("global"))
-					injectedCode = `${globalInject}\n${injectedCode}`;
-			}
-		}
-		return transformMagicCommands(this.app, injectedCode);
 	}
 }
