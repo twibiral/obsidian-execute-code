@@ -274,8 +274,14 @@ hello("Bob")
 
 <details>
 <summary>Haskell</summary>
-- Requirements: Ghci is installed and correct path is set in the settings.
-- If you have a main function you have to manually call it.
+
+- You can either use <strong>runghc</strong> (compiler) or <strong>ghci</strong> (interpreter) to run your code.
+  - <strong>runghc</strong> requirements:
+  	- runghc and ghc are installed and correct paths are set in the settings.
+    - Every code block must contain a main function.
+  - <strong>ghci</strong>  requirements:
+    - ghci is installed and correct path is set in the settings.
+	- If you have a main function you have to manually call it.
 
 ```haskell
 mySum:: Num a => a -> a -> a
