@@ -1,7 +1,11 @@
+import { LanguageId } from "src/main";
+
 /**
  * Interface that contains all the settings for the extension.
  */
 export interface ExecutorSettings {
+	lastOpenLanguageTab: LanguageId | undefined
+	
 	timeout: number;
 	allowInput: boolean;
 	nodePath: string;
@@ -93,6 +97,8 @@ export interface ExecutorSettings {
  * The default settings for the extensions as implementation of the ExecutorSettings interface.
  */
 export const DEFAULT_SETTINGS: ExecutorSettings = {
+	lastOpenLanguageTab: undefined,
+	
 	timeout: 10000,
 	allowInput: true,
 	nodePath: "node",

@@ -85,8 +85,10 @@ export class SettingsTab extends PluginSettingTab {
 			.addOptions(Object.fromEntries(
 				canonicalLanguages.map(x=>[x, x])
 			))
-			.onChange(value=> {
-				this.focusContainer(value as LanguageId)
+			.onChange(async (value: LanguageId)=> {
+				this.focusContainer(value);
+				this.plugin.settings.lastOpenLanguageTab = value;
+				await this.plugin.saveSettings();
 			})
 		)
 		.settingEl.style.borderTop = "0";
@@ -154,7 +156,7 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== Haskell ===========
 		makeHaskellSettings(this, this.makeContainerFor("haskell"));
 
-		this.focusContainer(canonicalLanguages[0]);
+		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}
 	
 	private makeContainerFor(language: LanguageId) {
