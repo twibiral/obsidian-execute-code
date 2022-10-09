@@ -1,5 +1,5 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
-import ExecuteCodePlugin, {LanguageId} from "src/main";
+import ExecuteCodePlugin, {canonicalLanguages, LanguageId} from "src/main";
 import makeCppSettings from "./per-lang/makeCppSettings";
 import makeCsSettings from "./per-lang/makeCsSettings";
 import makeGoSettings from "./per-lang/makeGoSettings";
@@ -29,9 +29,14 @@ import {ExecutorSettings} from "./Settings";
 export class SettingsTab extends PluginSettingTab {
 	plugin: ExecuteCodePlugin;
 
+	languageContainers: Partial<Record<LanguageId, HTMLDivElement>>;
+	activeLanguageContainer: HTMLDivElement | undefined;
+
 	constructor(app: App, plugin: ExecuteCodePlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
+		
+		this.languageContainers = {}
 	}
 
 	/**
@@ -71,68 +76,105 @@ export class SettingsTab extends PluginSettingTab {
 
 		// TODO setting per language that requires main function if main function should be implicitly made or not, if not, non-main blocks will not have a run button
 
+		containerEl.createEl("hr");
+		
+		new Setting(containerEl)
+		.setName("Language-Specific Settings")
+		.setDesc("Pick a language to edit its language-specific settings")
+		.addDropdown((dropdown) => dropdown
+			.addOptions(Object.fromEntries(
+				canonicalLanguages.map(x=>[x, x])
+			))
+			.onChange(value=> {
+				this.focusContainer(value as LanguageId)
+			})
+		)
+		.settingEl.style.borderTop = "0";
+		
 
 		// ========== JavaScript / Node ==========
-		makeJsSettings(this, containerEl);
+		makeJsSettings(this, this.makeContainerFor("js"));
 
 		// ========== TypeScript ==========
-		makeTsSettings(this, containerEl);
+		makeTsSettings(this, this.makeContainerFor("ts"));
 
 		// ========== Lua ==========
-		makeLuaSettings(this, containerEl);
+		makeLuaSettings(this, this.makeContainerFor("lua"));
 
 		// ========== CSharp ==========
-		makeCsSettings(this, containerEl);
+		makeCsSettings(this, this.makeContainerFor("cs"));
 
 		// ========== Java ==========
-		makeJavaSettings(this, containerEl);
+		makeJavaSettings(this, this.makeContainerFor("java"));
 
 
 		// ========== Python ==========
-		makePythonSettings(this, containerEl);
+		makePythonSettings(this, this.makeContainerFor("python"));
 
 
 		// ========== Golang =========
-		makeGoSettings(this, containerEl);
+		makeGoSettings(this, this.makeContainerFor("go"));
 
 
 		// ========== Rust ===========
-		makeRustSettings(this, containerEl);
+		makeRustSettings(this, this.makeContainerFor("rust"));
 
 
 		// ========== C++ ===========
-		makeCppSettings(this, containerEl);
+		makeCppSettings(this, this.makeContainerFor("cpp"));
 
 
 		// ========== Shell ==========
-		makeShellSettings(this, containerEl);
+		makeShellSettings(this, this.makeContainerFor("shell"));
 
 
 		// ========== Powershell ==========
-		makePowershellSettings(this, containerEl);
+		makePowershellSettings(this, this.makeContainerFor("powershell"));
 
 
 		// ========== Prolog ==========
-		makePrologSettings(this, containerEl);
+		makePrologSettings(this, this.makeContainerFor("prolog"));
 
 
 		// ========== Groovy ==========
-		makeGroovySettings(this, containerEl);
+		makeGroovySettings(this, this.makeContainerFor("groovy"));
 
 
 		// ========== R ==========
-		makeRSettings(this, containerEl);
+		makeRSettings(this, this.makeContainerFor("r"));
 
 
 		// ========== Kotlin ==========
-		makeKotlinSettings(this, containerEl);
+		makeKotlinSettings(this, this.makeContainerFor("kotlin"));
 
 		// ========== Mathematica ==========
-		makeMathematicaSettings(this, containerEl);
+		makeMathematicaSettings(this, this.makeContainerFor("mathematica"));
 
 
 		// ========== Haskell ===========
-		makeHaskellSettings(this, containerEl);
+		makeHaskellSettings(this, this.makeContainerFor("haskell"));
+
+		this.focusContainer(canonicalLanguages[0]);
+	}
+	
+	private makeContainerFor(language: LanguageId) {
+		const container = this.containerEl.createDiv();
+		
+		container.style.display = "none";
+		
+		this.languageContainers[language] = container;
+		
+		return container;
+	}
+	
+	private focusContainer(language: LanguageId) {
+		if(this.activeLanguageContainer) 
+			this.activeLanguageContainer.style.display = "none";
+			
+		if(language in this.languageContainers) {
+			this.activeLanguageContainer = this.languageContainers[language];
+			this.activeLanguageContainer.style.display = "block";
+		}
 	}
 
 	sanitizePath(path: string): string {
