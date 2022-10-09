@@ -21,10 +21,6 @@ export default class PythonExecutor extends AsyncExecutor {
 
 		this.process = spawn(settings.pythonPath, args);
 
-		// TODO: Can this out commented code be removed?
-		//this.process.stdout.on("data", (x) => console.log(x.toString()))
-		//this.process.stderr.on("data", (x) => console.log(x.toString()))
-
 		this.printFunctionName = `__print_${Math.random().toString().substring(2)}_${Date.now()}`;
 		this.localsDictionaryName = `__locals_${Math.random().toString().substring(2)}_${Date.now()}`;
 		this.globalsDictionaryName = `__locals_${Math.random().toString().substring(2)}_${Date.now()}`;
@@ -54,7 +50,8 @@ export default class PythonExecutor extends AsyncExecutor {
 	async dismissIntroMessage() {
 		this.addJobToQueue((resolve, reject) => {
 			this.process.stdin.write(
-				`from __future__ import print_function
+				/*python*/`
+from __future__ import print_function
 import sys
 ${this.printFunctionName} = print
 
