@@ -114,3 +114,26 @@ input.interactive-stdin {
 	color: var(--text-muted);
 	padding: 0.5em;
 }
+
+.load-state-indicator {
+	position: absolute;
+	top: 0.5em;
+	left: -2em;
+	widtH: 2em;
+	height: 2em;
+	background: var(--background-primary-alt);
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+	box-shadow: -1em 0 1em -0.75em inset var(--background-modifier-box-shadow);
+	color: var(--tx1);
+}
+
+.load-state-indicator svg {
+	width: 1.5em;
+	height: 1.5em;
+	margin: 0.25em;
+}
+
+.has-run-code-button {
+	position: relative;
+}

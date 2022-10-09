@@ -1,4 +1,5 @@
 import {EventEmitter} from "events";
+import loadSpinner from "./svgs/loadSpinner";
 
 
 export class Outputter extends EventEmitter {
@@ -9,6 +10,8 @@ export class Outputter extends EventEmitter {
 	lastPrinted: string;
 
 	inputElement: HTMLInputElement;
+	
+	loadStateIndicatorElement: HTMLElement;
 
 	hadPreviouslyPrinted: boolean;
 	inputState: "NOT_DOING" | "OPEN" | "CLOSED" | "INACTIVE";
@@ -87,6 +90,31 @@ export class Outputter extends EventEmitter {
 		this.inputState = "CLOSED";
 		if (this.inputElement)
 			this.inputElement.style.display = "none";
+	}
+	
+	startBlock() {
+		if(!this.loadStateIndicatorElement) this.addLoadStateIndicator();
+		
+		this.loadStateIndicatorElement.style.display = "block";
+		
+		this.loadStateIndicatorElement.innerHTML = loadSpinner();
+		
+		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is running")
+	}
+	
+	/** Marks the block as finished running */
+	finishBlock() {
+		if (this.loadStateIndicatorElement) {
+			this.loadStateIndicatorElement.style.display = "none";
+		}
+	}
+	
+	private addLoadStateIndicator() {
+		this.loadStateIndicatorElement = document.createElement("div");
+		
+		this.loadStateIndicatorElement.classList.add("load-state-indicator");
+		
+		this.getParentElement().parentElement.appendChild(this.loadStateIndicatorElement);
 	}
 
 	private getParentElement() {
