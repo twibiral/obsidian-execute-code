@@ -15,5 +15,5 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 }
                 await tab.plugin.saveSettings();
             }));
-    tab.makeInjectSetting("prolog", "Prolog");
+    tab.makeInjectSetting(containerEl, "prolog", "Prolog");
 }

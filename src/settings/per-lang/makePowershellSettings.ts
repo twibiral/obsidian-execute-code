@@ -33,5 +33,5 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 console.log('Powershell file extension set to: ' + value);
                 await tab.plugin.saveSettings();
             }));
-    tab.makeInjectSetting("powershell", "Powershell");
+    tab.makeInjectSetting(containerEl, "powershell", "Powershell");
 }

@@ -23,5 +23,5 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 console.log('Kotlin args set to: ' + value);
                 await tab.plugin.saveSettings();
             }));
-    tab.makeInjectSetting("mathematica", "Mathematica");
+    tab.makeInjectSetting(containerEl, "mathematica", "Mathematica");
 }

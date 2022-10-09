@@ -22,5 +22,5 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 console.log('Lua args set to: ' + value);
                 await tab.plugin.saveSettings();
             }));
-    tab.makeInjectSetting("lua", "Lua");
+    tab.makeInjectSetting(containerEl, "lua", "Lua");
 }

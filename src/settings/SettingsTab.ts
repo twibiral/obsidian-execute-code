@@ -143,8 +143,8 @@ export class SettingsTab extends PluginSettingTab {
 		return path
 	}
 
-	makeInjectSetting(language: LanguageId, languageAlt: string) {
-		new Setting(this.containerEl)
+	makeInjectSetting(containerEl: HTMLElement, language: LanguageId, languageAlt: string) {
+		new Setting(containerEl)
 			.setName(`Inject ${languageAlt} code`)
 			.setDesc(`Code to add to the top of every ${languageAlt} code block before running.`)
 			.setClass('settings-code-input-box')

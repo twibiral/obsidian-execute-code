@@ -24,5 +24,5 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 console.log('Ghci args set to: ' + sanitized);
                 await tab.plugin.saveSettings();
             }));
-    tab.makeInjectSetting("haskell", "Haskell");
+    tab.makeInjectSetting(containerEl, "haskell", "Haskell");
 }
