@@ -440,6 +440,7 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 
 - Missing when `run` button after switching the theme: Try to close and reopen your notes and wait for a few minutes. It seems like obsidian doesn't call the postprocessors after the theme switch.
 - Pre- / Post-blocks may not be executed if the file contains duplicate code blocks.
+- In Python, Embed Plots may not be off while Notebook Mode is on
 
 ## Future Work
 
