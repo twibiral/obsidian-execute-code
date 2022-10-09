@@ -39,19 +39,7 @@ export default class PythonExecutor extends AsyncExecutor {
 	 * Swallows and does not output the "Welcome to Node.js v..." message that shows at startup
 	 */
 	async dismissIntroMessage() {
-		// TODO: Does the reject need to be handled? Otherwise it might be removed.
-		this.addJobToQueue((resolve, reject) => {
-			let stdoutBuffers = 0;
-			const listener = () => {
-				//we need 2 data messages: 1 for the welcome message, 1 for the prompt.
-				stdoutBuffers++;
-				if (stdoutBuffers >= 2) {
-					this.process.stdout.removeListener("data", listener);
-					resolve();
-				}
-			}
-			this.process.stdout.on("data", listener);
-		});
+		this.process.stdin.write("\n");
 	}
 
 	/**
