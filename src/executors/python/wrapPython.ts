@@ -1,5 +1,12 @@
 export default (code: string, globalsName: string, localsName: string, printName: string, finishSigil: string) =>
-	`try:
+/*python*/`
+try:
+    import matplotlib
+    matplotlib.use('svg')
+except:
+    pass
+
+try:
     try:
         ${printName}(eval(
             compile(${JSON.stringify(code.replace(/\r\n/g, "\n") + "\n")}, "<code block>", "eval"),
@@ -15,4 +22,4 @@ except Exception as e:
 finally:
     ${printName} ("${finishSigil}", end="")
 
-`
+`;
