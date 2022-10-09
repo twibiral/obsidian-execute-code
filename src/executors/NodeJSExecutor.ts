@@ -1,6 +1,6 @@
-import {ChildProcessWithoutNullStreams, spawn} from "child_process";
-import {Outputter} from "src/Outputter";
-import {ExecutorSettings} from "src/settings/Settings";
+import { ChildProcessWithoutNullStreams, spawn } from "child_process";
+import { Outputter } from "src/Outputter";
+import { ExecutorSettings } from "src/settings/Settings";
 import AsyncExecutor from "./AsyncExecutor";
 
 
@@ -18,7 +18,7 @@ export default class PythonExecutor extends AsyncExecutor {
 		this.process = spawn(settings.nodePath, args);
 
 		//send a newline so that the intro message won't be buffered
-		this.dismissIntroMessage().then(() => {/* do nothing */});
+		this.dismissIntroMessage().then(() => {/* do nothing */ });
 	}
 
 	/**
@@ -59,39 +59,39 @@ export default class PythonExecutor extends AsyncExecutor {
 			try { eval(${JSON.stringify(code)}); } catch(e) { console.error(e); }
 			process.stdout.write(${JSON.stringify(finishSigil)})&&undefined;
 			`;
-			
+
 			outputter.clear();
 
 			this.process.stdin.write(wrappedCode);
 
 
-				outputter.on("data", (data: string) => {
-					this.process.stdin.write(data);
-				});
-
-				const writeToStderr = (data: any) => {
-					outputter.writeErr(data.toString());
-				};
-
-				const writeToStdout = (data: any) => {
-					const stringData = data.toString();
-
-					if (stringData.endsWith(finishSigil)) {
-						outputter.write(
-							stringData.substring(0, stringData.length - finishSigil.length)
-						);
-						
-						this.process.stdout.removeListener("data", writeToStdout);
-						this.process.stderr.removeListener("data", writeToStderr);
-						resolve();
-					} else {
-						outputter.write(stringData);
-					}
-				}
-
-				this.process.stdout.on("data", writeToStdout);
-				this.process.stderr.on("data", writeToStderr);
+			outputter.on("data", (data: string) => {
+				this.process.stdin.write(data);
 			});
+
+			const writeToStderr = (data: any) => {
+				outputter.writeErr(data.toString());
+			};
+
+			const writeToStdout = (data: any) => {
+				const stringData = data.toString();
+
+				if (stringData.endsWith(finishSigil)) {
+					outputter.write(
+						stringData.substring(0, stringData.length - finishSigil.length)
+					);
+
+					this.process.stdout.removeListener("data", writeToStdout);
+					this.process.stderr.removeListener("data", writeToStderr);
+					resolve();
+				} else {
+					outputter.write(stringData);
+				}
+			}
+
+			this.process.stdout.on("data", writeToStdout);
+			this.process.stderr.on("data", writeToStderr);
+		});
 	}
 
 }
