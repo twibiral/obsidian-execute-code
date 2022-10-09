@@ -36,7 +36,7 @@ export default class PythonExecutor extends AsyncExecutor {
 	}
 
 	/**
-	 * Swallows and does not output the "Welcome to Node.js v..." message that shows at startup
+	 * Writes a single newline to ensure that the stdin is set up correctly.
 	 */
 	async dismissIntroMessage() {
 		this.process.stdin.write("\n");
