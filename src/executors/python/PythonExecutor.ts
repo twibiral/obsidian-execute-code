@@ -2,9 +2,11 @@ import {ChildProcessWithoutNullStreams, spawn} from "child_process";
 import {Outputter} from "src/Outputter";
 import {ExecutorSettings} from "src/settings/Settings";
 import AsyncExecutor from "../AsyncExecutor";
-import wrapPython from "./wrapPython";
+import wrapPython, {PLT_DEFAULT_BACKEND_PY_VAR} from "./wrapPython";
 
 export default class PythonExecutor extends AsyncExecutor {
+
+	settings: ExecutorSettings
 
 	process: ChildProcessWithoutNullStreams
 
@@ -14,6 +16,8 @@ export default class PythonExecutor extends AsyncExecutor {
 
 	constructor(settings: ExecutorSettings, file: string) {
 		super(file, "python");
+
+		this.settings = settings;
 
 		const args = settings.pythonArgs ? settings.pythonArgs.split(" ") : [];
 
@@ -25,8 +29,8 @@ export default class PythonExecutor extends AsyncExecutor {
 		this.localsDictionaryName = `__locals_${Math.random().toString().substring(2)}_${Date.now()}`;
 		this.globalsDictionaryName = `__locals_${Math.random().toString().substring(2)}_${Date.now()}`;
 
-		//send a newline so that the intro message won't be buffered
-		this.dismissIntroMessage().then(() => { /* do nothing */ });
+		// Send a newline so that the intro message won't be buffered
+		this.setup().then(() => { /* do nothing */ });
 	}
 
 	/**
@@ -45,12 +49,21 @@ export default class PythonExecutor extends AsyncExecutor {
 
 	/**
 	 * Swallows and does not output the "Welcome to Python v..." message that shows at startup.
-	 * Also sets the printFunctionName up correctly.
+	 * Also sets the printFunctionName up correctly and sets up matplotlib
 	 */
-	async dismissIntroMessage() {
+	async setup() {
 		this.addJobToQueue((resolve, reject) => {
 			this.process.stdin.write(
-				/*python*/`
+/*python*/`
+${this.settings.pythonEmbedPlots ?
+/*python*/`
+try:
+    import matplotlib
+    ${PLT_DEFAULT_BACKEND_PY_VAR} = matplotlib.get_backend()
+except:
+    pass
+` : "" }
+
 from __future__ import print_function
 import sys
 ${this.printFunctionName} = print
@@ -83,7 +96,8 @@ ${this.globalsDictionaryName} = {**globals()}
 				this.globalsDictionaryName,
 				this.localsDictionaryName,
 				this.printFunctionName,
-				finishSigil
+				finishSigil,
+				this.settings.pythonEmbedPlots
 			);
 
 			//import print from builtins to circumnavigate the case where the user redefines print
