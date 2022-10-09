@@ -13,7 +13,7 @@ export default class PythonExecutor extends AsyncExecutor {
 
 		const args = settings.nodeArgs ? settings.nodeArgs.split(" ") : [];
 
-		args.unshift(`-e`, `require("repl").start({prompt: ""})`);
+		args.unshift(`-e`, `require("repl").start({prompt: "", preview: false, ignoreUndefined: true})`);
 
 		this.process = spawn(settings.nodePath, args);
 
@@ -57,7 +57,7 @@ export default class PythonExecutor extends AsyncExecutor {
 
 			const wrappedCode = `
 			try { eval(${JSON.stringify(code)}); } catch(e) { console.error(e); }
-			process.stdout.write(${JSON.stringify(finishSigil)});
+			process.stdout.write(${JSON.stringify(finishSigil)})&&undefined;
 			`;
 			
 			outputter.clear();
