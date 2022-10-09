@@ -53,12 +53,17 @@ export default class PythonExecutor extends AsyncExecutor {
 	 */
 	async run(code: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
 		return this.addJobToQueue((resolve, reject) => {
+			const finishSigil = `SIGIL_BLOCK_DONE${Math.random()}_${Date.now()}_${code.length}`;
 
 			const wrappedCode = `
 			try { eval(${JSON.stringify(code)}); } catch(e) { console.error(e); }
+			process.stdout.write(${JSON.stringify(finishSigil)});
 			`;
 			
 			outputter.clear();
+
+			this.process.stdin.write(wrappedCode);
+
 
 				outputter.on("data", (data: string) => {
 					this.process.stdin.write(data);
@@ -71,23 +76,22 @@ export default class PythonExecutor extends AsyncExecutor {
 				const writeToStdout = (data: any) => {
 					const stringData = data.toString();
 
-					//remove the prompts from the stdout stream (... on unfinished lines and > on finished lines)
-					const removedPrompts = stringData.replace(/(^((\.\.\. |>) )+)|(((\.\.\.|>) )+$)/g, "")
-
-					outputter.write(removedPrompts);
-
-					if (stringData.endsWith("> ")) prompts++;
-					if (prompts >= requiredPrompts) {
+					if (stringData.endsWith(finishSigil)) {
+						outputter.write(
+							stringData.substring(0, stringData.length - finishSigil.length)
+						);
+						
 						this.process.stdout.removeListener("data", writeToStdout);
 						this.process.stderr.removeListener("data", writeToStderr);
 						resolve();
+					} else {
+						outputter.write(stringData);
 					}
 				}
 
 				this.process.stdout.on("data", writeToStdout);
 				this.process.stderr.on("data", writeToStderr);
 			});
-		});
 	}
 
 }
