@@ -31,5 +31,5 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 await tab.plugin.saveSettings();
             })
         )
-    tab.makeInjectSetting(containerEl, "js", "JavaScript");
+    tab.makeInjectSetting(containerEl, "js");
 }

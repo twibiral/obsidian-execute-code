@@ -14,5 +14,5 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 console.log('Cargo path set to: ' + sanitized);
                 await tab.plugin.saveSettings();
             }));
-    tab.makeInjectSetting(containerEl, "rust", "Rust");
+    tab.makeInjectSetting(containerEl, "rust");
 }

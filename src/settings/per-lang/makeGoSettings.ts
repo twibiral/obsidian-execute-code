@@ -14,5 +14,5 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 console.log('Golang path set to: ' + sanitized);
                 await tab.plugin.saveSettings();
             }));
-    tab.makeInjectSetting(containerEl, "go", "Golang");
+    tab.makeInjectSetting(containerEl, "go");
 }

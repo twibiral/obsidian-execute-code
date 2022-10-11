@@ -23,5 +23,5 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 console.log('Java args set to: ' + value);
                 await tab.plugin.saveSettings();
             }));
-    tab.makeInjectSetting(containerEl, "java", "Java");
+    tab.makeInjectSetting(containerEl, "java");
 }

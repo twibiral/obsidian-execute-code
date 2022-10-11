@@ -1,5 +1,6 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
 import ExecuteCodePlugin, {canonicalLanguages, LanguageId} from "src/main";
+import { DISPLAY_NAMES } from "./languageDisplayName";
 import makeCppSettings from "./per-lang/makeCppSettings";
 import makeCsSettings from "./per-lang/makeCsSettings";
 import makeGoSettings from "./per-lang/makeGoSettings";
@@ -83,7 +84,7 @@ export class SettingsTab extends PluginSettingTab {
 		.setDesc("Pick a language to edit its language-specific settings")
 		.addDropdown((dropdown) => dropdown
 			.addOptions(Object.fromEntries(
-				canonicalLanguages.map(x=>[x, x])
+				canonicalLanguages.map(lang => [lang, DISPLAY_NAMES[lang]])
 			))
 			.onChange(async (value: LanguageId)=> {
 				this.focusContainer(value);
@@ -187,7 +188,9 @@ export class SettingsTab extends PluginSettingTab {
 		return path
 	}
 
-	makeInjectSetting(containerEl: HTMLElement, language: LanguageId, languageAlt: string) {
+	makeInjectSetting(containerEl: HTMLElement, language: LanguageId) {
+		const languageAlt = DISPLAY_NAMES[language];
+		
 		new Setting(containerEl)
 			.setName(`Inject ${languageAlt} code`)
 			.setDesc(`Code to add to the top of every ${languageAlt} code block before running.`)

@@ -33,5 +33,5 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 console.log('Shell file extension set to: ' + value);
                 await tab.plugin.saveSettings();
             }));
-    tab.makeInjectSetting(containerEl, "shell", "Shell");
+    tab.makeInjectSetting(containerEl, "shell");
 }

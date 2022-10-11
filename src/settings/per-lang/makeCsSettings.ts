@@ -22,5 +22,5 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 console.log('CSharp args set to: ' + value);
                 await tab.plugin.saveSettings();
             }));
-    tab.makeInjectSetting(containerEl, "cs", "CSharp");
+    tab.makeInjectSetting(containerEl, "cs");
 }

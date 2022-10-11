@@ -40,5 +40,5 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 tab.plugin.settings.pythonInteractive = value;
                 await tab.plugin.saveSettings();
             }));
-    tab.makeInjectSetting(containerEl, "python", "Python");
+    tab.makeInjectSetting(containerEl, "python");
 }

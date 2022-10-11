@@ -45,5 +45,5 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 console.log('Cpp use main set to: ' + value);
                 await tab.plugin.saveSettings();
             }));
-    tab.makeInjectSetting(containerEl, "cpp", "C++");
+    tab.makeInjectSetting(containerEl, "cpp");
 }

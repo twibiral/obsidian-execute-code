@@ -23,5 +23,5 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 console.log('Groovy args set to: ' + value);
                 await tab.plugin.saveSettings();
             }));
-    tab.makeInjectSetting(containerEl, "groovy", "Groovy");
+    tab.makeInjectSetting(containerEl, "groovy");
 }

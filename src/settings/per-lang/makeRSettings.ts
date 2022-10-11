@@ -32,5 +32,5 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 console.log('R args set to: ' + value);
                 await tab.plugin.saveSettings();
             }));
-    tab.makeInjectSetting(containerEl, "r", "R");
+    tab.makeInjectSetting(containerEl, "r");
 }
