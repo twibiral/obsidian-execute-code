@@ -16,6 +16,8 @@ export class Outputter extends EventEmitter {
 
 	hadPreviouslyPrinted: boolean;
 	inputState: "NOT_DOING" | "OPEN" | "CLOSED" | "INACTIVE";
+	
+	blockRunState: "RUNNING" | "QUEUED" | "FINISHED" | "INITIAL";
 
 	constructor(codeBlock: HTMLElement, doInput: boolean) {
 		super();
@@ -23,6 +25,7 @@ export class Outputter extends EventEmitter {
 		this.inputState = doInput ? "INACTIVE" : "NOT_DOING";
 		this.codeBlockElement = codeBlock;
 		this.hadPreviouslyPrinted = false;
+		this.blockRunState = "INITIAL";
 	}
 
 	/**
@@ -98,12 +101,18 @@ export class Outputter extends EventEmitter {
 	 */
 	startBlock() {
 		if(!this.loadStateIndicatorElement) this.addLoadStateIndicator();
-		this.loadStateIndicatorElement.classList.add("visible");
+		setTimeout(() => {
+			if(this.blockRunState != "FINISHED") 
+				this.loadStateIndicatorElement.classList.add("visible");	
+		}, 100);
+		
 		
 		this.loadStateIndicatorElement.empty();
 		this.loadStateIndicatorElement.appendChild(loadSpinner());
 		
 		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is running");
+		
+		this.blockRunState = "RUNNING";
 	}
 	
 	/**
@@ -111,12 +120,17 @@ export class Outputter extends EventEmitter {
 	 */
 	queueBlock() {
 		if (!this.loadStateIndicatorElement) this.addLoadStateIndicator();
-		this.loadStateIndicatorElement.classList.add("visible");
+		setTimeout(() => {
+			if (this.blockRunState != "FINISHED")
+				this.loadStateIndicatorElement.classList.add("visible");
+		}, 100);
 		
 		this.loadStateIndicatorElement.empty();
 		this.loadStateIndicatorElement.appendChild(loadEllipses());
 		
 		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is waiting for another block to finish");
+		
+		this.blockRunState = "QUEUED";
 	}
 	
 	/** Marks the block as finished running */
@@ -124,6 +138,8 @@ export class Outputter extends EventEmitter {
 		if (this.loadStateIndicatorElement) {
 			this.loadStateIndicatorElement.classList.remove("visible");
 		}
+		
+		this.blockRunState = "FINISHED";
 	}
 	
 	private addLoadStateIndicator() {
