@@ -1,4 +1,5 @@
 import {EventEmitter} from "events";
+import loadEllipses from "./svgs/loadEllipses";
 import loadSpinner from "./svgs/loadSpinner";
 
 
@@ -104,6 +105,19 @@ export class Outputter extends EventEmitter {
 		this.loadStateIndicatorElement.appendChild(loadSpinner());
 		
 		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is running")
+	}
+	
+	/**
+	 * Marks the block as queued, but waiting for another block before running
+	 */
+	queueBlock() {
+		if (!this.loadStateIndicatorElement) this.addLoadStateIndicator();
+		this.loadStateIndicatorElement.style.display = "block";
+		
+		this.loadStateIndicatorElement.empty();
+		this.loadStateIndicatorElement.appendChild(loadEllipses());
+		
+		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is waiting for another block to finish");
 	}
 	
 	/** Marks the block as finished running */
