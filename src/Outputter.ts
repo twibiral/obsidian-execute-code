@@ -97,7 +97,8 @@ export class Outputter extends EventEmitter {
 		
 		this.loadStateIndicatorElement.style.display = "block";
 		
-		this.loadStateIndicatorElement.innerHTML = loadSpinner();
+		this.loadStateIndicatorElement.empty();
+		this.loadStateIndicatorElement.appendChild(loadSpinner());
 		
 		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is running")
 	}
