@@ -64,7 +64,12 @@ export default class PythonExecutor extends AsyncExecutor {
 	 * @returns A promise that resolves once the code is done running
 	 */
 	async run(code: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
+		
+		outputter.queueBlock();
+		
 		return this.addJobToQueue((resolve, reject) => {
+			
+			outputter.startBlock();
 
 			const trimmedCode = code.trim() + "\n";
 			this.process.stdin.write(trimmedCode, () => {
