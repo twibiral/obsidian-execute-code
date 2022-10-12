@@ -98,8 +98,7 @@ export class Outputter extends EventEmitter {
 	 */
 	startBlock() {
 		if(!this.loadStateIndicatorElement) this.addLoadStateIndicator();
-		
-		this.loadStateIndicatorElement.style.display = "block";
+		this.loadStateIndicatorElement.classList.add("visible");
 		
 		this.loadStateIndicatorElement.empty();
 		this.loadStateIndicatorElement.appendChild(loadSpinner());
@@ -112,7 +111,7 @@ export class Outputter extends EventEmitter {
 	 */
 	queueBlock() {
 		if (!this.loadStateIndicatorElement) this.addLoadStateIndicator();
-		this.loadStateIndicatorElement.style.display = "block";
+		this.loadStateIndicatorElement.classList.add("visible");
 		
 		this.loadStateIndicatorElement.empty();
 		this.loadStateIndicatorElement.appendChild(loadEllipses());
@@ -123,7 +122,7 @@ export class Outputter extends EventEmitter {
 	/** Marks the block as finished running */
 	finishBlock() {
 		if (this.loadStateIndicatorElement) {
-			this.loadStateIndicatorElement.style.display = "none";
+			this.loadStateIndicatorElement.classList.remove("visible");
 		}
 	}
 	

@@ -124,8 +124,9 @@ input.interactive-stdin {
 	background: var(--background-primary-alt);
 	border-top-left-radius: 4px;
 	border-bottom-left-radius: 4px;
-	box-shadow: -1em 0 1em -0.75em inset var(--background-modifier-box-shadow);
 	color: var(--tx1);
+	transform: translateX(2em);
+	transition: transform 0.25s;
 }
 
 .load-state-indicator svg {
@@ -136,4 +137,29 @@ input.interactive-stdin {
 
 .has-run-code-button {
 	position: relative;
+}
+
+.has-run-code-button pre {
+	z-index: 1;
+}
+
+.load-state-indicator.visible {
+	transform: translateX(0);
+}
+
+.load-state-indicator::before {
+	content: "";
+	box-shadow: -1em 0 1em -0.75em inset var(--background-modifier-box-shadow);
+	position: absolute;
+	display: block;
+	width: 100%;
+	height: 100%;
+	transform: translateX(-2em);
+	opacity: 0;
+	transition: transform 0.25s, opacity 0.25s;
+}
+
+.load-state-indicator.visible::before {
+	transform: translateX(0);
+	opacity: 1;
 }
