@@ -92,6 +92,9 @@ export class Outputter extends EventEmitter {
 			this.inputElement.style.display = "none";
 	}
 	
+	/**
+	 * Mark the block as running
+	 */
 	startBlock() {
 		if(!this.loadStateIndicatorElement) this.addLoadStateIndicator();
 		
