@@ -7,16 +7,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 ### Added
-- Added Option to use either ghci or runghc.
-- `@html(...)` command and better HTML Handling.
-- Show indicator when block is running.
+- Added Option to use either ghci or runghc. (Thanks to @afonsofrancof)
+- `@html(...)` command and better HTML Handling. (Thanks to @chlohal and @milan338)
+- Show indicator when block is running. (Thanks to @chlohal) 
 
 ### Changed
-- Update Future Work section and add snap/flatpak/appimage problem to known issues.
-- Fix python notebook mode freezing after showing a matplotlib plot.
-- Better output coloring to fix color problems with plugins like codemirror.
-- Fix JS notebook mode freezing when global injection is used.
-- Fix Rust Execution to use `cargo eval` instead of `cargo run`.
+- Update Future Work section and add snap/flatpak/appimage problem to known issues. (Thanks to @chlohal)
+- Fix python notebook mode freezing after showing a matplotlib plot. (Thanks to @milan338)
+- Better output coloring to fix color problems with plugins like codemirror. (Thanks to @chlohal)
+- Fix JS notebook mode freezing when global injection is used. (Thanks to @chlohal)
+- Fix Rust Execution to use `cargo eval` instead of `cargo run`. (Thanks to @chlohal)
 
 
 ## [1.0.0]
