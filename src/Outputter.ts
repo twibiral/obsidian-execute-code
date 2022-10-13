@@ -1,4 +1,6 @@
 import {EventEmitter} from "events";
+import loadEllipses from "./svgs/loadEllipses";
+import loadSpinner from "./svgs/loadSpinner";
 
 
 export class Outputter extends EventEmitter {
@@ -9,9 +11,13 @@ export class Outputter extends EventEmitter {
 	lastPrinted: string;
 
 	inputElement: HTMLInputElement;
+	
+	loadStateIndicatorElement: HTMLElement;
 
 	hadPreviouslyPrinted: boolean;
 	inputState: "NOT_DOING" | "OPEN" | "CLOSED" | "INACTIVE";
+	
+	blockRunState: "RUNNING" | "QUEUED" | "FINISHED" | "INITIAL";
 
 	constructor(codeBlock: HTMLElement, doInput: boolean) {
 		super();
@@ -19,6 +25,7 @@ export class Outputter extends EventEmitter {
 		this.inputState = doInput ? "INACTIVE" : "NOT_DOING";
 		this.codeBlockElement = codeBlock;
 		this.hadPreviouslyPrinted = false;
+		this.blockRunState = "INITIAL";
 	}
 
 	/**
@@ -87,6 +94,60 @@ export class Outputter extends EventEmitter {
 		this.inputState = "CLOSED";
 		if (this.inputElement)
 			this.inputElement.style.display = "none";
+	}
+	
+	/**
+	 * Mark the block as running
+	 */
+	startBlock() {
+		if(!this.loadStateIndicatorElement) this.addLoadStateIndicator();
+		setTimeout(() => {
+			if(this.blockRunState != "FINISHED") 
+				this.loadStateIndicatorElement.classList.add("visible");	
+		}, 100);
+		
+		
+		this.loadStateIndicatorElement.empty();
+		this.loadStateIndicatorElement.appendChild(loadSpinner());
+		
+		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is running");
+		
+		this.blockRunState = "RUNNING";
+	}
+	
+	/**
+	 * Marks the block as queued, but waiting for another block before running
+	 */
+	queueBlock() {
+		if (!this.loadStateIndicatorElement) this.addLoadStateIndicator();
+		setTimeout(() => {
+			if (this.blockRunState != "FINISHED")
+				this.loadStateIndicatorElement.classList.add("visible");
+		}, 100);
+		
+		this.loadStateIndicatorElement.empty();
+		this.loadStateIndicatorElement.appendChild(loadEllipses());
+		
+		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is waiting for another block to finish");
+		
+		this.blockRunState = "QUEUED";
+	}
+	
+	/** Marks the block as finished running */
+	finishBlock() {
+		if (this.loadStateIndicatorElement) {
+			this.loadStateIndicatorElement.classList.remove("visible");
+		}
+		
+		this.blockRunState = "FINISHED";
+	}
+	
+	private addLoadStateIndicator() {
+		this.loadStateIndicatorElement = document.createElement("div");
+		
+		this.loadStateIndicatorElement.classList.add("load-state-indicator");
+		
+		this.getParentElement().parentElement.appendChild(this.loadStateIndicatorElement);
 	}
 
 	private getParentElement() {

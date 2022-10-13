@@ -356,10 +356,12 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * @param file The address of the file which the code originates from
 	 */
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {
+		outputter.startBlock();
 		const executor = this.executors.getExecutorFor(file, language, false);
 		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
 			button.className = runButtonClass;
 			outputter.closeInput();
+			outputter.finishBlock();
 		});
 	}
 
