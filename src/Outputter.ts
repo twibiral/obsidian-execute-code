@@ -1,5 +1,6 @@
 import {EventEmitter} from "events";
 
+export const TOGGLE_HTML_SIGIL = `TOGGLE_HTML_${Math.random().toString(16).substring(2)}`;
 
 export class Outputter extends EventEmitter {
 	codeBlockElement: HTMLElement;
@@ -10,8 +11,11 @@ export class Outputter extends EventEmitter {
 
 	inputElement: HTMLInputElement;
 
+	htmlBuffer: string
+	escapeHTML: boolean
 	hadPreviouslyPrinted: boolean;
 	inputState: "NOT_DOING" | "OPEN" | "CLOSED" | "INACTIVE";
+
 
 	constructor(codeBlock: HTMLElement, doInput: boolean) {
 		super();
@@ -19,6 +23,8 @@ export class Outputter extends EventEmitter {
 		this.inputState = doInput ? "INACTIVE" : "NOT_DOING";
 		this.codeBlockElement = codeBlock;
 		this.hadPreviouslyPrinted = false;
+		this.escapeHTML = true;
+		this.htmlBuffer = "";
 	}
 
 	/**
@@ -40,6 +46,8 @@ export class Outputter extends EventEmitter {
 
 		this.closeInput();
 		this.inputState = "INACTIVE";
+		
+		this.escapeHTML = true;
 	}
 
 	/**
@@ -57,9 +65,41 @@ export class Outputter extends EventEmitter {
 	 * @param text The stdout data in question
 	 */
 	write(text: string) {
+		this.processSigilsAndWriteText(text);
+		
+	}
+	
+	/**
+	 * Add a segment of stdout data to the outputter,
+	 * processing `toggleHtmlSigil`s along the way.
+	 * `toggleHtmlSigil`s may be interleaved with text and HTML
+	 * in any way; this method will correctly interpret them.
+	 * @param text The stdout data in question
+	 */
+	private processSigilsAndWriteText(text: string) {
+		//Loop around, removing HTML toggling sigils
+		while (true) {
+			let index = text.indexOf(TOGGLE_HTML_SIGIL);
+			if (index === -1) break;
+
+			if (index > 0) this.writeRaw(text.substring(0, index));
+			
+			this.escapeHTML = !this.escapeHTML;
+			this.writeHTMLBuffer(this.addStdout());
+
+			text = text.substring(index + TOGGLE_HTML_SIGIL.length);
+		}
+		this.writeRaw(text);
+	}
+	
+	/**
+	 * Writes a segment of stdout data without caring about the HTML sigil
+	 * @param text The stdout data in question
+	 */
+	private writeRaw(text: string) {
 		// Keep output field and clear button invisible if no text was printed.
 		if (this.textPrinted(text)) {
-			this.addStdout().innerHTML += text;
+			this.escapeAwareAppend(this.addStdout(), text);
 
 			// make visible again:
 			this.makeOutputVisible();
@@ -185,6 +225,39 @@ export class Outputter extends EventEmitter {
 
 		return stdElem
 	}
+	
+	/**
+	 * Appends some text to a given element. Respects `this.escapeHTML` for whether or not to escape HTML.
+	 * If not escaping HTML, appends the text to the HTML buffer to ensure that the whole HTML segment is recieved
+	 * before parsing it.
+	 * @param element Element to append to
+	 * @param text text to append
+	 */
+	private escapeAwareAppend(element: HTMLElement, text: string) {
+		if(this.escapeHTML) {
+			element.appendChild(document.createTextNode(text));
+		} else {
+			this.htmlBuffer += text;
+		}
+	}
+	
+	/**
+	 * Parses the HTML buffer and appends its elements to a given parent element.
+	 * Erases the HTML buffer afterwards.
+	 * @param element element to append to
+	 */
+	private writeHTMLBuffer(element: HTMLElement) {
+		if(this.htmlBuffer != "") {
+			this.makeOutputVisible();
+			
+			let content = document.createElement("div");
+			content.innerHTML = this.htmlBuffer;
+			for (const childElem of Array.from(content.childNodes))
+				element.appendChild(childElem);
+				
+			this.htmlBuffer = "";
+		}
+	}
 
 	/**
 	 * Checks if either:
@@ -198,7 +271,8 @@ export class Outputter extends EventEmitter {
 	private textPrinted(text: string) {
 		if (this.hadPreviouslyPrinted) return true;
 
-		if (text == "") return false;
+		if (text.contains(TOGGLE_HTML_SIGIL)) return false;
+		if (text === "") return false;
 
 		this.hadPreviouslyPrinted = true;
 		return true;
@@ -218,7 +292,7 @@ export class Outputter extends EventEmitter {
 		this.clearButton.className = "clear-button";
 
 		setTimeout(() => {
-			if (this.inputState == "OPEN") this.inputElement.style.display = "inline";
+			if (this.inputState === "OPEN") this.inputElement.style.display = "inline";
 		}, 500)
 	}
 }

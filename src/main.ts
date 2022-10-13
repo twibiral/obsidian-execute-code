@@ -1,6 +1,6 @@
 import {FileView, MarkdownRenderer, Plugin} from 'obsidian';
 
-import {Outputter} from "./Outputter";
+import {Outputter, TOGGLE_HTML_SIGIL} from "./Outputter";
 import type {ExecutorSettings} from "./settings/Settings";
 import {DEFAULT_SETTINGS} from "./settings/Settings";
 import {SettingsTab} from "./settings/SettingsTab";
@@ -214,7 +214,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				let transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				if (this.settings.pythonEmbedPlots)	// embed plots into html which shows them in the note
-					transformedCode = addInlinePlotsToPython(transformedCode);
+					transformedCode = addInlinePlotsToPython(transformedCode, TOGGLE_HTML_SIGIL);
 				transformedCode = addMagicToPython(transformedCode);
 
 				this.runCode(transformedCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py", language, file);

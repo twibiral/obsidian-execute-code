@@ -27,7 +27,7 @@ export default class PythonExecutor extends AsyncExecutor {
 
 		this.printFunctionName = `__print_${Math.random().toString().substring(2)}_${Date.now()}`;
 		this.localsDictionaryName = `__locals_${Math.random().toString().substring(2)}_${Date.now()}`;
-		this.globalsDictionaryName = `__locals_${Math.random().toString().substring(2)}_${Date.now()}`;
+		this.globalsDictionaryName = `__globals_${Math.random().toString().substring(2)}_${Date.now()}`;
 
 		// Send a newline so that the intro message won't be buffered
 		this.setup().then(() => { /* do nothing */ });

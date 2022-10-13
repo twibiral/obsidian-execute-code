@@ -310,8 +310,9 @@ The following magic commands are supported:
 - `@show(ImagePath)`: Displays an image at the given path in the note.
 - `@show(ImagePath, Width, Height)`: Displays an image at the given path in the note.
 - `@show(ImagePath, Width, Height, Alignment[center|left|right])`: Displays an image at the given path in the note.
+- `@html(HtmlSource)`: Displays HTML in the note
 
-(`@show(...)` is only supported for JavaScript and Python yet.)
+(`@show(...)` and `@html(...)` are only supported for JavaScript and Python yet.)
 
 ![Example how to use the magic commands.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/magic_example.png?raw=true)
 
@@ -446,6 +447,7 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 - On Linux, Snap/Flatpak/AppImage installations of Obsidian run in an isolated environment. As such, they will not have access to any of your installed programs. If you are on Linux, make sure to install the `.deb` version of Obsidian. If your distro isn't compatible with `.deb` files, you may see issues.
 - Missing when `run` button after switching the theme: Try to close and reopen your notes and wait for a few minutes. It seems like obsidian doesn't call the postprocessors after the theme switch.
 - Pre- / Post-blocks may not be executed if the file contains duplicate code blocks.
+- In Python, Embed Plots may not be off while Notebook Mode is on
 
 ## Future Work
 
