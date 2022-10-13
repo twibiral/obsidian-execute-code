@@ -43,7 +43,7 @@ export interface ExecutorSettings {
 	powershellFileExtension: string;
 	powershellInject: string;
 	cargoPath: string;
-	cargoArgs: string;
+	cargoEvalArgs: string;
 	rustInject: string;
 	cppRunner: string;
 	cppInject: string;
@@ -134,7 +134,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	powershellFileExtension: "ps1",
 	powershellInject: "",
 	cargoPath: "cargo",
-	cargoArgs: "run",
+	cargoEvalArgs: "",
 	rustInject: "",
 	cppRunner: "cling",
 	cppInject: "",
