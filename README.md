@@ -14,6 +14,9 @@ Python and Rust support embedded plots. All languages support ["magic" commands]
 
 You can create code blocks that are executed before or after each code block of the same language and define [global code injections](#global-code-injection-and-reusing-code-blocks).
 
+Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent versions.
+
+
 ## Supported programming languages
 
 <details>
