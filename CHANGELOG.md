@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+
+## [Unreleased]
+### Added
+- Added Option to use either ghci or runghc.
+- `@html(...)` command and better HTML Handling.
+- Show indicator when block is running.
+
+### Changed
+- Update Future Work section and add snap/flatpak/appimage problem to known issues.
+- Fix python notebook mode freezing after showing a matplotlib plot.
+- Better output coloring to fix color problems with plugins like codemirror.
+- Fix JS notebook mode freezing when global injection is used.
+- Fix Rust Execution to use `cargo eval` instead of `cargo run`.
+
+
 ## [1.0.0]
 
 ### Added
