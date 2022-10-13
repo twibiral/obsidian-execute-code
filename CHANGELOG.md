@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
-## [Unreleased]
+## [1.1.0]
 ### Added
 - Added Option to use either ghci or runghc. (Thanks to @afonsofrancof)
 - `@html(...)` command and better HTML Handling. (Thanks to @chlohal and @milan338)
