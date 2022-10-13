@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 - Update Future Work section and add snap/flatpak/appimage problem to known issues. (Thanks to @chlohal)
 - Fix python notebook mode freezing after showing a matplotlib plot. (Thanks to @milan338)
-- Better output coloring to fix color problems with plugins like codemirror. (Thanks to @chlohal)
+- Better output coloring to fix color problems with plugins like codemirror. (Thanks to @milan338)
 - Fix JS notebook mode freezing when global injection is used. (Thanks to @chlohal)
 - Fix Rust Execution to use `cargo eval` instead of `cargo run`. (Thanks to @chlohal)
 
