@@ -178,7 +178,7 @@ ls -la
 <details>
 <summary>Powershell</summary>
 
-- Requirements: Set the path to your preferred shell in the settings. Default is Powershell. (Only on Windows)
+- Requirements: Used to execute shell commands on Windows. Default is Powershell but can be set to your preferred shell in the settings.
 
 ```powershell
 echo "Hello World!"
