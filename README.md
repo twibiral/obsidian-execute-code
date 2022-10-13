@@ -242,7 +242,7 @@ func main() {
 - `cargo-eval` is installed. Install using `cargo install cargo-eval`.
 - Import statements and external crates is supported by `cargo-eval`. Read
 	their [documentation](https://github.com/reitermarkus/cargo-eval).
-- Every code block must a main function.
+- Every code block must have a main function.
 
 ```rust
 fn main() {
@@ -410,12 +410,13 @@ A few languages (currently JS and Python) support *Notebook Mode*. If a language
 
 Variables functions, etc. defined in one code block will be available in other code blocks. Code blocks are executed on demand; the order of code blocks in the file does not affect the order in which they are executed:
 
-```
+``````
 ```js
 console.log(f)
 ```
 ```js
 let f = 3;
+```
 ``````
 
 Running the first code block, then the second, then the first again will give:
@@ -429,6 +430,9 @@ undefined
 To manage the open runtimes for Notebook Mode, you can use the `Open Code Runtime Management` command in the command palette. From this sidebar window, you can stop kernels.
 
 
+## Style Settings
+
+This plugin supports customising styles using the [Style Settings plugin](https://github.com/mgmeyers/obsidian-style-settings). It's possible to customise the color of code block outputs and errors.
 
 ## Installation
 

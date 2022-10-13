@@ -1,3 +1,41 @@
+/* @settings
+
+name: Execute Code Settings
+id: obsidian-execute-code
+settings:
+    -
+        id: color-section-title
+        title: Color Settings
+        type: heading
+        level: 3
+    -
+        id: use-custom-output-color
+        title: Custom Code Output Color
+        description: Use a custom color for the output of code blocks
+        type: class-toggle
+        default: false
+    -
+        id: code-output-text-color
+        title: Output Text Color
+        type: variable-color
+        format: hex
+        opacity: false
+        default: '#FFFFFF'
+    -
+        id: use-custom-error-color
+        title: Custom Code Error Color
+        description: Use a custom color for the error output of code blocks
+        type: class-toggle
+        default: false
+    -
+        id: code-error-text-color
+        title: Error Text Color
+        type: variable-color
+        format: hex
+        opacity: false
+        default: '#FF0000'
+*/
+
 button.run-code-button {
 	display: none;
 	color: var(--text-muted);
@@ -36,12 +74,20 @@ pre:hover code.language-output {
 	margin-bottom: 23px;
 }
 
-code.language-output span.stdout {
-	color: var(--text-muted);
+:not(.use-custom-output-color) code.language-output span.stdout {
+	color: var(--text-muted) !important;
 }
 
-code.language-output span.stderr {
-	color: red;
+.use-custom-output-color code.language-output span.stdout {
+    color: var(--code-output-text-color) !important;
+}
+
+:not(.use-custom-error-color) code.language-output span.stderr {
+	color: red !important;
+}
+
+.use-custom-error-color code.language-output span.stderr {
+	color: var(--code-error-text-color) !important;
 }
 
 code.language-output hr {
