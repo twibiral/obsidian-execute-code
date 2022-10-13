@@ -443,6 +443,7 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 
 ## Known Problems
 
+- On Linux, Snap/Flatpak/AppImage installations of Obsidian run in an isolated environment. As such, they will not have access to any of your installed programs. If you are on Linux, make sure to install the `.deb` version of Obsidian. If your distro isn't compatible with `.deb` files, you may see issues.
 - Missing when `run` button after switching the theme: Try to close and reopen your notes and wait for a few minutes. It seems like obsidian doesn't call the postprocessors after the theme switch.
 - Pre- / Post-blocks may not be executed if the file contains duplicate code blocks.
 
@@ -450,7 +451,6 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 
 - Find better way to show that the program is running (for example a loading sign).
 - Notebook Mode similar to Jupyter
-- Key combination to execute all code blocks in a file
 - Error warning when the execution fails (e.g. when python isn't installed)
 - Test if this plugin works in combination with dataview.
 
