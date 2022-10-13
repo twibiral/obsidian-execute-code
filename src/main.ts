@@ -262,7 +262,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCode(transformedCode, out, button, this.settings.cargoPath, this.settings.cargoArgs, this.settings.rustFileExtension, language, file);
+				this.runCode(transformedCode, out, button, this.settings.cargoPath, "eval", this.settings.rustFileExtension, language, file);
 			});
 
 		} else if (language === "r") {
