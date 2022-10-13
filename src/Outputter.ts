@@ -1,4 +1,6 @@
 import {EventEmitter} from "events";
+import loadEllipses from "./svgs/loadEllipses";
+import loadSpinner from "./svgs/loadSpinner";
 
 export const TOGGLE_HTML_SIGIL = `TOGGLE_HTML_${Math.random().toString(16).substring(2)}`;
 
@@ -11,10 +13,14 @@ export class Outputter extends EventEmitter {
 
 	inputElement: HTMLInputElement;
 
+	loadStateIndicatorElement: HTMLElement;
+
 	htmlBuffer: string
 	escapeHTML: boolean
 	hadPreviouslyPrinted: boolean;
 	inputState: "NOT_DOING" | "OPEN" | "CLOSED" | "INACTIVE";
+
+	blockRunState: "RUNNING" | "QUEUED" | "FINISHED" | "INITIAL";
 
 
 	constructor(codeBlock: HTMLElement, doInput: boolean) {
@@ -25,6 +31,7 @@ export class Outputter extends EventEmitter {
 		this.hadPreviouslyPrinted = false;
 		this.escapeHTML = true;
 		this.htmlBuffer = "";
+		this.blockRunState = "INITIAL";
 	}
 
 	/**
@@ -46,8 +53,6 @@ export class Outputter extends EventEmitter {
 
 		this.closeInput();
 		this.inputState = "INACTIVE";
-		
-		this.escapeHTML = true;
 	}
 
 	/**
@@ -66,9 +71,9 @@ export class Outputter extends EventEmitter {
 	 */
 	write(text: string) {
 		this.processSigilsAndWriteText(text);
-		
+
 	}
-	
+
 	/**
 	 * Add a segment of stdout data to the outputter,
 	 * processing `toggleHtmlSigil`s along the way.
@@ -83,7 +88,7 @@ export class Outputter extends EventEmitter {
 			if (index === -1) break;
 
 			if (index > 0) this.writeRaw(text.substring(0, index));
-			
+
 			this.escapeHTML = !this.escapeHTML;
 			this.writeHTMLBuffer(this.addStdout());
 
@@ -91,7 +96,7 @@ export class Outputter extends EventEmitter {
 		}
 		this.writeRaw(text);
 	}
-	
+
 	/**
 	 * Writes a segment of stdout data without caring about the HTML sigil
 	 * @param text The stdout data in question
@@ -127,6 +132,60 @@ export class Outputter extends EventEmitter {
 		this.inputState = "CLOSED";
 		if (this.inputElement)
 			this.inputElement.style.display = "none";
+	}
+
+	/**
+	 * Mark the block as running
+	 */
+	startBlock() {
+		if(!this.loadStateIndicatorElement) this.addLoadStateIndicator();
+		setTimeout(() => {
+			if(this.blockRunState != "FINISHED")
+				this.loadStateIndicatorElement.classList.add("visible");
+		}, 100);
+
+
+		this.loadStateIndicatorElement.empty();
+		this.loadStateIndicatorElement.appendChild(loadSpinner());
+
+		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is running");
+
+		this.blockRunState = "RUNNING";
+	}
+
+	/**
+	 * Marks the block as queued, but waiting for another block before running
+	 */
+	queueBlock() {
+		if (!this.loadStateIndicatorElement) this.addLoadStateIndicator();
+		setTimeout(() => {
+			if (this.blockRunState != "FINISHED")
+				this.loadStateIndicatorElement.classList.add("visible");
+		}, 100);
+
+		this.loadStateIndicatorElement.empty();
+		this.loadStateIndicatorElement.appendChild(loadEllipses());
+
+		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is waiting for another block to finish");
+
+		this.blockRunState = "QUEUED";
+	}
+
+	/** Marks the block as finished running */
+	finishBlock() {
+		if (this.loadStateIndicatorElement) {
+			this.loadStateIndicatorElement.classList.remove("visible");
+		}
+
+		this.blockRunState = "FINISHED";
+	}
+
+	private addLoadStateIndicator() {
+		this.loadStateIndicatorElement = document.createElement("div");
+
+		this.loadStateIndicatorElement.classList.add("load-state-indicator");
+
+		this.getParentElement().parentElement.appendChild(this.loadStateIndicatorElement);
 	}
 
 	private getParentElement() {
@@ -225,7 +284,7 @@ export class Outputter extends EventEmitter {
 
 		return stdElem
 	}
-	
+
 	/**
 	 * Appends some text to a given element. Respects `this.escapeHTML` for whether or not to escape HTML.
 	 * If not escaping HTML, appends the text to the HTML buffer to ensure that the whole HTML segment is recieved
@@ -240,7 +299,7 @@ export class Outputter extends EventEmitter {
 			this.htmlBuffer += text;
 		}
 	}
-	
+
 	/**
 	 * Parses the HTML buffer and appends its elements to a given parent element.
 	 * Erases the HTML buffer afterwards.
@@ -249,12 +308,12 @@ export class Outputter extends EventEmitter {
 	private writeHTMLBuffer(element: HTMLElement) {
 		if(this.htmlBuffer != "") {
 			this.makeOutputVisible();
-			
+
 			let content = document.createElement("div");
 			content.innerHTML = this.htmlBuffer;
 			for (const childElem of Array.from(content.childNodes))
 				element.appendChild(childElem);
-				
+
 			this.htmlBuffer = "";
 		}
 	}

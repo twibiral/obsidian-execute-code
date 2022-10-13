@@ -455,7 +455,6 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 
 ## Future Work
 
-- Find better way to show that the program is running (for example a loading sign).
 - Notebook Mode similar to Jupyter
 - Error warning when the execution fails (e.g. when python isn't installed)
 - Test if this plugin works in combination with dataview.

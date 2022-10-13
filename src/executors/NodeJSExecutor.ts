@@ -1,6 +1,6 @@
-import { ChildProcessWithoutNullStreams, spawn } from "child_process";
-import { Outputter } from "src/Outputter";
-import { ExecutorSettings } from "src/settings/Settings";
+import {ChildProcessWithoutNullStreams, spawn} from "child_process";
+import {Outputter} from "src/Outputter";
+import {ExecutorSettings} from "src/settings/Settings";
 import AsyncExecutor from "./AsyncExecutor";
 
 
@@ -18,7 +18,7 @@ export default class PythonExecutor extends AsyncExecutor {
 		this.process = spawn(settings.nodePath, args);
 
 		//send a newline so that the intro message won't be buffered
-		this.dismissIntroMessage().then(() => {/* do nothing */ });
+		this.dismissIntroMessage().then(() => {/* do nothing */});
 	}
 
 	/**
@@ -52,6 +52,9 @@ export default class PythonExecutor extends AsyncExecutor {
 	 * @returns A promise that resolves once the code is done running
 	 */
 	async run(code: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
+
+		outputter.queueBlock();
+
 		return this.addJobToQueue((resolve, reject) => {
 			const finishSigil = `SIGIL_BLOCK_DONE${Math.random()}_${Date.now()}_${code.length}`;
 

@@ -88,9 +88,13 @@ ${this.globalsDictionaryName} = {**globals()}
 	 * @returns A promise that resolves once the code is done running
 	 */
 	async run(code: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
+		outputter.queueBlock();
+		
 		// TODO: Is handling for reject necessary?
 		return this.addJobToQueue((resolve, reject) => {
 			const finishSigil = `SIGIL_BLOCK_DONE${Math.random()}_${Date.now()}_${code.length}`;
+			
+			outputter.startBlock();
 
 			const wrappedCode = wrapPython(code,
 				this.globalsDictionaryName,

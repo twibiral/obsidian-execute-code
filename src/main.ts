@@ -262,7 +262,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCode(transformedCode, out, button, this.settings.cargoPath, this.settings.cargoArgs, this.settings.rustFileExtension, language, file);
+				this.runCode(transformedCode, out, button, this.settings.cargoPath, "eval" + this.settings.cargoEvalArgs, this.settings.rustFileExtension, language, file);
 			});
 
 		} else if (language === "r") {
@@ -356,10 +356,12 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * @param file The address of the file which the code originates from
 	 */
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {
+		outputter.startBlock();
 		const executor = this.executors.getExecutorFor(file, language, false);
 		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
 			button.className = runButtonClass;
 			outputter.closeInput();
+			outputter.finishBlock();
 		});
 	}
 
