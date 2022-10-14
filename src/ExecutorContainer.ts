@@ -24,6 +24,12 @@ export default class ExecutorContainer extends EventEmitter implements Iterable<
 	constructor(plugin: ExecuteCodePlugin) {
 		super();
 		this.plugin = plugin;
+		
+		window.addEventListener("beforeunload", async () => {
+			for(const executor of this) {
+				executor.stop();
+			}
+		});
 	}
 
 	/**
