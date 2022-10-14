@@ -60,6 +60,8 @@ export default class PythonExecutor extends AsyncExecutor {
 			if(this.process.exitCode !== null) return resolve();
 			
 			const finishSigil = `SIGIL_BLOCK_DONE${Math.random()}_${Date.now()}_${code.length}`;
+			
+			outputter.startBlock();
 
 			const wrappedCode = `
 			try { eval(${JSON.stringify(code)}); } catch(e) { console.error(e); }
