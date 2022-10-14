@@ -1,5 +1,5 @@
 import {ChildProcessWithoutNullStreams, spawn} from "child_process";
-import {Outputter} from "src/Outputter";
+import {Outputter} from "src/output/Outputter";
 import {ExecutorSettings} from "src/settings/Settings";
 import AsyncExecutor from "../AsyncExecutor";
 import wrapPython, {PLT_DEFAULT_BACKEND_PY_VAR} from "./wrapPython";

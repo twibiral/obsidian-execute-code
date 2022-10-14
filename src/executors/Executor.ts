@@ -1,5 +1,5 @@
 import {Notice} from "obsidian";
-import {Outputter} from "src/Outputter";
+import {Outputter} from "src/output/Outputter";
 import * as os from "os";
 import {LanguageId} from "src/main";
 import {EventEmitter} from "stream";

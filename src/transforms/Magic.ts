@@ -11,7 +11,7 @@
  */
 
 import * as os from "os";
-import { TOGGLE_HTML_SIGIL } from "src/Outputter";
+import { TOGGLE_HTML_SIGIL } from "src/output/Outputter";
 
 // Regex for all languages.
 const SHOW_REGEX = /@show\(["'](?<path>[^<>?*=!\n#()\[\]{}]+)["'](,\s*(?<width>\d+[\w%]+),?\s*(?<height>\d+[\w%]+))?(,\s*(?<align>left|center|right))?\)/g;

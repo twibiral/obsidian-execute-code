@@ -1,6 +1,6 @@
 import {FileView, MarkdownRenderer, Plugin} from 'obsidian';
 
-import {Outputter, TOGGLE_HTML_SIGIL} from "./Outputter";
+import {Outputter, TOGGLE_HTML_SIGIL} from "./output/Outputter";
 import type {ExecutorSettings} from "./settings/Settings";
 import {DEFAULT_SETTINGS} from "./settings/Settings";
 import {SettingsTab} from "./settings/SettingsTab";

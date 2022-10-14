@@ -1,6 +1,6 @@
 import {EventEmitter} from "events";
-import loadEllipses from "./svgs/loadEllipses";
-import loadSpinner from "./svgs/loadSpinner";
+import loadEllipses from "../svgs/loadEllipses";
+import loadSpinner from "../svgs/loadSpinner";
 
 export const TOGGLE_HTML_SIGIL = `TOGGLE_HTML_${Math.random().toString(16).substring(2)}`;
 

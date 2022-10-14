@@ -1,7 +1,7 @@
 import NonInteractiveCodeExecutor from './NonInteractiveCodeExecutor';
 import * as child_process from "child_process";
 import type {ChildProcessWithoutNullStreams} from "child_process";
-import type {Outputter} from "src/Outputter";
+import type {Outputter} from "src/output/Outputter";
 import type {ExecutorSettings} from "src/settings/Settings";
 
 export default class CppExecutor extends NonInteractiveCodeExecutor {
