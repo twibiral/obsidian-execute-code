@@ -24,6 +24,8 @@ export default class PythonExecutor extends AsyncExecutor {
 		args.unshift("-i");
 
 		this.process = spawn(settings.pythonPath, args);
+		
+		this.process.on("close", () => this.emit("close"));
 
 		this.printFunctionName = `__print_${Math.random().toString().substring(2)}_${Date.now()}`;
 		this.localsDictionaryName = `__locals_${Math.random().toString().substring(2)}_${Date.now()}`;
@@ -43,7 +45,6 @@ export default class PythonExecutor extends AsyncExecutor {
 			this.process.on("close", () => {
 				resolve();
 			});
-			this.emit("close");
 		});
 	}
 

@@ -16,6 +16,8 @@ export default class PythonExecutor extends AsyncExecutor {
 		args.unshift(`-e`, `require("repl").start({prompt: "", preview: false, ignoreUndefined: true}).on("exit", ()=>process.exit())`);
 
 		this.process = spawn(settings.nodePath, args);
+		
+		this.process.on("close", () => this.emit("close"));
 
 		//send a newline so that the intro message won't be buffered
 		this.dismissIntroMessage().then(() => {/* do nothing */});
@@ -31,7 +33,6 @@ export default class PythonExecutor extends AsyncExecutor {
 			this.process.on("close", () => {
 				resolve();
 			});
-			this.emit("close");
 		});
 	}
 
