@@ -57,7 +57,7 @@ export default class PythonExecutor extends AsyncExecutor {
 		outputter.queueBlock();
 
 		return this.addJobToQueue((resolve, reject) => {
-			if(this.process.exitCode != null) return resolve();
+			if(this.process.exitCode !== null) return resolve();
 			
 			const finishSigil = `SIGIL_BLOCK_DONE${Math.random()}_${Date.now()}_${code.length}`;
 
