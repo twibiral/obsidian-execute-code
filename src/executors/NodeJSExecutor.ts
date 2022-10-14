@@ -57,6 +57,8 @@ export default class PythonExecutor extends AsyncExecutor {
 		outputter.queueBlock();
 
 		return this.addJobToQueue((resolve, reject) => {
+			if(this.process.exitCode != null) return resolve();
+			
 			const finishSigil = `SIGIL_BLOCK_DONE${Math.random()}_${Date.now()}_${code.length}`;
 
 			const wrappedCode = `
@@ -85,7 +87,7 @@ export default class PythonExecutor extends AsyncExecutor {
 						stringData.substring(0, stringData.length - finishSigil.length)
 					);
 					
-					this.process.removeListener("exit", resolve);
+					this.process.removeListener("close", resolve);
 
 					this.process.stdout.removeListener("data", writeToStdout);
 					this.process.stderr.removeListener("data", writeToStderr);
@@ -95,7 +97,7 @@ export default class PythonExecutor extends AsyncExecutor {
 				}
 			}
 			
-			this.process.addListener("exit", resolve);
+			this.process.addListener("close", resolve);
 
 			this.process.stdout.on("data", writeToStdout);
 			this.process.stderr.on("data", writeToStderr);
