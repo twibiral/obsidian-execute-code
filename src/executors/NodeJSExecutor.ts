@@ -83,6 +83,8 @@ export default class PythonExecutor extends AsyncExecutor {
 					outputter.write(
 						stringData.substring(0, stringData.length - finishSigil.length)
 					);
+					
+					this.process.removeListener("exit", resolve);
 
 					this.process.stdout.removeListener("data", writeToStdout);
 					this.process.stderr.removeListener("data", writeToStderr);
@@ -91,6 +93,8 @@ export default class PythonExecutor extends AsyncExecutor {
 					outputter.write(stringData);
 				}
 			}
+			
+			this.process.addListener("exit", resolve);
 
 			this.process.stdout.on("data", writeToStdout);
 			this.process.stderr.on("data", writeToStderr);

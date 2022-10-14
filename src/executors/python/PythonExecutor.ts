@@ -121,6 +121,7 @@ ${this.globalsDictionaryName} = {**globals()}
 
 					this.process.stdout.removeListener("data", writeToStdout)
 					this.process.stderr.removeListener("data", writeToStderr);
+					this.process.removeListener("exit", resolve);
 					outputter.write(str);
 
 					resolve();
@@ -134,6 +135,8 @@ ${this.globalsDictionaryName} = {**globals()}
 
 				outputter.writeErr(removedPrompts);
 			}
+			
+			this.process.on("exit", resolve);
 
 			this.process.stdout.on("data", writeToStdout);
 			this.process.stderr.on("data", writeToStderr);
