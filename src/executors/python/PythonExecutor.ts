@@ -26,6 +26,11 @@ export default class PythonExecutor extends AsyncExecutor {
 		this.process = spawn(settings.pythonPath, args);
 		
 		this.process.on("close", () => this.emit("close"));
+		
+		this.process.on("error", (err) => {
+			this.notifyError(settings.pythonPath, args.join(" "), "", err, undefined, "Error launching Python process: " + err);
+			this.stop();
+		});
 
 		this.printFunctionName = `__print_${Math.random().toString().substring(2)}_${Date.now()}`;
 		this.localsDictionaryName = `__locals_${Math.random().toString().substring(2)}_${Date.now()}`;

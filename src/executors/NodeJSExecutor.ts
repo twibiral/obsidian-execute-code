@@ -1,4 +1,5 @@
 import {ChildProcessWithoutNullStreams, spawn} from "child_process";
+import { Notice } from "obsidian";
 import {Outputter} from "src/Outputter";
 import {ExecutorSettings} from "src/settings/Settings";
 import AsyncExecutor from "./AsyncExecutor";
@@ -18,6 +19,11 @@ export default class PythonExecutor extends AsyncExecutor {
 		this.process = spawn(settings.nodePath, args);
 		
 		this.process.on("close", () => this.emit("close"));
+		
+		this.process.on("error", (err) => {
+			this.notifyError(settings.nodePath, args.join(" "), "", err, undefined, "Error launching NodeJS process: " + err);
+			this.stop();
+		});
 
 		//send a newline so that the intro message won't be buffered
 		this.dismissIntroMessage().then(() => {/* do nothing */});
