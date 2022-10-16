@@ -209,3 +209,7 @@ input.interactive-stdin {
 	transform: translateX(0);
 	opacity: 1;
 }
+
+.has-run-code-button+div pre.language-output {
+	display: none;
+}
