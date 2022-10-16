@@ -1,6 +1,8 @@
 import {EventEmitter} from "events";
+import { MarkdownView } from "obsidian";
 import loadEllipses from "../svgs/loadEllipses";
 import loadSpinner from "../svgs/loadSpinner";
+import FileAppender from "./FileAppender.js";
 
 export const TOGGLE_HTML_SIGIL = `TOGGLE_HTML_${Math.random().toString(16).substring(2)}`;
 
@@ -21,9 +23,11 @@ export class Outputter extends EventEmitter {
 	inputState: "NOT_DOING" | "OPEN" | "CLOSED" | "INACTIVE";
 
 	blockRunState: "RUNNING" | "QUEUED" | "FINISHED" | "INITIAL";
+	
+	saveToFile: FileAppender;
 
 
-	constructor(codeBlock: HTMLElement, doInput: boolean) {
+	constructor(codeBlock: HTMLElement, doInput: boolean, view: MarkdownView) {
 		super();
 
 		this.inputState = doInput ? "INACTIVE" : "NOT_DOING";
@@ -32,6 +36,8 @@ export class Outputter extends EventEmitter {
 		this.escapeHTML = true;
 		this.htmlBuffer = "";
 		this.blockRunState = "INITIAL";
+		
+		this.saveToFile = new FileAppender(view);
 	}
 
 	/**
@@ -53,6 +59,8 @@ export class Outputter extends EventEmitter {
 
 		this.closeInput();
 		this.inputState = "INACTIVE";
+		
+		this.saveToFile.clearOutput();
 	}
 
 	/**
@@ -62,7 +70,7 @@ export class Outputter extends EventEmitter {
 		if (this.outputElement)
 			this.outputElement.style.display = "none";
 
-		this.clear()
+		this.clear();
 	}
 
 	/**
@@ -104,10 +112,10 @@ export class Outputter extends EventEmitter {
 	private writeRaw(text: string) {
 		// Keep output field and clear button invisible if no text was printed.
 		if (this.textPrinted(text)) {
-			this.escapeAwareAppend(this.addStdout(), text);
-
 			// make visible again:
 			this.makeOutputVisible();
+			
+			this.escapeAwareAppend(this.addStdout(), text);
 		}
 	}
 
@@ -118,10 +126,10 @@ export class Outputter extends EventEmitter {
 	writeErr(text: string) {
 		// Keep output field and clear button invisible if no text was printed.
 		if (this.textPrinted(text)) {
-			this.addStderr().appendText(text);
-
 			// make visible again:
 			this.makeOutputVisible()
+			
+			this.addStderr().appendText(text);
 		}
 	}
 
@@ -294,6 +302,7 @@ export class Outputter extends EventEmitter {
 	 */
 	private escapeAwareAppend(element: HTMLElement, text: string) {
 		if(this.escapeHTML) {
+			this.saveToFile.addOutput(text);
 			element.appendChild(document.createTextNode(text));
 		} else {
 			this.htmlBuffer += text;
@@ -345,6 +354,8 @@ export class Outputter extends EventEmitter {
 	private makeOutputVisible() {
 		if (!this.clearButton) this.addClearButton();
 		if (!this.outputElement) this.addOutputElement();
+		
+		this.saveToFile.setCodeBlock(this.codeBlockElement.parentElement as HTMLPreElement);
 
 		this.inputState = "OPEN";
 		this.outputElement.style.display = "block";
