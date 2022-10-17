@@ -12,18 +12,19 @@ import type {LanguageId} from "src/main";
  */
 export function getLanguageAlias(language: string | undefined): LanguageId | undefined {
 	if (language === undefined) return undefined;
-	const replaced = language
-		.replace("javascript", "js")
-		.replace("typescript", "ts")
-		.replace("csharp", "cs")
-		.replace("bash", "shell")
-		.replace(/py$/, "python")
-		.replace("wolfram", "mathematica")
-		.replace("nb", "mathematica")
-		.replace("wl", "mathematica")
-		.replace("hs", "haskell") as LanguageId;
-	if (canonicalLanguages.includes(replaced))
-		return replaced;
+	switch(language) {
+		case "javascript": return "js";
+		case "typescript": return "ts";
+		case "csharp": return "cs";
+		case "bash": return "shell";
+		case "py": return "python";
+		case "wolfram": return "mathematica";
+		case "nb": return "mathematica";
+		case "wl": "mathematica";
+		case "hs": return "haskell";
+	}
+	if ((canonicalLanguages as readonly string[]).includes(language))
+		return language as LanguageId;
 	return undefined;
 }
 
