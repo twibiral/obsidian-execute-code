@@ -17,6 +17,7 @@ export function getLanguageAlias(language: string | undefined): LanguageId | und
 		.replace("typescript", "ts")
 		.replace("csharp", "cs")
 		.replace("bash", "shell")
+		.replace("py", "python")
 		.replace("wolfram", "mathematica")
 		.replace("nb", "mathematica")
 		.replace("wl", "mathematica")
