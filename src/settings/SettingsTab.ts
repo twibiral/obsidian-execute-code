@@ -86,6 +86,7 @@ export class SettingsTab extends PluginSettingTab {
 			.addOptions(Object.fromEntries(
 				canonicalLanguages.map(lang => [lang, DISPLAY_NAMES[lang]])
 			))
+			.setValue(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0])
 			.onChange(async (value: LanguageId)=> {
 				this.focusContainer(value);
 				this.plugin.settings.lastOpenLanguageTab = value;
