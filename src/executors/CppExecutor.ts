@@ -12,23 +12,27 @@ export default class CppExecutor extends NonInteractiveCodeExecutor {
 		this.settings = settings;
 	}
 
-	override async run(codeBlockContent: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
+	override run(codeBlockContent: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
 		const extension = "cpp";
 		const args = `-std=${this.settings.clingStd} ${this.settings.clingArgs}`;
-		// Generate a new temp file id and don't set to undefined to super.run() uses the same file id
-		this.getTempFile(extension);
-		// Cling expects the main function to have the same name as the file
-		const code = codeBlockContent.replace(/main\(\)/g, `temp_${this.tempFileId}()`);
 
 		// Run code with a main block
 		if (this.settings.cppUseMain) {
-			super.run(code, outputter, this.settings.clingPath, args, extension);
-			return;
+			// Generate a new temp file id and don't set to undefined to super.run() uses the same file id
+			this.getTempFile(extension);
+			// Cling expects the main function to have the same name as the file
+			const code = codeBlockContent.replace(/main\(\)/g, `temp_${this.tempFileId}()`);
+			return super.run(code, outputter, this.settings.clingPath, args, extension);
 		}
+
 		// Run code without a main block
-		const childArgs = [...args.split(" "), ...code.split("\n")];
-		const child = child_process.spawn(this.settings.clingPath, childArgs, {env: process.env, shell: this.usesShell});
-		await this.handleChildOutput(child, outputter, undefined);
+		return new Promise<void>((resolve, reject) => {
+			const childArgs = [...args.split(" "), ...codeBlockContent.split("\n")];
+			const child = child_process.spawn(this.settings.clingPath, childArgs, {env: process.env, shell: this.usesShell});
+			// Set resolve callback to resolve the promise in the child_process.on('close', ...) listener from super.handleChildOutput
+			this.resolveRun = resolve;
+			this.handleChildOutput(child, outputter, undefined);
+		});
 	}
 
 	/**
