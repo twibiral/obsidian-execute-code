@@ -75,16 +75,19 @@ export class SettingsTab extends PluginSettingTab {
 					this.plugin.settings.allowInput = value
 					await this.plugin.saveSettings();
 				}));
-		new Setting(containerEl)
-			.setName('WSL Mode')
-			.setDesc("Whether or not to run code in the Windows Subsystem for Linux. If you don't have WSL installed, don't turn this on!")
-			.addToggle(text => text
-				.setValue(this.plugin.settings.wslMode)
-				.onChange(async (value) => {
-					console.log('WSL Mode set to: ' + value);
-					this.plugin.settings.wslMode = value
-					await this.plugin.saveSettings();
-				}));
+		
+		if(process.platform === "win32") {
+			new Setting(containerEl)
+				.setName('WSL Mode')
+				.setDesc("Whether or not to run code in the Windows Subsystem for Linux. If you don't have WSL installed, don't turn this on!")
+				.addToggle(text => text
+					.setValue(this.plugin.settings.wslMode)
+					.onChange(async (value) => {
+						console.log('WSL Mode set to: ' + value);
+						this.plugin.settings.wslMode = value
+						await this.plugin.saveSettings();
+					}));
+		}
 
 		// TODO setting per language that requires main function if main function should be implicitly made or not, if not, non-main blocks will not have a run button
 
