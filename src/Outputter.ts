@@ -157,7 +157,7 @@ export class Outputter extends EventEmitter {
 		this.loadStateIndicatorElement.empty();
 		this.loadStateIndicatorElement.appendChild(loadSpinner());
 
-		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is running");
+		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is running.\nClick to stop.");
 
 		this.blockRunState = "RUNNING";
 	}
@@ -175,7 +175,7 @@ export class Outputter extends EventEmitter {
 		this.loadStateIndicatorElement.empty();
 		this.loadStateIndicatorElement.appendChild(loadEllipses());
 
-		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is waiting for another block to finish");
+		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is waiting for another block to finish.\nClick to cancel.");
 
 		this.blockRunState = "QUEUED";
 	}
@@ -193,6 +193,9 @@ export class Outputter extends EventEmitter {
 		this.loadStateIndicatorElement = document.createElement("div");
 
 		this.loadStateIndicatorElement.classList.add("load-state-indicator");
+
+		// Kill code block on clicking load state indicator
+		this.loadStateIndicatorElement.addEventListener('click', () => this.killBlock());
 
 		this.getParentElement().parentElement.appendChild(this.loadStateIndicatorElement);
 	}
