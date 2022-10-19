@@ -1,5 +1,4 @@
 import {ChildProcessWithoutNullStreams, spawn} from "child_process";
-import { Notice } from "obsidian";
 import {Outputter} from "src/Outputter";
 import {ExecutorSettings} from "src/settings/Settings";
 import AsyncExecutor from "./AsyncExecutor";
@@ -24,10 +23,11 @@ export default class NodeJSExecutor extends ReplExecutor {
 	 */
 	stop(): Promise<void> {
 		return new Promise((resolve, reject) => {
-			this.process.kill();
 			this.process.on("close", () => {
 				resolve();
 			});
+			this.process.kill();
+			this.process = null;
 		});
 	}
 

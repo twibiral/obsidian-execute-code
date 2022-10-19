@@ -46,10 +46,11 @@ export default class PythonExecutor extends ReplExecutor {
 	 */
 	stop(): Promise<void> {
 		return new Promise((resolve, reject) => {
-			this.process.kill();
 			this.process.on("close", () => {
 				resolve();
 			});
+			this.process.kill();
+			this.process = null;
 		});
 	}
 

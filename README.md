@@ -7,7 +7,7 @@ The result is shown only after the execution is finished. It is not possible to 
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
 
-The following [languages are supported](#supported-programming-languages): CPP, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lua, CSharp, Prolog, Rust, Python, R, Wolfram Mathematica, Haskell, Shell & Powershell. 
+The following [languages are supported](#supported-programming-languages): CPP, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lua, CSharp, Prolog, Rust, Python, R, Wolfram Mathematica, Haskell, Scala, Shell & Powershell. 
 
 
 Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands) that help you to access paths in obsidian or show images in your notes.
@@ -178,7 +178,8 @@ ls -la
 <details>
 <summary>Powershell</summary>
 
-- Requirements: Set the path to your preferred shell in the settings. Default is Powershell. (Only on Windows)
+- Requirements: Used to execute shell commands on Windows. Default is Powershell but can be set to your preferred shell in the settings.
+- On MacOS: You probably need to change the command to use from `powershell` to `pwsh` in the plugin settings. Make sure you set the right path.
 
 ```powershell
 echo "Hello World!"
@@ -289,6 +290,13 @@ hello("Bob")
 ```haskell
 mySum:: Num a => a -> a -> a
 mySum a b = a+b
+```
+</details>
+<summary>Scala</summary>
+- Requirements: Scala is installed and the correct path is set in the settings.
+
+```scala
+println("Hello, World!")
 ```
 </details>
 
