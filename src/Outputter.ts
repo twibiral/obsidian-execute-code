@@ -53,7 +53,16 @@ export class Outputter extends EventEmitter {
 
 		this.closeInput();
 		this.inputState = "INACTIVE";
+
+		// Kill code block
+		this.killBlock();
 	}
+
+	/**
+	 * Kills the code block.
+	 * To be overwritten in an executor's run method
+	 */
+	killBlock() {}
 
 	/**
 	 * Hides the output and clears the log. Visually, restores the code block to its initial state.
@@ -140,7 +149,7 @@ export class Outputter extends EventEmitter {
 	startBlock() {
 		if(!this.loadStateIndicatorElement) this.addLoadStateIndicator();
 		setTimeout(() => {
-			if(this.blockRunState != "FINISHED")
+			if(this.blockRunState !== "FINISHED")
 				this.loadStateIndicatorElement.classList.add("visible");
 		}, 100);
 
@@ -148,7 +157,7 @@ export class Outputter extends EventEmitter {
 		this.loadStateIndicatorElement.empty();
 		this.loadStateIndicatorElement.appendChild(loadSpinner());
 
-		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is running");
+		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is running.\nClick to stop.");
 
 		this.blockRunState = "RUNNING";
 	}
@@ -159,14 +168,14 @@ export class Outputter extends EventEmitter {
 	queueBlock() {
 		if (!this.loadStateIndicatorElement) this.addLoadStateIndicator();
 		setTimeout(() => {
-			if (this.blockRunState != "FINISHED")
+			if (this.blockRunState !== "FINISHED")
 				this.loadStateIndicatorElement.classList.add("visible");
 		}, 100);
 
 		this.loadStateIndicatorElement.empty();
 		this.loadStateIndicatorElement.appendChild(loadEllipses());
 
-		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is waiting for another block to finish");
+		this.loadStateIndicatorElement.setAttribute("aria-label", "This block is waiting for another block to finish.\nClick to cancel.");
 
 		this.blockRunState = "QUEUED";
 	}
@@ -184,6 +193,9 @@ export class Outputter extends EventEmitter {
 		this.loadStateIndicatorElement = document.createElement("div");
 
 		this.loadStateIndicatorElement.classList.add("load-state-indicator");
+
+		// Kill code block on clicking load state indicator
+		this.loadStateIndicatorElement.addEventListener('click', () => this.killBlock());
 
 		this.getParentElement().parentElement.appendChild(this.loadStateIndicatorElement);
 	}
@@ -306,10 +318,10 @@ export class Outputter extends EventEmitter {
 	 * @param element element to append to
 	 */
 	private writeHTMLBuffer(element: HTMLElement) {
-		if(this.htmlBuffer != "") {
+		if(this.htmlBuffer !== "") {
 			this.makeOutputVisible();
 
-			let content = document.createElement("div");
+			const content = document.createElement("div");
 			content.innerHTML = this.htmlBuffer;
 			for (const childElem of Array.from(content.childNodes))
 				element.appendChild(childElem);

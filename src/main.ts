@@ -314,8 +314,8 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language === "haskell") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				 const transformedCode = await new CodeInjector(this.app, this.settings, "haskell").injectCode(srcCode);
-				 this.runCodeInShell(transformedCode, out, button, this.settings.useGhci ? this.settings.ghciPath : this.settings.runghcPath, this.settings.useGhci ? "" : "-f "+this.settings.ghcPath, "hs", language, file);
+				const transformedCode = await new CodeInjector(this.app, this.settings, "haskell").injectCode(srcCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.useGhci ? this.settings.ghciPath : this.settings.runghcPath, this.settings.useGhci ? "" : "-f "+this.settings.ghcPath, "hs", language, file);
 			});
 
 		} else if (language === "mathematica") {
