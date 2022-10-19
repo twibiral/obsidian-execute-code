@@ -5,6 +5,8 @@ import Executor from "./Executor";
 import {Outputter} from "src/Outputter";
 import {LanguageId} from "src/main";
 import { ExecutorSettings } from "../settings/Settings.js";
+import { sep } from "path";
+import { join } from "path/posix";
 
 export default class NonInteractiveCodeExecutor extends Executor {
 	usesShell: boolean
@@ -35,7 +37,19 @@ export default class NonInteractiveCodeExecutor extends Executor {
 
 			fs.promises.writeFile(tempFileName, codeBlockContent).then(() => {
 				const args = cmdArgs ? cmdArgs.split(" ") : [];
-				args.push(tempFileName);
+				
+				if (this.settings.wslMode) {
+					args.unshift("-e", cmd);
+					cmd = "wsl";
+					
+					const driveLetter = tempFileName[0].toLowerCase();
+					const posixyPath = tempFileName.replace(/^[^:]*:/, "") //remove drive letter
+						.split(sep).join("/"); //force / as separator
+						
+					args.push(join("/mnt/", driveLetter, posixyPath));
+				} else {
+					args.push(tempFileName);	
+				}
 				
 				const child = child_process.spawn(cmd, args, {env: process.env, shell: this.usesShell});
 				
