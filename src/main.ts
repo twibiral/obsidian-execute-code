@@ -314,8 +314,8 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language === "haskell") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				 const transformedCode = await new CodeInjector(this.app, this.settings, "haskell").injectCode(srcCode);
-				 this.runCodeInShell(transformedCode, out, button, this.settings.useGhci ? this.settings.ghciPath : this.settings.runghcPath, this.settings.useGhci ? "" : "-f "+this.settings.ghcPath, "hs", language, file);
+				const transformedCode = await new CodeInjector(this.app, this.settings, "haskell").injectCode(srcCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.useGhci ? this.settings.ghciPath : this.settings.runghcPath, this.settings.useGhci ? "" : "-f "+this.settings.ghcPath, "hs", language, file);
 			});
 
 		} else if (language === "mathematica") {
@@ -358,10 +358,9 @@ export default class ExecuteCodePlugin extends Plugin {
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {
 		outputter.startBlock();
 		const executor = this.executors.getExecutorFor(file, language, false);
+		// TODO kill existing process
 		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
 			button.className = runButtonClass;
-			outputter.closeInput();
-			outputter.finishBlock();
 		});
 	}
 

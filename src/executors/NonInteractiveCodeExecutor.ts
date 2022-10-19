@@ -85,5 +85,10 @@ export default class NonInteractiveCodeExecutor extends Executor {
 			new Notice("Error!");
 			outputter.writeErr(err.toString());
 		});
+
+		child.on('close', () => {
+			outputter.closeInput();
+			outputter.finishBlock();
+		});
 	}
 }
