@@ -63,9 +63,7 @@ export default class NonInteractiveCodeExecutor extends Executor {
 		outputter.clear();
 
 		// Kill process on clear
-		outputter.clear = function () {
-			// Call original clear method
-			outputter.originalClear();
+		outputter.killBlock = () => {
 			// Kill the process
 			child.kill('SIGINT');
 		}

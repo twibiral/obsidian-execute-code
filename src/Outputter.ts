@@ -53,9 +53,16 @@ export class Outputter extends EventEmitter {
 
 		this.closeInput();
 		this.inputState = "INACTIVE";
+
+		// Kill code block
+		this.killBlock();
 	}
 
-	originalClear = this.clear;
+	/**
+	 * Kills the code block.
+	 * To be overwritten in an executor's run method
+	 */
+	killBlock() {}
 
 	/**
 	 * Hides the output and clears the log. Visually, restores the code block to its initial state.
@@ -142,7 +149,7 @@ export class Outputter extends EventEmitter {
 	startBlock() {
 		if(!this.loadStateIndicatorElement) this.addLoadStateIndicator();
 		setTimeout(() => {
-			if(this.blockRunState != "FINISHED")
+			if(this.blockRunState !== "FINISHED")
 				this.loadStateIndicatorElement.classList.add("visible");
 		}, 100);
 
@@ -161,7 +168,7 @@ export class Outputter extends EventEmitter {
 	queueBlock() {
 		if (!this.loadStateIndicatorElement) this.addLoadStateIndicator();
 		setTimeout(() => {
-			if (this.blockRunState != "FINISHED")
+			if (this.blockRunState !== "FINISHED")
 				this.loadStateIndicatorElement.classList.add("visible");
 		}, 100);
 
@@ -308,10 +315,10 @@ export class Outputter extends EventEmitter {
 	 * @param element element to append to
 	 */
 	private writeHTMLBuffer(element: HTMLElement) {
-		if(this.htmlBuffer != "") {
+		if(this.htmlBuffer !== "") {
 			this.makeOutputVisible();
 
-			let content = document.createElement("div");
+			const content = document.createElement("div");
 			content.innerHTML = this.htmlBuffer;
 			for (const childElem of Array.from(content.childNodes))
 				element.appendChild(childElem);
