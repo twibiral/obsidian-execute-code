@@ -73,6 +73,10 @@ export interface ExecutorSettings {
 	mathematicaArgs: string;
 	mathematicaFileExtension: string;
 	mathematicaInject: string;
+	scalaPath: string;
+	scalaArgs: string;
+	scalaFileExtension: string;
+	scalaInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -92,6 +96,7 @@ export interface ExecutorSettings {
 	kotlinInteractive: boolean;
 	mathematicaInteractive: boolean;
 	haskellInteractive: boolean;
+	scalaInteractive: boolean;
 }
 
 
@@ -168,6 +173,10 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	mathematicaArgs: "",
 	mathematicaFileExtension: "wls",
 	mathematicaInject: "",
+	scalaPath: "scala",
+	scalaArgs: "",
+	scalaFileExtension: "scala",
+	scalaInject: "",
 
 	jsInteractive: true,
 	tsInteractive: false,
@@ -186,5 +195,6 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	powershellInteractive: false,
 	kotlinInteractive: false,
 	mathematicaInteractive: true,
-	haskellInteractive: false
+	haskellInteractive: false,
+	scalaInteractive: false
 }
