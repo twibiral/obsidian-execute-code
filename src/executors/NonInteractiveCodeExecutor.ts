@@ -4,16 +4,19 @@ import * as child_process from "child_process";
 import Executor from "./Executor";
 import {Outputter} from "src/Outputter";
 import {LanguageId} from "src/main";
+import { ExecutorSettings } from "../settings/Settings.js";
 
 export default class NonInteractiveCodeExecutor extends Executor {
 	usesShell: boolean
 	stdoutCb: (chunk: any) => void
 	stderrCb: (chunk: any) => void
 	resolveRun: (value: void | PromiseLike<void>) => void | undefined = undefined;
+	settings: ExecutorSettings;
 
-	constructor(usesShell: boolean, file: string, language: LanguageId) {
+	constructor(settings: ExecutorSettings, usesShell: boolean, file: string, language: LanguageId) {
 		super(file, language);
 
+		this.settings = settings;
 		this.usesShell = usesShell;
 	}
 

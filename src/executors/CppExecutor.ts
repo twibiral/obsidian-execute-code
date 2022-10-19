@@ -5,11 +5,9 @@ import type {Outputter} from "src/Outputter";
 import type {ExecutorSettings} from "src/settings/Settings";
 
 export default class CppExecutor extends NonInteractiveCodeExecutor {
-	settings: ExecutorSettings
 
 	constructor(settings: ExecutorSettings, file: string) {
-		super(false, file, "cpp");
-		this.settings = settings;
+		super(settings, false, file, "cpp");
 	}
 
 	override run(codeBlockContent: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
