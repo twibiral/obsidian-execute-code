@@ -46,10 +46,11 @@ export default class PythonExecutor extends AsyncExecutor {
 	 */
 	stop(): Promise<void> {
 		return new Promise((resolve, reject) => {
-			this.process.kill();
 			this.process.on("close", () => {
 				resolve();
 			});
+			this.process.kill();
+			this.process = null;
 		});
 	}
 
@@ -98,7 +99,7 @@ ${this.globalsDictionaryName} = {**globals()}
 		
 		// TODO: Is handling for reject necessary?
 		return this.addJobToQueue((resolve, reject) => {
-			if (this.process.exitCode !== null) return resolve();
+			if (this.process === null) return resolve();
 			
 			const finishSigil = `SIGIL_BLOCK_DONE${Math.random()}_${Date.now()}_${code.length}`;
 			
