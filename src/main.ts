@@ -358,9 +358,10 @@ export default class ExecuteCodePlugin extends Plugin {
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {
 		outputter.startBlock();
 		const executor = this.executors.getExecutorFor(file, language, false);
-		// TODO kill existing process
 		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
 			button.className = runButtonClass;
+			outputter.closeInput();
+			outputter.finishBlock();
 		});
 	}
 
