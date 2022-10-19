@@ -179,6 +179,7 @@ ls -la
 <summary>Powershell</summary>
 
 - Requirements: Used to execute shell commands on Windows. Default is Powershell but can be set to your preferred shell in the settings.
+- On MacOS: You probably need to change the command to use from `powershell` to `pwsh` in the plugin settings. Make sure you set the right path.
 
 ```powershell
 echo "Hello World!"
