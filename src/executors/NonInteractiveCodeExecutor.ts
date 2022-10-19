@@ -28,8 +28,6 @@ export default class NonInteractiveCodeExecutor extends Executor {
 		this.resolveRun = undefined;
 
 		return new Promise<void>((resolve, reject) => {
-			// TODO remove notice
-			new Notice("Running...");
 			const tempFileName = this.getTempFile(ext);
 
 			fs.promises.writeFile(tempFileName, codeBlockContent).then(() => {
@@ -87,8 +85,8 @@ export default class NonInteractiveCodeExecutor extends Executor {
 		});
 
 		child.on('close', (code) => {
-			// TODO remove notice
-			new Notice(code === 0 ? "Done!" : "Error!");
+			if (code === 0)
+				new Notice("Error!");
 
 			// Resolve the run promise once finished running the code block
 			if (this.resolveRun !== undefined)

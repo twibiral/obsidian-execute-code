@@ -1,5 +1,4 @@
 import {ChildProcessWithoutNullStreams, spawn} from "child_process";
-import { Notice } from "obsidian";
 import {Outputter} from "src/Outputter";
 import {ExecutorSettings} from "src/settings/Settings";
 import AsyncExecutor from "./AsyncExecutor";
