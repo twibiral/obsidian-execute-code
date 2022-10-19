@@ -55,6 +55,8 @@ export class Outputter extends EventEmitter {
 		this.inputState = "INACTIVE";
 	}
 
+	originalClear = this.clear;
+
 	/**
 	 * Hides the output and clears the log. Visually, restores the code block to its initial state.
 	 */

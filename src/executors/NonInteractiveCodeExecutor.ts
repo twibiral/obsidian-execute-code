@@ -31,13 +31,11 @@ export default class NonInteractiveCodeExecutor extends Executor {
 			// TODO remove notice
 			new Notice("Running...");
 			const tempFileName = this.getTempFile(ext);
-			console.debug(`Execute ${cmd} ${cmdArgs} ${tempFileName}`);
 
 			fs.promises.writeFile(tempFileName, codeBlockContent).then(() => {
 				const args = cmdArgs ? cmdArgs.split(" ") : [];
 				args.push(tempFileName);
 				
-				console.debug(`Execute ${cmd} ${args.join(" ")}`);
 				const child = child_process.spawn(cmd, args, {env: process.env, shell: this.usesShell});
 				
 				this.handleChildOutput(child, outputter, tempFileName).then(() => {
@@ -65,6 +63,14 @@ export default class NonInteractiveCodeExecutor extends Executor {
 	 */
 	protected async handleChildOutput(child: child_process.ChildProcessWithoutNullStreams, outputter: Outputter, fileName: string | undefined) {
 		outputter.clear();
+
+		// Kill process on clear
+		outputter.clear = function () {
+			// Call original clear method
+			outputter.originalClear();
+			// Kill the process
+			child.kill('SIGINT');
+		}
 
 		this.stdoutCb = (data) => {
 			outputter.write(data.toString());
