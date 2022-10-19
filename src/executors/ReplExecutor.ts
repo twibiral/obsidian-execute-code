@@ -53,8 +53,6 @@ export default abstract class ReplExecutor extends AsyncExecutor {
             outputter.startBlock();
 
             const wrappedCode = this.wrapCode(code, finishSigil);
-            
-            console.log(wrappedCode);
 
             this.process.stdin.write(wrappedCode);
 
