@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
+## [Unreleased] - 2022-10-19
+### Added
+- Support for Scala (Thanks to @chlohal)
+- Add run indicator to non-interactive blocks (Thanks to @milan338 and @chlohal)
+
+### Changed
+- Fix problems with runtimes and never hiding running indicators (Thanks to @milan338)
+
 ## [1.1.1] - 2022-10-18
 ### Changes
 - Various bug fixes (Thanks to @chlohal)
