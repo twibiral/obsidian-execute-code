@@ -16,6 +16,13 @@ export default class PythonExecutor extends AsyncExecutor {
 		args.unshift(`-e`, `require("repl").start({prompt: "", preview: false, ignoreUndefined: true}).on("exit", ()=>process.exit())`);
 
 		this.process = spawn(settings.nodePath, args);
+		
+		this.process.on("close", () => this.emit("close"));
+		
+		this.process.on("error", (err) => {
+			this.notifyError(settings.nodePath, args.join(" "), "", err, undefined, "Error launching NodeJS process: " + err);
+			this.stop();
+		});
 
 		//send a newline so that the intro message won't be buffered
 		this.dismissIntroMessage().then(() => {/* do nothing */});
@@ -31,7 +38,6 @@ export default class PythonExecutor extends AsyncExecutor {
 			this.process.on("close", () => {
 				resolve();
 			});
-			this.emit("close");
 		});
 	}
 
@@ -56,7 +62,11 @@ export default class PythonExecutor extends AsyncExecutor {
 		outputter.queueBlock();
 
 		return this.addJobToQueue((resolve, reject) => {
+			if(this.process.exitCode !== null) return resolve();
+			
 			const finishSigil = `SIGIL_BLOCK_DONE${Math.random()}_${Date.now()}_${code.length}`;
+			
+			outputter.startBlock();
 
 			const wrappedCode = `
 			try { eval(${JSON.stringify(code)}); } catch(e) { console.error(e); }
@@ -83,6 +93,8 @@ export default class PythonExecutor extends AsyncExecutor {
 					outputter.write(
 						stringData.substring(0, stringData.length - finishSigil.length)
 					);
+					
+					this.process.removeListener("close", resolve);
 
 					this.process.stdout.removeListener("data", writeToStdout);
 					this.process.stderr.removeListener("data", writeToStderr);
@@ -91,6 +103,8 @@ export default class PythonExecutor extends AsyncExecutor {
 					outputter.write(stringData);
 				}
 			}
+			
+			this.process.addListener("close", resolve);
 
 			this.process.stdout.on("data", writeToStdout);
 			this.process.stderr.on("data", writeToStderr);

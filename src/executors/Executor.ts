@@ -40,13 +40,15 @@ export default abstract class Executor extends EventEmitter {
 	 * @param tempFileName The name of the temporary file that contained the code.
 	 * @param err The error that was thrown.
 	 * @param outputter The outputter that should be used to display the error.
+	 * @param label A high-level, short label to show to the user 
 	 * @protected
 	 */
-	protected notifyError(cmd: string, cmdArgs: string, tempFileName: string, err: any, outputter: Outputter) {
+	protected notifyError(cmd: string, cmdArgs: string, tempFileName: string, err: any,
+		outputter: Outputter | undefined, label = "Error while executing code") {
 		const errorMSG = `Error while executing ${cmd} ${cmdArgs} ${tempFileName}: ${err}`
 		console.error(errorMSG);
-		outputter.writeErr(errorMSG);
-		new Notice("Error while executing code!");
+		if(outputter) outputter.writeErr(errorMSG);
+		new Notice(label);
 	}
 
 	/**

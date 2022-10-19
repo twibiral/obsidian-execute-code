@@ -24,6 +24,13 @@ export default class PythonExecutor extends AsyncExecutor {
 		args.unshift("-i");
 
 		this.process = spawn(settings.pythonPath, args);
+		
+		this.process.on("close", () => this.emit("close"));
+		
+		this.process.on("error", (err) => {
+			this.notifyError(settings.pythonPath, args.join(" "), "", err, undefined, "Error launching Python process: " + err);
+			this.stop();
+		});
 
 		this.printFunctionName = `__print_${Math.random().toString().substring(2)}_${Date.now()}`;
 		this.localsDictionaryName = `__locals_${Math.random().toString().substring(2)}_${Date.now()}`;
@@ -43,7 +50,6 @@ export default class PythonExecutor extends AsyncExecutor {
 			this.process.on("close", () => {
 				resolve();
 			});
-			this.emit("close");
 		});
 	}
 
@@ -92,6 +98,8 @@ ${this.globalsDictionaryName} = {**globals()}
 		
 		// TODO: Is handling for reject necessary?
 		return this.addJobToQueue((resolve, reject) => {
+			if (this.process.exitCode !== null) return resolve();
+			
 			const finishSigil = `SIGIL_BLOCK_DONE${Math.random()}_${Date.now()}_${code.length}`;
 			
 			outputter.startBlock();
@@ -121,6 +129,7 @@ ${this.globalsDictionaryName} = {**globals()}
 
 					this.process.stdout.removeListener("data", writeToStdout)
 					this.process.stderr.removeListener("data", writeToStderr);
+					this.process.removeListener("close", resolve);
 					outputter.write(str);
 
 					resolve();
@@ -134,6 +143,8 @@ ${this.globalsDictionaryName} = {**globals()}
 
 				outputter.writeErr(removedPrompts);
 			}
+			
+			this.process.on("close", resolve);
 
 			this.process.stdout.on("data", writeToStdout);
 			this.process.stderr.on("data", writeToStderr);
