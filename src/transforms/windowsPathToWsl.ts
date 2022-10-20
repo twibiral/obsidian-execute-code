@@ -1,4 +1,5 @@
-import { join, sep } from "path";
+import { join } from "path/posix";
+import { sep } from "path";
 
 export default (windowsPath: string) => {
     const driveLetter = windowsPath[0].toLowerCase();
