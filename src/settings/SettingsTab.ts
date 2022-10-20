@@ -16,6 +16,7 @@ import makePrologSettings from "./per-lang/makePrologSettings";
 import makePythonSettings from "./per-lang/makePythonSettings";
 import makeRSettings from "./per-lang/makeRSettings";
 import makeRustSettings from "./per-lang/makeRustSettings";
+import makeScalaSettings from "./per-lang/makeScalaSettings.js";
 import makeShellSettings from "./per-lang/makeShellSettings";
 import makeTsSettings from "./per-lang/makeTsSettings";
 import {ExecutorSettings} from "./Settings";
@@ -86,6 +87,7 @@ export class SettingsTab extends PluginSettingTab {
 			.addOptions(Object.fromEntries(
 				canonicalLanguages.map(lang => [lang, DISPLAY_NAMES[lang]])
 			))
+			.setValue(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0])
 			.onChange(async (value: LanguageId)=> {
 				this.focusContainer(value);
 				this.plugin.settings.lastOpenLanguageTab = value;
@@ -156,6 +158,9 @@ export class SettingsTab extends PluginSettingTab {
 
 		// ========== Haskell ===========
 		makeHaskellSettings(this, this.makeContainerFor("haskell"));
+
+		// ========== Scala ===========
+		makeScalaSettings(this, this.makeContainerFor("scala"));
 
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}

@@ -9,6 +9,7 @@ export default class NonInteractiveCodeExecutor extends Executor {
 	usesShell: boolean
 	stdoutCb: (chunk: any) => void
 	stderrCb: (chunk: any) => void
+	resolveRun: (value: void | PromiseLike<void>) => void | undefined = undefined;
 
 	constructor(usesShell: boolean, file: string, language: LanguageId) {
 		super(file, language);
@@ -20,26 +21,33 @@ export default class NonInteractiveCodeExecutor extends Executor {
 		return Promise.resolve();
 	}
 
-	async run(codeBlockContent: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
-		new Notice("Running...");
-		const tempFileName = this.getTempFile(ext);
-		console.debug(`Execute ${cmd} ${cmdArgs} ${tempFileName}`);
+	run(codeBlockContent: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
+		// Resolve any currently running blocks
+		if (this.resolveRun !== undefined)
+			this.resolveRun();
+		this.resolveRun = undefined;
 
-		try {
-			await fs.promises.writeFile(tempFileName, codeBlockContent);
-			
-			const args = cmdArgs ? cmdArgs.split(" ") : [];
-			args.push(tempFileName);
-			
-			console.debug(`Execute ${cmd} ${args.join(" ")}`);
-			const child = child_process.spawn(cmd, args, {env: process.env, shell: this.usesShell});
-			
-			await this.handleChildOutput(child, outputter, tempFileName);
-		} catch (err) {
-			this.notifyError(cmd, cmdArgs, tempFileName, err, outputter);
-		}
+		return new Promise<void>((resolve, reject) => {
+			const tempFileName = this.getTempFile(ext);
 
-		this.tempFileId = undefined; // Reset the file id to use a new file next time
+			fs.promises.writeFile(tempFileName, codeBlockContent).then(() => {
+				const args = cmdArgs ? cmdArgs.split(" ") : [];
+				args.push(tempFileName);
+				
+				const child = child_process.spawn(cmd, args, {env: process.env, shell: this.usesShell});
+				
+				this.handleChildOutput(child, outputter, tempFileName).then(() => {
+					this.tempFileId = undefined; // Reset the file id to use a new file next time
+				});
+
+				// We don't resolve the promise here - 'handleChildOutput' registers a listener
+				// For when the child_process closes, and will resolve the promise there
+				this.resolveRun = resolve;
+			}).catch((err) => {
+				this.notifyError(cmd, cmdArgs, tempFileName, err, outputter);
+				resolve();
+			});
+		});
 	}
 
 	/**
@@ -53,6 +61,12 @@ export default class NonInteractiveCodeExecutor extends Executor {
 	 */
 	protected async handleChildOutput(child: child_process.ChildProcessWithoutNullStreams, outputter: Outputter, fileName: string | undefined) {
 		outputter.clear();
+
+		// Kill process on clear
+		outputter.killBlock = () => {
+			// Kill the process
+			child.kill('SIGINT');
+		}
 
 		this.stdoutCb = (data) => {
 			outputter.write(data.toString());
@@ -69,7 +83,12 @@ export default class NonInteractiveCodeExecutor extends Executor {
 		});
 
 		child.on('close', (code) => {
-			new Notice(code === 0 ? "Done!" : "Error!");
+			if (code !== 0)
+				new Notice("Error!");
+
+			// Resolve the run promise once finished running the code block
+			if (this.resolveRun !== undefined)
+				this.resolveRun();
 
 			outputter.closeInput();
 
