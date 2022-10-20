@@ -83,7 +83,7 @@ export default class NonInteractiveCodeExecutor extends Executor {
 		});
 
 		child.on('close', (code) => {
-			if (code === 0)
+			if (code !== 0)
 				new Notice("Error!");
 
 			// Resolve the run promise once finished running the code block
