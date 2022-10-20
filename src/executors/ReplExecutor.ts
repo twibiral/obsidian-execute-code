@@ -17,6 +17,11 @@ export default abstract class ReplExecutor extends AsyncExecutor {
         
         this.settings = settings;
         
+        if (this.settings.wslMode) {
+            args.unshift("-e", path, "--");
+            path = "wsl";
+        }
+        
         this.process = spawn(path, args);
         
         this.process.on("close", () => {
