@@ -198,6 +198,7 @@ input.interactive-stdin {
 	content: "";
 	box-shadow: -1em 0 1em -0.75em inset var(--background-modifier-box-shadow);
 	position: absolute;
+	left: -2em;
 	display: block;
 	width: 100%;
 	height: 100%;
