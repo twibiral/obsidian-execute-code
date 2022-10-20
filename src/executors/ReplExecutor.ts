@@ -1,4 +1,5 @@
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
+import { Notice } from "obsidian";
 import { LanguageId } from "../main.js";
 import { Outputter } from "../Outputter.js";
 import { ExecutorSettings } from "../settings/Settings.js";
@@ -26,6 +27,7 @@ export default abstract class ReplExecutor extends AsyncExecutor {
         
         this.process.on("close", () => {
             this.emit("close");
+            new Notice("Runtime exited");
             this.process = null;
         });
         
