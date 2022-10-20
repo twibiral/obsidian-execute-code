@@ -181,6 +181,7 @@ input.interactive-stdin {
 	color: var(--tx1);
 	transform: translateX(2em);
 	transition: transform 0.25s;
+	cursor: pointer;
 }
 
 .load-state-indicator svg {
