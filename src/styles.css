@@ -161,9 +161,17 @@ input.interactive-stdin {
 	padding: 0.5em;
 }
 
+.has-run-code-button {
+	position: relative;
+}
+
+.has-run-code-button pre {
+	z-index: 1;
+}
+
 .load-state-indicator {
 	position: absolute;
-	top: 0.5em;
+	top: 0.1em;
 	left: -2em;
 	widtH: 2em;
 	height: 2em;
@@ -179,14 +187,6 @@ input.interactive-stdin {
 	width: 1.5em;
 	height: 1.5em;
 	margin: 0.25em;
-}
-
-.has-run-code-button {
-	position: relative;
-}
-
-.has-run-code-button pre {
-	z-index: 1;
 }
 
 .load-state-indicator.visible {
