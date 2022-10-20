@@ -2,11 +2,23 @@ import {ChildProcessWithoutNullStreams, spawn} from "child_process";
 import {Outputter} from "src/Outputter";
 import {ExecutorSettings} from "src/settings/Settings";
 import AsyncExecutor from "../AsyncExecutor";
+import ReplExecutor from "../ReplExecutor.js";
 import wrapPython, {PLT_DEFAULT_BACKEND_PY_VAR} from "./wrapPython";
 
-export default class PythonExecutor extends AsyncExecutor {
+export default class PythonExecutor extends ReplExecutor {
+	removePrompts(output: string, source: "stdout" | "stderr"): string {
+		if(source == "stderr") {
+			return output.replace(/(^((\.\.\.|>>>) )+)|(((\.\.\.|>>>) )+$)/g, "");
+		} else {
+			return output;
+		}
+	}
+	wrapCode(code: string, finishSigil: string): string {
+		return wrapPython(code, this.globalsDictionaryName, this.localsDictionaryName, this.printFunctionName, 
+			finishSigil, this.settings.pythonEmbedPlots);
+	}
 
-	settings: ExecutorSettings
+	
 
 	process: ChildProcessWithoutNullStreams
 
@@ -15,29 +27,17 @@ export default class PythonExecutor extends AsyncExecutor {
 	globalsDictionaryName: string;
 
 	constructor(settings: ExecutorSettings, file: string) {
-		super(file, "python");
-
-		this.settings = settings;
 
 		const args = settings.pythonArgs ? settings.pythonArgs.split(" ") : [];
 
 		args.unshift("-i");
-
-		this.process = spawn(settings.pythonPath, args);
 		
-		this.process.on("close", () => this.emit("close"));
-		
-		this.process.on("error", (err) => {
-			this.notifyError(settings.pythonPath, args.join(" "), "", err, undefined, "Error launching Python process: " + err);
-			this.stop();
-		});
-
+		super(settings, settings.pythonPath, args,
+			file, "python");
+			
 		this.printFunctionName = `__print_${Math.random().toString().substring(2)}_${Date.now()}`;
 		this.localsDictionaryName = `__locals_${Math.random().toString().substring(2)}_${Date.now()}`;
 		this.globalsDictionaryName = `__globals_${Math.random().toString().substring(2)}_${Date.now()}`;
-
-		// Send a newline so that the intro message won't be buffered
-		this.setup().then(() => { /* do nothing */ });
 	}
 
 	/**
@@ -84,72 +84,4 @@ ${this.globalsDictionaryName} = {**globals()}
 			});
 		}).then(() => { /* do nothing */ });
 	}
-
-	/**
-	 * Run some Python code
-	 * @param code code to run
-	 * @param outputter outputter to use
-	 * @param cmd Not used
-	 * @param cmdArgs Not used
-	 * @param ext Not used
-	 * @returns A promise that resolves once the code is done running
-	 */
-	async run(code: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
-		outputter.queueBlock();
-		
-		// TODO: Is handling for reject necessary?
-		return this.addJobToQueue((resolve, reject) => {
-			if (this.process === null) return resolve();
-			
-			const finishSigil = `SIGIL_BLOCK_DONE${Math.random()}_${Date.now()}_${code.length}`;
-			
-			outputter.startBlock();
-
-			const wrappedCode = wrapPython(code,
-				this.globalsDictionaryName,
-				this.localsDictionaryName,
-				this.printFunctionName,
-				finishSigil,
-				this.settings.pythonEmbedPlots
-			);
-
-			//import print from builtins to circumnavigate the case where the user redefines print
-			this.process.stdin.write(wrappedCode);
-
-			outputter.clear();
-
-			outputter.on("data", (data: string) => {
-				this.process.stdin.write(data);
-			});
-
-			const writeToStdout = (data: any) => {
-				let str = data.toString();
-
-				if (str.endsWith(finishSigil)) {
-					str = str.substring(0, str.length - finishSigil.length);
-
-					this.process.stdout.removeListener("data", writeToStdout)
-					this.process.stderr.removeListener("data", writeToStderr);
-					this.process.removeListener("close", resolve);
-					outputter.write(str);
-
-					resolve();
-				} else {
-					outputter.write(str);
-				}
-			};
-
-			const writeToStderr = (data: any) => {
-				const removedPrompts = data.toString().replace(/(^((\.\.\.|>>>) )+)|(((\.\.\.|>>>) )+$)/g, "")
-
-				outputter.writeErr(removedPrompts);
-			}
-			
-			this.process.on("close", resolve);
-
-			this.process.stdout.on("data", writeToStdout);
-			this.process.stderr.on("data", writeToStderr);
-		});
-	}
-
 }
