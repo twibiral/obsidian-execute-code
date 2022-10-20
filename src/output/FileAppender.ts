@@ -37,14 +37,12 @@ export default class FileAppender {
         );
         
         this.view.setViewData(this.view.editor.getValue(), false);
-        console.log(editor.getValue());
     }
     
     public setCodeBlock(blockElem: HTMLPreElement) {
         if(this.codeBlockElement != blockElem) {
             this.codeBlockElement = blockElem;
-            const blockIndex = this.getIndexOfCodeBlock(blockElem);
-            this.codeBlockRange = this.getCodeBlockTextRangeByIndex(blockIndex);
+            this.codeBlockRange = this.getRangeOfCodeBlock(blockElem);
         }
     }
     
@@ -74,15 +72,20 @@ export default class FileAppender {
         }
     }
     
-    getCodeBlockTextRangeByIndex(searchBlockIndex: number): EditorRange | null {
+    findExactCodeBlockRange(startLine: number, endLine: number, searchBlockIndex: number): EditorRange | null {
         const textContent = this.view.data;
+        const editor = this.view.editor;
+        
+        const startIndex = editor.posToOffset({ch: 0, line: startLine});
+        const endIndex = editor.posToOffset({ ch: 0, line: endLine + 1 });
         
         const PADDING = "\n\n\n\n\n";
         
-        let escaped, inBlock, blockI = 0, last5 = PADDING, blockStart, charIndex = 0;
-        for(const char of textContent + PADDING) {
+        let escaped, inBlock, blockI = 0, last5 = PADDING, blockStart
+        for(let i = startIndex; i < endIndex + PADDING.length; i++) {
+            const char = i < endIndex ? textContent[i] : PADDING[0];
+            
             last5 = last5.substring(1) + char;
-            console.log(last5, char, inBlock, blockI, charIndex, searchBlockIndex);
             if(escaped) {
                 escaped = false;
                 continue;
@@ -95,40 +98,40 @@ export default class FileAppender {
                 inBlock = !inBlock;
                 //If we are entering a block, set the block start
                 if(inBlock) {
-                    blockStart = charIndex - 4;
+                    blockStart = i - 4;
                 } else {
                     //if we're leaving a block, check if its index is the searched index
                     if(blockI == searchBlockIndex) {
                         return { 
                             from: this.view.editor.offsetToPos(blockStart), 
-                            to: this.view.editor.offsetToPos(charIndex)
+                            to: this.view.editor.offsetToPos(i)
                         }
                     } else {// if it isn't, just increase the block index
                         blockI++;
                     }
                 }
             }
-            charIndex++;
         }
         return null;
     }
     
-    getIndexOfCodeBlock(codeBlock: HTMLPreElement): number {
-        const container = this.findContainer(codeBlock);
+    /**
+     * Uses an undocumented API to find the EditorRange that corresponds to a given codeblock's element.
+     * Returns null if it wasn't able to find the range.
+     * @param codeBlock <pre> element of the desired code block
+     * @returns the corresponding EditorRange, or null
+     */
+    getRangeOfCodeBlock(codeBlock: HTMLPreElement): EditorRange | null {
+        const parent = codeBlock.parentElement;
+        const index = Array.from(parent.children).indexOf(codeBlock);
         
-        const preBlocks = Array.from(container.getElementsByTagName("pre"));
+        //@ts-ignore
+        const section: null | { lineStart: number, lineEnd: number } = this.view.previewMode.renderer.sections.find(x => x.el==parent);
         
-        let iHasLanguage = 0;
-        for(const block of preBlocks) {
-            if (block == codeBlock) return iHasLanguage;
-            if(block.className.includes("language-")) iHasLanguage++;
+        if(section) {
+            return this.findExactCodeBlockRange(section.lineStart, section.lineEnd, index);
+        } else {
+            return null;
         }
-        return -1;
-    }
-    findContainer(codeBlock: HTMLElement) {
-        console.log(codeBlock);
-        let target = codeBlock;
-        while (!target.classList.contains("markdown-reading-view")) target = target.parentElement;
-        return target;
     }
 }
