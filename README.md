@@ -295,6 +295,7 @@ mySum a b = a+b
 
 <details>
 <summary>Scala</summary>
+
 - Requirements: Scala is installed and the correct path is set in the settings.
 
 ```scala
