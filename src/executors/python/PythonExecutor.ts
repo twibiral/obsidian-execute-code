@@ -60,6 +60,7 @@ export default class PythonExecutor extends ReplExecutor {
 		this.addJobToQueue((resolve, reject) => {
 			this.process.stdin.write(
 /*python*/`
+${this.globalsDictionaryName} = {**globals()}
 ${this.settings.pythonEmbedPlots ?
 /*python*/`
 try:
@@ -72,7 +73,6 @@ except:
 from __future__ import print_function
 import sys
 ${this.printFunctionName} = print
-${this.globalsDictionaryName} = {**globals()}
 `.replace(/\r\n/g, "\n"));
 
 			this.process.stderr.once("data", (data) => {
