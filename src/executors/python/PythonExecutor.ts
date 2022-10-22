@@ -40,19 +40,6 @@ export default class PythonExecutor extends ReplExecutor {
 		this.globalsDictionaryName = `__globals_${Math.random().toString().substring(2)}_${Date.now()}`;
 	}
 
-	/**
-	 * Close the runtime.
-	 * @returns A promise that resolves once the runtime is fully closed
-	 */
-	stop(): Promise<void> {
-		return new Promise((resolve, reject) => {
-			this.process.on("close", () => {
-				resolve();
-			});
-			this.process.kill();
-			this.process = null;
-		});
-	}
 
 	/**
 	 * Swallows and does not output the "Welcome to Python v..." message that shows at startup.

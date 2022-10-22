@@ -13,25 +13,11 @@ export default class RExecutor extends ReplExecutor {
 		//use empty array for empty string, instead of [""]
 		const args = settings.RArgs ? settings.RArgs.split(" ") : [];
 		
-		let conArgName = `notebook_connection_${Math.random().toString(16).substring(2)}`;
+		let conArgName = `notebook_connection` //_${Math.random().toString(16).substring(2)}`;
 
 		args.unshift(`-e`, `${conArgName} <- file("stdin"); while(1) { eval(parse(text = readLines(${conArgName}, n=1))) }`);
 
-		super(settings, settings.nodePath, args, file, "r");
-	}
-
-	/**
-	 * Close the runtime.
-	 * @returns A promise that resolves once the runtime is fully closed
-	 */
-	stop(): Promise<void> {
-		return new Promise((resolve, reject) => {
-			this.process.on("close", () => {
-				resolve();
-			});
-			this.process.kill();
-			this.process = null;
-		});
+		super(settings, settings.RPath, args, file, "r");
 	}
 
 	/**
@@ -43,7 +29,9 @@ export default class RExecutor extends ReplExecutor {
 	
 	wrapCode(code: string, finishSigil: string): string {
 		return `tryCatch({
-			cat(sprintf("%s", ${code}))
+			cat(sprintf("%s", 
+				eval(parse(text = ${JSON.stringify(code)} ))
+			))
 		},
 		error = function(e){
 			cat(sprintf("%s", e), file=stderr())
