@@ -457,6 +457,8 @@ Follow [this link](https://obsidian.md/plugins?search=execute%20code#) and click
 	
 	To avoid or resolve errors from an incorrect path.
 	
+	(for Mac and Windows)
+	
 	1. In your terminal, type 'where node'
 	
 	![Type 'where node' in terminal](https://user-images.githubusercontent.com/11916140/197309851-a837525b-ff07-45a2-99f1-b0d9a05a3082.png)
