@@ -459,13 +459,14 @@ Follow [this link](https://obsidian.md/plugins?search=execute%20code#) and click
 	
 	1. In your terminal, type 'where node'
 	
-	![CleanShot 2022-10-21 at 19 03 49@2x](https://user-images.githubusercontent.com/11916140/197303215-07ff9460-201d-4c0a-95a3-3b1263713a35.png)
+	![Type 'where node' in terminal](https://user-images.githubusercontent.com/11916140/197309851-a837525b-ff07-45a2-99f1-b0d9a05a3082.png)
 	
 	2. Copy path from terminal ( ex. /opt/homebrew/bin/node )
 	
 	3. Paste in path under settings ( ex. Node path )
 	
-	<img width="807" alt="CleanShot 2022-10-21 at 18 59 48@2x" src="https://user-images.githubusercontent.com/11916140/197303057-a9f05c03-5bfc-44d7-b583-9028a3279eaf.png">
+	![Update path under settings with path from step 2](https://user-images.githubusercontent.com/11916140/197309879-31008dcd-f2c1-4411-9278-bc97768a81b4.png)
+
 
 ## Warning
 
