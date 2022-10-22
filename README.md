@@ -455,19 +455,19 @@ Follow [this link](https://obsidian.md/plugins?search=execute%20code#) and click
 	
 ## Locating Path Settings ( ex. JavaScript | Node )
 	
-	To avoid or resolve errors from an incorrect path.
+To avoid or resolve errors from an incorrect path.
 	
-	(for Mac and Windows)
+('where' for Mac and Windows) --- (for Linux Users, replace 'where' with 'which')
 	
-	1. In your terminal, type 'where node'
+1. In your terminal, type 'where node'
 	
-	![Type 'where node' in terminal](https://user-images.githubusercontent.com/11916140/197309851-a837525b-ff07-45a2-99f1-b0d9a05a3082.png)
+![Type 'where node' in terminal](https://user-images.githubusercontent.com/11916140/197309851-a837525b-ff07-45a2-99f1-b0d9a05a3082.png)
 	
-	2. Copy path from terminal ( ex. /opt/homebrew/bin/node )
+2. Copy path from terminal ( ex. /opt/homebrew/bin/node )
 	
-	3. Paste in path under settings ( ex. Node path )
+3. Paste in path under settings ( ex. Node path )
 	
-	![Update path under settings with path from step 2](https://user-images.githubusercontent.com/11916140/197309879-31008dcd-f2c1-4411-9278-bc97768a81b4.png)
+![Update path under settings with path from step 2](https://user-images.githubusercontent.com/11916140/197309879-31008dcd-f2c1-4411-9278-bc97768a81b4.png)
 
 
 ## Warning
