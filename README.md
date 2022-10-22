@@ -467,7 +467,7 @@ To avoid or resolve errors from an incorrect path.
 	
 3. Paste in path under settings ( ex. Node path )
 	
-![Update path under settings with path from step 2](https://user-images.githubusercontent.com/11916140/197309879-31008dcd-f2c1-4411-9278-bc97768a81b4.png)
+![Update path under settings with path from step 2](https://user-images.githubusercontent.com/11916140/197365611-50a2f7ae-f580-4067-bc15-967a3eddc355.png)
 
 
 ## Warning
