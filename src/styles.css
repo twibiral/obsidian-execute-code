@@ -71,7 +71,7 @@ pre:hover .run-button-disabled, pre:hover .clear-button-disabled {
 }
 
 pre:hover code.language-output {
-	margin-bottom: 23px;
+	margin-bottom: 28px;
 }
 
 :not(.use-custom-output-color) code.language-output span.stdout {
@@ -161,9 +161,17 @@ input.interactive-stdin {
 	padding: 0.5em;
 }
 
+.has-run-code-button {
+	position: relative;
+}
+
+.has-run-code-button pre {
+	z-index: 1;
+}
+
 .load-state-indicator {
 	position: absolute;
-	top: 0.5em;
+	top: 0.1em;
 	left: -2em;
 	widtH: 2em;
 	height: 2em;
@@ -173,20 +181,13 @@ input.interactive-stdin {
 	color: var(--tx1);
 	transform: translateX(2em);
 	transition: transform 0.25s;
+	cursor: pointer;
 }
 
 .load-state-indicator svg {
 	width: 1.5em;
 	height: 1.5em;
 	margin: 0.25em;
-}
-
-.has-run-code-button {
-	position: relative;
-}
-
-.has-run-code-button pre {
-	z-index: 1;
 }
 
 .load-state-indicator.visible {
@@ -203,6 +204,7 @@ input.interactive-stdin {
 	transform: translateX(-2em);
 	opacity: 0;
 	transition: transform 0.25s, opacity 0.25s;
+	pointer-events: none;
 }
 
 .load-state-indicator.visible::before {
