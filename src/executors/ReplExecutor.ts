@@ -3,6 +3,7 @@ import { LanguageId } from "../main.js";
 import { Outputter } from "../Outputter.js";
 import { ExecutorSettings } from "../settings/Settings.js";
 import AsyncExecutor from "./AsyncExecutor.js";
+import killWithChildren from "./killWithChildren.js";
 
 export default abstract class ReplExecutor extends AsyncExecutor {
     process: ChildProcessWithoutNullStreams;
@@ -93,11 +94,12 @@ export default abstract class ReplExecutor extends AsyncExecutor {
     }
     
     stop(): Promise<void> {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             this.process.on("close", () => {
                 resolve();
-            });
-            this.process.kill();
+            });            
+            
+            await killWithChildren(this.process.pid);
             this.process = null;
         });
     }

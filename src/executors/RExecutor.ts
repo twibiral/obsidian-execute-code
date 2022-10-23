@@ -15,7 +15,19 @@ export default class RExecutor extends ReplExecutor {
 		
 		let conArgName = `notebook_connection` //_${Math.random().toString(16).substring(2)}`;
 
-		args.unshift(`-e`, `${conArgName} <- file("stdin"); while(1) { eval(parse(text = readLines(${conArgName}, n=1))) }`);
+		args.unshift(`-e`, `con=file("stdin", "r"); while(1) {}; eval(parse(text= tail(readLines(con = con, n=1))))`)
+		
+		/*`			
+				try({ 
+					print(
+						eval(
+							parse(
+								text = readLines(n=4)
+							)
+						)
+					)
+				})
+		`.replace(/[\r\n\s]+/g, ""));*/
 
 		super(settings, settings.RPath, args, file, "r");
 	}
@@ -24,10 +36,11 @@ export default class RExecutor extends ReplExecutor {
 	 * Writes a single newline to ensure that the stdin is set up correctly.
 	 */
 	async setup() {
-		this.process.stdin.write("\n");
+		console.log("setup");
+		//this.process.stdin.write("\n");
 	}
 	
-	wrapCode(code: string, finishSigil: string): string {
+	wrapCode(code: string, finishSigil: string): string {		
 		return `tryCatch({
 			cat(sprintf("%s", 
 				eval(parse(text = ${JSON.stringify(code)} ))
@@ -37,8 +50,9 @@ export default class RExecutor extends ReplExecutor {
 			cat(sprintf("%s", e), file=stderr())
 		}, 
 		finally = {
-			cat(${JSON.stringify(finishSigil)})
-		})` +
+			cat(${JSON.stringify(finishSigil)});
+			flush.console()
+		})`.replace(/\r?\n/g, "") +
 			"\n";
 	}
 	
