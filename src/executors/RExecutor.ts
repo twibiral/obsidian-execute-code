@@ -15,7 +15,7 @@ export default class RExecutor extends ReplExecutor {
 		
 		let conArgName = `notebook_connection` //_${Math.random().toString(16).substring(2)}`;
 
-		args.unshift(`-e`, `con=file("stdin", "r"); while(1) {}; eval(parse(text= tail(readLines(con = con, n=1))))`)
+		args.unshift(`-e`, `con=file("stdin", "r"); while(1) { eval(parse(text= tail(readLines(con = con, n=1)))) }`)
 		
 		/*`			
 				try({ 
