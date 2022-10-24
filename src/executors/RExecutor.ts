@@ -13,9 +13,9 @@ export default class RExecutor extends ReplExecutor {
 		//use empty array for empty string, instead of [""]
 		const args = settings.RArgs ? settings.RArgs.split(" ") : [];
 		
-		let conArgName = `notebook_connection` //_${Math.random().toString(16).substring(2)}`;
+		let conArgName = `notebook_connection_${Math.random().toString(16).substring(2)}`;
 
-		args.unshift(`-e`, `con=file("stdin", "r"); while(1) { eval(parse(text= tail(readLines(con = con, n=1)))) }`)
+		args.unshift(`-e`, `${conArgName}=file("stdin", "r"); while(1) { eval(parse(text= tail(readLines(con = ${conArgName}, n=1)))) }`)
 		
 		/*`			
 				try({ 
