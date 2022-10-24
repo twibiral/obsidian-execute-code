@@ -37,7 +37,7 @@ export class Outputter extends EventEmitter {
 		this.htmlBuffer = "";
 		this.blockRunState = "INITIAL";
 		
-		this.saveToFile = new FileAppender(view);
+		this.saveToFile = new FileAppender(view, codeBlock.parentElement as HTMLPreElement);
 	}
 
 	/**
@@ -366,8 +366,6 @@ export class Outputter extends EventEmitter {
 	private makeOutputVisible() {
 		if (!this.clearButton) this.addClearButton();
 		if (!this.outputElement) this.addOutputElement();
-		
-		this.saveToFile.setCodeBlock(this.codeBlockElement.parentElement as HTMLPreElement);
 
 		this.inputState = "OPEN";
 		this.outputElement.style.display = "block";

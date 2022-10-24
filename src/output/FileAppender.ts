@@ -6,8 +6,11 @@ export default class FileAppender {
     codeBlockRange: EditorRange
     outputPosition: EditorPosition;
 
-    public constructor(view: MarkdownView) {
+    public constructor(view: MarkdownView, blockElem: HTMLPreElement) {
         this.view = view;
+        
+        this.codeBlockElement = blockElem;
+        this.codeBlockRange = this.getRangeOfCodeBlock(blockElem);
     }
 
     public clearOutput() {
@@ -37,13 +40,6 @@ export default class FileAppender {
         );
 
         this.view.setViewData(this.view.editor.getValue(), false);
-    }
-
-    public setCodeBlock(blockElem: HTMLPreElement) {
-        if (this.codeBlockElement != blockElem) {
-            this.codeBlockElement = blockElem;
-            this.codeBlockRange = this.getRangeOfCodeBlock(blockElem);
-        }
     }
 
     addOutputBlock() {
