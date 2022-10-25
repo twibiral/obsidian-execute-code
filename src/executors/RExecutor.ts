@@ -15,19 +15,15 @@ export default class RExecutor extends ReplExecutor {
 		
 		let conArgName = `notebook_connection_${Math.random().toString(16).substring(2)}`;
 
-		args.unshift(`-e`, `${conArgName}=file("stdin", "r"); while(1) { eval(parse(text= tail(readLines(con = ${conArgName}, n=1)))) }`)
+		// This is the R repl. 
+		// It's coded by itself because Rscript has no REPL, and adding an additional dep on R would be lazy.
+		//It doesn't handle printing by itself because of the need to print the sigil, so
+		//   it's really more of a REL.
+		args.unshift(`-e`, 
+			/*R*/
+			`${conArgName}=file("stdin", "r"); while(1) { eval(parse(text=tail(readLines(con = ${conArgName}, n=1)))) }`
+		)
 		
-		/*`			
-				try({ 
-					print(
-						eval(
-							parse(
-								text = readLines(n=4)
-							)
-						)
-					)
-				})
-		`.replace(/[\r\n\s]+/g, ""));*/
 
 		super(settings, settings.RPath, args, file, "r");
 	}
