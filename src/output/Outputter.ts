@@ -38,6 +38,8 @@ export class Outputter extends EventEmitter {
 		this.blockRunState = "INITIAL";
 		
 		this.saveToFile = new FileAppender(view, codeBlock.parentElement as HTMLPreElement);
+		
+		this.restoreWrite(this.saveToFile.getRenderedOutput());
 	}
 
 	/**
@@ -89,6 +91,12 @@ export class Outputter extends EventEmitter {
 	write(text: string) {
 		this.processSigilsAndWriteText(text);
 
+	}
+	
+	restoreWrite(text: string) {
+		this.saveToFile.clearOutput();
+		this.processSigilsAndWriteText(text);
+		this.blockRunState = "INITIAL";
 	}
 
 	/**

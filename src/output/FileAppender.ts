@@ -30,7 +30,7 @@ export default class FileAppender {
     }
 
     public addOutput(output: string) {
-        this.addOutputBlock();
+        this.findOutputTarget();
 
         const editor = this.view.editor;
 
@@ -41,30 +41,63 @@ export default class FileAppender {
 
         this.view.setViewData(this.view.editor.getValue(), false);
     }
+    
+    /**
+     * Get the output's string from the document. 
+     */
+    public getRenderedOutput(): string {
+        this.findOutputTarget(false);
+        
+        const CODE_BLOCK_START = "\n```output\n";
+        
+        console.log(this.view.editor.getRange(this.codeBlockRange.to, this.outputPosition));
+        
+        return this.view.editor
+            .getRange(this.codeBlockRange.to, this.outputPosition)
+            .substring(CODE_BLOCK_START.length)
+            .trim();
+    }
 
-    addOutputBlock() {
+    /**
+     * Finds where output should be appended to.
+     * @param addIfNotExist Add an `output` code block if one doesn't exist already
+     */
+    findOutputTarget(addIfNotExist = true) {
         const editor = this.view.editor;
+        
+        console.log("addIfNotExist", addIfNotExist);
 
-        const EXPECTED_SUFFIX = "\n```output\n"
+        const EXPECTED_SUFFIX = "\n```output\n";
+        
+        const sigilEndIndex = editor.posToOffset(this.codeBlockRange.to) + EXPECTED_SUFFIX.length;
 
         const outputBlockSigilRange: EditorRange = {
             from: this.codeBlockRange.to,
-            to: editor.offsetToPos(
-                editor.posToOffset(this.codeBlockRange.to) + EXPECTED_SUFFIX.length
-            )
+            to: editor.offsetToPos(sigilEndIndex)
         }
 
         const hasOutput = editor.getRange(outputBlockSigilRange.from, outputBlockSigilRange.to) == EXPECTED_SUFFIX;
 
         if (hasOutput) {
-            this.outputPosition = outputBlockSigilRange.to;
-        } else {
-            editor.replaceRange(EXPECTED_SUFFIX + "\n```", this.codeBlockRange.to);
+            //find the first code block end that occurs after the ```output sigil
+            const index = editor.getValue().indexOf("\n```\n", sigilEndIndex);
+            
+            //bail out if we didn't find an end
+            if(index == -1) {
+                this.outputPosition = outputBlockSigilRange.to;
+            } else {
+                //subtract 1 so output appears before the newline
+                this.outputPosition = editor.offsetToPos(index - 1);
+            }
+        } else if (addIfNotExist) {
+            editor.replaceRange(EXPECTED_SUFFIX + "\n```\n", this.codeBlockRange.to);
             this.view.data = this.view.editor.getValue();
-            //We need to recalculate the offsetToPos because the insertion will've changed the lines.
+            //We need to recalculate the outputPosition because the insertion will've changed the lines.
             this.outputPosition = editor.offsetToPos(
                 editor.posToOffset(this.codeBlockRange.to) + EXPECTED_SUFFIX.length
             )
+        } else {
+            this.outputPosition = outputBlockSigilRange.to;
         }
     }
 
@@ -77,8 +110,8 @@ export default class FileAppender {
      * @returns an EditorRange representing the range occupied by the given block, or null if it couldn't be found
      */
     findExactCodeBlockRange(startLine: number, endLine: number, searchBlockIndex: number): EditorRange | null {
-        const textContent = this.view.data;
         const editor = this.view.editor;
+        const textContent = editor.getValue();
 
         const startIndex = editor.posToOffset({ ch: 0, line: startLine });
         const endIndex = editor.posToOffset({ ch: 0, line: endLine + 1 });
@@ -87,6 +120,8 @@ export default class FileAppender {
         //This helps us if the section begins directly with "```".
         //At the end, it iterates through the padding again.
         const PADDING = "\n\n\n\n\n";
+        
+        console.log("here it is!", textContent, searchBlockIndex);
 
 
         /*
