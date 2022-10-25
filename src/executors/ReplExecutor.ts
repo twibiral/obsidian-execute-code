@@ -94,12 +94,12 @@ export default abstract class ReplExecutor extends AsyncExecutor {
     }
     
     stop(): Promise<void> {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             this.process.on("close", () => {
                 resolve();
             });            
             
-            await killWithChildren(this.process.pid);
+            killWithChildren(this.process.pid);
             this.process = null;
         });
     }
