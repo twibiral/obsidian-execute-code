@@ -18,9 +18,11 @@ export default class FileAppender {
 
             const editor = this.view.editor;
 
-            const afterEndOfOutputCodeBlock = editor.offsetToPos(
-                editor.posToOffset(this.outputPosition) + "\n```".length
-            );
+            //Offset this.outputPosition by "\n```"
+            const afterEndOfOutputCodeBlock: EditorPosition = {
+                line: this.outputPosition.line + 1,
+                ch: "```".length    
+            };
 
             editor.replaceRange("", this.codeBlockRange.to, afterEndOfOutputCodeBlock);
             this.view.setViewData(editor.getValue(), false);
@@ -35,9 +37,14 @@ export default class FileAppender {
         const editor = this.view.editor;
 
         editor.replaceRange(output, this.outputPosition);
-        this.outputPosition = editor.offsetToPos(
-            editor.posToOffset(this.outputPosition) + output.length
-        );
+        
+        const lines = output.split("\n");
+        this.outputPosition = {
+            line: this.outputPosition.line + (lines.length - 1), //if the addition is only 1 line, don't change current line pos
+            ch: (lines.length == 1 ? //if the addition is only 1 line, then offset from the existing position.
+                this.outputPosition.ch : 0  //If it's not, ignore it.
+            ) + lines[lines.length - 1].length
+        }
 
         this.view.setViewData(this.view.editor.getValue(), false);
     }
@@ -73,7 +80,10 @@ export default class FileAppender {
 
         const outputBlockSigilRange: EditorRange = {
             from: this.codeBlockRange.to,
-            to: editor.offsetToPos(sigilEndIndex)
+            to: {
+                ch: 0, //since the suffix ends with a newline, it'll be column 0
+                line: this.codeBlockRange.to.line + 2 // the suffix adds 2 lines
+            }
         }
 
         const hasOutput = editor.getRange(outputBlockSigilRange.from, outputBlockSigilRange.to) == EXPECTED_SUFFIX;
@@ -93,9 +103,13 @@ export default class FileAppender {
             editor.replaceRange(EXPECTED_SUFFIX + "\n```\n", this.codeBlockRange.to);
             this.view.data = this.view.editor.getValue();
             //We need to recalculate the outputPosition because the insertion will've changed the lines.
-            this.outputPosition = editor.offsetToPos(
-                editor.posToOffset(this.codeBlockRange.to) + EXPECTED_SUFFIX.length
-            )
+            //The expected suffix ends with a newline, so the column will always be 0; 
+            //the row will be the current row + 2: the suffix adds 2 lines
+            this.outputPosition = {
+                ch: 0,
+                line: this.codeBlockRange.to.line + 2
+            };
+            
         } else {
             this.outputPosition = outputBlockSigilRange.to;
         }
