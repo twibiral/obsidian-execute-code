@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
+## [Unreleased]
+## Added
+- WSL support (thanks to @clohal)
+
+## Changed
+- Fix bug where recursion didn't work and some parts of the code couldn't be executed (Python executor's usage of `exec`/`eval`) (thanks to @clohal)
+- Fix formatting for the Scale section in the README.md (thanks to @cbarond)
+- Fix mixed up mathematica settings (thanks to @clohal)
+
+
 ## [1.2.0] - 2022-10-19
 ### Added
 - Support for Scala (Thanks to @chlohal)
