@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fix bug where recursion didn't work and some parts of the code couldn't be executed (Python executor's usage of `exec`/`eval`) (thanks to @clohal)
 - Fix formatting for the Scale section in the README.md (thanks to @cbarond)
 - Fix mixed up mathematica settings (thanks to @clohal)
-
+- Fix wrong setting for Mathematica
 
 ## [1.2.0] - 2022-10-19
 ### Added
