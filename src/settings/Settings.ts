@@ -196,7 +196,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	javaInteractive: false,
 	powershellInteractive: false,
 	kotlinInteractive: false,
-	mathematicaInteractive: true,
+	mathematicaInteractive: false,
 	haskellInteractive: false,
 	scalaInteractive: false
 }
