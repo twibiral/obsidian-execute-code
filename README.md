@@ -292,7 +292,10 @@ mySum:: Num a => a -> a -> a
 mySum a b = a+b
 ```
 </details>
+
+<details>
 <summary>Scala</summary>
+
 - Requirements: Scala is installed and the correct path is set in the settings.
 
 ```scala
