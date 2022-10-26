@@ -95,6 +95,6 @@ export default class ExecutorContainer extends EventEmitter implements Iterable<
 		else if (language in nonInteractiveExecutors)
 			return new nonInteractiveExecutors[language](this.plugin.settings, file);
 		// Generic non-interactive language executor
-		return new NonInteractiveCodeExecutor(needsShell, file, language);
+		return new NonInteractiveCodeExecutor(this.plugin.settings, needsShell, file, language);
 	}
 }
