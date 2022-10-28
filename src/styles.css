@@ -173,7 +173,7 @@ input.interactive-stdin {
 	position: absolute;
 	top: 0.1em;
 	left: -2em;
-	widtH: 2em;
+	width: 2em;
 	height: 2em;
 	background: var(--background-primary-alt);
 	border-top-left-radius: 4px;
