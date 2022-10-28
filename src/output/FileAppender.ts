@@ -57,8 +57,6 @@ export default class FileAppender {
         
         const CODE_BLOCK_START = "\n```output\n";
         
-        console.log(this.view.editor.getRange(this.codeBlockRange.to, this.outputPosition));
-        
         return this.view.editor
             .getRange(this.codeBlockRange.to, this.outputPosition)
             .substring(CODE_BLOCK_START.length)
@@ -66,14 +64,12 @@ export default class FileAppender {
     }
 
     /**
-     * Finds where output should be appended to.
+     * Finds where output should be appended to and sets the `outputPosition` property to reflect it.
      * @param addIfNotExist Add an `output` code block if one doesn't exist already
      */
     findOutputTarget(addIfNotExist = true) {
         const editor = this.view.editor;
         
-        console.log("addIfNotExist", addIfNotExist);
-
         const EXPECTED_SUFFIX = "\n```output\n";
         
         const sigilEndIndex = editor.posToOffset(this.codeBlockRange.to) + EXPECTED_SUFFIX.length;
@@ -134,8 +130,6 @@ export default class FileAppender {
         //This helps us if the section begins directly with "```".
         //At the end, it iterates through the padding again.
         const PADDING = "\n\n\n\n\n";
-        
-        console.log("here it is!", textContent, searchBlockIndex);
 
 
         /*

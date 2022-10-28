@@ -39,7 +39,7 @@ export class Outputter extends EventEmitter {
 		
 		this.saveToFile = new FileAppender(view, codeBlock.parentElement as HTMLPreElement);
 		
-		this.restoreWrite(this.saveToFile.getRenderedOutput());
+		this.restoreWrite("haha"); //this.saveToFile.getRenderedOutput());
 	}
 
 	/**
@@ -48,6 +48,7 @@ export class Outputter extends EventEmitter {
 	clear() {
 		if (this.outputElement) {
 			for (const child of Array.from(this.outputElement.children)) {
+				console.log(child);
 				if (child instanceof HTMLSpanElement)
 					this.outputElement.removeChild(child);
 			}
@@ -95,7 +96,10 @@ export class Outputter extends EventEmitter {
 	
 	restoreWrite(text: string) {
 		this.saveToFile.clearOutput();
+		console.log(this);
 		this.processSigilsAndWriteText(text);
+		
+		this.closeInput();
 		this.blockRunState = "INITIAL";
 	}
 
@@ -237,10 +241,12 @@ export class Outputter extends EventEmitter {
 		const hr = document.createElement("hr");
 
 		this.outputElement = document.createElement("code");
-		this.outputElement.classList.add("language-output");
+		this.outputElement.classList.add("executor-output");
 
 		this.outputElement.appendChild(hr);
-		if (this.inputState != "NOT_DOING") this.addInputElement();
+		if (this.inputElement === undefined && this.inputState != "NOT_DOING") 
+			this.addInputElement();
+
 		parentEl.appendChild(this.outputElement);
 	}
 
@@ -304,6 +310,7 @@ export class Outputter extends EventEmitter {
 		stdElem.addClass(streamId);
 
 		if (this.inputElement) {
+			console.log(this.inputElement, this.outputElement);
 			this.outputElement.insertBefore(stdElem, this.inputElement);
 		} else {
 			this.outputElement.appendChild(stdElem);
