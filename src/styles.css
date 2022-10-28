@@ -194,6 +194,7 @@ input.interactive-stdin {
 
 .load-state-indicator.visible {
 	transform: translateX(0);
+	transform: translateX(var(--folding-offset, 0));
 	opacity: 1;
 	pointer-events: all;
 }
