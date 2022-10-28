@@ -181,6 +181,8 @@ input.interactive-stdin {
 	color: var(--tx1);
 	transform: translateX(2em);
 	transition: transform 0.25s;
+	opacity: 0;
+	pointer-events: none;
 	cursor: pointer;
 }
 
@@ -192,6 +194,8 @@ input.interactive-stdin {
 
 .load-state-indicator.visible {
 	transform: translateX(0);
+	opacity: 1;
+	pointer-events: all;
 }
 
 .load-state-indicator::before {
