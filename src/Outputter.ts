@@ -366,6 +366,6 @@ export class Outputter extends EventEmitter {
 
 		setTimeout(() => {
 			if (this.inputState === "OPEN") this.inputElement.style.display = "inline";
-		}, 1000)
+		}, 400)
 	}
 }
