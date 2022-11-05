@@ -6,10 +6,12 @@ import PrologExecutor from "./executors/PrologExecutor";
 import PythonExecutor from "./executors/python/PythonExecutor";
 import CppExecutor from './executors/CppExecutor';
 import ExecuteCodePlugin, {LanguageId} from "./main";
+import RExecutor from "./executors/RExecutor.js";
 
 const interactiveExecutors: Partial<Record<LanguageId, any>> = {
 	"js": NodeJSExecutor,
-	"python": PythonExecutor
+	"python": PythonExecutor,
+	"r": RExecutor
 };
 
 const nonInteractiveExecutors: Partial<Record<LanguageId, any>> = {

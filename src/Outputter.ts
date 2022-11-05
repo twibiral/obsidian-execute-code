@@ -355,6 +355,8 @@ export class Outputter extends EventEmitter {
 	 * @see {@link clear()}
 	 */
 	private makeOutputVisible() {
+        this.closeInput();
+        
 		if (!this.clearButton) this.addClearButton();
 		if (!this.outputElement) this.addOutputElement();
 
