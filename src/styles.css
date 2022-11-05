@@ -173,14 +173,16 @@ input.interactive-stdin {
 	position: absolute;
 	top: 0.1em;
 	left: -2em;
-	widtH: 2em;
+	width: 2em;
 	height: 2em;
 	background: var(--background-primary-alt);
 	border-top-left-radius: 4px;
 	border-bottom-left-radius: 4px;
 	color: var(--tx1);
 	transform: translateX(2em);
-	transition: transform 0.25s;
+	transition: transform 0.25s, opacity 0.25s;
+	opacity: 0;
+	pointer-events: none;
 	cursor: pointer;
 }
 
@@ -192,6 +194,9 @@ input.interactive-stdin {
 
 .load-state-indicator.visible {
 	transform: translateX(0);
+	transform: translateX(var(--folding-offset, 0));
+	opacity: 1;
+	pointer-events: all;
 }
 
 .load-state-indicator::before {
