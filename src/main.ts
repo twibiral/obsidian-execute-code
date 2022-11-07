@@ -336,6 +336,12 @@ export default class ExecuteCodePlugin extends Plugin {
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.clingPath, this.settings.clingArgs, "c", language, file);
 			})
+		} else if (language === "racket") {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.racketPath, this.settings.racketArgs, this.settings.racketFileExtension, language, file);
+			});
 		}
 	}
 

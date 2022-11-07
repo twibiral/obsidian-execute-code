@@ -41,6 +41,10 @@ export interface ExecutorSettings {
 	javaArgs: string,
 	javaFileExtension: string,
 	javaInject: string;
+	racketPath: string,
+	racketArgs: string,
+	racketFileExtension: string,
+	racketInject: string;
 	maxPrologAnswers: number;
 	prologInject: string;
 	powershellPath: string;
