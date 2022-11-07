@@ -5,15 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
+## [1.4.0]
+### Added
+- Notebook mode for R (Thanks to @chlohal)
+- Improved hiding of running indicator (Thanks to @chlohal and @ZackYJz)
+
+### Changed
+- Fix problem with the output boxes showing up (Thanks to @qiaogaojian)
+
 ## [1.3.0]
-## Added
+### Added
 - WSL support (thanks to @clohal)
 
-## Changed
+### Changed
 - Fix bug where recursion didn't work and some parts of the code couldn't be executed (Python executor's usage of `exec`/`eval`) (thanks to @clohal)
 - Fix formatting for the Scale section in the README.md (thanks to @cbarond)
 - Fix mixed up mathematica settings (thanks to @clohal)
 - Fix wrong setting for Mathematica
+- Improve styles (thanks to @milan338)
+- Refactor interactive executors to cut down on code reuse (thanks to @chlohal)
+- Fix Error Notif on Success (thanks to @clohal)
 
 ## [1.2.0] - 2022-10-19
 ### Added
