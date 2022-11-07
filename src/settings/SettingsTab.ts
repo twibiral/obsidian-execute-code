@@ -2,6 +2,7 @@ import {App, PluginSettingTab, Setting} from "obsidian";
 import ExecuteCodePlugin, {canonicalLanguages, LanguageId} from "src/main";
 import { DISPLAY_NAMES } from "./languageDisplayName";
 import makeCppSettings from "./per-lang/makeCppSettings";
+import makeCSettings from "./per-lang/makeCSettings.js";
 import makeCsSettings from "./per-lang/makeCsSettings";
 import makeGoSettings from "./per-lang/makeGoSettings";
 import makeGroovySettings from "./per-lang/makeGroovySettings";
@@ -174,6 +175,9 @@ export class SettingsTab extends PluginSettingTab {
 
 		// ========== Scala ===========
 		makeScalaSettings(this, this.makeContainerFor("scala"));
+		
+		// ========== C ===========
+		makeCSettings(this, this.makeContainerFor("c"));
 
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}
