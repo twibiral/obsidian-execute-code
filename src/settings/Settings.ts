@@ -41,10 +41,6 @@ export interface ExecutorSettings {
 	javaArgs: string,
 	javaFileExtension: string,
 	javaInject: string;
-	racketPath: string,
-	racketArgs: string,
-	racketFileExtension: string,
-	racketInject: string;
 	maxPrologAnswers: number;
 	prologInject: string;
 	powershellPath: string;
@@ -82,6 +78,10 @@ export interface ExecutorSettings {
 	scalaArgs: string;
 	scalaFileExtension: string;
 	scalaInject: string;
+	racketPath: string;
+	racketArgs: string;
+	racketFileExtension: string;
+	racketInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -102,6 +102,7 @@ export interface ExecutorSettings {
 	mathematicaInteractive: boolean;
 	haskellInteractive: boolean;
 	scalaInteractive: boolean;
+	racketInteractive: boolean;
 }
 
 
@@ -183,6 +184,10 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	scalaArgs: "",
 	scalaFileExtension: "scala",
 	scalaInject: "",
+	racketPath: "racket",
+	racketArgs: "",
+	racketFileExtension: "rkt",
+	racketInject: "",
 
 	jsInteractive: true,
 	tsInteractive: false,
@@ -202,5 +207,6 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	kotlinInteractive: false,
 	mathematicaInteractive: false,
 	haskellInteractive: false,
-	scalaInteractive: false
+	scalaInteractive: false,
+	racketInteractive: false,
 }
