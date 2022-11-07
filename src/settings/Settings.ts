@@ -187,7 +187,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	racketPath: "racket",
 	racketArgs: "",
 	racketFileExtension: "rkt",
-	racketInject: "",
+	racketInject: "#lang racket",
 
 	jsInteractive: true,
 	tsInteractive: false,
