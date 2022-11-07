@@ -7,7 +7,7 @@ The result is shown only after the execution is finished. It is not possible to 
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
 
-The following [languages are supported](#supported-programming-languages): CPP, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lua, CSharp, Prolog, Rust, Python, R, Wolfram Mathematica, Haskell, Scala, Shell & Powershell. 
+The following [languages are supported](#supported-programming-languages): C, CPP, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lua, CSharp, Prolog, Rust, Python, R, Wolfram Mathematica, Haskell, Scala, Shell & Powershell. 
 
 
 Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands) that help you to access paths in obsidian or show images in your notes.
@@ -162,6 +162,31 @@ void main() {
 	std::cout << "Hello, World!" << std::endl;
 }
 ```
+</details>
+
+<details>
+<summary>C</summary>
+
+- Requirements: [Cling](https://github.com/root-project/cling) is installed and correct path is set in the settings.
+- Code will be executed line-by-line without needing a main function.
+
+```c
+#include <stdio.h>
+
+printf("Hello, World!");
+```
+
+- Main functions can be used as an entrypoint by toggling the option in settings.
+
+```c
+#include <stdio.h>
+
+int main() {
+	printf("Hello, World!");
+	return 0;
+}
+```
+
 </details>
 
 <details>
