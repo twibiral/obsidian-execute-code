@@ -330,7 +330,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.scalaPath, this.settings.scalaArgs, this.settings.scalaFileExtension, language, file);
 			});
-		} else if(language == "c") {
+		} else if(language === "c") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
