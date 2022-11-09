@@ -142,6 +142,9 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== C++ ===========
 		makeCppSettings(this, this.makeContainerFor("cpp"));
 
+		// ========== C ===========
+		makeCSettings(this, this.makeContainerFor("c"));
+
 
 		// ========== Shell ==========
 		makeShellSettings(this, this.makeContainerFor("shell"));
@@ -176,9 +179,6 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== Scala ===========
 		makeScalaSettings(this, this.makeContainerFor("scala"));
 		
-		// ========== C ===========
-		makeCSettings(this, this.makeContainerFor("c"));
-
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}
 
