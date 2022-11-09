@@ -15,12 +15,12 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 await tab.plugin.saveSettings();
             }));
     new Setting(containerEl)
-        .setName('Cling arguments')
+        .setName('Cling arguments for C++')
         .addText(text => text
-            .setValue(tab.plugin.settings.clingArgs)
+            .setValue(tab.plugin.settings.cppArgs)
             .onChange(async (value) => {
-                tab.plugin.settings.clingArgs = value;
-                console.log('Cling args set to: ' + value);
+                tab.plugin.settings.cppArgs = value;
+                console.log('CPP args set to: ' + value);
                 await tab.plugin.saveSettings();
             }));
     new Setting(containerEl)

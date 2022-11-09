@@ -15,11 +15,11 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 await tab.plugin.saveSettings();
             }));
     new Setting(containerEl)
-        .setName('Cling arguments')
+        .setName('Cling arguments for C')
         .addText(text => text
-            .setValue(tab.plugin.settings.clingArgs)
+            .setValue(tab.plugin.settings.cArgs)
             .onChange(async (value) => {
-                tab.plugin.settings.clingArgs = value;
+                tab.plugin.settings.cArgs = value;
                 console.log('Cling args set to: ' + value);
                 await tab.plugin.saveSettings();
             }));
