@@ -52,6 +52,7 @@ export interface ExecutorSettings {
 	rustInject: string;
 	cppRunner: string;
 	cppInject: string;
+	cppArgs: string;
 	cppUseMain: boolean;
 	clingPath: string;
 	clingArgs: string;
@@ -78,6 +79,7 @@ export interface ExecutorSettings {
 	scalaArgs: string;
 	scalaFileExtension: string;
 	scalaInject: string;
+	cArgs: string;
 	cUseMain: boolean;
 
 	jsInteractive: boolean;
@@ -155,6 +157,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	rustInject: "",
 	cppRunner: "cling",
 	cppInject: "",
+	cppArgs: "",
 	cppUseMain: false,
 	clingPath: "cling",
 	clingArgs: "",
@@ -181,6 +184,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	scalaArgs: "",
 	scalaFileExtension: "scala",
 	scalaInject: "",
+	cArgs: "",
 	cUseMain: true,
 
 	jsInteractive: true,
