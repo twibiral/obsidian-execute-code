@@ -295,6 +295,52 @@ hello("Bob")
 </details>
 
 <details>
+<summary>Zig</summary>
+
+- Requirements:
+ - Zig is installed ( install instructions : https://ziglang.org/learn/getting-started/#installing-zig )
+
+Zig does not have a run script option but the problem can be easilly solved with a script.
+
+Let's call this script zigr and place it beside zig executable in the installation folder.
+ - after installation add a zig runner script in $HOME/.zig/
+```bash
+#!/bin/bash
+# the execution context does not load .bashrc
+# anything initialized there should be reiniitalized here
+# .... i.e. the path to zig binary 
+cp $1 $HOME/.zig/temp/src/main.zig
+# cat $HOME/.zig/temp/src/main.zig
+cd "$HOME/.zig/temp/"
+#echo "executing zig"
+#echo "$HOME"
+PATH="$PATH:$HOME/.zig"
+#echo "$PATH:$HOME/.zig"
+rm -rf zig-out
+zig build
+zig-out/bin/temp
+
+cd $CDIR
+```
+Zig does not execute/compile single files but projects, so we need to create a project to run our scripts:
+ - create a zig project called temp in $HOME/zig
+ ```bash
+ cd ~/.zig
+ mkdir temp
+ cd temp
+ zig init-exe
+ ```
+Now we can test it :
+```zig
+const std = @import("std");
+
+pub fn main() !void {
+	std.log.info("Hello $name!")
+}
+```
+</details>
+
+<details>
 <summary>Wolfram Mathematica</summary>
 
 - Requirements: Mathematica is installed and correct path is set in the settings.

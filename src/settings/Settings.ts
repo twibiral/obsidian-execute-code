@@ -66,6 +66,10 @@ export interface ExecutorSettings {
 	kotlinArgs: string;
 	kotlinFileExtension: string;
 	kotlinInject: string;
+	zigPath: string;
+	zigArgs: string;
+	zigFileExtension: string;
+	zigInject: string;
 	runghcPath: string;
 	ghcPath: string;
 	ghciPath: string;
@@ -99,6 +103,7 @@ export interface ExecutorSettings {
 	javaInteractive: boolean;
 	powershellInteractive: boolean;
 	kotlinInteractive: boolean;
+	zigInteractive: boolean;
 	mathematicaInteractive: boolean;
 	haskellInteractive: boolean;
 	scalaInteractive: boolean;
@@ -172,6 +177,10 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	kotlinArgs: "-script",
 	kotlinFileExtension: "kts",
 	kotlinInject: "",
+	zigPath: "zigr",
+	zigArgs: "",
+	zigFileExtension: "zig",
+	zigInject: "",
 	runghcPath: "runghc",
 	ghcPath: "ghc",
 	ghciPath: "ghci",
@@ -205,6 +214,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	javaInteractive: false,
 	powershellInteractive: false,
 	kotlinInteractive: false,
+	zigInteractive: false,
 	mathematicaInteractive: false,
 	haskellInteractive: false,
 	scalaInteractive: false,

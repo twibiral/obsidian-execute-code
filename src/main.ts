@@ -290,6 +290,13 @@ export default class ExecuteCodePlugin extends Plugin {
 				this.runCodeInShell(transformedCode, out, button, this.settings.kotlinPath, this.settings.kotlinArgs, this.settings.kotlinFileExtension, language, file);
 			});
 
+		} else if (language === "zig") {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.zigPath, this.settings.zigArgs, this.settings.zigFileExtension, language, file);
+			});
+
 		} else if (language === "ts") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
