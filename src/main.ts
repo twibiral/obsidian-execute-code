@@ -18,7 +18,7 @@ import runAllCodeBlocks from './runAllCodeBlocks';
 
 export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py"] as const;
 export const canonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
-	"prolog", "shell", "groovy", "r", "go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell", "scala"] as const;
+	"prolog", "shell", "groovy", "r", "go", "rust", "java", "powershell", "kotlin", "zig", "mathematica", "haskell", "scala"] as const;
 export const supportedLanguages = [...languageAliases, ...canonicalLanguages] as const;
 
 
@@ -288,6 +288,13 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.kotlinPath, this.settings.kotlinArgs, this.settings.kotlinFileExtension, language, file);
+			});
+
+		} else if (language === "zig") {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.zigPath, this.settings.zigArgs, this.settings.zigFileExtension, language, file);
 			});
 
 		} else if (language === "ts") {

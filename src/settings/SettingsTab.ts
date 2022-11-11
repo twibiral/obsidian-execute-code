@@ -9,6 +9,7 @@ import makeHaskellSettings from "./per-lang/makeHaskellSettings";
 import makeJavaSettings from "./per-lang/makeJavaSettings";
 import makeJsSettings from "./per-lang/makeJsSettings";
 import makeKotlinSettings from "./per-lang/makeKotlinSettings";
+import makeZigSettings from "./per-lang/makeZigSettings";
 import makeLuaSettings from "./per-lang/makeLuaSettings";
 import makeMathematicaSettings from "./per-lang/makeMathematicaSettings";
 import makePowershellSettings from "./per-lang/makePowershellSettings";
@@ -164,6 +165,9 @@ export class SettingsTab extends PluginSettingTab {
 
 		// ========== Kotlin ==========
 		makeKotlinSettings(this, this.makeContainerFor("kotlin"));
+		
+		// ========== Zig ==========
+		makeZigSettings(this, this.makeContainerFor("zig"));
 
 		// ========== Mathematica ==========
 		makeMathematicaSettings(this, this.makeContainerFor("mathematica"));
