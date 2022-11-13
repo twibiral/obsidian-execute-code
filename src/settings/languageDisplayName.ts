@@ -3,6 +3,7 @@ import { LanguageId } from "src/main";
 export const DISPLAY_NAMES: Record<LanguageId, string> = {
     cpp: "C++",
     cs: "C#",
+    dart: "Dart",
     go: "Golang",
     groovy: "Groovy",
     haskell: "Haskell",

@@ -10,6 +10,7 @@ import makeJavaSettings from "./per-lang/makeJavaSettings";
 import makeJsSettings from "./per-lang/makeJsSettings";
 import makeKotlinSettings from "./per-lang/makeKotlinSettings";
 import makeLuaSettings from "./per-lang/makeLuaSettings";
+import makeDartSettings from "./per-lang/makeDartSettings";
 import makeMathematicaSettings from "./per-lang/makeMathematicaSettings";
 import makePowershellSettings from "./per-lang/makePowershellSettings";
 import makePrologSettings from "./per-lang/makePrologSettings";
@@ -118,6 +119,9 @@ export class SettingsTab extends PluginSettingTab {
 
 		// ========== Lua ==========
 		makeLuaSettings(this, this.makeContainerFor("lua"));
+
+		// ========== Dart ==========
+		makeDartSettings(this, this.makeContainerFor("dart"));
 
 		// ========== CSharp ==========
 		makeCsSettings(this, this.makeContainerFor("cs"));

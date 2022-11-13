@@ -18,6 +18,9 @@ export interface ExecutorSettings {
 	luaPath: string;
 	luaArgs: string;
 	luaInject: string;
+	dartPath: string;
+	dartArgs: string;
+	dartInject: string;
 	csPath: string;
 	csArgs: string;
 	csInject: string;
@@ -83,6 +86,7 @@ export interface ExecutorSettings {
 	tsInteractive: boolean;
 	csInteractive: boolean;
 	luaInteractive: boolean;
+	dartInteractive: boolean;
 	pythonInteractive: boolean;
 	cppInteractive: boolean;
 	prologInteractive: boolean;
@@ -119,6 +123,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	luaPath: "lua",
 	luaArgs: "",
 	luaInject: "",
+	dartPath: "dart",
+	dartArgs: "",
+	dartInject: "",
 	csPath: "dotnet-script",
 	csArgs: "",
 	csInject: "",
@@ -184,6 +191,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	tsInteractive: false,
 	csInteractive: false,
 	luaInteractive: false,
+	dartInteractive: false,
 	pythonInteractive: true,
 	cppInteractive: false,
 	prologInteractive: false,
