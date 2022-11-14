@@ -111,6 +111,9 @@ export class Outputter extends EventEmitter {
 	 * @param text The stdout data in question
 	 */
 	private writeRaw(text: string) {
+		//remove ANSI escape codes
+		text = text.replace(/\x1b\\[;\d]*m/g, "")
+		
 		// Keep output field and clear button invisible if no text was printed.
 		if (this.textPrinted(text)) {
 			this.escapeAwareAppend(this.addStdout(), text);
