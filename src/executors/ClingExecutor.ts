@@ -12,8 +12,7 @@ export default abstract class ClingExecutor extends NonInteractiveCodeExecutor {
 		super(settings, false, file, language);
 	}
 
-	override run(codeBlockContent: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
-		const args = `-std=${this.settings.clingStd} ${cmdArgs}`;
+	override run(codeBlockContent: string, outputter: Outputter, cmd: string, args: string, ext: string) {
 		
 		// Run code with a main block
 		if (this.settings[`${this.language}UseMain`]) {
