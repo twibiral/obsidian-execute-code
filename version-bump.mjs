@@ -8,6 +8,11 @@ const {minAppVersion} = manifest;
 manifest.version = targetVersion;
 writeFileSync("manifest.json", JSON.stringify(manifest, null, "\t"));
 
+let package_lock = JSON.parse(readFileSync("package-lock.json", "utf8"));
+package_lock.version = targetVersion;
+manifest.version = targetVersion;
+writeFileSync("package-lock.json", JSON.stringify(package_lock, null, "\t"));
+
 // update versions.json with target version and minAppVersion from manifest.json
 let versions = JSON.parse(readFileSync("versions.json", "utf8"));
 versions[targetVersion] = minAppVersion;
