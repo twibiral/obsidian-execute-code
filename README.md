@@ -61,6 +61,8 @@ Console.WriteLine("Hello, World!");
 <details>
 <summary>Dart</summary>
 
+- Requirements: dart sdk is installed and the correct path is set in the settings.
+
 ```dart
 void main() {
 	print("Hello World");
