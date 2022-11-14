@@ -356,7 +356,6 @@ export class Outputter extends EventEmitter {
 	 */
 	private makeOutputVisible() {
         this.closeInput();
-        
 		if (!this.clearButton) this.addClearButton();
 		if (!this.outputElement) this.addOutputElement();
 
@@ -366,6 +365,6 @@ export class Outputter extends EventEmitter {
 
 		setTimeout(() => {
 			if (this.inputState === "OPEN") this.inputElement.style.display = "inline";
-		}, 500)
+		}, 1000)
 	}
 }
