@@ -4,7 +4,7 @@ import type {ChildProcessWithoutNullStreams} from "child_process";
 import type {Outputter} from "src/Outputter";
 import type {ExecutorSettings} from "src/settings/Settings";
 
-export default class ClingExecutor extends NonInteractiveCodeExecutor {
+export default abstract class ClingExecutor extends NonInteractiveCodeExecutor {
 	
 	language: "cpp" | "c"
 
