@@ -81,6 +81,7 @@ export interface ExecutorSettings {
 	scalaInject: string;
 	cArgs: string;
 	cUseMain: boolean;
+	cInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -186,6 +187,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	scalaInject: "",
 	cArgs: "",
 	cUseMain: true,
+	cInject: "",
 
 	jsInteractive: true,
 	tsInteractive: false,
