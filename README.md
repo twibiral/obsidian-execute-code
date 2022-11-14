@@ -59,6 +59,8 @@ Console.WriteLine("Hello, World!");
 </details>
 
 <details>
+<summary>Dart</summary>
+
 ```dart
 void main() {
 	print("Hello World");
