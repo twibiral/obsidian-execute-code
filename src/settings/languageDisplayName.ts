@@ -19,5 +19,6 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
     rust: "Rust",
     shell: "Shell",
     ts: "Typescript",
-    scala: "Scala"
+    scala: "Scala",
+    c: "C"
 } as const;

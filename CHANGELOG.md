@@ -7,7 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [1.5.0]
 ### Added
-- Support for Dart
+- Support for C (Thanks to @chlohal)
+
+### Changed
+- Fix the wrong options for wolframscript (Thanks to @davnn)
+- Escape ANSI color codes in the output (Thanks to @chlohal)
+
 
 ## [1.4.0]
 ### Added

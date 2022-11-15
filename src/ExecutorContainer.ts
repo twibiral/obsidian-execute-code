@@ -7,6 +7,7 @@ import PythonExecutor from "./executors/python/PythonExecutor";
 import CppExecutor from './executors/CppExecutor';
 import ExecuteCodePlugin, {LanguageId} from "./main";
 import RExecutor from "./executors/RExecutor.js";
+import CExecutor from "./executors/CExecutor";
 
 const interactiveExecutors: Partial<Record<LanguageId, any>> = {
 	"js": NodeJSExecutor,
@@ -16,7 +17,8 @@ const interactiveExecutors: Partial<Record<LanguageId, any>> = {
 
 const nonInteractiveExecutors: Partial<Record<LanguageId, any>> = {
 	"prolog": PrologExecutor,
-	"cpp": CppExecutor
+	"cpp": CppExecutor,
+	"c": CExecutor
 };
 
 export default class ExecutorContainer extends EventEmitter implements Iterable<Executor> {
