@@ -184,6 +184,9 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== Racket ===========
 		makeRacketSettings(this, this.makeContainerFor("racket"));
 
+		// ========== Racket ===========
+		makeRacketSettings(this, this.makeContainerFor("racket"));
+
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}
 
