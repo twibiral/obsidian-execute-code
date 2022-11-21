@@ -18,7 +18,7 @@ import runAllCodeBlocks from './runAllCodeBlocks';
 
 export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py"] as const;
 export const canonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
-	"prolog", "shell", "groovy", "r", "go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell", "scala"] as const;
+	"prolog", "shell", "groovy", "r", "go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell", "scala", "fsharp"] as const;
 export const supportedLanguages = [...languageAliases, ...canonicalLanguages] as const;
 
 
@@ -329,6 +329,12 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.scalaPath, this.settings.scalaArgs, this.settings.scalaFileExtension, language, file);
+			});
+		} else if(language === "fsharp") {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.fsharpPath, this.settings.fsharpArgs, this.settings.fsharpFileExtension, language, file);
 			});
 		}
 	}

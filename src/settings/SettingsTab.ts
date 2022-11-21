@@ -3,6 +3,7 @@ import ExecuteCodePlugin, {canonicalLanguages, LanguageId} from "src/main";
 import { DISPLAY_NAMES } from "./languageDisplayName";
 import makeCppSettings from "./per-lang/makeCppSettings";
 import makeCsSettings from "./per-lang/makeCsSettings";
+import makeFSharpSettings from "./per-lang/makeFSharpSettings";
 import makeGoSettings from "./per-lang/makeGoSettings";
 import makeGroovySettings from "./per-lang/makeGroovySettings";
 import makeHaskellSettings from "./per-lang/makeHaskellSettings";
@@ -174,6 +175,9 @@ export class SettingsTab extends PluginSettingTab {
 
 		// ========== Scala ===========
 		makeScalaSettings(this, this.makeContainerFor("scala"));
+		
+		// ========== FSharp ===========
+		makeFSharpSettings(this, this.makeContainerFor("fsharp"));
 
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}

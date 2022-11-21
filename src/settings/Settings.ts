@@ -78,6 +78,10 @@ export interface ExecutorSettings {
 	scalaArgs: string;
 	scalaFileExtension: string;
 	scalaInject: string;
+	fsharpPath: string;
+	fsharpArgs: string;
+	fsharpInject: "";
+	fsharpFileExtension: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -98,6 +102,7 @@ export interface ExecutorSettings {
 	mathematicaInteractive: boolean;
 	haskellInteractive: boolean;
 	scalaInteractive: boolean;
+	fsharpInteractive: boolean;
 }
 
 
@@ -179,6 +184,10 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	scalaArgs: "",
 	scalaFileExtension: "scala",
 	scalaInject: "",
+	fsharpPath: "dotnet",
+	fsharpArgs: "",
+	fsharpInject: "",
+	fsharpFileExtension: "fsx",
 
 	jsInteractive: true,
 	tsInteractive: false,
@@ -198,5 +207,6 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	kotlinInteractive: false,
 	mathematicaInteractive: false,
 	haskellInteractive: false,
-	scalaInteractive: false
+	scalaInteractive: false,
+	fsharpInteractive: false,
 }
