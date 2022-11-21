@@ -52,6 +52,7 @@ export interface ExecutorSettings {
 	rustInject: string;
 	cppRunner: string;
 	cppInject: string;
+	cppArgs: string;
 	cppUseMain: boolean;
 	clingPath: string;
 	clingArgs: string;
@@ -82,6 +83,9 @@ export interface ExecutorSettings {
 	fsharpArgs: string;
 	fsharpInject: "";
 	fsharpFileExtension: string;
+	cArgs: string;
+	cUseMain: boolean;
+	cInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -103,6 +107,7 @@ export interface ExecutorSettings {
 	haskellInteractive: boolean;
 	scalaInteractive: boolean;
 	fsharpInteractive: boolean;
+	cInteractive: boolean;
 }
 
 
@@ -158,6 +163,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	rustInject: "",
 	cppRunner: "cling",
 	cppInject: "",
+	cppArgs: "",
 	cppUseMain: false,
 	clingPath: "cling",
 	clingArgs: "",
@@ -175,9 +181,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	ghcPath: "ghc",
 	ghciPath: "ghci",
 	useGhci: false,
-  haskellInject: "",
+	haskellInject: "",
 	mathematicaPath: "wolframscript",
-	mathematicaArgs: "",
+	mathematicaArgs: "-file",
 	mathematicaFileExtension: "wls",
 	mathematicaInject: "",
 	scalaPath: "scala",
@@ -188,6 +194,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	fsharpArgs: "",
 	fsharpInject: "",
 	fsharpFileExtension: "fsx",
+	cArgs: "",
+	cUseMain: true,
+	cInject: "",
 
 	jsInteractive: true,
 	tsInteractive: false,
@@ -209,4 +218,5 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	haskellInteractive: false,
 	scalaInteractive: false,
 	fsharpInteractive: false,
+	cInteractive: false
 }

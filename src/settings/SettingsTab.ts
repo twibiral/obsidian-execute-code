@@ -2,6 +2,7 @@ import {App, PluginSettingTab, Setting} from "obsidian";
 import ExecuteCodePlugin, {canonicalLanguages, LanguageId} from "src/main";
 import { DISPLAY_NAMES } from "./languageDisplayName";
 import makeCppSettings from "./per-lang/makeCppSettings";
+import makeCSettings from "./per-lang/makeCSettings.js";
 import makeCsSettings from "./per-lang/makeCsSettings";
 import makeFSharpSettings from "./per-lang/makeFSharpSettings";
 import makeGoSettings from "./per-lang/makeGoSettings";
@@ -141,6 +142,9 @@ export class SettingsTab extends PluginSettingTab {
 
 		// ========== C++ ===========
 		makeCppSettings(this, this.makeContainerFor("cpp"));
+
+		// ========== C ===========
+		makeCSettings(this, this.makeContainerFor("c"));
 
 
 		// ========== Shell ==========

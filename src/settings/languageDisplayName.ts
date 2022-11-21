@@ -19,5 +19,6 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
     shell: "Shell",
     ts: "Typescript",
     scala: "Scala",
-    fsharp: "F#"
+    fsharp: "F#",
+    c: "C"
 } as const;
