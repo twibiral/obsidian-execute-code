@@ -1,11 +1,11 @@
-import {LanguageId} from "src/main";
+import { LanguageId } from "src/main";
 
 /**
  * Interface that contains all the settings for the extension.
  */
 export interface ExecutorSettings {
-	lastOpenLanguageTab: LanguageId | undefined
-	
+	lastOpenLanguageTab: LanguageId | undefined;
+
 	timeout: number;
 	allowInput: boolean;
 	wslMode: boolean;
@@ -33,13 +33,13 @@ export interface ExecutorSettings {
 	groovyArgs: string;
 	groovyFileExtension: string;
 	groovyInject: string;
-	golangPath: string,
-	golangArgs: string,
-	golangFileExtension: string,
+	golangPath: string;
+	golangArgs: string;
+	golangFileExtension: string;
 	goInject: string;
-	javaPath: string,
-	javaArgs: string,
-	javaFileExtension: string,
+	javaPath: string;
+	javaArgs: string;
+	javaFileExtension: string;
 	javaInject: string;
 	maxPrologAnswers: number;
 	prologInject: string;
@@ -57,7 +57,7 @@ export interface ExecutorSettings {
 	clingPath: string;
 	clingArgs: string;
 	clingStd: string;
-	rustFileExtension: string,
+	rustFileExtension: string;
 	RPath: string;
 	RArgs: string;
 	REmbedPlots: boolean;
@@ -82,6 +82,9 @@ export interface ExecutorSettings {
 	cArgs: string;
 	cUseMain: boolean;
 	cInject: string;
+	rubyPath: string;
+	rubyArgs: string;
+	rubyInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -103,15 +106,15 @@ export interface ExecutorSettings {
 	haskellInteractive: boolean;
 	scalaInteractive: boolean;
 	cInteractive: boolean;
+	rubyInteractive: boolean;
 }
-
 
 /**
  * The default settings for the extensions as implementation of the ExecutorSettings interface.
  */
 export const DEFAULT_SETTINGS: ExecutorSettings = {
 	lastOpenLanguageTab: undefined,
-	
+
 	timeout: 10000,
 	allowInput: true,
 	wslMode: false,
@@ -188,6 +191,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	cArgs: "",
 	cUseMain: true,
 	cInject: "",
+	rubyPath: "ruby",
+	rubyArgs: "",
+	rubyInject: "",
 
 	jsInteractive: true,
 	tsInteractive: false,
@@ -208,5 +214,6 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	mathematicaInteractive: false,
 	haskellInteractive: false,
 	scalaInteractive: false,
-	cInteractive: false
-}
+	cInteractive: false,
+	rubyInteractive: false,
+};
