@@ -10,6 +10,7 @@ import makeHaskellSettings from "./per-lang/makeHaskellSettings";
 import makeJavaSettings from "./per-lang/makeJavaSettings";
 import makeJsSettings from "./per-lang/makeJsSettings";
 import makeKotlinSettings from "./per-lang/makeKotlinSettings";
+import makeLeanSettings from "./per-lang/makeLeanSettings";
 import makeLuaSettings from "./per-lang/makeLuaSettings";
 import makeMathematicaSettings from "./per-lang/makeMathematicaSettings";
 import makePowershellSettings from "./per-lang/makePowershellSettings";
@@ -116,6 +117,9 @@ export class SettingsTab extends PluginSettingTab {
 
 		// ========== TypeScript ==========
 		makeTsSettings(this, this.makeContainerFor("ts"));
+
+		// ========== Lean ==========
+		makeLeanSettings(this, this.makeContainerFor("lean"));
 
 		// ========== Lua ==========
 		makeLuaSettings(this, this.makeContainerFor("lua"));

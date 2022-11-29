@@ -7,7 +7,7 @@ The result is shown only after the execution is finished. It is not possible to 
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
 
-The following [languages are supported](#supported-programming-languages): C, CPP, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lua, CSharp, Prolog, Rust, Python, R, Wolfram Mathematica, Haskell, Scala, Shell & Powershell. 
+The following [languages are supported](#supported-programming-languages): C, CPP, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Wolfram Mathematica, Haskell, Scala, Shell & Powershell. 
 
 
 Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands) that help you to access paths in obsidian or show images in your notes.
@@ -131,6 +131,19 @@ public class HelloWorld {
 
 ```lua
 print('Hello, World!')
+```
+</details>
+
+<details>
+<summary>Lean</summary>
+
+- Requirements: install lean and config lean path.
+
+```lean
+def main : IO Unit :=
+  IO.println s!"Hello, World!"
+
+#eval main
 ```
 </details>
 

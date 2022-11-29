@@ -17,7 +17,7 @@ import ExecutorManagerView, {
 import runAllCodeBlocks from './runAllCodeBlocks';
 
 export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py"] as const;
-export const canonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
+export const canonicalLanguages = ["js", "ts", "cs", "lean", "lua", "python", "cpp",
 	"prolog", "shell", "groovy", "r", "go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell", "scala", "c"] as const;
 export const supportedLanguages = [...languageAliases, ...canonicalLanguages] as const;
 
@@ -295,6 +295,13 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.tsPath, this.settings.tsArgs, "ts", language, file);
+			});
+
+		} else if (language === "lean") {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.leanPath, this.settings.leanArgs, "lean", language, file);
 			});
 
 		} else if (language === "lua") {
