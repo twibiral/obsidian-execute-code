@@ -8,6 +8,7 @@
  * - `@vault`: Inserts the vault path as string.
  * - `@note`: Inserts the note path as string.
  * - `@title`: Inserts the note title as string.
+ * - `@theme`: Inserts the color theme; either `"light"` or `"dark"`. For use with images, inline plots, and `@html()`.
  */
 
 import * as os from "os";

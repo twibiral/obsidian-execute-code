@@ -350,6 +350,7 @@ The following magic commands are supported:
 - `@show(ImagePath, Width, Height)`: Displays an image at the given path in the note.
 - `@show(ImagePath, Width, Height, Alignment[center|left|right])`: Displays an image at the given path in the note.
 - `@html(HtmlSource)`: Displays HTML in the note
+- `@theme`: Inserts the color theme; either `"light"` or `"dark"`. For use with images, inline plots, and `@html()`.
 
 (`@show(...)` and `@html(...)` are only supported for JavaScript and Python yet.)
 
