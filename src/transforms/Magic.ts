@@ -19,6 +19,7 @@ const HTML_REGEX = /@html\((?<html>[^)]+)\)/g;
 const VAULT_REGEX = /@vault/g
 const CURRENT_NOTE_REGEX = /@note/g;
 const NOTE_TITLE_REGEX = /@title/g;
+const COLOR_THEME_REGEX = /@theme/g;
 
 // Regex that are only used by one language.
 const PYTHON_PLOT_REGEX = /^(plt|matplotlib.pyplot|pyplot)\.show\(\)/gm;
@@ -63,6 +64,16 @@ export function insertNoteTitle(source: string, noteTitle: string): string {
 	return source.replace(NOTE_TITLE_REGEX, `"${t}"`);
 }
 
+/**
+ * Parses the source code for the @theme command and replaces it with the colour theme.
+ *
+ * @param source The source code to parse.
+ * @param noteTitle The current colour theme.
+ * @returns The transformed source code.
+ */
+export function insertColorTheme(source: string, theme: string): string {
+	return source.replace(COLOR_THEME_REGEX, `"${theme}"`);
+}
 
 /**
  * Add the @show command to python. @show is only supported in python and javascript.
