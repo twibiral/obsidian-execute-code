@@ -16,6 +16,7 @@ import makePowershellSettings from "./per-lang/makePowershellSettings";
 import makePrologSettings from "./per-lang/makePrologSettings";
 import makePythonSettings from "./per-lang/makePythonSettings";
 import makeRSettings from "./per-lang/makeRSettings";
+import makeRubySettings from "./per-lang/makeRubySettings";
 import makeRustSettings from "./per-lang/makeRustSettings";
 import makeScalaSettings from "./per-lang/makeScalaSettings.js";
 import makeShellSettings from "./per-lang/makeShellSettings";
@@ -178,7 +179,10 @@ export class SettingsTab extends PluginSettingTab {
 
 		// ========== Scala ===========
 		makeScalaSettings(this, this.makeContainerFor("scala"));
-		
+
+		// ========== Ruby ============
+		makeRubySettings(this, this.makeContainerFor("ruby"));
+
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}
 

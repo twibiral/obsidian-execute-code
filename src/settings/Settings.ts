@@ -82,6 +82,9 @@ export interface ExecutorSettings {
 	cArgs: string;
 	cUseMain: boolean;
 	cInject: string;
+	rubyPath: string;
+	rubyArgs: string;
+	rubyInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -103,6 +106,7 @@ export interface ExecutorSettings {
 	haskellInteractive: boolean;
 	scalaInteractive: boolean;
 	cInteractive: boolean;
+	rubyInteractive: boolean;
 }
 
 
@@ -188,6 +192,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	cArgs: "",
 	cUseMain: true,
 	cInject: "",
+	rubyPath: "ruby",
+	rubyArgs: "",
+	rubyInject: "",
 
 	jsInteractive: true,
 	tsInteractive: false,
@@ -208,5 +215,6 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	mathematicaInteractive: false,
 	haskellInteractive: false,
 	scalaInteractive: false,
-	cInteractive: false
+	cInteractive: false,
+	rubyInteractive: false
 }

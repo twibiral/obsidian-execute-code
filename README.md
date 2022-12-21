@@ -7,7 +7,7 @@ The result is shown only after the execution is finished. It is not possible to 
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
 
-The following [languages are supported](#supported-programming-languages): C, CPP, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lua, CSharp, Prolog, Rust, Python, R, Wolfram Mathematica, Haskell, Scala, Shell & Powershell. 
+The following [languages are supported](#supported-programming-languages): C, CPP, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Shell & Powershell.
 
 
 Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands) that help you to access paths in obsidian or show images in your notes.
@@ -325,6 +325,16 @@ mySum a b = a+b
 
 ```scala
 println("Hello, World!")
+```
+</details>
+
+<details>
+<summary>Ruby</summary>
+
+- Requirements: Ruby is installed and the correct path is set in the settings.
+
+```ruby
+puts "Hello, World!"
 ```
 </details>
 
