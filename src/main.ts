@@ -119,6 +119,9 @@ export default class ExecuteCodePlugin extends Plugin {
 	 */
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		if (process.platform !== "win32") {
+			this.settings.wslMode = false;
+		}
 	}
 
 	/**
