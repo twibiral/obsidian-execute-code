@@ -15,9 +15,15 @@ export interface ExecutorSettings {
 	tsPath: string;
 	tsArgs: string;
 	tsInject: string;
+	leanPath: string;
+	leanArgs: string;
+	leanInject: string;
 	luaPath: string;
 	luaArgs: string;
 	luaInject: string;
+	dartPath: string;
+	dartArgs: string;
+	dartInject: string;
 	csPath: string;
 	csArgs: string;
 	csInject: string;
@@ -83,14 +89,27 @@ export interface ExecutorSettings {
 	scalaArgs: string;
 	scalaFileExtension: string;
 	scalaInject: string;
+	racketPath: string;
+	racketArgs: string;
+	racketFileExtension: string;
+	racketInject: string;
+	fsharpPath: string;
+	fsharpArgs: string;
+	fsharpInject: "";
+	fsharpFileExtension: string;
 	cArgs: string;
 	cUseMain: boolean;
 	cInject: string;
+	rubyPath: string;
+	rubyArgs: string;
+	rubyInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
 	csInteractive: boolean;
+	leanInteractive: boolean;
 	luaInteractive: boolean;
+	dartInteractive: boolean;
 	pythonInteractive: boolean;
 	cppInteractive: boolean;
 	prologInteractive: boolean;
@@ -107,7 +126,10 @@ export interface ExecutorSettings {
 	mathematicaInteractive: boolean;
 	haskellInteractive: boolean;
 	scalaInteractive: boolean;
+	racketInteractive: boolean;
+	fsharpInteractive: boolean;
 	cInteractive: boolean;
+	rubyInteractive: boolean;
 }
 
 
@@ -126,9 +148,15 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	tsPath: "ts-node",
 	tsArgs: "",
 	tsInject: "",
+	leanPath: "lean",
+	leanArgs: "",
+	leanInject: "",
 	luaPath: "lua",
 	luaArgs: "",
 	luaInject: "",
+	dartPath: "dart",
+	dartArgs: "",
+	dartInject: "",
 	csPath: "dotnet-script",
 	csArgs: "",
 	csInject: "",
@@ -194,14 +222,27 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	scalaArgs: "",
 	scalaFileExtension: "scala",
 	scalaInject: "",
+	racketPath: "racket",
+	racketArgs: "",
+	racketFileExtension: "rkt",
+	racketInject: "#lang racket",
+	fsharpPath: "dotnet",
+	fsharpArgs: "",
+	fsharpInject: "",
+	fsharpFileExtension: "fsx",
 	cArgs: "",
 	cUseMain: true,
 	cInject: "",
+	rubyPath: "ruby",
+	rubyArgs: "",
+	rubyInject: "",
 
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
+	leanInteractive: false,
 	luaInteractive: false,
+	dartInteractive: false,
 	pythonInteractive: true,
 	cppInteractive: false,
 	prologInteractive: false,
@@ -218,5 +259,8 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	mathematicaInteractive: false,
 	haskellInteractive: false,
 	scalaInteractive: false,
-	cInteractive: false
+	fsharpInteractive: false,
+	cInteractive: false,
+	racketInteractive: false,
+	rubyInteractive: false
 }

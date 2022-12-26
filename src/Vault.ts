@@ -21,10 +21,13 @@ export function getVaultVariables(app: App) {
 	const fileName = activeView.file.name
 	const filePath = activeView.file.path
 
+	const theme = document.body.classList.contains("theme-light") ? "light" : "dark";
+
 	return {
 		vaultPath: vaultPath,
 		folder: folder,
 		fileName: fileName,
 		filePath: filePath,
+		theme: theme
 	}
 }

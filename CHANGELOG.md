@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
+## [Unreleased]
+### Added
+- New magic command `@theme` to get if obsidian is in dark or light mode (Thanks to @chlohal)
+- Support for Racket (Thanks to @Ghexor)
+- Support for F# (Thanks to @chlohal)
+- Support for Dart (Thanks to @andremeireles)
+- Support for Ruby (Thanks to @santry)
+
 ## [1.5.0]
 ### Added
 - Support for C (Thanks to @chlohal)
@@ -12,7 +20,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 - Fix the wrong options for wolframscript (Thanks to @davnn)
 - Escape ANSI color codes in the output (Thanks to @chlohal)
-
 
 ## [1.4.0]
 ### Added
