@@ -7,7 +7,7 @@ The result is shown only after the execution is finished. It is not possible to 
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
 
-The following [languages are supported](#supported-programming-languages): C, CPP, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lua, CSharp, Prolog, Rust, Python, R, Wolfram Mathematica, Haskell, Scala, Shell & Powershell. 
+The following [languages are supported](#supported-programming-languages): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell.
 
 
 Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands) that help you to access paths in obsidian or show images in your notes.
@@ -56,6 +56,18 @@ console.log(message);
 ```cs 
 Console.WriteLine("Hello, World!");  
 ```  
+</details>
+
+<details>
+<summary>Dart</summary>
+
+- Requirements: dart sdk is installed and the correct path is set in the settings.
+
+```dart
+void main() {
+  print("Hello World");
+}
+```
 </details>
 
 <details>
@@ -135,6 +147,19 @@ print('Hello, World!')
 </details>
 
 <details>
+<summary>Lean</summary>
+
+- Requirements: install lean and config lean path.
+
+```lean
+def main : IO Unit :=
+  IO.println s!"Hello, World!"
+
+#eval main
+```
+</details>
+
+<details>
 <summary>C++</summary>
 
 - Requirements: [Cling](https://github.com/root-project/cling) is installed and correct path is set in the settings.
@@ -209,7 +234,22 @@ ls -la
 ```powershell
 echo "Hello World!"
 ```
+
+- If you prefer batch: change the path settings in the menu for powershell
+![Example how to use the magic commands.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/batch_settings.png?raw=true)
 </details>
+
+
+<details>
+<summary>Batch</summary>
+
+- Requirements: Used to execute batch commands on Windows (also known as BAT or CMD). Default is command prompt, but can be set to your preferred shell in the settings.
+
+```batch
+ECHO Hello World!
+```
+</details>
+
 
 <details>
 <summary>Prolog</summary>
@@ -328,6 +368,26 @@ println("Hello, World!")
 ```
 </details>
 
+<details>
+<summary>Racket</summary>
+
+- Requirements: Racket is installed and the correct path is set in the settings.
+
+```racket
+"Hello, world!"
+```
+</details>
+
+<details>
+<summary>Ruby</summary>
+
+- Requirements: Ruby is installed and the correct path is set in the settings.
+
+```ruby
+puts "Hello, World!"
+```
+</details>
+
 Squiggle: For Squiggle support take a look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle) by @jqhoogland.
 
 Support for the following is planned:
@@ -343,8 +403,10 @@ Magic commands are some meta commands that can be used in the code block. They a
 
 The following magic commands are supported:
 
-- `@vault`: Inserts the vault path as string.
-- `@note`: Inserts the note path as string.
+- `@vault_path`: Inserts the vault path as string (e.g. "/User/path/to/vault")
+- `@vault_url`: Inserts the vault url as string. (e.g. "app://local/path/to/vault")
+- `@note_path`: Inserts the vault path as string (e.g. "/User/path/to/vault/Note.md")
+- `@note_url`: Inserts the vault url as string. (e.g. "app://local/path/to/vault/Note.md")
 - `@title`: Inserts the note title as string.
 - `@show(ImagePath)`: Displays an image at the given path in the note.
 - `@show(ImagePath, Width, Height)`: Displays an image at the given path in the note.
@@ -352,6 +414,7 @@ The following magic commands are supported:
 - `@html(HtmlSource)`: Displays HTML in the note
 
 (`@show(...)` and `@html(...)` are only supported for JavaScript and Python yet.)
+(The old commands `@note` and `@vault` are still supported, but may be removed in the future.)
 
 ![Example how to use the magic commands.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/magic_example.png?raw=true)
 

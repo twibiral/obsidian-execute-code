@@ -1,4 +1,4 @@
-import { LanguageId } from "src/main";
+import {LanguageId} from "src/main";
 
 export const DISPLAY_NAMES: Record<LanguageId, string> = {
     cpp: "C++",
@@ -17,7 +17,13 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
     r: "R",
     rust: "Rust",
     shell: "Shell",
+    batch: "Batch",
     ts: "Typescript",
     scala: "Scala",
-    c: "C"
+    racket: "Racket",
+    c: "C",
+    fsharp: "F#",
+    ruby: "Ruby",
+	dart: "Dart",
+	lean: "Lean"
 } as const;
