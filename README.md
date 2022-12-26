@@ -403,8 +403,10 @@ Magic commands are some meta commands that can be used in the code block. They a
 
 The following magic commands are supported:
 
-- `@vault`: Inserts the vault path as string.
-- `@note`: Inserts the note path as string.
+- `@vault_path`: Inserts the vault path as string (e.g. "/User/path/to/vault")
+- `@vault_url`: Inserts the vault url as string. (e.g. "app://local/path/to/vault")
+- `@note_path`: Inserts the vault path as string (e.g. "/User/path/to/vault/Note.md")
+- `@note_url`: Inserts the vault url as string. (e.g. "app://local/path/to/vault/Note.md")
 - `@title`: Inserts the note title as string.
 - `@show(ImagePath)`: Displays an image at the given path in the note.
 - `@show(ImagePath, Width, Height)`: Displays an image at the given path in the note.
@@ -412,6 +414,7 @@ The following magic commands are supported:
 - `@html(HtmlSource)`: Displays HTML in the note
 
 (`@show(...)` and `@html(...)` are only supported for JavaScript and Python yet.)
+(The old commands `@note` and `@vault` are still supported, but may be removed in the future.)
 
 ![Example how to use the magic commands.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/magic_example.png?raw=true)
 

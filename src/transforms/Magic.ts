@@ -18,7 +18,11 @@ import { TOGGLE_HTML_SIGIL } from "src/Outputter";
 const SHOW_REGEX = /@show\(["'](?<path>[^<>?*=!\n#()\[\]{}]+)["'](,\s*(?<width>\d+[\w%]+),?\s*(?<height>\d+[\w%]+))?(,\s*(?<align>left|center|right))?\)/g;
 const HTML_REGEX = /@html\((?<html>[^)]+)\)/g;
 const VAULT_REGEX = /@vault/g
+const VAULT_PATH_REGEX = /@vault_path/g
+const VAULT_URL_REGEX = /@vault_url/g
 const CURRENT_NOTE_REGEX = /@note/g;
+const CURRENT_NOTE_PATH_REGEX = /@note_path/g;
+const CURRENT_NOTE_URL_REGEX = /@note_url/g;
 const NOTE_TITLE_REGEX = /@title/g;
 const COLOR_THEME_REGEX = /@theme/g;
 
@@ -34,7 +38,11 @@ const R_PLOT_REGEX = /^plot\(.*\)/gm;
  * @returns The transformed source code.
  */
 export function insertVaultPath(source: string, vaultPath: string): string {
-	return source.replace(VAULT_REGEX, `"app://local/${vaultPath.replace(/\\/g, "/")}"`);
+	source = source.replace(VAULT_REGEX, `"app://local/${vaultPath.replace(/\\/g, "/")}"`);
+	source = source.replace(VAULT_URL_REGEX, `"app://local/${vaultPath.replace(/\\/g, "/")}"`);
+	source = source.replace(VAULT_PATH_REGEX, `"${vaultPath.replace(/\\/g, "/")}"`);
+
+	return source;
 }
 
 
@@ -46,7 +54,11 @@ export function insertVaultPath(source: string, vaultPath: string): string {
  * @returns The transformed source code.
  */
 export function insertNotePath(source: string, notePath: string): string {
-	return source.replace(CURRENT_NOTE_REGEX, `"app://local/${notePath.replace(/\\/g, "/")}"`);
+	source = source.replace(CURRENT_NOTE_REGEX, `"app://local/${notePath.replace(/\\/g, "/")}"`);
+	source = source.replace(CURRENT_NOTE_URL_REGEX, `"app://local/${notePath.replace(/\\/g, "/")}"`);
+	source = source.replace(CURRENT_NOTE_PATH_REGEX, `"${notePath.replace(/\\/g, "/")}"`);
+
+	return source;
 }
 
 

@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 ### Added
 - New magic command `@theme` to get if obsidian is in dark or light mode (Thanks to @chlohal)
+- New magic commands `@vault_path` and `@note_path` to get the path, and `@vault_url` and `@note_url` to get the url. They replace the old magic commands `@vault` and `@note`.
 - Support for Racket (Thanks to @Ghexor)
 - Support for F# (Thanks to @chlohal)
 - Support for Dart (Thanks to @andremeireles)
