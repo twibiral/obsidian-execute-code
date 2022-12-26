@@ -17,7 +17,7 @@ import ExecutorManagerView, {
 import runAllCodeBlocks from './runAllCodeBlocks';
 
 export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py"] as const;
-export const canonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp",
+export const canonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp", "batch",
 	"prolog", "shell", "groovy", "r", "go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell", "scala", "c"] as const;
 export const supportedLanguages = [...languageAliases, ...canonicalLanguages] as const;
 
@@ -225,6 +225,13 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension, language, file);
+			});
+
+		} else if (language === "batch") {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
+				this.runCodeInBatch(transformedCode, out, button, this.settings.batchPath, this.settings.batchArgs, this.settings.batchFileExtension, language, file);
 			});
 
 		} else if (language === "powershell") {
