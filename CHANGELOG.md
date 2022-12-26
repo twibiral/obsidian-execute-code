@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 - Support for Racket (Thanks to @Ghexor)
 - Support for F# (Thanks to @chlohal)
+- New magic command `@theme` to get if obsidian is in dark or light mode (Thanks to @chlohal)
 
 
 ## [1.5.0]
