@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Support for F# (Thanks to @chlohal)
 - Support for Dart (Thanks to @andremeireles)
 - Support for Ruby (Thanks to @santry)
+- Support for Batch scripts (Thanks to @hannesdelbeke)
 
 ## [1.5.0]
 ### Added
