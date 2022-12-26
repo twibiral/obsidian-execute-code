@@ -168,7 +168,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	shellArgs: "",
 	shellFileExtension: "sh",
 	shellInject: "",
-	batchPath: "cmd",
+	batchPath: "call",
 	batchArgs: "",
 	batchFileExtension: "bat",
 	batchInject: "",

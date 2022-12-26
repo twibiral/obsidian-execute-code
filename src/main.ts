@@ -235,7 +235,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCodeInBatch(transformedCode, out, button, this.settings.batchPath, this.settings.batchArgs, this.settings.batchFileExtension, language, file);
+				this.runCodeInShell(transformedCode, out, button, this.settings.batchPath, this.settings.batchArgs, this.settings.batchFileExtension, language, file);
 			});
 
 		} else if (language === "powershell") {
