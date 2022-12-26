@@ -83,6 +83,10 @@ export interface ExecutorSettings {
 	racketArgs: string;
 	racketFileExtension: string;
 	racketInject: string;
+	fsharpPath: string;
+	fsharpArgs: string;
+	fsharpInject: "";
+	fsharpFileExtension: string;
 	cArgs: string;
 	cUseMain: boolean;
 	cInject: string;
@@ -107,6 +111,7 @@ export interface ExecutorSettings {
 	haskellInteractive: boolean;
 	scalaInteractive: boolean;
 	racketInteractive: boolean;
+	fsharpInteractive: boolean;
 	cInteractive: boolean;
 }
 
@@ -194,6 +199,10 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	racketArgs: "",
 	racketFileExtension: "rkt",
 	racketInject: "#lang racket",
+	fsharpPath: "dotnet",
+	fsharpArgs: "",
+	fsharpInject: "",
+	fsharpFileExtension: "fsx",
 	cArgs: "",
 	cUseMain: true,
 	cInject: "",
@@ -217,6 +226,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	mathematicaInteractive: false,
 	haskellInteractive: false,
 	scalaInteractive: false,
+	fsharpInteractive: false,
 	cInteractive: false,
 	racketInteractive: false,
 }

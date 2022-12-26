@@ -21,4 +21,5 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
     scala: "Scala",
     racket: "Racket",
     c: "C",
+    fsharp: "F#",
 } as const;
