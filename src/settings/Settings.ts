@@ -35,6 +35,10 @@ export interface ExecutorSettings {
 	shellArgs: string;
 	shellFileExtension: string;
 	shellInject: string;
+	batchPath: string;
+	batchArgs: string;
+	batchFileExtension: string;
+	batchInject: string;
 	groovyPath: string;
 	groovyArgs: string;
 	groovyFileExtension: string;
@@ -110,6 +114,7 @@ export interface ExecutorSettings {
 	cppInteractive: boolean;
 	prologInteractive: boolean;
 	shellInteractive: boolean;
+	batchInteractive: boolean;
 	bashInteractive: boolean;
 	groovyInteractive: boolean;
 	rInteractive: boolean;
@@ -163,6 +168,10 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	shellArgs: "",
 	shellFileExtension: "sh",
 	shellInject: "",
+	batchPath: "cmd",
+	batchArgs: "",
+	batchFileExtension: "bat",
+	batchInject: "",
 	groovyPath: "groovy",
 	groovyArgs: "",
 	groovyFileExtension: "groovy",
@@ -238,6 +247,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	cppInteractive: false,
 	prologInteractive: false,
 	shellInteractive: false,
+	batchInteractive: false,
 	bashInteractive: false,
 	groovyInteractive: false,
 	rInteractive: false,

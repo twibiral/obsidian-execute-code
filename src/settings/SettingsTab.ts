@@ -24,6 +24,7 @@ import makeRustSettings from "./per-lang/makeRustSettings";
 import makeScalaSettings from "./per-lang/makeScalaSettings.js";
 import makeRacketSettings from "./per-lang/makeRacketSettings.js";
 import makeShellSettings from "./per-lang/makeShellSettings";
+import makeBatchSettings from "./per-lang/makeBatchSettings";
 import makeTsSettings from "./per-lang/makeTsSettings";
 import {ExecutorSettings} from "./Settings";
 
@@ -152,6 +153,8 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== C ===========
 		makeCSettings(this, this.makeContainerFor("c"));
 
+		// ========== Batch ==========
+		makeBatchSettings(this, this.makeContainerFor("batch"));
 		// ========== Shell ==========
 		makeShellSettings(this, this.makeContainerFor("shell"));
 

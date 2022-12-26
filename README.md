@@ -7,7 +7,7 @@ The result is shown only after the execution is finished. It is not possible to 
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
 
-The following [languages are supported](#supported-programming-languages): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Shell & Powershell.
+The following [languages are supported](#supported-programming-languages): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell.
 
 
 Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands) that help you to access paths in obsidian or show images in your notes.
@@ -238,6 +238,18 @@ echo "Hello World!"
 - If you prefer batch: change the path settings in the menu for powershell
 ![Example how to use the magic commands.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/batch_settings.png?raw=true)
 </details>
+
+
+<details>
+<summary>Batch</summary>
+
+- Requirements: Used to execute batch commands on Windows (also known as BAT or CMD). Default is command prompt, but can be set to your preferred shell in the settings.
+
+```batch
+ECHO Hello World!
+```
+</details>
+
 
 <details>
 <summary>Prolog</summary>
