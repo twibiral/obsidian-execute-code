@@ -79,6 +79,10 @@ export interface ExecutorSettings {
 	scalaArgs: string;
 	scalaFileExtension: string;
 	scalaInject: string;
+	racketPath: string;
+	racketArgs: string;
+	racketFileExtension: string;
+	racketInject: string;
 	cArgs: string;
 	cUseMain: boolean;
 	cInject: string;
@@ -102,6 +106,7 @@ export interface ExecutorSettings {
 	mathematicaInteractive: boolean;
 	haskellInteractive: boolean;
 	scalaInteractive: boolean;
+	racketInteractive: boolean;
 	cInteractive: boolean;
 }
 
@@ -185,6 +190,10 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	scalaArgs: "",
 	scalaFileExtension: "scala",
 	scalaInject: "",
+	racketPath: "racket",
+	racketArgs: "",
+	racketFileExtension: "rkt",
+	racketInject: "#lang racket",
 	cArgs: "",
 	cUseMain: true,
 	cInject: "",
@@ -208,5 +217,6 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	mathematicaInteractive: false,
 	haskellInteractive: false,
 	scalaInteractive: false,
-	cInteractive: false
+	cInteractive: false,
+	racketInteractive: false,
 }

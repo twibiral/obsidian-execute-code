@@ -18,6 +18,7 @@ import makePythonSettings from "./per-lang/makePythonSettings";
 import makeRSettings from "./per-lang/makeRSettings";
 import makeRustSettings from "./per-lang/makeRustSettings";
 import makeScalaSettings from "./per-lang/makeScalaSettings.js";
+import makeRacketSettings from "./per-lang/makeRacketSettings.js";
 import makeShellSettings from "./per-lang/makeShellSettings";
 import makeTsSettings from "./per-lang/makeTsSettings";
 import {ExecutorSettings} from "./Settings";
@@ -179,6 +180,13 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== Scala ===========
 		makeScalaSettings(this, this.makeContainerFor("scala"));
 		
+
+		// ========== Racket ===========
+		makeRacketSettings(this, this.makeContainerFor("racket"));
+
+		// ========== Racket ===========
+		makeRacketSettings(this, this.makeContainerFor("racket"));
+
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}
 
