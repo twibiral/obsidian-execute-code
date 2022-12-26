@@ -17,6 +17,7 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
     r: "R",
     rust: "Rust",
     shell: "Shell",
+    batch: "Batch",
     ts: "Typescript",
     scala: "Scala",
     c: "C"
