@@ -15,6 +15,9 @@ export interface ExecutorSettings {
 	tsPath: string;
 	tsArgs: string;
 	tsInject: string;
+	leanPath: string;
+	leanArgs: string;
+	leanInject: string;
 	luaPath: string;
 	luaArgs: string;
 	luaInject: string;
@@ -82,6 +85,14 @@ export interface ExecutorSettings {
 	scalaArgs: string;
 	scalaFileExtension: string;
 	scalaInject: string;
+	racketPath: string;
+	racketArgs: string;
+	racketFileExtension: string;
+	racketInject: string;
+	fsharpPath: string;
+	fsharpArgs: string;
+	fsharpInject: "";
+	fsharpFileExtension: string;
 	cArgs: string;
 	cUseMain: boolean;
 	cInject: string;
@@ -89,6 +100,7 @@ export interface ExecutorSettings {
 	jsInteractive: boolean;
 	tsInteractive: boolean;
 	csInteractive: boolean;
+	leanInteractive: boolean;
 	luaInteractive: boolean;
 	dartInteractive: boolean;
 	pythonInteractive: boolean;
@@ -106,6 +118,8 @@ export interface ExecutorSettings {
 	mathematicaInteractive: boolean;
 	haskellInteractive: boolean;
 	scalaInteractive: boolean;
+	racketInteractive: boolean;
+	fsharpInteractive: boolean;
 	cInteractive: boolean;
 }
 
@@ -125,6 +139,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	tsPath: "ts-node",
 	tsArgs: "",
 	tsInject: "",
+	leanPath: "lean",
+	leanArgs: "",
+	leanInject: "",
 	luaPath: "lua",
 	luaArgs: "",
 	luaInject: "",
@@ -192,6 +209,14 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	scalaArgs: "",
 	scalaFileExtension: "scala",
 	scalaInject: "",
+	racketPath: "racket",
+	racketArgs: "",
+	racketFileExtension: "rkt",
+	racketInject: "#lang racket",
+	fsharpPath: "dotnet",
+	fsharpArgs: "",
+	fsharpInject: "",
+	fsharpFileExtension: "fsx",
 	cArgs: "",
 	cUseMain: true,
 	cInject: "",
@@ -199,6 +224,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
+	leanInteractive: false,
 	luaInteractive: false,
 	dartInteractive: false,
 	pythonInteractive: true,
@@ -216,5 +242,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	mathematicaInteractive: false,
 	haskellInteractive: false,
 	scalaInteractive: false,
-	cInteractive: false
+	fsharpInteractive: false,
+	cInteractive: false,
+	racketInteractive: false,
 }

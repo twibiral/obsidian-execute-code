@@ -10,6 +10,7 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
     java: "Java",
     js: "Javascript",
     kotlin: "Kotlin",
+    lean: "Lean",
     lua: "Lua",
     mathematica: "Mathematica",
     powershell: "Powershell",
@@ -20,5 +21,7 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
     shell: "Shell",
     ts: "Typescript",
     scala: "Scala",
-    c: "C"
+    racket: "Racket",
+    c: "C",
+    fsharp: "F#",
 } as const;

@@ -4,12 +4,14 @@ import { DISPLAY_NAMES } from "./languageDisplayName";
 import makeCppSettings from "./per-lang/makeCppSettings";
 import makeCSettings from "./per-lang/makeCSettings.js";
 import makeCsSettings from "./per-lang/makeCsSettings";
+import makeFSharpSettings from "./per-lang/makeFSharpSettings";
 import makeGoSettings from "./per-lang/makeGoSettings";
 import makeGroovySettings from "./per-lang/makeGroovySettings";
 import makeHaskellSettings from "./per-lang/makeHaskellSettings";
 import makeJavaSettings from "./per-lang/makeJavaSettings";
 import makeJsSettings from "./per-lang/makeJsSettings";
 import makeKotlinSettings from "./per-lang/makeKotlinSettings";
+import makeLeanSettings from "./per-lang/makeLeanSettings";
 import makeLuaSettings from "./per-lang/makeLuaSettings";
 import makeDartSettings from "./per-lang/makeDartSettings";
 import makeMathematicaSettings from "./per-lang/makeMathematicaSettings";
@@ -19,6 +21,7 @@ import makePythonSettings from "./per-lang/makePythonSettings";
 import makeRSettings from "./per-lang/makeRSettings";
 import makeRustSettings from "./per-lang/makeRustSettings";
 import makeScalaSettings from "./per-lang/makeScalaSettings.js";
+import makeRacketSettings from "./per-lang/makeRacketSettings.js";
 import makeShellSettings from "./per-lang/makeShellSettings";
 import makeTsSettings from "./per-lang/makeTsSettings";
 import {ExecutorSettings} from "./Settings";
@@ -118,6 +121,9 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== TypeScript ==========
 		makeTsSettings(this, this.makeContainerFor("ts"));
 
+		// ========== Lean ==========
+		makeLeanSettings(this, this.makeContainerFor("lean"));
+
 		// ========== Lua ==========
 		makeLuaSettings(this, this.makeContainerFor("lua"));
 
@@ -130,18 +136,14 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== Java ==========
 		makeJavaSettings(this, this.makeContainerFor("java"));
 
-
 		// ========== Python ==========
 		makePythonSettings(this, this.makeContainerFor("python"));
-
 
 		// ========== Golang =========
 		makeGoSettings(this, this.makeContainerFor("go"));
 
-
 		// ========== Rust ===========
 		makeRustSettings(this, this.makeContainerFor("rust"));
-
 
 		// ========== C++ ===========
 		makeCppSettings(this, this.makeContainerFor("cpp"));
@@ -149,26 +151,20 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== C ===========
 		makeCSettings(this, this.makeContainerFor("c"));
 
-
 		// ========== Shell ==========
 		makeShellSettings(this, this.makeContainerFor("shell"));
-
 
 		// ========== Powershell ==========
 		makePowershellSettings(this, this.makeContainerFor("powershell"));
 
-
 		// ========== Prolog ==========
 		makePrologSettings(this, this.makeContainerFor("prolog"));
-
 
 		// ========== Groovy ==========
 		makeGroovySettings(this, this.makeContainerFor("groovy"));
 
-
 		// ========== R ==========
 		makeRSettings(this, this.makeContainerFor("r"));
-
 
 		// ========== Kotlin ==========
 		makeKotlinSettings(this, this.makeContainerFor("kotlin"));
@@ -176,13 +172,18 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== Mathematica ==========
 		makeMathematicaSettings(this, this.makeContainerFor("mathematica"));
 
-
 		// ========== Haskell ===========
 		makeHaskellSettings(this, this.makeContainerFor("haskell"));
 
 		// ========== Scala ===========
 		makeScalaSettings(this, this.makeContainerFor("scala"));
-		
+
+		// ========== Racket ===========
+		makeRacketSettings(this, this.makeContainerFor("racket"));
+
+		// ========== FSharp ===========
+		makeFSharpSettings(this, this.makeContainerFor("fsharp"));
+
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}
 
