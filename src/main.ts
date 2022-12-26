@@ -17,8 +17,8 @@ import ExecutorManagerView, {
 import runAllCodeBlocks from './runAllCodeBlocks';
 
 export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py"] as const;
-export const canonicalLanguages = ["js", "ts", "cs", "lua", "python", "cpp", "prolog", "shell", "groovy", "r", "go",
-	"rust", "java", "powershell", "kotlin", "mathematica", "haskell", "scala", "racket", "fsharp", "c"] as const;
+export const canonicalLanguages = ["js", "ts", "cs", "lean", "lua", "python", "cpp", "prolog", "shell", "groovy", "r",
+	"go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell", "scala", "racket", "fsharp", "c"] as const;
 export const supportedLanguages = [...languageAliases, ...canonicalLanguages] as const;
 
 
@@ -108,8 +108,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			.forEach((out: HTMLElement) => out.remove());
 
 		for (const executor of this.executors) {
-			executor.stop().then(_ => { /* do nothing */
-			});
+			executor.stop().then(_ => { /* do nothing */ });
 		}
 
 		console.log("Unloaded plugin: Execute Code");
@@ -152,7 +151,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	private addRunButtons(element: HTMLElement, file: string) {
 		Array.from(element.getElementsByTagName("code"))
 			.forEach((codeBlock: HTMLElement) => {
-				if (codeBlock.className.match(/^language-\{\w+/i)) {
+				if (codeBlock.className.match(/^language-\{\w+/i)){
 					codeBlock.className = codeBlock.className.replace(/^language-\{(\w+)/i, "language-$1 {");
 					codeBlock.parentElement.className = codeBlock.className;
 				}
@@ -316,7 +315,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, "haskell").injectCode(srcCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.useGhci ? this.settings.ghciPath : this.settings.runghcPath, this.settings.useGhci ? "" : "-f " + this.settings.ghcPath, "hs", language, file);
+				this.runCodeInShell(transformedCode, out, button, this.settings.useGhci ? this.settings.ghciPath : this.settings.runghcPath, this.settings.useGhci ? "" : "-f "+this.settings.ghcPath, "hs", language, file);
 			});
 
 		} else if (language === "mathematica") {
@@ -331,24 +330,12 @@ export default class ExecuteCodePlugin extends Plugin {
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.scalaPath, this.settings.scalaArgs, this.settings.scalaFileExtension, language, file);
 			});
-		} else if (language === "fsharp") {
-			button.addEventListener("click", async () => {
-				button.className = runButtonDisabledClass;
-				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.fsharpPath, this.settings.fsharpArgs, this.settings.fsharpFileExtension, language, file);
-			});
-		} else if (language === "c") {
+		} else if(language === "c") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.clingPath, this.settings.clingArgs, "c", language, file);
 			})
-		} else if (language === "racket") {
-			button.addEventListener("click", async () => {
-				button.className = runButtonDisabledClass;
-				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.racketPath, this.settings.racketArgs, this.settings.racketFileExtension, language, file);
-			});
 		}
 	}
 

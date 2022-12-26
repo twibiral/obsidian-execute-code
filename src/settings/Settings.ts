@@ -15,6 +15,9 @@ export interface ExecutorSettings {
 	tsPath: string;
 	tsArgs: string;
 	tsInject: string;
+	leanPath: string;
+	leanArgs: string;
+	leanInject: string;
 	luaPath: string;
 	luaArgs: string;
 	luaInject: string;
@@ -94,6 +97,7 @@ export interface ExecutorSettings {
 	jsInteractive: boolean;
 	tsInteractive: boolean;
 	csInteractive: boolean;
+	leanInteractive: boolean;
 	luaInteractive: boolean;
 	pythonInteractive: boolean;
 	cppInteractive: boolean;
@@ -131,6 +135,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	tsPath: "ts-node",
 	tsArgs: "",
 	tsInject: "",
+	leanPath: "lean",
+	leanArgs: "",
+	leanInject: "",
 	luaPath: "lua",
 	luaArgs: "",
 	luaInject: "",
@@ -210,6 +217,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
+	leanInteractive: false,
 	luaInteractive: false,
 	pythonInteractive: true,
 	cppInteractive: false,
