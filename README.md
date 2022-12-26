@@ -234,6 +234,9 @@ ls -la
 ```powershell
 echo "Hello World!"
 ```
+
+- If you prefer batch: change the path settings in the menu for powershell
+![Example how to use the magic commands.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/batch_settings.png?raw=true)
 </details>
 
 <details>
