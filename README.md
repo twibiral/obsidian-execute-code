@@ -19,7 +19,7 @@ Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent v
 
 [![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?color=1e1e1e&labelColor=8572db&label=Downloads&query=$['execute-code'].downloads&url=https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugin-stats.json&)](obsidian://show-plugin?id=execute-code)
 
-## Supported programming languages
+## Supported programming languages 💻
 
 <details>
 <summary>JavaScript</summary>
@@ -399,7 +399,7 @@ Support for the following is planned:
 
 Open for suggestions.
 
-## Magic Commands
+## Magic Commands 🪄
 
 Magic commands are some meta commands that can be used in the code block. They are processed by the plugin before the source code is executed.
 
@@ -420,7 +420,7 @@ The following magic commands are supported:
 
 ![Example how to use the magic commands.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/magic_example.png?raw=true)
 
-## Running in Preview
+## Running in Preview ⏩
 
 Adding `run-` before the language name in the code blocks (as in the example below) renders the code block in the preview already.
 This allows you to execute the code in the preview.
@@ -434,7 +434,7 @@ print("Hello", name)
         hello("Eve")
 `````` 
 
-## Code Block Arguments
+## Code Block Arguments 🏷
 
 Code blocks support specifying additional arguments in the form `{key='value', otherkey=['val1', 'val2']}`. Add them to code blocks like so:
 
@@ -444,7 +444,7 @@ print('my labelled code block')
 ```
 `````
 
-## Global Code Injection and Reusing Code Blocks
+## Global Code Injection and Reusing Code Blocks 📘
 
 Sometimes it is helpful to have code that is executed before or after each other block of the same language. This plugin supports this in a few ways:
 
@@ -534,11 +534,11 @@ undefined
 To manage the open runtimes for Notebook Mode, you can use the `Open Code Runtime Management` command in the command palette. From this sidebar window, you can stop kernels. **Note: force-stopping requires `taskkill` on Windows and `pkill` on Unix. 99% of systems should have these preinstalled: if yours doesn't, please [file an issue](https://github.com/twibiral/obsidian-execute-code/issues/new/choose)**
 
 
-## Style Settings
+## Style Settings 🎨
 
 This plugin supports customising styles using the [Style Settings plugin](https://github.com/mgmeyers/obsidian-style-settings). It's possible to customise the color of code block outputs and errors.
 
-## Installation
+## Installation 💾
 
 In your vault go to Settings > Community plugins > Browse and search for "Execute Code". Select the plugin, install it and activate it.
 
@@ -546,30 +546,30 @@ or
 
 Follow [this link](https://obsidian.md/plugins?search=execute%20code#) and click "Open in Obsidian".
 
-## Warning
+## Warning ⚠
 
 Do not execute code from sources you don't know or code you don't understand. Executing code can cause irreparable damage.
 
-## Known Problems
+## Known Problems 🛠
 
 - On Linux, Snap/Flatpak/AppImage installations of Obsidian run in an isolated environment. As such, they will not have access to any of your installed programs. If you are on Linux, make sure to install the `.deb` version of Obsidian. If your distro isn't compatible with `.deb` files, you may see issues.
 - Missing when `run` button after switching the theme: Try to close and reopen your notes and wait for a few minutes. It seems like obsidian doesn't call the postprocessors after the theme switch.
 - Pre- / Post-blocks may not be executed if the file contains duplicate code blocks.
 - In Python, Embed Plots may not be off while Notebook Mode is on
 
-## Future Work
+## Future Work 📑
 
 - Notebook Mode similar to Jupyter
 - Error warning when the execution fails (e.g. when python isn't installed)
 - Test if this plugin works in combination with dataview.
 
-## Contribution
+## Contribution 🤝
 
 All contributions are welcome. Just create a merge request or email me: tim.wibiral(at)uni-ulm.de
 
 The bullet points in Future Work are a good starting point if you want to help.
 
-## Contributors
+## Contributors ♥
 
 <a href="https://github.com/twibiral/obsidian-execute-code/graphs/contributors">
   <img alt="List of contributors to this project." src="https://contrib.rocks/image?repo=twibiral/obsidian-execute-code" />
