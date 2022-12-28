@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
+## [1.6.1]
+### Changed
+- Fix magic commands @vault_path and @vault_url
+
+
 ## [1.6.0]
 ### Added
 - New magic command `@theme` to get if obsidian is in dark or light mode (Thanks to @chlohal)

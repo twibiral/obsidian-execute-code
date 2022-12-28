@@ -38,9 +38,9 @@ const R_PLOT_REGEX = /^plot\(.*\)/gm;
  * @returns The transformed source code.
  */
 export function insertVaultPath(source: string, vaultPath: string): string {
-	source = source.replace(VAULT_REGEX, `"app://local/${vaultPath.replace(/\\/g, "/")}"`);
-	source = source.replace(VAULT_URL_REGEX, `"app://local/${vaultPath.replace(/\\/g, "/")}"`);
 	source = source.replace(VAULT_PATH_REGEX, `"${vaultPath.replace(/\\/g, "/")}"`);
+	source = source.replace(VAULT_URL_REGEX, `"app://local/${vaultPath.replace(/\\/g, "/")}"`);
+	source = source.replace(VAULT_REGEX, `"app://local/${vaultPath.replace(/\\/g, "/")}"`);
 
 	return source;
 }
@@ -54,9 +54,9 @@ export function insertVaultPath(source: string, vaultPath: string): string {
  * @returns The transformed source code.
  */
 export function insertNotePath(source: string, notePath: string): string {
-	source = source.replace(CURRENT_NOTE_REGEX, `"app://local/${notePath.replace(/\\/g, "/")}"`);
-	source = source.replace(CURRENT_NOTE_URL_REGEX, `"app://local/${notePath.replace(/\\/g, "/")}"`);
 	source = source.replace(CURRENT_NOTE_PATH_REGEX, `"${notePath.replace(/\\/g, "/")}"`);
+	source = source.replace(CURRENT_NOTE_URL_REGEX, `"app://local/${notePath.replace(/\\/g, "/")}"`);
+	source = source.replace(CURRENT_NOTE_REGEX, `"app://local/${notePath.replace(/\\/g, "/")}"`);
 
 	return source;
 }
