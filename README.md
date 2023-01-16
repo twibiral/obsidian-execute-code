@@ -282,25 +282,30 @@ hello("Bob")
 - You can either use <strong>runghc</strong> (compiler) or <strong>ghci</strong> (interpreter) to run your code.
   - <strong>runghc</strong> requirements:
   	- runghc and ghc are installed and correct paths are set in the settings.
-    - Every code block must contain a main function.
+	- Every code block must contain a main function.
   - <strong>ghci</strong>  requirements:
-    - ghci is installed and correct path is set in the settings.
-	- If you have a main function you have to manually call it.
+	  - ghci is installed and correct path is set in the settings.
+	  - If you have a main function you have to manually call it.
 
 ```haskell
 mySum:: Num a => a -> a -> a
 mySum a b = a+b
 ```
+
 </details>
+
+<details>
 <summary>Scala</summary>
 - Requirements: Scala is installed and the correct path is set in the settings.
 
 ```scala
 println("Hello, World!")
 ```
+
 </details>
 
-Squiggle: For Squiggle support take a look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle) by @jqhoogland.
+Squiggle: For Squiggle support take a look at
+the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle) by @jqhoogland.
 
 Support for the following is planned:
 
@@ -460,14 +465,10 @@ To avoid or resolve errors from an incorrect path.
 ('where' for Mac and Windows) --- (for Linux Users, replace 'where' with 'which')
 	
 1. In your terminal, type 'where node'
-	
-![Type 'where node' in terminal](https://user-images.githubusercontent.com/11916140/197309851-a837525b-ff07-45a2-99f1-b0d9a05a3082.png)
-	
+   ![Type 'where node' in terminal](https://github.com/twibiral/obsidian-execute-code/blob/master/images/path_location_shell.png?raw=true)
 2. Copy path from terminal ( ex. /opt/homebrew/bin/node )
-	
 3. Paste in path under settings ( ex. Node path )
-	
-![Update path under settings with path from step 2](https://user-images.githubusercontent.com/11916140/197365611-50a2f7ae-f580-4067-bc15-967a3eddc355.png)
+   ![Update path under settings with path from step 2](https://github.com/twibiral/obsidian-execute-code/blob/master/images/path_location_settings.png?raw=true)
 
 
 ## Warning
