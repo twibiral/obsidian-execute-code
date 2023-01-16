@@ -358,6 +358,7 @@ hello("Bob")
 mySum:: Num a => a -> a -> a
 mySum a b = a+b
 ```
+
 </details>
 
 <details>
@@ -368,6 +369,7 @@ mySum a b = a+b
 ```scala
 println("Hello, World!")
 ```
+
 </details>
 
 <details>
@@ -545,6 +547,20 @@ In your vault go to Settings > Community plugins > Browse and search for "Execut
 or
 
 Follow [this link](https://obsidian.md/plugins?search=execute%20code#) and click "Open in Obsidian".
+	
+
+## Locating Path Settings ( ex. JavaScript | Node )
+	
+To avoid or resolve errors from an incorrect path.
+	
+('where' for Mac and Windows) --- (for Linux Users, replace 'where' with 'which')
+	
+1. In your terminal, type 'where node'
+   ![Type 'where node' in terminal](https://github.com/twibiral/obsidian-execute-code/blob/master/images/path_location_shell.png?raw=true)
+2. Copy path from terminal ( ex. /opt/homebrew/bin/node )
+3. Paste in path under settings ( ex. Node path )
+   ![Update path under settings with path from step 2](https://github.com/twibiral/obsidian-execute-code/blob/master/images/path_location_settings.png?raw=true)
+
 
 ## Warning ⚠
 
