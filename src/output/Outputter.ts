@@ -1,6 +1,8 @@
 import {EventEmitter} from "events";
-import loadEllipses from "./svgs/loadEllipses";
-import loadSpinner from "./svgs/loadSpinner";
+import { MarkdownView } from "obsidian";
+import loadEllipses from "../svgs/loadEllipses";
+import loadSpinner from "../svgs/loadSpinner";
+import FileAppender from "./FileAppender.js";
 
 export const TOGGLE_HTML_SIGIL = `TOGGLE_HTML_${Math.random().toString(16).substring(2)}`;
 
@@ -21,9 +23,11 @@ export class Outputter extends EventEmitter {
 	inputState: "NOT_DOING" | "OPEN" | "CLOSED" | "INACTIVE";
 
 	blockRunState: "RUNNING" | "QUEUED" | "FINISHED" | "INITIAL";
+	
+	saveToFile: FileAppender;
 
 
-	constructor(codeBlock: HTMLElement, doInput: boolean) {
+	constructor(codeBlock: HTMLElement, doInput: boolean, view: MarkdownView) {
 		super();
 
 		this.inputState = doInput ? "INACTIVE" : "NOT_DOING";
@@ -32,6 +36,10 @@ export class Outputter extends EventEmitter {
 		this.escapeHTML = true;
 		this.htmlBuffer = "";
 		this.blockRunState = "INITIAL";
+		
+		this.saveToFile = new FileAppender(view, codeBlock.parentElement as HTMLPreElement);
+		
+		this.restoreWrite("haha"); //this.saveToFile.getRenderedOutput());
 	}
 
 	/**
@@ -40,6 +48,7 @@ export class Outputter extends EventEmitter {
 	clear() {
 		if (this.outputElement) {
 			for (const child of Array.from(this.outputElement.children)) {
+				console.log(child);
 				if (child instanceof HTMLSpanElement)
 					this.outputElement.removeChild(child);
 			}
@@ -54,6 +63,8 @@ export class Outputter extends EventEmitter {
 		this.closeInput();
 		this.inputState = "INACTIVE";
 
+		// clear output block in file
+		this.saveToFile.clearOutput();
 		// Kill code block
 		this.killBlock();
 	}
@@ -71,7 +82,7 @@ export class Outputter extends EventEmitter {
 		if (this.outputElement)
 			this.outputElement.style.display = "none";
 
-		this.clear()
+		this.clear();
 	}
 
 	/**
@@ -81,6 +92,15 @@ export class Outputter extends EventEmitter {
 	write(text: string) {
 		this.processSigilsAndWriteText(text);
 
+	}
+	
+	restoreWrite(text: string) {
+		this.saveToFile.clearOutput();
+		console.log(this);
+		this.processSigilsAndWriteText(text);
+		
+		this.closeInput();
+		this.blockRunState = "INITIAL";
 	}
 
 	/**
@@ -116,10 +136,10 @@ export class Outputter extends EventEmitter {
 		
 		// Keep output field and clear button invisible if no text was printed.
 		if (this.textPrinted(text)) {
-			this.escapeAwareAppend(this.addStdout(), text);
-
 			// make visible again:
 			this.makeOutputVisible();
+			
+			this.escapeAwareAppend(this.addStdout(), text);
 		}
 	}
 
@@ -130,10 +150,10 @@ export class Outputter extends EventEmitter {
 	writeErr(text: string) {
 		// Keep output field and clear button invisible if no text was printed.
 		if (this.textPrinted(text)) {
-			this.addStderr().appendText(text);
-
 			// make visible again:
 			this.makeOutputVisible()
+			
+			this.addStderr().appendText(text);
 		}
 	}
 
@@ -224,10 +244,12 @@ export class Outputter extends EventEmitter {
 		const hr = document.createElement("hr");
 
 		this.outputElement = document.createElement("code");
-		this.outputElement.classList.add("language-output");
+		this.outputElement.classList.add("executor-output");
 
 		this.outputElement.appendChild(hr);
-		if (this.inputState != "NOT_DOING") this.addInputElement();
+		if (this.inputElement === undefined && this.inputState != "NOT_DOING") 
+			this.addInputElement();
+
 		parentEl.appendChild(this.outputElement);
 	}
 
@@ -291,6 +313,7 @@ export class Outputter extends EventEmitter {
 		stdElem.addClass(streamId);
 
 		if (this.inputElement) {
+			console.log(this.inputElement, this.outputElement);
 			this.outputElement.insertBefore(stdElem, this.inputElement);
 		} else {
 			this.outputElement.appendChild(stdElem);
@@ -309,6 +332,7 @@ export class Outputter extends EventEmitter {
 	 */
 	private escapeAwareAppend(element: HTMLElement, text: string) {
 		if(this.escapeHTML) {
+			this.saveToFile.addOutput(text);
 			element.appendChild(document.createTextNode(text));
 		} else {
 			this.htmlBuffer += text;

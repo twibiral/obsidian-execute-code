@@ -1,7 +1,7 @@
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import { Notice } from "obsidian";
 import { LanguageId } from "../main.js";
-import { Outputter } from "../Outputter.js";
+import { Outputter } from "../output/Outputter.js";
 import { ExecutorSettings } from "../settings/Settings.js";
 import AsyncExecutor from "./AsyncExecutor.js";
 import killWithChildren from "./killWithChildren.js";

@@ -1,4 +1,4 @@
-import type { Outputter } from "src/Outputter";
+import type { Outputter } from "src/output/Outputter";
 import type { ExecutorSettings } from "src/settings/Settings";
 import ClingExecutor from './ClingExecutor';
 
