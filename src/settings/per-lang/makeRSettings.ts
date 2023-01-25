@@ -32,5 +32,13 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 console.log('R args set to: ' + value);
                 await tab.plugin.saveSettings();
             }));
+    new Setting(containerEl)
+        .setName("Run R blocks in Notebook Mode")
+        .addToggle((toggle) => toggle
+            .setValue(tab.plugin.settings.rInteractive)
+            .onChange(async (value) => {
+                tab.plugin.settings.rInteractive = value;
+                await tab.plugin.saveSettings();
+            }));
     tab.makeInjectSetting(containerEl, "r");
 }

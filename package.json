@@ -1,6 +1,6 @@
 {
 	"name": "execute-code",
-	"version": "1.2.0",
+	"version": "1.6.2",
 	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
 	"main": "src/main.js",
 	"scripts": {
@@ -23,7 +23,7 @@
 	},
 	"dependencies": {
 		"g": "^2.0.1",
-		"json5": "^2.2.1",
+		"json5": "^2.2.2",
 		"moment": ">=2.29.4",
 		"original-fs": "^1.2.0",
 		"tau-prolog": "^0.3.4"

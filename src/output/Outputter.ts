@@ -131,6 +131,9 @@ export class Outputter extends EventEmitter {
 	 * @param text The stdout data in question
 	 */
 	private writeRaw(text: string) {
+		//remove ANSI escape codes
+		text = text.replace(/\x1b\\[;\d]*m/g, "")
+		
 		// Keep output field and clear button invisible if no text was printed.
 		if (this.textPrinted(text)) {
 			// make visible again:
@@ -379,6 +382,7 @@ export class Outputter extends EventEmitter {
 	 * @see {@link clear()}
 	 */
 	private makeOutputVisible() {
+        this.closeInput();
 		if (!this.clearButton) this.addClearButton();
 		if (!this.outputElement) this.addOutputElement();
 
@@ -388,6 +392,6 @@ export class Outputter extends EventEmitter {
 
 		setTimeout(() => {
 			if (this.inputState === "OPEN") this.inputElement.style.display = "inline";
-		}, 500)
+		}, 1000)
 	}
 }

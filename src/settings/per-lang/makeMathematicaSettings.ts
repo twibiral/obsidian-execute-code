@@ -7,7 +7,7 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
         .setName('Mathematica path')
         .setDesc('The path to your Mathematica installation.')
         .addText(text => text
-            .setValue(tab.plugin.settings.kotlinPath)
+            .setValue(tab.plugin.settings.mathematicaPath)
             .onChange(async (value) => {
                 const sanitized = tab.sanitizePath(value);
                 tab.plugin.settings.mathematicaPath = sanitized;
@@ -17,10 +17,10 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
     new Setting(containerEl)
         .setName('Mathematica arguments')
         .addText(text => text
-            .setValue(tab.plugin.settings.kotlinArgs)
+            .setValue(tab.plugin.settings.mathematicaArgs)
             .onChange(async (value) => {
                 tab.plugin.settings.mathematicaArgs = value;
-                console.log('Kotlin args set to: ' + value);
+                console.log('Mathematica args set to: ' + value);
                 await tab.plugin.saveSettings();
             }));
     tab.makeInjectSetting(containerEl, "mathematica");

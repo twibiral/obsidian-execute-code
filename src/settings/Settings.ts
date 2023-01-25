@@ -8,15 +8,22 @@ export interface ExecutorSettings {
 	
 	timeout: number;
 	allowInput: boolean;
+	wslMode: boolean;
 	nodePath: string;
 	nodeArgs: string;
 	jsInject: string;
 	tsPath: string;
 	tsArgs: string;
 	tsInject: string;
+	leanPath: string;
+	leanArgs: string;
+	leanInject: string;
 	luaPath: string;
 	luaArgs: string;
 	luaInject: string;
+	dartPath: string;
+	dartArgs: string;
+	dartInject: string;
 	csPath: string;
 	csArgs: string;
 	csInject: string;
@@ -28,6 +35,10 @@ export interface ExecutorSettings {
 	shellArgs: string;
 	shellFileExtension: string;
 	shellInject: string;
+	batchPath: string;
+	batchArgs: string;
+	batchFileExtension: string;
+	batchInject: string;
 	groovyPath: string;
 	groovyArgs: string;
 	groovyFileExtension: string;
@@ -51,6 +62,7 @@ export interface ExecutorSettings {
 	rustInject: string;
 	cppRunner: string;
 	cppInject: string;
+	cppArgs: string;
 	cppUseMain: boolean;
 	clingPath: string;
 	clingArgs: string;
@@ -77,15 +89,35 @@ export interface ExecutorSettings {
 	scalaArgs: string;
 	scalaFileExtension: string;
 	scalaInject: string;
+	racketPath: string;
+	racketArgs: string;
+	racketFileExtension: string;
+	racketInject: string;
+	fsharpPath: string;
+	fsharpArgs: string;
+	fsharpInject: "";
+	fsharpFileExtension: string;
+	cArgs: string;
+	cUseMain: boolean;
+	cInject: string;
+	rubyPath: string;
+	rubyArgs: string;
+	rubyInject: string;
+	sqlPath: string;
+	sqlArgs: string;
+	sqlInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
 	csInteractive: boolean;
+	leanInteractive: boolean;
 	luaInteractive: boolean;
+	dartInteractive: boolean;
 	pythonInteractive: boolean;
 	cppInteractive: boolean;
 	prologInteractive: boolean;
 	shellInteractive: boolean;
+	batchInteractive: boolean;
 	bashInteractive: boolean;
 	groovyInteractive: boolean;
 	rInteractive: boolean;
@@ -97,6 +129,11 @@ export interface ExecutorSettings {
 	mathematicaInteractive: boolean;
 	haskellInteractive: boolean;
 	scalaInteractive: boolean;
+	racketInteractive: boolean;
+	fsharpInteractive: boolean;
+	cInteractive: boolean;
+	rubyInteractive: boolean;
+	sqlInteractive: boolean;
 }
 
 
@@ -108,15 +145,22 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	
 	timeout: 10000,
 	allowInput: true,
+	wslMode: false,
 	nodePath: "node",
 	nodeArgs: "",
 	jsInject: "",
 	tsPath: "ts-node",
 	tsArgs: "",
 	tsInject: "",
+	leanPath: "lean",
+	leanArgs: "",
+	leanInject: "",
 	luaPath: "lua",
 	luaArgs: "",
 	luaInject: "",
+	dartPath: "dart",
+	dartArgs: "",
+	dartInject: "",
 	csPath: "dotnet-script",
 	csArgs: "",
 	csInject: "",
@@ -128,6 +172,10 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	shellArgs: "",
 	shellFileExtension: "sh",
 	shellInject: "",
+	batchPath: "call",
+	batchArgs: "",
+	batchFileExtension: "bat",
+	batchInject: "",
 	groovyPath: "groovy",
 	groovyArgs: "",
 	groovyFileExtension: "groovy",
@@ -151,6 +199,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	rustInject: "",
 	cppRunner: "cling",
 	cppInject: "",
+	cppArgs: "",
 	cppUseMain: false,
 	clingPath: "cling",
 	clingArgs: "",
@@ -168,24 +217,44 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	ghcPath: "ghc",
 	ghciPath: "ghci",
 	useGhci: false,
-  haskellInject: "",
+	haskellInject: "",
 	mathematicaPath: "wolframscript",
-	mathematicaArgs: "",
+	mathematicaArgs: "-file",
 	mathematicaFileExtension: "wls",
 	mathematicaInject: "",
 	scalaPath: "scala",
 	scalaArgs: "",
 	scalaFileExtension: "scala",
 	scalaInject: "",
+	racketPath: "racket",
+	racketArgs: "",
+	racketFileExtension: "rkt",
+	racketInject: "#lang racket",
+	fsharpPath: "dotnet",
+	fsharpArgs: "",
+	fsharpInject: "",
+	fsharpFileExtension: "fsx",
+	cArgs: "",
+	cUseMain: true,
+	cInject: "",
+	rubyPath: "ruby",
+	rubyArgs: "",
+	rubyInject: "",
+	sqlPath: "psql",
+	sqlArgs: "-d <database> -U <user> -f",
+	sqlInject: "",
 
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
+	leanInteractive: false,
 	luaInteractive: false,
+	dartInteractive: false,
 	pythonInteractive: true,
 	cppInteractive: false,
 	prologInteractive: false,
 	shellInteractive: false,
+	batchInteractive: false,
 	bashInteractive: false,
 	groovyInteractive: false,
 	rInteractive: false,
@@ -194,7 +263,12 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	javaInteractive: false,
 	powershellInteractive: false,
 	kotlinInteractive: false,
-	mathematicaInteractive: true,
+	mathematicaInteractive: false,
 	haskellInteractive: false,
-	scalaInteractive: false
+	scalaInteractive: false,
+	fsharpInteractive: false,
+	cInteractive: false,
+	racketInteractive: false,
+	rubyInteractive: false,
+	sqlInteractive: false,
 }

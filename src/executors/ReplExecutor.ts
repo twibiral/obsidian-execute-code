@@ -1,8 +1,10 @@
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
+import { Notice } from "obsidian";
 import { LanguageId } from "../main.js";
 import { Outputter } from "../output/Outputter.js";
 import { ExecutorSettings } from "../settings/Settings.js";
 import AsyncExecutor from "./AsyncExecutor.js";
+import killWithChildren from "./killWithChildren.js";
 
 export default abstract class ReplExecutor extends AsyncExecutor {
     process: ChildProcessWithoutNullStreams;
@@ -17,10 +19,16 @@ export default abstract class ReplExecutor extends AsyncExecutor {
         
         this.settings = settings;
         
+        if (this.settings.wslMode) {
+            args.unshift("-e", path);
+            path = "wsl";
+        }
+        
         this.process = spawn(path, args);
         
         this.process.on("close", () => {
             this.emit("close");
+            new Notice("Runtime exited");
             this.process = null;
         });
         
@@ -96,8 +104,9 @@ export default abstract class ReplExecutor extends AsyncExecutor {
         return new Promise((resolve, reject) => {
             this.process.on("close", () => {
                 resolve();
-            });
-            this.process.kill();
+            });            
+            
+            killWithChildren(this.process.pid);
             this.process = null;
         });
     }

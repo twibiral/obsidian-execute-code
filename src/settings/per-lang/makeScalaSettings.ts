@@ -7,19 +7,19 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
         .setName('scala path')
         .setDesc("Path to your scala installation")
         .addText(text => text
-            .setValue(tab.plugin.settings.tsPath)
+            .setValue(tab.plugin.settings.scalaPath)
             .onChange(async (value) => {
                 const sanitized = tab.sanitizePath(value);
-                tab.plugin.settings.tsPath = sanitized;
+                tab.plugin.settings.scalaPath = sanitized;
                 console.log('scala path set to: ' + sanitized);
                 await tab.plugin.saveSettings();
             }));
     new Setting(containerEl)
         .setName('Scala arguments')
         .addText(text => text
-            .setValue(tab.plugin.settings.tsArgs)
+            .setValue(tab.plugin.settings.scalaArgs)
             .onChange(async (value) => {
-                tab.plugin.settings.tsArgs = value;
+                tab.plugin.settings.scalaArgs = value;
                 console.log('Scala args set to: ' + value);
                 await tab.plugin.saveSettings();
             }));

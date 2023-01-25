@@ -7,17 +7,19 @@ The result is shown only after the execution is finished. It is not possible to 
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
 
-The following [languages are supported](#supported-programming-languages): CPP, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lua, CSharp, Prolog, Rust, Python, R, Wolfram Mathematica, Haskell, Scala, Shell & Powershell. 
+The following [languages are supported](#supported-programming-languages-): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell.
 
 
-Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands) that help you to access paths in obsidian or show images in your notes.
+Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands-) that help you to access paths in obsidian or show images in your notes.
 
-You can create code blocks that are executed before or after each code block of the same language and define [global code injections](#global-code-injection-and-reusing-code-blocks).
+You can create code blocks that are executed before or after each code block of the same language and define [global code injections](#global-code-injection-and-reusing-code-blocks-).
 
 Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent versions.
 
 
-## Supported programming languages
+[![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?color=1e1e1e&labelColor=8572db&label=Downloads&query=$['execute-code'].downloads&url=https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugin-stats.json&)](obsidian://show-plugin?id=execute-code)
+
+## Supported programming languages 💻
 
 <details>
 <summary>JavaScript</summary>
@@ -56,6 +58,18 @@ console.log(message);
 ```cs 
 Console.WriteLine("Hello, World!");  
 ```  
+</details>
+
+<details>
+<summary>Dart</summary>
+
+- Requirements: dart sdk is installed and the correct path is set in the settings.
+
+```dart
+void main() {
+  print("Hello World");
+}
+```
 </details>
 
 <details>
@@ -135,6 +149,19 @@ print('Hello, World!')
 </details>
 
 <details>
+<summary>Lean</summary>
+
+- Requirements: install lean and config lean path.
+
+```lean
+def main : IO Unit :=
+  IO.println s!"Hello, World!"
+
+#eval main
+```
+</details>
+
+<details>
 <summary>C++</summary>
 
 - Requirements: [Cling](https://github.com/root-project/cling) is installed and correct path is set in the settings.
@@ -165,6 +192,31 @@ void main() {
 </details>
 
 <details>
+<summary>C</summary>
+
+- Requirements: [Cling](https://github.com/root-project/cling) is installed and correct path is set in the settings.
+- Code will be executed line-by-line without needing a main function.
+
+```c
+#include <stdio.h>
+
+printf("Hello, World!");
+```
+
+- Main functions can be used as an entrypoint by toggling the option in settings.
+
+```c
+#include <stdio.h>
+
+int main() {
+	printf("Hello, World!");
+	return 0;
+}
+```
+
+</details>
+
+<details>
 <summary>Shell</summary>
 
 - Requirements: Set the path to your preferred shell in the settings. Default is Bash. (Only on Linux and macOS)
@@ -184,7 +236,22 @@ ls -la
 ```powershell
 echo "Hello World!"
 ```
+
+- If you prefer batch: change the path settings in the menu for powershell
+![Example how to use the magic commands.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/batch_settings.png?raw=true)
 </details>
+
+
+<details>
+<summary>Batch</summary>
+
+- Requirements: Used to execute batch commands on Windows (also known as BAT or CMD). Default is command prompt, but can be set to your preferred shell in the settings.
+
+```batch
+ECHO Hello World!
+```
+</details>
+
 
 <details>
 <summary>Prolog</summary>
@@ -291,12 +358,37 @@ hello("Bob")
 mySum:: Num a => a -> a -> a
 mySum a b = a+b
 ```
+
 </details>
+
+<details>
 <summary>Scala</summary>
+
 - Requirements: Scala is installed and the correct path is set in the settings.
 
 ```scala
 println("Hello, World!")
+```
+
+</details>
+
+<details>
+<summary>Racket</summary>
+
+- Requirements: Racket is installed and the correct path is set in the settings.
+
+```racket
+"Hello, world!"
+```
+</details>
+
+<details>
+<summary>Ruby</summary>
+
+- Requirements: Ruby is installed and the correct path is set in the settings.
+
+```ruby
+puts "Hello, World!"
 ```
 </details>
 
@@ -309,14 +401,16 @@ Support for the following is planned:
 
 Open for suggestions.
 
-## Magic Commands
+## Magic Commands 🪄
 
 Magic commands are some meta commands that can be used in the code block. They are processed by the plugin before the source code is executed.
 
 The following magic commands are supported:
 
-- `@vault`: Inserts the vault path as string.
-- `@note`: Inserts the note path as string.
+- `@vault_path`: Inserts the vault path as string (e.g. "/User/path/to/vault")
+- `@vault_url`: Inserts the vault url as string. (e.g. "app://local/path/to/vault")
+- `@note_path`: Inserts the vault path as string (e.g. "/User/path/to/vault/Note.md")
+- `@note_url`: Inserts the vault url as string. (e.g. "app://local/path/to/vault/Note.md")
 - `@title`: Inserts the note title as string.
 - `@show(ImagePath)`: Displays an image at the given path in the note.
 - `@show(ImagePath, Width, Height)`: Displays an image at the given path in the note.
@@ -324,10 +418,11 @@ The following magic commands are supported:
 - `@html(HtmlSource)`: Displays HTML in the note
 
 (`@show(...)` and `@html(...)` are only supported for JavaScript and Python yet.)
+(The old commands `@note` and `@vault` are still supported, but may be removed in the future.)
 
 ![Example how to use the magic commands.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/magic_example.png?raw=true)
 
-## Running in Preview
+## Running in Preview ⏩
 
 Adding `run-` before the language name in the code blocks (as in the example below) renders the code block in the preview already.
 This allows you to execute the code in the preview.
@@ -341,7 +436,7 @@ print("Hello", name)
         hello("Eve")
 `````` 
 
-## Code Block Arguments
+## Code Block Arguments 🏷
 
 Code blocks support specifying additional arguments in the form `{key='value', otherkey=['val1', 'val2']}`. Add them to code blocks like so:
 
@@ -351,7 +446,7 @@ print('my labelled code block')
 ```
 `````
 
-## Global Code Injection and Reusing Code Blocks
+## Global Code Injection and Reusing Code Blocks 📘
 
 Sometimes it is helpful to have code that is executed before or after each other block of the same language. This plugin supports this in a few ways:
 
@@ -438,45 +533,59 @@ undefined
 3
 ```
 
-To manage the open runtimes for Notebook Mode, you can use the `Open Code Runtime Management` command in the command palette. From this sidebar window, you can stop kernels.
+To manage the open runtimes for Notebook Mode, you can use the `Open Code Runtime Management` command in the command palette. From this sidebar window, you can stop kernels. **Note: force-stopping requires `taskkill` on Windows and `pkill` on Unix. 99% of systems should have these preinstalled: if yours doesn't, please [file an issue](https://github.com/twibiral/obsidian-execute-code/issues/new/choose)**
 
 
-## Style Settings
+## Style Settings 🎨
 
 This plugin supports customising styles using the [Style Settings plugin](https://github.com/mgmeyers/obsidian-style-settings). It's possible to customise the color of code block outputs and errors.
 
-## Installation
+## Installation 💾
 
 In your vault go to Settings > Community plugins > Browse and search for "Execute Code". Select the plugin, install it and activate it.
 
 or
 
 Follow [this link](https://obsidian.md/plugins?search=execute%20code#) and click "Open in Obsidian".
+	
 
-## Warning
+## Locating Path Settings ( ex. JavaScript | Node )
+	
+To avoid or resolve errors from an incorrect path.
+	
+('where' for Mac and Windows) --- (for Linux Users, replace 'where' with 'which')
+	
+1. In your terminal, type 'where node'
+   ![Type 'where node' in terminal](https://github.com/twibiral/obsidian-execute-code/blob/master/images/path_location_shell.png?raw=true)
+2. Copy path from terminal ( ex. /opt/homebrew/bin/node )
+3. Paste in path under settings ( ex. Node path )
+   ![Update path under settings with path from step 2](https://github.com/twibiral/obsidian-execute-code/blob/master/images/path_location_settings.png?raw=true)
+
+
+## Warning ⚠
 
 Do not execute code from sources you don't know or code you don't understand. Executing code can cause irreparable damage.
 
-## Known Problems
+## Known Problems 🛠
 
 - On Linux, Snap/Flatpak/AppImage installations of Obsidian run in an isolated environment. As such, they will not have access to any of your installed programs. If you are on Linux, make sure to install the `.deb` version of Obsidian. If your distro isn't compatible with `.deb` files, you may see issues.
 - Missing when `run` button after switching the theme: Try to close and reopen your notes and wait for a few minutes. It seems like obsidian doesn't call the postprocessors after the theme switch.
 - Pre- / Post-blocks may not be executed if the file contains duplicate code blocks.
 - In Python, Embed Plots may not be off while Notebook Mode is on
 
-## Future Work
+## Future Work 📑
 
 - Notebook Mode similar to Jupyter
 - Error warning when the execution fails (e.g. when python isn't installed)
 - Test if this plugin works in combination with dataview.
 
-## Contribution
+## Contribution 🤝
 
 All contributions are welcome. Just create a merge request or email me: tim.wibiral(at)uni-ulm.de
 
 The bullet points in Future Work are a good starting point if you want to help.
 
-## Contributors
+## Contributors ♥
 
 <a href="https://github.com/twibiral/obsidian-execute-code/graphs/contributors">
   <img alt="List of contributors to this project." src="https://contrib.rocks/image?repo=twibiral/obsidian-execute-code" />

@@ -1,25 +1,33 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
 import ExecuteCodePlugin, {canonicalLanguages, LanguageId} from "src/main";
-import { DISPLAY_NAMES } from "./languageDisplayName";
+import {DISPLAY_NAMES} from "./languageDisplayName";
 import makeCppSettings from "./per-lang/makeCppSettings";
+import makeCSettings from "./per-lang/makeCSettings.js";
 import makeCsSettings from "./per-lang/makeCsSettings";
+import makeFSharpSettings from "./per-lang/makeFSharpSettings";
 import makeGoSettings from "./per-lang/makeGoSettings";
 import makeGroovySettings from "./per-lang/makeGroovySettings";
 import makeHaskellSettings from "./per-lang/makeHaskellSettings";
 import makeJavaSettings from "./per-lang/makeJavaSettings";
 import makeJsSettings from "./per-lang/makeJsSettings";
 import makeKotlinSettings from "./per-lang/makeKotlinSettings";
+import makeLeanSettings from "./per-lang/makeLeanSettings";
 import makeLuaSettings from "./per-lang/makeLuaSettings";
+import makeDartSettings from "./per-lang/makeDartSettings";
 import makeMathematicaSettings from "./per-lang/makeMathematicaSettings";
 import makePowershellSettings from "./per-lang/makePowershellSettings";
 import makePrologSettings from "./per-lang/makePrologSettings";
 import makePythonSettings from "./per-lang/makePythonSettings";
 import makeRSettings from "./per-lang/makeRSettings";
+import makeRubySettings from "./per-lang/makeRubySettings";
 import makeRustSettings from "./per-lang/makeRustSettings";
 import makeScalaSettings from "./per-lang/makeScalaSettings.js";
+import makeRacketSettings from "./per-lang/makeRacketSettings.js";
 import makeShellSettings from "./per-lang/makeShellSettings";
+import makeBatchSettings from "./per-lang/makeBatchSettings";
 import makeTsSettings from "./per-lang/makeTsSettings";
 import {ExecutorSettings} from "./Settings";
+import makeSQLSettings from "./per-lang/makeSQLSettings";
 
 
 /**
@@ -75,6 +83,19 @@ export class SettingsTab extends PluginSettingTab {
 					this.plugin.settings.allowInput = value
 					await this.plugin.saveSettings();
 				}));
+		
+		if(process.platform === "win32") {
+			new Setting(containerEl)
+				.setName('WSL Mode')
+				.setDesc("Whether or not to run code in the Windows Subsystem for Linux. If you don't have WSL installed, don't turn this on!")
+				.addToggle(text => text
+					.setValue(this.plugin.settings.wslMode)
+					.onChange(async (value) => {
+						console.log('WSL Mode set to: ' + value);
+						this.plugin.settings.wslMode = value
+						await this.plugin.saveSettings();
+					}));
+		}
 
 		// TODO setting per language that requires main function if main function should be implicitly made or not, if not, non-main blocks will not have a run button
 
@@ -103,8 +124,14 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== TypeScript ==========
 		makeTsSettings(this, this.makeContainerFor("ts"));
 
+		// ========== Lean ==========
+		makeLeanSettings(this, this.makeContainerFor("lean"));
+
 		// ========== Lua ==========
 		makeLuaSettings(this, this.makeContainerFor("lua"));
+
+		// ========== Dart ==========
+		makeDartSettings(this, this.makeContainerFor("dart"));
 
 		// ========== CSharp ==========
 		makeCsSettings(this, this.makeContainerFor("cs"));
@@ -112,42 +139,37 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== Java ==========
 		makeJavaSettings(this, this.makeContainerFor("java"));
 
-
 		// ========== Python ==========
 		makePythonSettings(this, this.makeContainerFor("python"));
-
 
 		// ========== Golang =========
 		makeGoSettings(this, this.makeContainerFor("go"));
 
-
 		// ========== Rust ===========
 		makeRustSettings(this, this.makeContainerFor("rust"));
-
 
 		// ========== C++ ===========
 		makeCppSettings(this, this.makeContainerFor("cpp"));
 
+		// ========== C ===========
+		makeCSettings(this, this.makeContainerFor("c"));
 
+		// ========== Batch ==========
+		makeBatchSettings(this, this.makeContainerFor("batch"));
 		// ========== Shell ==========
 		makeShellSettings(this, this.makeContainerFor("shell"));
-
 
 		// ========== Powershell ==========
 		makePowershellSettings(this, this.makeContainerFor("powershell"));
 
-
 		// ========== Prolog ==========
 		makePrologSettings(this, this.makeContainerFor("prolog"));
-
 
 		// ========== Groovy ==========
 		makeGroovySettings(this, this.makeContainerFor("groovy"));
 
-
 		// ========== R ==========
 		makeRSettings(this, this.makeContainerFor("r"));
-
 
 		// ========== Kotlin ==========
 		makeKotlinSettings(this, this.makeContainerFor("kotlin"));
@@ -155,12 +177,23 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== Mathematica ==========
 		makeMathematicaSettings(this, this.makeContainerFor("mathematica"));
 
-
 		// ========== Haskell ===========
 		makeHaskellSettings(this, this.makeContainerFor("haskell"));
 
 		// ========== Scala ===========
 		makeScalaSettings(this, this.makeContainerFor("scala"));
+
+		// ========== Racket ===========
+		makeRacketSettings(this, this.makeContainerFor("racket"));
+
+		// ========== FSharp ===========
+		makeFSharpSettings(this, this.makeContainerFor("fsharp"));
+
+		// ========== Ruby ============
+		makeRubySettings(this, this.makeContainerFor("ruby"));
+
+		// ========== SQL ============
+		makeSQLSettings(this, this.makeContainerFor("sql"));
 
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}

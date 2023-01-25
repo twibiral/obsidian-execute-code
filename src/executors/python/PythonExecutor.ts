@@ -14,7 +14,7 @@ export default class PythonExecutor extends ReplExecutor {
 		}
 	}
 	wrapCode(code: string, finishSigil: string): string {
-		return wrapPython(code, this.globalsDictionaryName, this.localsDictionaryName, this.printFunctionName, 
+		return wrapPython(code, this.globalsDictionaryName, this.printFunctionName, 
 			finishSigil, this.settings.pythonEmbedPlots);
 	}
 
@@ -23,7 +23,6 @@ export default class PythonExecutor extends ReplExecutor {
 	process: ChildProcessWithoutNullStreams
 
 	printFunctionName: string;
-	localsDictionaryName: string;
 	globalsDictionaryName: string;
 
 	constructor(settings: ExecutorSettings, file: string) {
@@ -36,23 +35,9 @@ export default class PythonExecutor extends ReplExecutor {
 			file, "python");
 			
 		this.printFunctionName = `__print_${Math.random().toString().substring(2)}_${Date.now()}`;
-		this.localsDictionaryName = `__locals_${Math.random().toString().substring(2)}_${Date.now()}`;
 		this.globalsDictionaryName = `__globals_${Math.random().toString().substring(2)}_${Date.now()}`;
 	}
 
-	/**
-	 * Close the runtime.
-	 * @returns A promise that resolves once the runtime is fully closed
-	 */
-	stop(): Promise<void> {
-		return new Promise((resolve, reject) => {
-			this.process.on("close", () => {
-				resolve();
-			});
-			this.process.kill();
-			this.process = null;
-		});
-	}
 
 	/**
 	 * Swallows and does not output the "Welcome to Python v..." message that shows at startup.
@@ -62,6 +47,7 @@ export default class PythonExecutor extends ReplExecutor {
 		this.addJobToQueue((resolve, reject) => {
 			this.process.stdin.write(
 /*python*/`
+${this.globalsDictionaryName} = {**globals()}
 ${this.settings.pythonEmbedPlots ?
 /*python*/`
 try:
@@ -74,9 +60,6 @@ except:
 from __future__ import print_function
 import sys
 ${this.printFunctionName} = print
-
-${this.localsDictionaryName} = {}
-${this.globalsDictionaryName} = {**globals()}
 `.replace(/\r\n/g, "\n"));
 
 			this.process.stderr.once("data", (data) => {

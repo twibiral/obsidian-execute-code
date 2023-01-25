@@ -6,15 +6,21 @@ import PrologExecutor from "./executors/PrologExecutor";
 import PythonExecutor from "./executors/python/PythonExecutor";
 import CppExecutor from './executors/CppExecutor';
 import ExecuteCodePlugin, {LanguageId} from "./main";
+import RExecutor from "./executors/RExecutor.js";
+import CExecutor from "./executors/CExecutor";
+import FSharpExecutor from "./executors/FSharpExecutor";
 
 const interactiveExecutors: Partial<Record<LanguageId, any>> = {
 	"js": NodeJSExecutor,
-	"python": PythonExecutor
+	"python": PythonExecutor,
+	"r": RExecutor
 };
 
 const nonInteractiveExecutors: Partial<Record<LanguageId, any>> = {
 	"prolog": PrologExecutor,
-	"cpp": CppExecutor
+	"cpp": CppExecutor,
+	"c": CExecutor,
+	"fsharp": FSharpExecutor
 };
 
 export default class ExecutorContainer extends EventEmitter implements Iterable<Executor> {
@@ -95,6 +101,6 @@ export default class ExecutorContainer extends EventEmitter implements Iterable<
 		else if (language in nonInteractiveExecutors)
 			return new nonInteractiveExecutors[language](this.plugin.settings, file);
 		// Generic non-interactive language executor
-		return new NonInteractiveCodeExecutor(needsShell, file, language);
+		return new NonInteractiveCodeExecutor(this.plugin.settings, needsShell, file, language);
 	}
 }

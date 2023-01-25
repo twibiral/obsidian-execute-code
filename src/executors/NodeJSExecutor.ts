@@ -18,20 +18,6 @@ export default class NodeJSExecutor extends ReplExecutor {
 	}
 
 	/**
-	 * Close the runtime.
-	 * @returns A promise that resolves once the runtime is fully closed
-	 */
-	stop(): Promise<void> {
-		return new Promise((resolve, reject) => {
-			this.process.on("close", () => {
-				resolve();
-			});
-			this.process.kill();
-			this.process = null;
-		});
-	}
-
-	/**
 	 * Writes a single newline to ensure that the stdin is set up correctly.
 	 */
 	async setup() {
