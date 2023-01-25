@@ -1,6 +1,6 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
 import ExecuteCodePlugin, {canonicalLanguages, LanguageId} from "src/main";
-import { DISPLAY_NAMES } from "./languageDisplayName";
+import {DISPLAY_NAMES} from "./languageDisplayName";
 import makeCppSettings from "./per-lang/makeCppSettings";
 import makeCSettings from "./per-lang/makeCSettings.js";
 import makeCsSettings from "./per-lang/makeCsSettings";
@@ -27,6 +27,7 @@ import makeShellSettings from "./per-lang/makeShellSettings";
 import makeBatchSettings from "./per-lang/makeBatchSettings";
 import makeTsSettings from "./per-lang/makeTsSettings";
 import {ExecutorSettings} from "./Settings";
+import makeSQLSettings from "./per-lang/makeSQLSettings";
 
 
 /**
@@ -190,6 +191,9 @@ export class SettingsTab extends PluginSettingTab {
 
 		// ========== Ruby ============
 		makeRubySettings(this, this.makeContainerFor("ruby"));
+
+		// ========== SQL ============
+		makeSQLSettings(this, this.makeContainerFor("sql"));
 
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}
