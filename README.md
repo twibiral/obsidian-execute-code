@@ -249,7 +249,7 @@ echo "Hello World!"
 - **Important**: <br>
 	The percent sign is used in batch files to represent command line parameters: e.g. %1, %2, ... <br>
 	Two percent signs in a batch file are treated like a single percent sign in a command: e.g. %%f <br>
-	When using variables in execute code, use 2 percent signs. <br>
+	When using variables in execute code, use 2 percent signs. More info [here](https://stackoverflow.com/questions/14509652/what-is-the-difference-between-and-in-a-cmd-file)<br>
 	
 ```batch
 ECHO Hello World!
