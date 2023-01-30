@@ -245,8 +245,12 @@ echo "Hello World!"
 <details>
 <summary>Batch</summary>
 
-- Requirements: Used to execute batch commands on Windows (also known as BAT or CMD). Default is command prompt, but can be set to your preferred shell in the settings.
-
+- **Requirements**: Used to execute batch commands on Windows (also known as BAT or CMD). Default is command prompt, but can be set to your preferred shell in the settings.
+- **Important**: <br>
+	The percent sign is used in batch files to represent command line parameters: e.g. %1, %2, ... <br>
+	Two percent signs in a batch file are treated like a single percent sign in a command: e.g. %%f <br>
+	When using variables in execute code, use 2 percent signs. More info [here](https://stackoverflow.com/questions/14509652/what-is-the-difference-between-and-in-a-cmd-file)<br>
+	
 ```batch
 ECHO Hello World!
 ```
