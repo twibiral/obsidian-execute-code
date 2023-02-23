@@ -22,7 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 
 - Fix wrong scala settings (Thanks to @scoopsdev)
--
+- Add new executor for PowerShell that fixes problems with file encodings by encoding powershell scripts with latin-1 instead of windows-1252.
 
 ## [1.6.1]
 
