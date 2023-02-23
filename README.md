@@ -7,12 +7,12 @@ The result is shown only after the execution is finished. It is not possible to 
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
 
-The following [languages are supported](#supported-programming-languages): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell.
+The following [languages are supported](#supported-programming-languages-): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell.
 
 
-Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands) that help you to access paths in obsidian or show images in your notes.
+Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands-) that help you to access paths in obsidian or show images in your notes.
 
-You can create code blocks that are executed before or after each code block of the same language and define [global code injections](#global-code-injection-and-reusing-code-blocks).
+You can create code blocks that are executed before or after each code block of the same language and define [global code injections](#global-code-injection-and-reusing-code-blocks-).
 
 Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent versions.
 
@@ -358,6 +358,7 @@ hello("Bob")
 mySum:: Num a => a -> a -> a
 mySum a b = a+b
 ```
+
 </details>
 
 <details>
@@ -368,6 +369,7 @@ mySum a b = a+b
 ```scala
 println("Hello, World!")
 ```
+
 </details>
 
 <details>
@@ -545,6 +547,20 @@ In your vault go to Settings > Community plugins > Browse and search for "Execut
 or
 
 Follow [this link](https://obsidian.md/plugins?search=execute%20code#) and click "Open in Obsidian".
+	
+
+## Locating Path Settings ( ex. JavaScript | Node )
+	
+To avoid or resolve errors from an incorrect path.
+	
+('where' for Mac and Windows) --- (for Linux Users, replace 'where' with 'which')
+	
+1. In your terminal, type 'where node'
+   ![Type 'where node' in terminal](https://github.com/twibiral/obsidian-execute-code/blob/master/images/path_location_shell.png?raw=true)
+2. Copy path from terminal ( ex. /opt/homebrew/bin/node )
+3. Paste in path under settings ( ex. Node path )
+   ![Update path under settings with path from step 2](https://github.com/twibiral/obsidian-execute-code/blob/master/images/path_location_settings.png?raw=true)
+
 
 ## Warning ⚠
 

@@ -103,6 +103,9 @@ export interface ExecutorSettings {
 	rubyPath: string;
 	rubyArgs: string;
 	rubyInject: string;
+	sqlPath: string;
+	sqlArgs: string;
+	sqlInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -130,6 +133,7 @@ export interface ExecutorSettings {
 	fsharpInteractive: boolean;
 	cInteractive: boolean;
 	rubyInteractive: boolean;
+	sqlInteractive: boolean;
 }
 
 
@@ -236,6 +240,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	rubyPath: "ruby",
 	rubyArgs: "",
 	rubyInject: "",
+	sqlPath: "psql",
+	sqlArgs: "-d <database> -U <user> -f",
+	sqlInject: "",
 
 	jsInteractive: true,
 	tsInteractive: false,
@@ -262,5 +269,6 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	fsharpInteractive: false,
 	cInteractive: false,
 	racketInteractive: false,
-	rubyInteractive: false
+	rubyInteractive: false,
+	sqlInteractive: false,
 }
