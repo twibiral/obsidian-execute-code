@@ -109,7 +109,8 @@ export default class ExecuteCodePlugin extends Plugin {
 			.forEach((out: HTMLElement) => out.remove());
 
 		for (const executor of this.executors) {
-			executor.stop().then(_ => { /* do nothing */ });
+			executor.stop().then(_ => { /* do nothing */
+			});
 		}
 
 		console.log("Unloaded plugin: Execute Code");
