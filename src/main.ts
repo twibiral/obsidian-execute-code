@@ -155,7 +155,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	private addRunButtons(element: HTMLElement, file: string) {
 		Array.from(element.getElementsByTagName("code"))
 			.forEach((codeBlock: HTMLElement) => {
-				if (codeBlock.className.match(/^language-\{\w+/i)){
+				if (codeBlock.className.match(/^language-\{\w+/i)) {
 					codeBlock.className = codeBlock.className.replace(/^language-\{(\w+)/i, "language-$1 {");
 					codeBlock.parentElement.className = codeBlock.className;
 				}
@@ -207,7 +207,6 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language === "java") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCode(transformedCode, out, button, this.settings.javaPath, this.settings.javaArgs, this.settings.javaFileExtension, language, file);
 			});
@@ -215,8 +214,8 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language === "python") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-
 				let transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
+
 				if (this.settings.pythonEmbedPlots)	// embed plots into html which shows them in the note
 					transformedCode = addInlinePlotsToPython(transformedCode, TOGGLE_HTML_SIGIL);
 				transformedCode = addMagicToPython(transformedCode);
@@ -263,7 +262,6 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language === "groovy") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension, language, file);
 			});
@@ -271,7 +269,6 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language === "rust") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCode(transformedCode, out, button, this.settings.cargoPath, "eval" + this.settings.cargoEvalArgs, this.settings.rustFileExtension, language, file);
 			});
@@ -279,11 +276,8 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language === "r") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-
 				let transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				transformedCode = addInlinePlotsToR(transformedCode);
-
-
 				this.runCode(transformedCode, out, button, this.settings.RPath, this.settings.RArgs, "R", language, file);
 			});
 
@@ -315,7 +309,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				this.runCodeInShell(transformedCode, out, button, this.settings.luaPath, this.settings.luaArgs, "lua", language, file);
 			});
 
-    } else if (language === "dart") {
+		} else if (language === "dart") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
@@ -333,7 +327,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, "haskell").injectCode(srcCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.useGhci ? this.settings.ghciPath : this.settings.runghcPath, this.settings.useGhci ? "" : "-f "+this.settings.ghcPath, "hs", language, file);
+				this.runCodeInShell(transformedCode, out, button, this.settings.useGhci ? this.settings.ghciPath : this.settings.runghcPath, this.settings.useGhci ? "" : "-f " + this.settings.ghcPath, "hs", language, file);
 			});
 
 		} else if (language === "mathematica") {
