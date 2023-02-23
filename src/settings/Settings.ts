@@ -57,6 +57,8 @@ export interface ExecutorSettings {
 	powershellArgs: string;
 	powershellFileExtension: string;
 	powershellInject: string;
+	powershellEncoding: BufferEncoding;
+
 	cargoPath: string;
 	cargoEvalArgs: string;
 	rustInject: string;
@@ -193,7 +195,8 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	powershellPath: "powershell",
 	powershellArgs: "-file",
 	powershellFileExtension: "ps1",
-	powershellInject: "",
+	powershellInject: "$OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding",
+	powershellEncoding: "latin1",
 	cargoPath: "cargo",
 	cargoEvalArgs: "",
 	rustInject: "",
