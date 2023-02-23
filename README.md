@@ -16,8 +16,11 @@ You can create code blocks that are executed before or after each code block of 
 
 Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent versions.
 
+<div align='center'>
 
-[![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?color=1e1e1e&labelColor=8572db&label=Downloads&query=$['execute-code'].downloads&url=https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugin-stats.json&)](obsidian://show-plugin?id=execute-code)
+[![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?color=1e1e1e&labelColor=8572db&label=Downloads&query=$['execute-code'].downloads&url=https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugin-stats.json&)](obsidian://show-plugin?id=execute-code)<a href="https://www.buymeacoffee.com/timwibiral" target="_blank">                              <img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 108px !important;" ></a>
+
+</div>
 
 ## Supported programming languages 💻
 
