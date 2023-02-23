@@ -16,8 +16,11 @@ You can create code blocks that are executed before or after each code block of 
 
 Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent versions.
 
+<div align='center'>
 
-[![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?color=1e1e1e&labelColor=8572db&label=Downloads&query=$['execute-code'].downloads&url=https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugin-stats.json&)](obsidian://show-plugin?id=execute-code)
+[![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?color=1e1e1e&labelColor=8572db&label=Downloads&query=$['execute-code'].downloads&url=https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugin-stats.json&)](obsidian://show-plugin?id=execute-code)<a href="https://www.buymeacoffee.com/timwibiral" target="_blank">                              <img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 108px !important;" ></a>
+
+</div>
 
 ## Supported programming languages 💻
 
@@ -245,8 +248,12 @@ echo "Hello World!"
 <details>
 <summary>Batch</summary>
 
-- Requirements: Used to execute batch commands on Windows (also known as BAT or CMD). Default is command prompt, but can be set to your preferred shell in the settings.
-
+- **Requirements**: Used to execute batch commands on Windows (also known as BAT or CMD). Default is command prompt, but can be set to your preferred shell in the settings.
+- **Important**: <br>
+	The percent sign is used in batch files to represent command line parameters: e.g. %1, %2, ... <br>
+	Two percent signs in a batch file are treated like a single percent sign in a command: e.g. %%f <br>
+	When using variables in execute code, use 2 percent signs. More info [here](https://stackoverflow.com/questions/14509652/what-is-the-difference-between-and-in-a-cmd-file)<br>
+	
 ```batch
 ECHO Hello World!
 ```
