@@ -430,6 +430,44 @@ The following magic commands are supported:
 (`@show(...)` and `@html(...)` are only supported for JavaScript and Python yet.)
 (The old commands `@note` and `@vault` are still supported, but may be removed in the future.)
 
+Examples for the magic commands with Python:
+
+```python
+print("Vault path:", @vault_path)
+print("Vault url:", @vault_url)
+
+print("Note path:", @note_path)
+print("Note url:", @note_url)
+
+print("Note title:", @title)
+```
+
+```python
+@show("image.png")
+@show("image.png", 100, 100)
+@show("https://upload.wikimedia.org/wikipedia/commons/d/de/TestScreen_square.svg", 10%, 10%, "center")
+```
+
+```python
+@html("<h1>HTML Caption</h1>")
+@html('''
+<svg width="100%" height="100%" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <circle cx="300" cy="300" r="250" style="fill:peru;" />
+  <circle cx="200" cy="250" r="50" style="fill:black;" />
+  <circle cx="400" cy="250" r="50" style="fill:black;" />
+  <circle cx="190" cy="230" r="20" style="fill:white;" />
+  <circle cx="390" cy="230" r="20" style="fill:white;" />
+  <circle cx="250" cy="400" r="85" style="fill:saddlebrown;" />
+  <circle cx="350" cy="400" r="85" style="fill:saddlebrown;" />
+  <ellipse cx="300" cy="380" rx="50" ry="35" style="fill:black;" />
+  <ellipse cx="130" cy="100" rx="110" ry="70" style="fill:saddlebrown;"/>
+<ellipse cx="470" cy="100" rx="110" ry="70" style="fill:saddlebrown;" />
+</svg> 
+''')
+```
+
+Try it out yourself!
+
 ![Example how to use the magic commands.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/magic_example.png?raw=true)
 
 ## Running in Preview ⏩
