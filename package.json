@@ -1,6 +1,6 @@
 {
 	"name": "execute-code",
-	"version": "1.7.0",
+	"version": "1.7.1",
 	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
 	"main": "src/main.js",
 	"scripts": {
