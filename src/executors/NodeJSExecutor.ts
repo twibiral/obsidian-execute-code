@@ -12,7 +12,7 @@ export default class NodeJSExecutor extends ReplExecutor {
 	constructor(settings: ExecutorSettings, file: string) {
 		const args = settings.nodeArgs ? settings.nodeArgs.split(" ") : [];
 
-		args.unshift(`-e`, `require("repl").start({prompt: "", preview: false, ignoreUndefined: true}).on("exit", ()=>process.exit())`);
+		args.unshift(`-e`, `require('repl').start({prompt:'',preview:false,ignoreUndefined:true}).on('exit', ()=>process.exit());`);
 
 		super(settings, settings.nodePath, args, file, "js");
 	}
@@ -27,8 +27,7 @@ export default class NodeJSExecutor extends ReplExecutor {
 	wrapCode(code: string, finishSigil: string): string {
 		return `try { eval(${JSON.stringify(code)}); }` +
 			`catch(e) { console.error(e); }` + 
-			`finally { process.stdout.write(${JSON.stringify(finishSigil)}); }` +
-			"\n";
+			`finally { process.stdout.write(${JSON.stringify(finishSigil)}); }`;
 	}
 	
 	removePrompts(output: string, source: "stdout" | "stderr"): string {

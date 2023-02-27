@@ -1,4 +1,5 @@
-import { ChildProcessWithoutNullStreams, spawn } from "child_process";
+// import { ChildProcessWithoutNullStreams, spawn } from "child_process";
+import * as child_process from "child_process";
 import { Notice } from "obsidian";
 import { LanguageId } from "../main.js";
 import { Outputter } from "../Outputter.js";
@@ -7,7 +8,7 @@ import AsyncExecutor from "./AsyncExecutor.js";
 import killWithChildren from "./killWithChildren.js";
 
 export default abstract class ReplExecutor extends AsyncExecutor {
-    process: ChildProcessWithoutNullStreams;
+    process: any;//ChildProcessWithoutNullStreams;
     settings: ExecutorSettings;
     
     abstract wrapCode(code: string, finishSigil: string): string;
@@ -23,17 +24,19 @@ export default abstract class ReplExecutor extends AsyncExecutor {
             args.unshift("-e", path);
             path = "wsl";
         }
-        
-        this.process = spawn(path, args);
-        
+
+		console.error("ReplExecutor.constructor: path: " + path + ", args: [" + args + "]");
+        this.process = child_process.spawn(path, args);//, {env: process.env, shell: true});
+        // this.process = child_process.spawn(path, args, {env: process.env, shell: true});
+
         this.process.on("close", () => {
             this.emit("close");
             new Notice("Runtime exited");
             this.process = null;
         });
         
-        this.process.on("error", (err) => {
-            this.notifyError(settings.pythonPath, args.join(" "), "", err, undefined, "Error launching Python process: " + err);
+        this.process.on("error", (err: any) => {
+            this.notifyError(settings.pythonPath, args.join(" "), "", err, undefined, "Error launching process: " + err);
             this.stop();
         });
         
