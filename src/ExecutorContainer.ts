@@ -9,7 +9,6 @@ import ExecuteCodePlugin, {LanguageId} from "./main";
 import RExecutor from "./executors/RExecutor.js";
 import CExecutor from "./executors/CExecutor";
 import FSharpExecutor from "./executors/FSharpExecutor";
-import PowerShellOnWindowsExecutor from "./executors/PowerShellOnWindowsExecutor";
 
 const interactiveExecutors: Partial<Record<LanguageId, any>> = {
 	"js": NodeJSExecutor,
@@ -21,8 +20,7 @@ const nonInteractiveExecutors: Partial<Record<LanguageId, any>> = {
 	"prolog": PrologExecutor,
 	"cpp": CppExecutor,
 	"c": CExecutor,
-	"fsharp": FSharpExecutor,
-	"powershell": PowerShellOnWindowsExecutor
+	"fsharp": FSharpExecutor
 };
 
 export default class ExecutorContainer extends EventEmitter implements Iterable<Executor> {

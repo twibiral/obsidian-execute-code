@@ -1,7 +1,5 @@
-import {ChildProcessWithoutNullStreams, spawn} from "child_process";
-import {Outputter} from "src/Outputter";
+import {ChildProcessWithoutNullStreams} from "child_process";
 import {ExecutorSettings} from "src/settings/Settings";
-import AsyncExecutor from "./AsyncExecutor";
 import ReplExecutor from "./ReplExecutor.js";
 
 
@@ -23,10 +21,10 @@ export default class NodeJSExecutor extends ReplExecutor {
 	async setup() {
 		this.process.stdin.write("\n");
 	}
-	
+
 	wrapCode(code: string, finishSigil: string): string {
 		return `try { eval(${JSON.stringify(code)}); }` +
-			`catch(e) { console.error(e); }` + 
+			`catch(e) { console.error(e); }` +
 			`finally { process.stdout.write(${JSON.stringify(finishSigil)}); }` +
 			"\n";
 	}

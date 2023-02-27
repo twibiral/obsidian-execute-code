@@ -21,9 +21,6 @@ export const canonicalLanguages = ["js", "ts", "cs", "lean", "lua", "python", "c
 	"go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell", "scala", "racket", "fsharp", "c", "dart",
 	"ruby", "batch", "sql"] as const;
 export const supportedLanguages = [...languageAliases, ...canonicalLanguages] as const;
-
-
-// type SupportedLanguage = typeof supportedLanguages[number];
 export type LanguageId = typeof canonicalLanguages[number];
 
 const buttonText = "Run";
@@ -170,9 +167,10 @@ export default class ExecuteCodePlugin extends Plugin {
 				const parent = pre.parentElement as HTMLDivElement;
 
 				const srcCode = codeBlock.getText();
+				let sanitizedClassList = this.sanitizeClassListOfCodeBlock(codeBlock);
 
 				const canonicalLanguage = getLanguageAlias(
-					supportedLanguages.find(lang => codeBlock.classList.contains(`language-${lang}`))
+					supportedLanguages.find(lang => sanitizedClassList.contains(`language-${lang}`))
 				) as LanguageId;
 
 				if (canonicalLanguage // if the language is supported
@@ -184,6 +182,11 @@ export default class ExecuteCodePlugin extends Plugin {
 					this.addListenerToButton(canonicalLanguage, srcCode, button, out, file);
 				}
 			});
+	}
+
+	private sanitizeClassListOfCodeBlock(codeBlock: HTMLElement) {
+		let sanitizedClassList = Array.from(codeBlock.classList);
+		return sanitizedClassList.map(c => c.toLowerCase());
 	}
 
 	/**
