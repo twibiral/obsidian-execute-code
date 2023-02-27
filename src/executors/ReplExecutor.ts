@@ -1,5 +1,4 @@
-// import { ChildProcessWithoutNullStreams, spawn } from "child_process";
-import * as child_process from "child_process";
+import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import { Notice } from "obsidian";
 import { LanguageId } from "../main.js";
 import { Outputter } from "../Outputter.js";
@@ -8,14 +7,14 @@ import AsyncExecutor from "./AsyncExecutor.js";
 import killWithChildren from "./killWithChildren.js";
 
 export default abstract class ReplExecutor extends AsyncExecutor {
-    process: any;//ChildProcessWithoutNullStreams;
+    process: ChildProcessWithoutNullStreams;
     settings: ExecutorSettings;
     
     abstract wrapCode(code: string, finishSigil: string): string;
     abstract setup(): Promise<void>;
     abstract removePrompts(output: string, source: "stdout" | "stderr"): string;
     
-    constructor(settings: ExecutorSettings, path: string, args: string[], file: string, language: LanguageId) {
+    protected constructor(settings: ExecutorSettings, path: string, args: string[], file: string, language: LanguageId) {
         super(file, language);
         
         this.settings = settings;
@@ -25,22 +24,21 @@ export default abstract class ReplExecutor extends AsyncExecutor {
             path = "wsl";
         }
 
-		console.error("ReplExecutor.constructor: path: " + path + ", args: [" + args + "]");
-        this.process = child_process.spawn(path, args);//, {env: process.env, shell: true});
-        // this.process = child_process.spawn(path, args, {env: process.env, shell: true});
+		// Spawns a new REPL that is used to execute code.
+		// {env: process.env} is used to ensure that the environment variables are passed to the REPL.
+        this.process = spawn(path, args, {env: process.env});
 
         this.process.on("close", () => {
             this.emit("close");
             new Notice("Runtime exited");
             this.process = null;
         });
-        
         this.process.on("error", (err: any) => {
             this.notifyError(settings.pythonPath, args.join(" "), "", err, undefined, "Error launching process: " + err);
             this.stop();
         });
         
-        this.setup();
+        this.setup().then(() => { /* Wait for the inheriting class to set up, then do nothing */ });
     }
     
     /**
@@ -55,11 +53,10 @@ export default abstract class ReplExecutor extends AsyncExecutor {
     run(code: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string): Promise<void> {
         outputter.queueBlock();
         
-        // TODO: Is handling for reject necessary?
-        return this.addJobToQueue((resolve, reject) => {
+        return this.addJobToQueue((resolve, _reject) => {
             if (this.process === null) return resolve();
 
-            const finishSigil = `SIGIL_BLOCK_DONE${Math.random()}_${Date.now()}_${code.length}`;
+            const finishSigil = `SIGIL_BLOCK_DONE_${Math.random()}_${Date.now()}_${code.length}`;
 
             outputter.startBlock();
 
@@ -104,7 +101,7 @@ export default abstract class ReplExecutor extends AsyncExecutor {
     }
     
     stop(): Promise<void> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, _reject) => {
             this.process.on("close", () => {
                 resolve();
             });            
