@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Add more examples for magic commands to README.md
 - Pass environmental variables to the REPL executors
+- Allow language names that are not lower case
 
 ## [1.7.0]
 
