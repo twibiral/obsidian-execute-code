@@ -62,7 +62,10 @@ export interface ExecutorSettings {
 	octaveArgs: string;
 	octaveFileExtension: string;
 	octaveInject: string;
-
+	maximaPath: string;
+	maximaArgs: string;
+	maximaFileExtension: string;
+	maximaInject: string;
 	cargoPath: string;
 	cargoEvalArgs: string;
 	rustInject: string;
@@ -141,6 +144,7 @@ export interface ExecutorSettings {
 	rubyInteractive: boolean;
 	sqlInteractive: boolean;
 	octaveInteractive: boolean;
+	maximaInteractive: boolean;
 }
 
 
@@ -255,7 +259,10 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	octaveArgs: "-q",
 	octaveFileExtension: "m",
 	octaveInject: "figure('visible','off')  # Necessary to embed plots",
-
+	maximaPath: "maxima",
+	maximaArgs: "-qb",
+	maximaFileExtension: "mx",
+	maximaInject: "",
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
@@ -284,4 +291,5 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	rubyInteractive: false,
 	sqlInteractive: false,
 	octaveInteractive: false,
+	maximaInteractive: false,
 }

@@ -28,4 +28,5 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
 	lean: "Lean",
 	sql: "SQL",
 	octave: "Octave",
+	maxima: "Maxima",
 } as const;

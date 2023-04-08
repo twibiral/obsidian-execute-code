@@ -29,6 +29,7 @@ import makeTsSettings from "./per-lang/makeTsSettings";
 import {ExecutorSettings} from "./Settings";
 import makeSQLSettings from "./per-lang/makeSQLSettings";
 import makeOctaviaSettings from "./per-lang/makeOctaveSettings";
+import makeMaximaSettings from "./per-lang/makeMaximaSettings";
 
 
 /**
@@ -198,6 +199,9 @@ export class SettingsTab extends PluginSettingTab {
 
 		// ========== Octavia ============
 		makeOctaviaSettings(this, this.makeContainerFor("octave"));
+
+		// ========== Maxima ============
+		makeMaximaSettings(this, this.makeContainerFor("maxima"));
 
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}

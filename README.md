@@ -14,7 +14,7 @@ The result is shown only after the execution is finished. It is not possible to 
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
 
-The following [languages are supported](#supported-programming-languages-): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell, and Octave.
+The following [languages are supported](#supported-programming-languages-): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell, Octave, and Maxima.
 
 
 Python, Rust, and Octave support embedded plots. All languages support ["magic" commands](#magic-commands-) that help you to access paths in obsidian or show images in your notes.
@@ -416,11 +416,27 @@ exp(i*pi)
 x = -10:0.1:10;
 plot (x, sin(x));
 ```
-(Thanks to Michael M. Tung for the example.)
+(Thanks to Michael M. Tung for the code example.)
 
-- Figures are set to invisible by default. They are store in a file and directly embedded in the note. If you want to see the figure, you can use the `@show_figure` magic command instead.
+- Figures are set to invisible by default. They are store in a file and directly embedded in the note.
 
 </details>
+
+<details>
+<summary>Maxima</summary>
+
+- Requirements: Maxima is installed and the correct path is set in the settings.
+
+```octavia
+integrate(x,x);
+plot2d(sin(x), [x,0,%pi]);
+```
+(Thanks to Michael M. Tung for the code example.)
+
+- By default, plots are saved in a file and directly embedded in the note.
+
+</details>
+
 
 Squiggle: For Squiggle support take a look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle) by @jqhoogland.
 

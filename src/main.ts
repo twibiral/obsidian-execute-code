@@ -6,7 +6,14 @@ import {DEFAULT_SETTINGS} from "./settings/Settings";
 import {SettingsTab} from "./settings/SettingsTab";
 import {getLanguageAlias} from './transforms/TransformCode';
 import {CodeInjector} from "./transforms/CodeInjector";
-import {addInlinePlotsToPython, addInlinePlotsToR, addMagicToJS, addMagicToPython,} from "./transforms/Magic";
+import {
+	addInlinePlotsToPython,
+	addInlinePlotsToR,
+	addMagicToJS,
+	addMagicToPython,
+	addInlinePlotsToOctave,
+	addInlinePlotsToMaxima
+} from "./transforms/Magic";
 
 import ExecutorContainer from './ExecutorContainer';
 import ExecutorManagerView, {
@@ -19,7 +26,7 @@ import runAllCodeBlocks from './runAllCodeBlocks';
 export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py"] as const;
 export const canonicalLanguages = ["js", "ts", "cs", "lean", "lua", "python", "cpp", "prolog", "shell", "groovy", "r",
 	"go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell", "scala", "racket", "fsharp", "c", "dart",
-	"ruby", "batch", "sql", "octave"] as const;
+	"ruby", "batch", "sql", "octave", "maxima"] as const;
 export const supportedLanguages = [...languageAliases, ...canonicalLanguages] as const;
 export type LanguageId = typeof canonicalLanguages[number];
 
@@ -367,8 +374,16 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language === "octave") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.sqlPath, this.settings.sqlArgs, "octave", language, file);
+				let transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
+				transformedCode = addInlinePlotsToOctave(transformedCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.octavePath, this.settings.octaveArgs, "octave", language, file);
+			})
+		} else if (language === "maxima") {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				let transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
+				transformedCode = addInlinePlotsToMaxima(transformedCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.maximaPath, this.settings.maximaArgs, "maxima", language, file);
 			})
 		}
 

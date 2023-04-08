@@ -30,6 +30,7 @@ const COLOR_THEME_REGEX = /@theme/g;
 const PYTHON_PLOT_REGEX = /^(plt|matplotlib.pyplot|pyplot)\.show\(\)/gm;
 const R_PLOT_REGEX = /^plot\(.*\)/gm;
 const OCTAVE_PLOT_REGEX = /^plot\s*\(.*\);/gm;
+const MAXIMA_PLOT_REGEX = /^plot2d\s*\(.*\[.+\]\)\s*[$;]/gm;
 
 /**
  * Parses the source code for the @vault command and replaces it with the vault path.
@@ -241,11 +242,24 @@ function buildMagicShowImage(imagePath: string, width: string = "0", height: str
 	return `<img src="${imagePath}" width="${width}" height="${height}" align="${alignment}" alt="Image found at path ${imagePath}." />`;
 }
 
-function addInlinePlotsToOctave(source: string): string {
+export function addInlinePlotsToOctave(source: string): string {
 	const matches = source.matchAll(OCTAVE_PLOT_REGEX);
 	for (const match of matches) {
 		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/");
 		const substitute = `${match[0]}; print -dpng ${tempFile}; disp('${TOGGLE_HTML_SIGIL}<img src="app://local/${tempFile}" align="center">${TOGGLE_HTML_SIGIL}');`;
+
+		source = source.replace(match[0], substitute);
+	}
+
+	return source;
+}
+
+export function addInlinePlotsToMaxima(source: string): string {
+	const matches = source.matchAll(MAXIMA_PLOT_REGEX);
+	for (const match of matches) {
+		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/");
+		const updated_plot_call = match[0].substring(0, match[0].lastIndexOf(')')) + `, [png_file, "${tempFile}"])`;
+		const substitute = `${updated_plot_call}; print ('${TOGGLE_HTML_SIGIL}<img src="app://local/${tempFile}" align="center">${TOGGLE_HTML_SIGIL}');`;
 
 		source = source.replace(match[0], substitute);
 	}
