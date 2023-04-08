@@ -58,6 +58,10 @@ export interface ExecutorSettings {
 	powershellFileExtension: string;
 	powershellInject: string;
 	powershellEncoding: BufferEncoding;
+	octavePath: string;
+	octaveArgs: string;
+	octaveFileExtension: string;
+	octaveInject: string;
 
 	cargoPath: string;
 	cargoEvalArgs: string;
@@ -136,6 +140,7 @@ export interface ExecutorSettings {
 	cInteractive: boolean;
 	rubyInteractive: boolean;
 	sqlInteractive: boolean;
+	octaveInteractive: boolean;
 }
 
 
@@ -246,6 +251,10 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	sqlPath: "psql",
 	sqlArgs: "-d <database> -U <user> -f",
 	sqlInject: "",
+	octavePath: "octave",
+	octaveArgs: "-q",
+	octaveFileExtension: "m",
+	octaveInject: "figure('visible','off')  # Necessary to embed plots",
 
 	jsInteractive: true,
 	tsInteractive: false,
@@ -274,4 +283,5 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	racketInteractive: false,
 	rubyInteractive: false,
 	sqlInteractive: false,
+	octaveInteractive: false,
 }

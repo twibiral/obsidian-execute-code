@@ -26,5 +26,6 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
 	ruby: "Ruby",
 	dart: "Dart",
 	lean: "Lean",
-	sql: "SQL"
+	sql: "SQL",
+	octave: "Octave",
 } as const;

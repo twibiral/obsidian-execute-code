@@ -29,6 +29,7 @@ const COLOR_THEME_REGEX = /@theme/g;
 // Regex that are only used by one language.
 const PYTHON_PLOT_REGEX = /^(plt|matplotlib.pyplot|pyplot)\.show\(\)/gm;
 const R_PLOT_REGEX = /^plot\(.*\)/gm;
+const OCTAVE_PLOT_REGEX = /^plot\s*\(.*\);/gm;
 
 /**
  * Parses the source code for the @vault command and replaces it with the vault path.
@@ -239,3 +240,16 @@ function buildMagicShowImage(imagePath: string, width: string = "0", height: str
 
 	return `<img src="${imagePath}" width="${width}" height="${height}" align="${alignment}" alt="Image found at path ${imagePath}." />`;
 }
+
+function addInlinePlotsToOctave(source: string): string {
+	const matches = source.matchAll(OCTAVE_PLOT_REGEX);
+	for (const match of matches) {
+		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/");
+		const substitute = `${match[0]}; print -dpng ${tempFile}; disp('${TOGGLE_HTML_SIGIL}<img src="app://local/${tempFile}" align="center">${TOGGLE_HTML_SIGIL}');`;
+
+		source = source.replace(match[0], substitute);
+	}
+
+	return source;
+}
+

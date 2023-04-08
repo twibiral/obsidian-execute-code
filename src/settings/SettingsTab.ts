@@ -28,6 +28,7 @@ import makeBatchSettings from "./per-lang/makeBatchSettings";
 import makeTsSettings from "./per-lang/makeTsSettings";
 import {ExecutorSettings} from "./Settings";
 import makeSQLSettings from "./per-lang/makeSQLSettings";
+import makeOctaviaSettings from "./per-lang/makeOctaveSettings";
 
 
 /**
@@ -194,6 +195,9 @@ export class SettingsTab extends PluginSettingTab {
 
 		// ========== SQL ============
 		makeSQLSettings(this, this.makeContainerFor("sql"));
+
+		// ========== Octavia ============
+		makeOctaviaSettings(this, this.makeContainerFor("octave"));
 
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}

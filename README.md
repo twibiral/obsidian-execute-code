@@ -14,10 +14,10 @@ The result is shown only after the execution is finished. It is not possible to 
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
 
-The following [languages are supported](#supported-programming-languages-): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell.
+The following [languages are supported](#supported-programming-languages-): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell, and Octave.
 
 
-Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands-) that help you to access paths in obsidian or show images in your notes.
+Python, Rust, and Octave support embedded plots. All languages support ["magic" commands](#magic-commands-) that help you to access paths in obsidian or show images in your notes.
 
 You can create code blocks that are executed before or after each code block of the same language and define [global code injections](#global-code-injection-and-reusing-code-blocks-).
 
@@ -403,6 +403,23 @@ println("Hello, World!")
 ```ruby
 puts "Hello, World!"
 ```
+</details>
+
+<details>
+<summary>Octave</summary>
+
+- Requirements: Octave is installed and the correct path is set in the settings.
+
+```octavia
+exp(i*pi)
+
+x = -10:0.1:10;
+plot (x, sin(x));
+```
+(Thanks to Michael M. Tung for the example.)
+
+- Figures are set to invisible by default. They are store in a file and directly embedded in the note. If you want to see the figure, you can use the `@show_figure` magic command instead.
+
 </details>
 
 Squiggle: For Squiggle support take a look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle) by @jqhoogland.
