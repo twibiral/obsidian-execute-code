@@ -427,7 +427,7 @@ plot (x, sin(x));
 
 - Requirements: Maxima is installed and the correct path is set in the settings.
 
-```octavia
+```maxima
 integrate(x,x);
 plot2d(sin(x), [x,0,%pi]);
 ```
