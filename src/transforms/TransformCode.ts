@@ -22,6 +22,7 @@ export function getLanguageAlias(language: string | undefined): LanguageId | und
 		case "nb": return "mathematica";
 		case "wl": "mathematica";
 		case "hs": return "haskell";
+		case "scpt": return "applescript";
 	}
 	if ((canonicalLanguages as readonly string[]).includes(language))
 		return language as LanguageId;
