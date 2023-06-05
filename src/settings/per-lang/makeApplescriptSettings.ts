@@ -4,8 +4,8 @@ import { SettingsTab } from "../SettingsTab";
 export default (tab: SettingsTab, containerEl: HTMLElement) => {
     containerEl.createEl('h3', { text: 'Applescript Settings' });
     new Setting(containerEl)
-        .setName('Applescript path')
-        .setDesc('The path to your Applescript installation.')
+        .setName('Osascript path')
+        .setDesc('The path to your osascript installation (only available on MacOS).')
         .addText(text => text
             .setValue(tab.plugin.settings.applescriptPath)
             .onChange(async (value) => {
