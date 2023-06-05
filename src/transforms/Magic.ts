@@ -12,6 +12,7 @@
  */
 
 import * as os from "os";
+import {Platform} from 'obsidian';
 import { TOGGLE_HTML_SIGIL } from "src/Outputter";
 
 // Regex for all languages.
@@ -41,8 +42,8 @@ const MAXIMA_PLOT_REGEX = /^plot2d\s*\(.*\[.+\]\)\s*[$;]/gm;
  */
 export function insertVaultPath(source: string, vaultPath: string): string {
 	source = source.replace(VAULT_PATH_REGEX, `"${vaultPath.replace(/\\/g, "/")}"`);
-	source = source.replace(VAULT_URL_REGEX, `"app://local/${vaultPath.replace(/\\/g, "/")}"`);
-	source = source.replace(VAULT_REGEX, `"app://local/${vaultPath.replace(/\\/g, "/")}"`);
+	source = source.replace(VAULT_URL_REGEX, `"${Platform.resourcePathPrefix + vaultPath.replace(/\\/g, "/")}"`);
+	source = source.replace(VAULT_REGEX, `"${Platform.resourcePathPrefix + vaultPath.replace(/\\/g, "/")}"`);
 
 	return source;
 }
@@ -57,8 +58,8 @@ export function insertVaultPath(source: string, vaultPath: string): string {
  */
 export function insertNotePath(source: string, notePath: string): string {
 	source = source.replace(CURRENT_NOTE_PATH_REGEX, `"${notePath.replace(/\\/g, "/")}"`);
-	source = source.replace(CURRENT_NOTE_URL_REGEX, `"app://local/${notePath.replace(/\\/g, "/")}"`);
-	source = source.replace(CURRENT_NOTE_REGEX, `"app://local/${notePath.replace(/\\/g, "/")}"`);
+	source = source.replace(CURRENT_NOTE_URL_REGEX, `"${Platform.resourcePathPrefix + notePath.replace(/\\/g, "/")}"`);
+	source = source.replace(CURRENT_NOTE_REGEX, `"${Platform.resourcePathPrefix + notePath.replace(/\\/g, "/")}"`);
 
 	return source;
 }
@@ -141,7 +142,7 @@ export function addInlinePlotsToR(source: string): string {
 	const matches = source.matchAll(R_PLOT_REGEX);
 	for (const match of matches) {
 		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/");
-		const substitute = `png("${tempFile}"); ${match[0]}; dev.off(); cat('${TOGGLE_HTML_SIGIL}<img src="app://local/${tempFile}" align="center">${TOGGLE_HTML_SIGIL}')`;
+		const substitute = `png("${tempFile}"); ${match[0]}; dev.off(); cat('${TOGGLE_HTML_SIGIL}<img src="${Platform.resourcePathPrefix + tempFile}" align="center">${TOGGLE_HTML_SIGIL}')`;
 
 		source = source.replace(match[0], substitute);
 	}
@@ -246,7 +247,7 @@ export function addInlinePlotsToOctave(source: string): string {
 	const matches = source.matchAll(OCTAVE_PLOT_REGEX);
 	for (const match of matches) {
 		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/");
-		const substitute = `${match[0]}; print -dpng ${tempFile}; disp('${TOGGLE_HTML_SIGIL}<img src="app://local/${tempFile}" align="center">${TOGGLE_HTML_SIGIL}');`;
+		const substitute = `${match[0]}; print -dpng ${tempFile}; disp('${TOGGLE_HTML_SIGIL}<img src="${Platform.resourcePathPrefix + tempFile}" align="center">${TOGGLE_HTML_SIGIL}');`;
 
 		source = source.replace(match[0], substitute);
 	}
@@ -259,7 +260,7 @@ export function addInlinePlotsToMaxima(source: string): string {
 	for (const match of matches) {
 		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/");
 		const updated_plot_call = match[0].substring(0, match[0].lastIndexOf(')')) + `, [png_file, "${tempFile}"])`;
-		const substitute = `${updated_plot_call}; print ('${TOGGLE_HTML_SIGIL}<img src="app://local/${tempFile}" align="center">${TOGGLE_HTML_SIGIL}');`;
+		const substitute = `${updated_plot_call}; print ('${TOGGLE_HTML_SIGIL}<img src="${Platform.resourcePathPrefix + tempFile}" align="center">${TOGGLE_HTML_SIGIL}');`;
 
 		source = source.replace(match[0], substitute);
 	}
