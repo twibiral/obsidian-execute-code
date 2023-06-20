@@ -56,5 +56,19 @@ export function transformMagicCommands(app: App, srcCode: string) {
  * @returns The language of the code block.
  */
 export function getCodeBlockLanguage(firstLineOfCode: string) {
-	return getLanguageAlias(firstLineOfCode.split("```")[1].trim().split(" ")[0].split("{")[0])
+	let currentLanguage: string = firstLineOfCode.split("```")[1].trim().split(" ")[0].split("{")[0];
+	if (isStringNotEmpty(currentLanguage) && currentLanguage.startsWith("run-")) {
+		currentLanguage = currentLanguage.replace("run-", "");
+	}
+	return getLanguageAlias(currentLanguage);
+}
+
+/**
+ * Check if a string is not empty
+ *
+ * @param str Input string
+ * @returns True when string not empty, False when the string is Empty
+ */
+export function isStringNotEmpty(str: string): boolean {
+	return !!str && str.trim().length > 0;
 }
