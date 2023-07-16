@@ -5,8 +5,6 @@ import Executor from "./Executor";
 import {Outputter} from "src/Outputter";
 import {LanguageId} from "src/main";
 import { ExecutorSettings } from "../settings/Settings.js";
-import { sep } from "path";
-import { join } from "path/posix";
 import windowsPathToWsl from "../transforms/windowsPathToWsl.js";
 
 export default class NonInteractiveCodeExecutor extends Executor {
@@ -38,13 +36,13 @@ export default class NonInteractiveCodeExecutor extends Executor {
 
 			fs.promises.writeFile(tempFileName, codeBlockContent).then(() => {
 				const args = cmdArgs ? cmdArgs.split(" ") : [];
-				
-				if (this.settings.wslMode) {
+
+				if (this.isWSLEnabled()) {
 					args.unshift("-e", cmd);
 					cmd = "wsl";
 					args.push(windowsPathToWsl(tempFileName));
 				} else {
-					args.push(tempFileName);	
+					args.push(tempFileName);
 				}
 				
 				const child = child_process.spawn(cmd, args, {env: process.env, shell: this.usesShell});
@@ -61,6 +59,18 @@ export default class NonInteractiveCodeExecutor extends Executor {
 				resolve();
 			});
 		});
+	}
+
+	private isWSLEnabled(): boolean {
+		if (this.settings.wslMode) {
+			return true;
+		}
+
+		if (this.language == 'shell' && this.settings.shellWSLMode) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

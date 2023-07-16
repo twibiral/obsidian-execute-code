@@ -9,6 +9,7 @@ export interface ExecutorSettings {
 	timeout: number;
 	allowInput: boolean;
 	wslMode: boolean;
+	shellWSLMode: boolean;
 	nodePath: string;
 	nodeArgs: string;
 	jsFileExtension: string;
@@ -170,6 +171,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	timeout: 10000,
 	allowInput: true,
 	wslMode: false,
+	shellWSLMode: false,
 	nodePath: "node",
 	nodeArgs: "",
 	jsFileExtension: "js",
