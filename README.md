@@ -28,6 +28,11 @@ Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent v
 [![Buy us a coffee](https://img.shields.io/badge/-buy_us_a%C2%A0coffee-gray?logo=buy-me-a-coffee)](https://www.buymeacoffee.com/timwibiral)
 </div>
 
+
+## Featured In
+[![Video by I Versus AI](https://img.youtube.com/vi/eQz4eAW3ZDk/0.jpg)](https://www.youtube.com/watch?v=eQz4eAW3ZDk)
+
+
 ## Supported programming languages 💻
 
 <details>
