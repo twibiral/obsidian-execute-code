@@ -31,7 +31,9 @@ Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent v
 
 ## Featured In
 [![Video by I Versus AI](https://img.youtube.com/vi/eQz4eAW3ZDk/0.jpg)](https://www.youtube.com/watch?v=eQz4eAW3ZDk)
+
 "Escape ChatGPT. Make your own Code Interpreter EASY" by I Versus AI
+
 
 ## Supported programming languages 💻
 
