@@ -99,6 +99,17 @@ export class SettingsTab extends PluginSettingTab {
 					}));
 		}
 
+		new Setting(containerEl)
+			.setName('Only Current Log')
+			.setDesc("Whether or not show print log only in current code block.")
+			.addToggle(text => text
+				.setValue(this.plugin.settings.onlyCurrentBlock)
+				.onChange(async (value) => {
+					console.log('Only Show Current Block Log set to: ' + value);
+					this.plugin.settings.onlyCurrentBlock = value
+					await this.plugin.saveSettings();
+				}));
+
 		// TODO setting per language that requires main function if main function should be implicitly made or not, if not, non-main blocks will not have a run button
 
 		containerEl.createEl("hr");

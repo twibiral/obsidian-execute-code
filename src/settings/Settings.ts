@@ -9,6 +9,7 @@ export interface ExecutorSettings {
 	timeout: number;
 	allowInput: boolean;
 	wslMode: boolean;
+	onlyCurrentBlock: boolean;
 	nodePath: string;
 	nodeArgs: string;
 	jsInject: string;
@@ -157,6 +158,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	timeout: 10000,
 	allowInput: true,
 	wslMode: false,
+	onlyCurrentBlock: false,
 	nodePath: "node",
 	nodeArgs: "",
 	jsInject: "",
