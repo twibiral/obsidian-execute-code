@@ -127,6 +127,9 @@ export interface ExecutorSettings {
 	applescriptArgs: string;
 	applescriptFileExtension: string;
 	applescriptInject: string;
+	zigPath: string;
+	zigArgs: string;
+	zigInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -158,6 +161,7 @@ export interface ExecutorSettings {
 	octaveInteractive: boolean;
 	maximaInteractive: boolean;
 	applescriptInteractive: boolean;
+	zigInteractive: boolean;
 }
 
 
@@ -288,6 +292,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	applescriptArgs: "",
 	applescriptFileExtension: "scpt",
 	applescriptInject: "",
+	zigPath: "zig",
+	zigArgs: "run",
+	zigInject: "",
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
@@ -318,4 +325,5 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	octaveInteractive: false,
 	maximaInteractive: false,
 	applescriptInteractive: false,
+	zigInteractive: false,
 }

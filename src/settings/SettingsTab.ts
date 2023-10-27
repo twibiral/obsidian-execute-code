@@ -31,6 +31,7 @@ import makeSQLSettings from "./per-lang/makeSQLSettings";
 import makeOctaviaSettings from "./per-lang/makeOctaveSettings";
 import makeMaximaSettings from "./per-lang/makeMaximaSettings";
 import makeApplescriptSettings from "./per-lang/makeApplescriptSettings";
+import makeZigSettings from "./per-lang/makeZigSettings";
 
 
 /**
@@ -206,6 +207,9 @@ export class SettingsTab extends PluginSettingTab {
 
 		// ========== Applescript ============
 		makeApplescriptSettings(this, this.makeContainerFor("applescript"));
+
+		// ========== Zig ============
+		makeZigSettings(this, this.makeContainerFor("zig"));
 
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}
