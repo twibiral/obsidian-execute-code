@@ -29,4 +29,5 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
 	sql: "SQL",
 	octave: "Octave",
 	maxima: "Maxima",
+    applescript: "Applescript",
 } as const;

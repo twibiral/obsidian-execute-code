@@ -115,6 +115,10 @@ export interface ExecutorSettings {
 	sqlPath: string;
 	sqlArgs: string;
 	sqlInject: string;
+	applescriptPath: string;
+	applescriptArgs: string;
+	applescriptFileExtension: string;
+	applescriptInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -145,6 +149,7 @@ export interface ExecutorSettings {
 	sqlInteractive: boolean;
 	octaveInteractive: boolean;
 	maximaInteractive: boolean;
+	applescriptInteractive: boolean;
 }
 
 
@@ -263,6 +268,10 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	maximaArgs: "-qb",
 	maximaFileExtension: "mx",
 	maximaInject: "",
+	applescriptPath: "osascript",
+	applescriptArgs: "",
+	applescriptFileExtension: "scpt",
+	applescriptInject: "",
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
@@ -292,4 +301,5 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	sqlInteractive: false,
 	octaveInteractive: false,
 	maximaInteractive: false,
+	applescriptInteractive: false,
 }
