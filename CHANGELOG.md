@@ -7,9 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 ### Changed
-- Fix app://local deprecation (New minimal Obsidian version: v1.2.8)
+- Fix app://local deprecation (New minimal Obsidian version: v1.2.8) (Thanks to @mayurankv)
+- Fix Racket support (Thanks to @mayurankv)
 
 ### Added
+- Support for Applescript (Thanks to @mayurankv)
 
 
 ## [1.8.1]
