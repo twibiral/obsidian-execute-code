@@ -212,7 +212,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				let transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				transformedCode = addMagicToJS(transformedCode);
-				this.runCode(transformedCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js", language, file);
+				this.runCode(transformedCode, out, button, this.settings.nodePath, this.settings.nodeArgs, this.settings.jsFileExtension, language, file);
 			});
 
 		} else if (language === "java") {
@@ -231,7 +231,7 @@ export default class ExecuteCodePlugin extends Plugin {
 					transformedCode = addInlinePlotsToPython(transformedCode, TOGGLE_HTML_SIGIL);
 				transformedCode = addMagicToPython(transformedCode);
 
-				this.runCode(transformedCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py", language, file);
+				this.runCode(transformedCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, this.settings.pythonFileExtension, language, file);
 			});
 
 		} else if (language === "shell") {
@@ -259,7 +259,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCode(transformedCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp", language, file);
+				this.runCode(transformedCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, this.settings.cppFileExtension, language, file);
 			});
 
 		} else if (language === "prolog") {
@@ -289,7 +289,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				let transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				transformedCode = addInlinePlotsToR(transformedCode);
-				this.runCode(transformedCode, out, button, this.settings.RPath, this.settings.RArgs, "R", language, file);
+				this.runCode(transformedCode, out, button, this.settings.RPath, this.settings.RArgs, this.settings.RFileExtension, language, file);
 			});
 
 		} else if (language === "go") {
@@ -317,21 +317,21 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.luaPath, this.settings.luaArgs, "lua", language, file);
+				this.runCodeInShell(transformedCode, out, button, this.settings.luaPath, this.settings.luaArgs, this.settings.luaFileExtension, language, file);
 			});
 
 		} else if (language === "dart") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.dartPath, this.settings.dartArgs, "dart", language, file);
+				this.runCodeInShell(transformedCode, out, button, this.settings.dartPath, this.settings.dartArgs, this.settings.dartFileExtension, language, file);
 			});
 
 		} else if (language === "cs") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, "csx", language, file);
+				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, this.settings.csFileExtension, language, file);
 			});
 
 		} else if (language === "haskell") {
@@ -363,7 +363,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.rubyPath, this.settings.rubyArgs, "rb", language, file);
+				this.runCodeInShell(transformedCode, out, button, this.settings.rubyPath, this.settings.rubyArgs, this.settings.rubyFileExtension, language, file);
 			})
 		} else if (language === "sql") {
 			button.addEventListener("click", async () => {
@@ -376,14 +376,14 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				let transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				transformedCode = addInlinePlotsToOctave(transformedCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.octavePath, this.settings.octaveArgs, "octave", language, file);
+				this.runCodeInShell(transformedCode, out, button, this.settings.octavePath, this.settings.octaveArgs, this.settings.octaveFileExtension, language, file);
 			})
 		} else if (language === "maxima") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				let transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				transformedCode = addInlinePlotsToMaxima(transformedCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.maximaPath, this.settings.maximaArgs, "maxima", language, file);
+				this.runCodeInShell(transformedCode, out, button, this.settings.maximaPath, this.settings.maximaArgs, this.settings.maximaFileExtension, language, file);
 			})
 		}else if (language === "racket") {
 			button.addEventListener("click", async () => {
