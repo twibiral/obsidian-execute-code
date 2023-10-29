@@ -11,6 +11,7 @@ export interface ExecutorSettings {
 	wslMode: boolean;
 	nodePath: string;
 	nodeArgs: string;
+	jsFileExtension: string;
 	jsInject: string;
 	tsPath: string;
 	tsArgs: string;
@@ -20,16 +21,20 @@ export interface ExecutorSettings {
 	leanInject: string;
 	luaPath: string;
 	luaArgs: string;
+	luaFileExtension: string;
 	luaInject: string;
 	dartPath: string;
 	dartArgs: string;
+	dartFileExtension: string;
 	dartInject: string;
 	csPath: string;
 	csArgs: string;
+	csFileExtension: string;
 	csInject: string;
 	pythonPath: string;
 	pythonArgs: string;
 	pythonEmbedPlots: boolean;
+	pythonFileExtension: string;
 	pythonInject: string;
 	shellPath: string;
 	shellArgs: string;
@@ -70,6 +75,7 @@ export interface ExecutorSettings {
 	cargoEvalArgs: string;
 	rustInject: string;
 	cppRunner: string;
+	cppFileExtension: string;
 	cppInject: string;
 	cppArgs: string;
 	cppUseMain: boolean;
@@ -80,6 +86,7 @@ export interface ExecutorSettings {
 	RPath: string;
 	RArgs: string;
 	REmbedPlots: boolean;
+	RFileExtension: string;
 	rInject: string;
 	kotlinPath: string;
 	kotlinArgs: string;
@@ -111,10 +118,15 @@ export interface ExecutorSettings {
 	cInject: string;
 	rubyPath: string;
 	rubyArgs: string;
+	rubyFileExtension: string;
 	rubyInject: string;
 	sqlPath: string;
 	sqlArgs: string;
 	sqlInject: string;
+	applescriptPath: string;
+	applescriptArgs: string;
+	applescriptFileExtension: string;
+	applescriptInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -145,6 +157,7 @@ export interface ExecutorSettings {
 	sqlInteractive: boolean;
 	octaveInteractive: boolean;
 	maximaInteractive: boolean;
+	applescriptInteractive: boolean;
 }
 
 
@@ -159,6 +172,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	wslMode: false,
 	nodePath: "node",
 	nodeArgs: "",
+	jsFileExtension: "js",
 	jsInject: "",
 	tsPath: "ts-node",
 	tsArgs: "",
@@ -168,16 +182,20 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	leanInject: "",
 	luaPath: "lua",
 	luaArgs: "",
+	luaFileExtension: "lua",
 	luaInject: "",
 	dartPath: "dart",
 	dartArgs: "",
+	dartFileExtension: "dart",
 	dartInject: "",
 	csPath: "dotnet-script",
 	csArgs: "",
+	csFileExtension: "csx",
 	csInject: "",
 	pythonPath: "python",
 	pythonArgs: "",
 	pythonEmbedPlots: true,
+	pythonFileExtension: "py",
 	pythonInject: "",
 	shellPath: "bash",
 	shellArgs: "",
@@ -210,6 +228,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	cargoEvalArgs: "",
 	rustInject: "",
 	cppRunner: "cling",
+	cppFileExtension: "cpp",
 	cppInject: "",
 	cppArgs: "",
 	cppUseMain: false,
@@ -220,6 +239,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	RPath: "Rscript",
 	RArgs: "",
 	REmbedPlots: true,
+	RFileExtension: "R",
 	rInject: "",
 	kotlinPath: "kotlinc",
 	kotlinArgs: "-script",
@@ -251,6 +271,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	cInject: "",
 	rubyPath: "ruby",
 	rubyArgs: "",
+	rubyFileExtension: "rb",
 	rubyInject: "",
 	sqlPath: "psql",
 	sqlArgs: "-d <database> -U <user> -f",
@@ -263,6 +284,10 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	maximaArgs: "-qb",
 	maximaFileExtension: "mx",
 	maximaInject: "",
+	applescriptPath: "osascript",
+	applescriptArgs: "",
+	applescriptFileExtension: "scpt",
+	applescriptInject: "",
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
@@ -292,4 +317,5 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	sqlInteractive: false,
 	octaveInteractive: false,
 	maximaInteractive: false,
+	applescriptInteractive: false,
 }
