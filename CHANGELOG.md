@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 - Option for better handling of logs (Thanks to @qiaogaojian)
+- Make labels work with code blocks with `run-` prefix (Thanks to @qiaogaojian)
 
 
 ## [1.9.0]
