@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
+## [1.10.0]
+### Added
+- Support for zig (Thanks to @slar)
+- Support for enabling WSL Mode for the shell language only (Thanks to @mihai-vlc)
+
+### Changed
+- Update README.md
+
+
+## [1.9.1]
+### Changed
+- Fix bug produced by duplicate labeled code blocks (Thanks to @qiaogaojian)
+
+### Added
+- Option for better handling of logs (Thanks to @qiaogaojian)
+- Make labels work with code blocks with `run-` prefix (Thanks to @qiaogaojian)
+
+
 ## [1.9.0]
 ### Changed
 - Fix app://local deprecation (New minimal Obsidian version: v1.2.8) (Thanks to @mayurankv)

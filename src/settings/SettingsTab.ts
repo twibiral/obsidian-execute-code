@@ -30,6 +30,8 @@ import {ExecutorSettings} from "./Settings";
 import makeSQLSettings from "./per-lang/makeSQLSettings";
 import makeOctaviaSettings from "./per-lang/makeOctaveSettings";
 import makeMaximaSettings from "./per-lang/makeMaximaSettings";
+import makeApplescriptSettings from "./per-lang/makeApplescriptSettings";
+import makeZigSettings from "./per-lang/makeZigSettings";
 
 
 /**
@@ -98,6 +100,17 @@ export class SettingsTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					}));
 		}
+
+		new Setting(containerEl)
+			.setName('Only Current Log')
+			.setDesc("Whether or not show print log only in current code block.")
+			.addToggle(text => text
+				.setValue(this.plugin.settings.onlyCurrentBlock)
+				.onChange(async (value) => {
+					console.log('Only Show Current Block Log set to: ' + value);
+					this.plugin.settings.onlyCurrentBlock = value
+					await this.plugin.saveSettings();
+				}));
 
 		// TODO setting per language that requires main function if main function should be implicitly made or not, if not, non-main blocks will not have a run button
 
@@ -202,6 +215,12 @@ export class SettingsTab extends PluginSettingTab {
 
 		// ========== Maxima ============
 		makeMaximaSettings(this, this.makeContainerFor("maxima"));
+
+		// ========== Applescript ============
+		makeApplescriptSettings(this, this.makeContainerFor("applescript"));
+
+		// ========== Zig ============
+		makeZigSettings(this, this.makeContainerFor("zig"));
 
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}

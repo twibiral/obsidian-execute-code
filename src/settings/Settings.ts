@@ -9,6 +9,8 @@ export interface ExecutorSettings {
 	timeout: number;
 	allowInput: boolean;
 	wslMode: boolean;
+	shellWSLMode: boolean;
+	onlyCurrentBlock: boolean;
 	nodePath: string;
 	nodeArgs: string;
 	jsInject: string;
@@ -115,6 +117,13 @@ export interface ExecutorSettings {
 	sqlPath: string;
 	sqlArgs: string;
 	sqlInject: string;
+	applescriptPath: string;
+	applescriptArgs: string;
+	applescriptFileExtension: string;
+	applescriptInject: string;
+	zigPath: string;
+	zigArgs: string;
+	zigInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -145,6 +154,8 @@ export interface ExecutorSettings {
 	sqlInteractive: boolean;
 	octaveInteractive: boolean;
 	maximaInteractive: boolean;
+	applescriptInteractive: boolean;
+	zigInteractive: boolean;
 }
 
 
@@ -157,6 +168,8 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	timeout: 10000,
 	allowInput: true,
 	wslMode: false,
+	shellWSLMode: false,
+	onlyCurrentBlock: false,
 	nodePath: "node",
 	nodeArgs: "",
 	jsInject: "",
@@ -263,6 +276,13 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	maximaArgs: "-qb",
 	maximaFileExtension: "mx",
 	maximaInject: "",
+	applescriptPath: "osascript",
+	applescriptArgs: "",
+	applescriptFileExtension: "scpt",
+	applescriptInject: "",
+	zigPath: "zig",
+	zigArgs: "run",
+	zigInject: "",
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
@@ -292,4 +312,6 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	sqlInteractive: false,
 	octaveInteractive: false,
 	maximaInteractive: false,
+	applescriptInteractive: false,
+	zigInteractive: false,
 }
