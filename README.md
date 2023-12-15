@@ -23,6 +23,8 @@ You can create code blocks that are executed before or after each code block of 
 
 Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent versions.
 
+[Here](#misc-) you can find some other tools and plugins that might are compatible with this plugin and might be useful for you.
+
 <div align='center'>
 
 [![Buy us a coffee](https://img.shields.io/badge/-buy_us_a%C2%A0coffee-gray?logo=buy-me-a-coffee)](https://www.buymeacoffee.com/timwibiral)
@@ -627,9 +629,17 @@ undefined
 To manage the open runtimes for Notebook Mode, you can use the `Open Code Runtime Management` command in the command palette. From this sidebar window, you can stop kernels. **Note: force-stopping requires `taskkill` on Windows and `pkill` on Unix. 99% of systems should have these preinstalled: if yours doesn't, please [file an issue](https://github.com/twibiral/obsidian-execute-code/issues/new/choose)**
 
 
-## Style Settings 🎨
+## Misc 📦
+### Style Settings 🎨
 
-This plugin supports customising styles using the [Style Settings plugin](https://github.com/mgmeyers/obsidian-style-settings). It's possible to customise the color of code block outputs and errors.
+This plugin supports customising styles using the [Style Settings plugin](https://github.com/mgmeyers/obsidian-style-settings) 
+or the [Obsidian Code Styler plugin](https://github.com/mayurankv/Obsidian-Code-Styler).
+
+### Other Tools
+
+Take a look at the [Obsidian Tools python package](https://github.com/mfarragher/obsidiantools) to find some useful 
+tools for interacting with your vault.
+
 
 ## Installation 💾
 
