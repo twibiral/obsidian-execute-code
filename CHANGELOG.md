@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
 ## [Unreleased]
+### Changed
+- Fix bug produced by duplicate labeled code blocks (Thanks to @qiaogaojian)
+
 ### Added
 - Option for better handling of logs (Thanks to @qiaogaojian)
 
