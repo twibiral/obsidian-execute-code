@@ -10,6 +10,7 @@ export interface ExecutorSettings {
 	allowInput: boolean;
 	wslMode: boolean;
 	shellWSLMode: boolean;
+	onlyCurrentBlock: boolean;
 	nodePath: string;
 	nodeArgs: string;
 	jsFileExtension: string;
@@ -128,6 +129,9 @@ export interface ExecutorSettings {
 	applescriptArgs: string;
 	applescriptFileExtension: string;
 	applescriptInject: string;
+	zigPath: string;
+	zigArgs: string;
+	zigInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -159,6 +163,7 @@ export interface ExecutorSettings {
 	octaveInteractive: boolean;
 	maximaInteractive: boolean;
 	applescriptInteractive: boolean;
+	zigInteractive: boolean;
 }
 
 
@@ -172,6 +177,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	allowInput: true,
 	wslMode: false,
 	shellWSLMode: false,
+	onlyCurrentBlock: false,
 	nodePath: "node",
 	nodeArgs: "",
 	jsFileExtension: "js",
@@ -290,6 +296,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	applescriptArgs: "",
 	applescriptFileExtension: "scpt",
 	applescriptInject: "",
+	zigPath: "zig",
+	zigArgs: "run",
+	zigInject: "",
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
@@ -320,4 +329,5 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	octaveInteractive: false,
 	maximaInteractive: false,
 	applescriptInteractive: false,
+	zigInteractive: false,
 }

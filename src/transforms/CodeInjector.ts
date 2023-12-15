@@ -85,7 +85,7 @@ export class CodeInjector {
 				new Notice(`Named export "${namedImport}" does not exist but was imported`);
 				return true;
 			}
-			this.namedImportSrcCode += `${this.namedExports[namedImport]}\n`;
+			this.namedImportSrcCode += `${this.disable_print(this.namedExports[namedImport])}\n`;
 			return false;
 		};
 		// Single import
@@ -145,13 +145,13 @@ export class CodeInjector {
 					if (!Array.isArray(currentArgs.export))
 						currentArgs.export = [currentArgs.export];
 					if (currentArgs.export.contains("pre"))
-						this.prependSrcCode += `${currentCode}\n`;
+						this.prependSrcCode += `${this.disable_print(currentCode)}\n`;
 					if (currentArgs.export.contains("post"))
-						this.appendSrcCode += `${currentCode}\n`;
+						this.appendSrcCode += `${this.disable_print(currentCode)}\n`;
 					currentLanguage = "";
 					currentCode = "";
 					insideCodeBlock = false;
-
+					currentArgs = {};
 				}
 
 				// reached start of code block
@@ -169,5 +169,14 @@ export class CodeInjector {
 				currentCode += `${line}\n`;
 			}
 		}
+	}
+
+	private disable_print(code: String): String {
+		if (!this.settings.onlyCurrentBlock) {
+			return code;
+		}
+		const pattern: RegExp = /^print\s*(.*)/gm;
+		// 使用正则表达式替换函数将符合条件的内容注释掉
+		return code.replace(pattern, ' ');
 	}
 }
