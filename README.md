@@ -14,7 +14,7 @@ The result is shown only after the execution is finished. It is not possible to 
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
 
-The following [languages are supported](#supported-programming-languages-): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell, Octave, and Maxima.
+The following [languages are supported](#supported-programming-languages-): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell, Octave, Maxima and Zig.
 
 
 Python, Rust, and Octave support embedded plots. All languages support ["magic" commands](#magic-commands-) that help you to access paths in obsidian or show images in your notes.
@@ -27,6 +27,13 @@ Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent v
 
 [![Buy us a coffee](https://img.shields.io/badge/-buy_us_a%C2%A0coffee-gray?logo=buy-me-a-coffee)](https://www.buymeacoffee.com/timwibiral)
 </div>
+
+
+## Featured In
+[![Video by I Versus AI](https://img.youtube.com/vi/eQz4eAW3ZDk/0.jpg)](https://www.youtube.com/watch?v=eQz4eAW3ZDk)
+
+"Escape ChatGPT. Make your own Code Interpreter EASY" by I Versus AI
+
 
 ## Supported programming languages 💻
 
