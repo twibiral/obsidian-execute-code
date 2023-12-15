@@ -63,6 +63,6 @@ export default abstract class Executor extends EventEmitter {
 	protected getTempFile(ext: string) {
 		if (this.tempFileId === undefined)
 			this.tempFileId = Date.now().toString();
-		return `${os.tmpdir()}/temp_${this.tempFileId}.${ext}`;
+		return `${os.tmpdir()}\\temp_${this.tempFileId}.${ext}`;
 	}
 }
