@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
+## [Unreleased]
+### Added
+- Support for zig (Thanks to @slar)
+- Support for enabling WSL Mode for the shell language only (Thanks to @mihai-vlc)
+
+
 ## [1.9.1]
 ### Changed
 - Fix bug produced by duplicate labeled code blocks (Thanks to @qiaogaojian)
