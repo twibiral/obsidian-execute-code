@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
+## [Unreleased]
+### Added
+- Option for better handling of logs (Thanks to @qiaogaojian)
+
+
 ## [1.9.0]
 ### Changed
 - Fix app://local deprecation (New minimal Obsidian version: v1.2.8) (Thanks to @mayurankv)
