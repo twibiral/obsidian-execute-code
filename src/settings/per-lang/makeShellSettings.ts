@@ -33,5 +33,17 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 console.log('Shell file extension set to: ' + value);
                 await tab.plugin.saveSettings();
             }));
+
+    new Setting(containerEl)
+        .setName('Shell WSL mode')
+        .setDesc('Run the shell script in Windows Subsystem for Linux. This option is used if the global "WSL Mode" is disabled.')
+        .addToggle((toggle) =>
+            toggle
+                .setValue(tab.plugin.settings.shellWSLMode)
+                .onChange(async (value) => {
+                    tab.plugin.settings.shellWSLMode = value;
+                    await tab.plugin.saveSettings();
+                })
+        );
     tab.makeInjectSetting(containerEl, "shell");
 }

@@ -30,4 +30,5 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
 	octave: "Octave",
 	maxima: "Maxima",
     applescript: "Applescript",
+	zig: "Zig",
 } as const;
