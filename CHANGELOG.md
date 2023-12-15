@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Support for zig (Thanks to @slar)
 - Support for enabling WSL Mode for the shell language only (Thanks to @mihai-vlc)
 
+### Changed
+- Update README.md
+
 
 ## [1.9.1]
 ### Changed
