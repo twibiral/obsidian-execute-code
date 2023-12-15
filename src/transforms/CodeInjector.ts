@@ -151,7 +151,7 @@ export class CodeInjector {
 					currentLanguage = "";
 					currentCode = "";
 					insideCodeBlock = false;
-
+					currentArgs = {};
 				}
 
 				// reached start of code block
