@@ -132,6 +132,9 @@ export interface ExecutorSettings {
 	zigPath: string;
 	zigArgs: string;
 	zigInject: string;
+	ocamlPath: string;
+	ocamlArgs: string;
+	ocamlInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -164,6 +167,7 @@ export interface ExecutorSettings {
 	maximaInteractive: boolean;
 	applescriptInteractive: boolean;
 	zigInteractive: boolean;
+	ocamlInteractive: boolean;
 }
 
 
@@ -299,6 +303,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	zigPath: "zig",
 	zigArgs: "run",
 	zigInject: "",
+	ocamlPath: "ocaml",
+	ocamlArgs: "",
+	ocamlInject: "",
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
@@ -330,4 +337,5 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	maximaInteractive: false,
 	applescriptInteractive: false,
 	zigInteractive: false,
+	ocamlInteractive: false,
 }

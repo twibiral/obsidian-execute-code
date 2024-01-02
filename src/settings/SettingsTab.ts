@@ -32,6 +32,7 @@ import makeOctaviaSettings from "./per-lang/makeOctaveSettings";
 import makeMaximaSettings from "./per-lang/makeMaximaSettings";
 import makeApplescriptSettings from "./per-lang/makeApplescriptSettings";
 import makeZigSettings from "./per-lang/makeZigSettings";
+import makeOCamlSettings from "./per-lang/makeOCamlSettings";
 
 
 /**
@@ -221,6 +222,9 @@ export class SettingsTab extends PluginSettingTab {
 
 		// ========== Zig ============
 		makeZigSettings(this, this.makeContainerFor("zig"));
+
+		// ========== OCaml ============
+		makeOCamlSettings(this, this.makeContainerFor("ocaml"));
 
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}
