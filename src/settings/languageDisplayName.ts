@@ -20,6 +20,7 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
 	batch: "Batch",
 	ts: "Typescript",
 	scala: "Scala",
+    swift: "Swift",
 	racket: "Racket",
 	c: "C",
 	fsharp: "F#",
