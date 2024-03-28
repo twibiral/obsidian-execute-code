@@ -32,6 +32,7 @@ import makeOctaviaSettings from "./per-lang/makeOctaveSettings";
 import makeMaximaSettings from "./per-lang/makeMaximaSettings";
 import makeApplescriptSettings from "./per-lang/makeApplescriptSettings";
 import makeZigSettings from "./per-lang/makeZigSettings";
+import makeSwiftSettings from "./per-lang/makeSwiftSettings";
 
 
 /**
@@ -197,6 +198,9 @@ export class SettingsTab extends PluginSettingTab {
 
 		// ========== Scala ===========
 		makeScalaSettings(this, this.makeContainerFor("scala"));
+
+		// ========== Swift ===========
+		makeSwiftSettings(this, this.makeContainerFor("swift"));
 
 		// ========== Racket ===========
 		makeRacketSettings(this, this.makeContainerFor("racket"));
