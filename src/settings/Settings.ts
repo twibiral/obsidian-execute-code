@@ -87,6 +87,10 @@ export interface ExecutorSettings {
 	kotlinArgs: string;
 	kotlinFileExtension: string;
 	kotlinInject: string;
+	swiftPath: string;
+	swiftArgs: string;
+	swiftFileExtension: string;
+	swiftInject: string;
 	runghcPath: string;
 	ghcPath: string;
 	ghciPath: string;
@@ -147,6 +151,7 @@ export interface ExecutorSettings {
 	javaInteractive: boolean;
 	powershellInteractive: boolean;
 	kotlinInteractive: boolean;
+	swiftInteractive: boolean;
 	mathematicaInteractive: boolean;
 	haskellInteractive: boolean;
 	scalaInteractive: boolean;
@@ -242,6 +247,10 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	kotlinArgs: "-script",
 	kotlinFileExtension: "kts",
 	kotlinInject: "",
+	swiftPath: "swift",
+	swiftArgs: "",
+	swiftFileExtension: "swift",
+	swiftInject: "",
 	runghcPath: "runghc",
 	ghcPath: "ghc",
 	ghciPath: "ghci",
@@ -309,6 +318,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	javaInteractive: false,
 	powershellInteractive: false,
 	kotlinInteractive: false,
+	swiftInteractive: false,
 	mathematicaInteractive: false,
 	haskellInteractive: false,
 	scalaInteractive: false,

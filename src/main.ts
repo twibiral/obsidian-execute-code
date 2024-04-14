@@ -25,7 +25,7 @@ import runAllCodeBlocks from './runAllCodeBlocks';
 
 export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py"] as const;
 export const canonicalLanguages = ["js", "ts", "cs", "lean", "lua", "python", "cpp", "prolog", "shell", "groovy", "r",
-	"go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell", "scala", "racket", "fsharp", "c", "dart",
+	"go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell", "scala", "swift", "racket", "fsharp", "c", "dart",
 	"ruby", "batch", "sql", "octave", "maxima", "applescript", "zig", "ocaml"] as const;
 export const supportedLanguages = [...languageAliases, ...canonicalLanguages] as const;
 export type LanguageId = typeof canonicalLanguages[number];
@@ -59,7 +59,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		supportedLanguages.forEach(l => {
 			console.debug(`Registering renderer for ${l}.`)
 			this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, _ctx) => {
-				await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, '', null);
+				await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, _ctx.sourcePath, null);
 			});
 		});
 
@@ -212,7 +212,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				let transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				transformedCode = addMagicToJS(transformedCode);
-				this.runCode(transformedCode, out, button, this.settings.nodePath, this.settings.nodeArgs, "js", language, file);
+				this.runCode(transformedCode, out, button, this.settings.nodePath, this.settings.nodeArgs, this.settings.jsFileExtension, language, file);
 			});
 
 		} else if (language === "java") {
@@ -231,7 +231,7 @@ export default class ExecuteCodePlugin extends Plugin {
 					transformedCode = addInlinePlotsToPython(transformedCode, TOGGLE_HTML_SIGIL);
 				transformedCode = addMagicToPython(transformedCode);
 
-				this.runCode(transformedCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, "py", language, file);
+				this.runCode(transformedCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, this.settings.pythonFileExtension, language, file);
 			});
 
 		} else if (language === "shell") {
@@ -259,7 +259,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCode(transformedCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, "cpp", language, file);
+				this.runCode(transformedCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, this.settings.cppFileExtension, language, file);
 			});
 
 		} else if (language === "prolog") {
@@ -289,7 +289,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				let transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				transformedCode = addInlinePlotsToR(transformedCode);
-				this.runCode(transformedCode, out, button, this.settings.RPath, this.settings.RArgs, "R", language, file);
+				this.runCode(transformedCode, out, button, this.settings.RPath, this.settings.RArgs, this.settings.RFileExtension, language, file);
 			});
 
 		} else if (language === "go") {
@@ -317,21 +317,21 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.luaPath, this.settings.luaArgs, "lua", language, file);
+				this.runCodeInShell(transformedCode, out, button, this.settings.luaPath, this.settings.luaArgs, this.settings.luaFileExtension, language, file);
 			});
 
 		} else if (language === "dart") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.dartPath, this.settings.dartArgs, "dart", language, file);
+				this.runCodeInShell(transformedCode, out, button, this.settings.dartPath, this.settings.dartArgs, this.settings.dartFileExtension, language, file);
 			});
 
 		} else if (language === "cs") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, "csx", language, file);
+				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, this.settings.csFileExtension, language, file);
 			});
 
 		} else if (language === "haskell") {
@@ -353,6 +353,13 @@ export default class ExecuteCodePlugin extends Plugin {
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.scalaPath, this.settings.scalaArgs, this.settings.scalaFileExtension, language, file);
 			});
+		} else if (language === "swift") {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.swiftPath, this.settings.swiftArgs, this.settings.swiftFileExtension, language, file);
+			});
+
 		} else if (language === "c") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
@@ -363,7 +370,7 @@ export default class ExecuteCodePlugin extends Plugin {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.rubyPath, this.settings.rubyArgs, "rb", language, file);
+				this.runCodeInShell(transformedCode, out, button, this.settings.rubyPath, this.settings.rubyArgs, this.settings.rubyFileExtension, language, file);
 			})
 		} else if (language === "sql") {
 			button.addEventListener("click", async () => {
@@ -376,14 +383,26 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				let transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				transformedCode = addInlinePlotsToOctave(transformedCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.octavePath, this.settings.octaveArgs, "octave", language, file);
+				this.runCodeInShell(transformedCode, out, button, this.settings.octavePath, this.settings.octaveArgs, this.settings.octaveFileExtension, language, file);
 			})
 		} else if (language === "maxima") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				let transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				transformedCode = addInlinePlotsToMaxima(transformedCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.maximaPath, this.settings.maximaArgs, "maxima", language, file);
+				this.runCodeInShell(transformedCode, out, button, this.settings.maximaPath, this.settings.maximaArgs, this.settings.maximaFileExtension, language, file);
+			})
+		}else if (language === "racket") {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.racketPath, this.settings.racketArgs, this.settings.racketFileExtension, language, file);
+      })
+		} else if (language === "applescript") {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.applescriptPath, this.settings.applescriptArgs, this.settings.applescriptFileExtension, language, file);
 			})
 		} else if (language === "zig") {
 			button.addEventListener("click", async () => {
