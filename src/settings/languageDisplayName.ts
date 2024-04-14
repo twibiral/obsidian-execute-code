@@ -31,4 +31,5 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
 	maxima: "Maxima",
     applescript: "Applescript",
 	zig: "Zig",
+	ocaml: "OCaml",
 } as const;
