@@ -32,9 +32,15 @@ Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent v
 
 
 ## Featured In
-[![Video by I Versus AI](https://img.youtube.com/vi/eQz4eAW3ZDk/0.jpg)](https://www.youtube.com/watch?v=eQz4eAW3ZDk)
 
-"Escape ChatGPT. Make your own Code Interpreter EASY" by I Versus AI
+| [![Video by I Versus AI](https://img.youtube.com/vi/eQz4eAW3ZDk/0.jpg)](https://www.youtube.com/watch?v=eQz4eAW3ZDk) | ![![Video by Michel's Science Speedrun](https://www.youtube.com/watch?v=w7vyavrMYqw)](https://img.youtube.com/vi/w7vyavrMYqw/0.jpg) |
+|---|---|
+| "Escape ChatGPT. Make your own Code Interpreter EASY" by _I Versus AI_ | "Obsidian & quarto integration" by _Michel's Science Speedrun_ |
+
+In blogs:
+- ["Using Obsidian: Coding Notes" by _Kera Cudmore_](https://www.codu.co/articles/using-obsidian-coding-notes-pqjyljkh)
+
+<small>Are you featuring this plugin in your content? Let me know and I will add it here.</small>
 
 
 ## Supported programming languages 💻
