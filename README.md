@@ -446,6 +446,16 @@ plot2d(sin(x), [x,0,%pi]);
 
 </details>
 
+<details>
+<summary>Swift</summary>
+
+- Requirements: Swift is installed and the correct path is set in the settings.
+
+```swift
+print("Hello, world!")
+```
+</details>
+
 
 Squiggle: For Squiggle support take a look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle) by @jqhoogland.
 
