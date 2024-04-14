@@ -13,8 +13,8 @@ export interface ExecutorSettings {
 	onlyCurrentBlock: boolean;
 	nodePath: string;
 	nodeArgs: string;
-	jsFileExtension: string;
 	jsInject: string;
+	jsFileExtension: string;
 	tsPath: string;
 	tsArgs: string;
 	tsInject: string;
@@ -94,6 +94,10 @@ export interface ExecutorSettings {
 	kotlinArgs: string;
 	kotlinFileExtension: string;
 	kotlinInject: string;
+	swiftPath: string;
+	swiftArgs: string;
+	swiftFileExtension: string;
+	swiftInject: string;
 	runghcPath: string;
 	ghcPath: string;
 	ghciPath: string;
@@ -132,6 +136,9 @@ export interface ExecutorSettings {
 	zigPath: string;
 	zigArgs: string;
 	zigInject: string;
+	ocamlPath: string;
+	ocamlArgs: string;
+	ocamlInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -152,6 +159,7 @@ export interface ExecutorSettings {
 	javaInteractive: boolean;
 	powershellInteractive: boolean;
 	kotlinInteractive: boolean;
+	swiftInteractive: boolean;
 	mathematicaInteractive: boolean;
 	haskellInteractive: boolean;
 	scalaInteractive: boolean;
@@ -164,6 +172,7 @@ export interface ExecutorSettings {
 	maximaInteractive: boolean;
 	applescriptInteractive: boolean;
 	zigInteractive: boolean;
+	ocamlInteractive: boolean;
 }
 
 
@@ -253,6 +262,10 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	kotlinArgs: "-script",
 	kotlinFileExtension: "kts",
 	kotlinInject: "",
+	swiftPath: "swift",
+	swiftArgs: "",
+	swiftFileExtension: "swift",
+	swiftInject: "",
 	runghcPath: "runghc",
 	ghcPath: "ghc",
 	ghciPath: "ghci",
@@ -299,6 +312,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	zigPath: "zig",
 	zigArgs: "run",
 	zigInject: "",
+	ocamlPath: "ocaml",
+	ocamlArgs: "",
+	ocamlInject: "",
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
@@ -318,6 +334,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	javaInteractive: false,
 	powershellInteractive: false,
 	kotlinInteractive: false,
+	swiftInteractive: false,
 	mathematicaInteractive: false,
 	haskellInteractive: false,
 	scalaInteractive: false,
@@ -330,4 +347,5 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	maximaInteractive: false,
 	applescriptInteractive: false,
 	zigInteractive: false,
+	ocamlInteractive: false,
 }

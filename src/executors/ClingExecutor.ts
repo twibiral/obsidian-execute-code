@@ -13,18 +13,21 @@ export default abstract class ClingExecutor extends NonInteractiveCodeExecutor {
 	}
 
 	override run(codeBlockContent: string, outputter: Outputter, cmd: string, args: string, ext: string) {
-		
 		// Run code with a main block
 		if (this.settings[`${this.language}UseMain`]) {
 			// Generate a new temp file id and don't set to undefined to super.run() uses the same file id
 			this.getTempFile(ext);
-			// Cling expects the main function to have the same name as the file
-			const code = codeBlockContent.replace(/main\(\)/g, `temp_${this.tempFileId}()`);
-			
+			// Cling expects the main function to have the same name as the file / the extension is only c when gcc is used
+			let code: string;
+			if (ext != "c") {
+				code = codeBlockContent.replace(/main\(\)/g, `temp_${this.tempFileId}()`);
+			} else {
+				code = codeBlockContent;
+			}
 			return super.run(code, outputter, this.settings.clingPath, args, ext);
 		}
 
-		// Run code without a main block
+		// Run code without a main block (cling only)
 		return new Promise<void>((resolve, reject) => {
 			const childArgs = [...args.split(" "), ...codeBlockContent.split("\n")];
 			const child = child_process.spawn(this.settings.clingPath, childArgs, {env: process.env, shell: this.usesShell});
