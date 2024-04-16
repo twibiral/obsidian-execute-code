@@ -232,7 +232,7 @@ export class SettingsTab extends PluginSettingTab {
 		makeOCamlSettings(this, this.makeContainerFor("ocaml"));
 
 		// ========== Ruby ============
-		makeRubySettings(this, this.makeContainerFor("php"));
+		makePhpSettings(this, this.makeContainerFor("php"));
 
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}
