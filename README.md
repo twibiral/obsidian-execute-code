@@ -459,8 +459,8 @@ plot2d(sin(x), [x,0,%pi]);
 
 ```ocaml
 print_endline "Hello, OCaml!"
-</details>
 ```
+</details>
 
 <details>
 <summary>Swift</summary>
