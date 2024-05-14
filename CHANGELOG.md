@@ -10,6 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Support for PHP (Thanks to @tlwt)
 
 
+## [1.11.1]
+### Changed
+- Fix the update; the previous version was not published correctly.
+
+
 ## [1.11.0]
 ### Added
 - Support for OCaml (Thanks to @nieomylnieja)
