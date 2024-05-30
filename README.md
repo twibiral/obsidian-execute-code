@@ -640,7 +640,7 @@ Variables functions, etc. defined in one code block will be available in other c
 console.log(f)
 ```
 ```js
-let f = 3;
+var f = 3;
 ```
 ``````
 
