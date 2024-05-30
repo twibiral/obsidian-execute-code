@@ -6,9 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
 ## [Unreleased]
+### Added
+- Dynamic path changes by adding %USERNAME% to the path (usable for python) (Thanks to @raffy8361)
+
 ### Changed
 - Fix wrong code example in Readme (Thanks to @danielmeloalencar)
 - Fix file separator bug (Thanks to @nfiles)
+- Fix un-stoppable runtime environments (Thanks to @jamesbtan)
+
 
 ## [1.11.1]
 ### Changed
