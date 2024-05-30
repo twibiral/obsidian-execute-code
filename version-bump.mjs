@@ -1,3 +1,8 @@
+/**
+ * This script updates the version in manifest.json, package-lock.json, versions.json and CHANGELOG.md
+ * with the version specified in the package.json.
+ */
+
 import {readFileSync, writeFileSync} from "fs";
 
 const targetVersion = process.env.npm_package_version;
