@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 ### Changed
 - Fix wrong code example in Readme (Thanks to @danielmeloalencar)
-
+- Fix file separator bug (Thanks to @nfiles)
 
 ## [1.11.1]
 ### Changed
