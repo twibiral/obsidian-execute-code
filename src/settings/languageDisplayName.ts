@@ -11,6 +11,7 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
     kotlin: "Kotlin",
     lua: "Lua",
     mathematica: "Mathematica",
+    php: "PHP",
     powershell: "Powershell",
     prolog: "Prolog",
     python: "Python",

@@ -107,6 +107,10 @@ export interface ExecutorSettings {
 	mathematicaArgs: string;
 	mathematicaFileExtension: string;
 	mathematicaInject: string;
+	phpPath: string;
+	phpArgs: string;
+	phpFileExtension: string;
+	phpInject: string;	
 	scalaPath: string;
 	scalaArgs: string;
 	scalaFileExtension: string;
@@ -173,6 +177,7 @@ export interface ExecutorSettings {
 	applescriptInteractive: boolean;
 	zigInteractive: boolean;
 	ocamlInteractive: boolean;
+	phpInteractive: boolean;
 }
 
 
@@ -315,6 +320,10 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	ocamlPath: "ocaml",
 	ocamlArgs: "",
 	ocamlInject: "",
+	phpPath: "php",
+	phpArgs: "",
+	phpFileExtension: "php",
+	phpInject: "",	
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
@@ -348,4 +357,5 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	applescriptInteractive: false,
 	zigInteractive: false,
 	ocamlInteractive: false,
+	phpInteractive: false,
 }
