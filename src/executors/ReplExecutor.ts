@@ -24,6 +24,10 @@ export default abstract class ReplExecutor extends AsyncExecutor {
             path = "wsl";
         }
 
+        // Replace %USERNAME% with actual username (if it exists)
+        if (path.includes("%USERNAME%") && process?.env?.USERNAME)
+            path = path.replace("%USERNAME%", process.env.USERNAME);
+
 		// Spawns a new REPL that is used to execute code.
 		// {env: process.env} is used to ensure that the environment variables are passed to the REPL.
         this.process = spawn(path, args, {env: process.env});
