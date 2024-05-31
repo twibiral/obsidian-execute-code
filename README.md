@@ -426,7 +426,9 @@ puts "Hello, World!"
 - Requirements: PHP is installed and the correct path is set in the settings.
 
 ```php
+<?php
 echo "Hello, World!";
+?>
 ```
 </details>
 
