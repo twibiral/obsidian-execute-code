@@ -48,6 +48,7 @@ Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent v
 
 In blogs:
 - ["Using Obsidian: Coding Notes" by _Kera Cudmore_](https://www.codu.co/articles/using-obsidian-coding-notes-pqjyljkh)
+- ["Obsidian and Jupyter Notebooks" by _Brian Carey_](https://medium.com/@biscotty666/obsidian-and-jupyter-notebooks-5d90ab3eab4c)
 
 <small>Are you featuring this plugin in your content? Let me know and I will add it here.</small>
 
