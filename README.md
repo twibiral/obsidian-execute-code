@@ -19,7 +19,7 @@ The result is shown only after the execution is finished. It is not possible to 
 
 > [!NOTE]
 > Advertisement on my behalf:
-> I am working on my master's thesis and looking for a PhD position in explainable AI or computer vision - if you have or know about an open position in that field, I would love to hear about it 😄
+> I am working on my master's thesis and looking for a PhD position in explainable AI or foundations of learning - if you have or know about an open position in that field, I would love to hear about it 😄
 
 
 <hr></div>
