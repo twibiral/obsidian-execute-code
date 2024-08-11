@@ -213,7 +213,7 @@ void hello(string name) {
 	cout << "Hello " << name << "!\n";
 }
 
-hello("Alice);
+hello("Alice");
 ```
 
 - Main functions can be used as an entrypoint by toggling the option in settings.
