@@ -14,8 +14,7 @@ The result is shown only after the execution is finished. It is not possible to 
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
 
-<br><hr>
-
+<hr>
 
 > [!NOTE]
 > Advertisement on my behalf:
@@ -34,19 +33,23 @@ You can create code blocks that are executed before or after each code block of 
 
 Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent versions.
 
-[Here](#misc-) you can find some other tools and plugins that might are compatible with this plugin and might be useful for you.
+[Here](#misc-) you can find some other tools and plugins that are compatible with this plugin and might be useful for you.
 
+<br>
 <div align='center'>
 
-[![Buy us a coffee](https://img.shields.io/badge/-buy_us_a%C2%A0coffee-gray?logo=buy-me-a-coffee)](https://www.buymeacoffee.com/timwibiral)
+If you like this plugin and use it a lot, please consider supporting me in continuing the development of this plugin. You can also sponsor a new feature or language integration directly, if you want to speed-up the development for a specific feature you need.
+
+[![GitHub Sponsors](https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=white)](https://github.com/sponsors/twibiral)   [![Buy me a coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/timwibiral)
+
 </div>
 
 
 ## Featured In
 
-| [![Video by I Versus AI](https://img.youtube.com/vi/eQz4eAW3ZDk/0.jpg)](https://www.youtube.com/watch?v=eQz4eAW3ZDk) | ![![Video by Michel's Science Speedrun](https://www.youtube.com/watch?v=w7vyavrMYqw)](https://img.youtube.com/vi/w7vyavrMYqw/0.jpg) |
+| [![Video by I Versus AI](https://img.youtube.com/vi/eQz4eAW3ZDk/0.jpg)](https://www.youtube.com/watch?v=eQz4eAW3ZDk) | ![![Video by Michel's Science Speedrun](https://www.youtube.com/watch?v=w7vyavrMYqw)](https://img.youtube.com/vi/w7vyavrMYqw/0.jpg) | ![![Video by GlareDB](https://www.youtube.com/watch?v=lRq3mlvcyJw)](https://img.youtube.com/vi/lRq3mlvcyJw/0.jpg) |
 |---|---|
-| "Escape ChatGPT. Make your own Code Interpreter EASY" by _I Versus AI_ | "Obsidian & quarto integration" by _Michel's Science Speedrun_ |
+| "Escape ChatGPT. Make your own Code Interpreter EASY" by _I Versus AI_ | "Obsidian & quarto integration" by _Michel's Science Speedrun_ | "Write SQL Queries in...Obsidian?" by _GlareDB_ |
 
 In blogs:
 - ["Using Obsidian: Coding Notes" by _Kera Cudmore_](https://www.codu.co/articles/using-obsidian-coding-notes-pqjyljkh)
