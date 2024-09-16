@@ -47,9 +47,9 @@ If you like this plugin and use it a lot, please consider supporting me in conti
 
 ## Featured In
 
-| [![Video by I Versus AI](https://img.youtube.com/vi/eQz4eAW3ZDk/0.jpg)](https://www.youtube.com/watch?v=eQz4eAW3ZDk) | ![![Video by Michel's Science Speedrun](https://www.youtube.com/watch?v=w7vyavrMYqw)](https://img.youtube.com/vi/w7vyavrMYqw/0.jpg) | ![![Video by GlareDB](https://www.youtube.com/watch?v=lRq3mlvcyJw)](https://img.youtube.com/vi/lRq3mlvcyJw/0.jpg) |
-|---|---|---|
-| "Escape ChatGPT. Make your own Code Interpreter EASY" by _I Versus AI_ | "Obsidian & quarto integration" by _Michel's Science Speedrun_ | "Write SQL Queries in...Obsidian?" by _GlareDB_ |
+| [![Video by I Versus AI](https://img.youtube.com/vi/eQz4eAW3ZDk/0.jpg)](https://www.youtube.com/watch?v=eQz4eAW3ZDk) | ![![Video by Michel's Science Speedrun](https://www.youtube.com/watch?v=w7vyavrMYqw)](https://img.youtube.com/vi/w7vyavrMYqw/0.jpg) | ![![Video by GlareDB](https://www.youtube.com/watch?v=lRq3mlvcyJw)](https://img.youtube.com/vi/lRq3mlvcyJw/0.jpg) | ![![Video by 노마드 코더 Nomad Coders](https://www.youtube.com/watch?v=qY1P_CmL8aQ)](https://img.youtube.com/vi/qY1P_CmL8aQ/0.jpg) |
+|---|---|---|---|
+| "Escape ChatGPT. Make your own Code Interpreter EASY" by _I Versus AI_ | "Obsidian & quarto integration" by _Michel's Science Speedrun_ | "Write SQL Queries in...Obsidian?" by _GlareDB_ | "인생 노트앱...드디어 찾았습니다..!" by _노마드 코더 Nomad Coders_|
 
 In blogs:
 - ["Using Obsidian: Coding Notes" by _Kera Cudmore_](https://www.codu.co/articles/using-obsidian-coding-notes-pqjyljkh)
