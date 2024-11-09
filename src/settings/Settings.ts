@@ -9,9 +9,12 @@ export interface ExecutorSettings {
 	timeout: number;
 	allowInput: boolean;
 	wslMode: boolean;
+	shellWSLMode: boolean;
+	onlyCurrentBlock: boolean;
 	nodePath: string;
 	nodeArgs: string;
 	jsInject: string;
+	jsFileExtension: string;
 	tsPath: string;
 	tsArgs: string;
 	tsInject: string;
@@ -20,16 +23,20 @@ export interface ExecutorSettings {
 	leanInject: string;
 	luaPath: string;
 	luaArgs: string;
+	luaFileExtension: string;
 	luaInject: string;
 	dartPath: string;
 	dartArgs: string;
+	dartFileExtension: string;
 	dartInject: string;
 	csPath: string;
 	csArgs: string;
+	csFileExtension: string;
 	csInject: string;
 	pythonPath: string;
 	pythonArgs: string;
 	pythonEmbedPlots: boolean;
+	pythonFileExtension: string;
 	pythonInject: string;
 	shellPath: string;
 	shellArgs: string;
@@ -57,10 +64,20 @@ export interface ExecutorSettings {
 	powershellArgs: string;
 	powershellFileExtension: string;
 	powershellInject: string;
+	powershellEncoding: BufferEncoding;
+	octavePath: string;
+	octaveArgs: string;
+	octaveFileExtension: string;
+	octaveInject: string;
+	maximaPath: string;
+	maximaArgs: string;
+	maximaFileExtension: string;
+	maximaInject: string;
 	cargoPath: string;
 	cargoEvalArgs: string;
 	rustInject: string;
 	cppRunner: string;
+	cppFileExtension: string;
 	cppInject: string;
 	cppArgs: string;
 	cppUseMain: boolean;
@@ -71,11 +88,16 @@ export interface ExecutorSettings {
 	RPath: string;
 	RArgs: string;
 	REmbedPlots: boolean;
+	RFileExtension: string;
 	rInject: string;
 	kotlinPath: string;
 	kotlinArgs: string;
 	kotlinFileExtension: string;
 	kotlinInject: string;
+	swiftPath: string;
+	swiftArgs: string;
+	swiftFileExtension: string;
+	swiftInject: string;
 	runghcPath: string;
 	ghcPath: string;
 	ghciPath: string;
@@ -102,10 +124,21 @@ export interface ExecutorSettings {
 	cInject: string;
 	rubyPath: string;
 	rubyArgs: string;
+	rubyFileExtension: string;
 	rubyInject: string;
 	sqlPath: string;
 	sqlArgs: string;
 	sqlInject: string;
+	applescriptPath: string;
+	applescriptArgs: string;
+	applescriptFileExtension: string;
+	applescriptInject: string;
+	zigPath: string;
+	zigArgs: string;
+	zigInject: string;
+	ocamlPath: string;
+	ocamlArgs: string;
+	ocamlInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -126,6 +159,7 @@ export interface ExecutorSettings {
 	javaInteractive: boolean;
 	powershellInteractive: boolean;
 	kotlinInteractive: boolean;
+	swiftInteractive: boolean;
 	mathematicaInteractive: boolean;
 	haskellInteractive: boolean;
 	scalaInteractive: boolean;
@@ -134,6 +168,11 @@ export interface ExecutorSettings {
 	cInteractive: boolean;
 	rubyInteractive: boolean;
 	sqlInteractive: boolean;
+	octaveInteractive: boolean;
+	maximaInteractive: boolean;
+	applescriptInteractive: boolean;
+	zigInteractive: boolean;
+	ocamlInteractive: boolean;
 }
 
 
@@ -146,8 +185,11 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	timeout: 10000,
 	allowInput: true,
 	wslMode: false,
+	shellWSLMode: false,
+	onlyCurrentBlock: false,
 	nodePath: "node",
 	nodeArgs: "",
+	jsFileExtension: "js",
 	jsInject: "",
 	tsPath: "ts-node",
 	tsArgs: "",
@@ -157,16 +199,20 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	leanInject: "",
 	luaPath: "lua",
 	luaArgs: "",
+	luaFileExtension: "lua",
 	luaInject: "",
 	dartPath: "dart",
 	dartArgs: "",
+	dartFileExtension: "dart",
 	dartInject: "",
 	csPath: "dotnet-script",
 	csArgs: "",
+	csFileExtension: "csx",
 	csInject: "",
 	pythonPath: "python",
 	pythonArgs: "",
 	pythonEmbedPlots: true,
+	pythonFileExtension: "py",
 	pythonInject: "",
 	shellPath: "bash",
 	shellArgs: "",
@@ -193,11 +239,13 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	powershellPath: "powershell",
 	powershellArgs: "-file",
 	powershellFileExtension: "ps1",
-	powershellInject: "",
+	powershellInject: "$OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding",
+	powershellEncoding: "latin1",
 	cargoPath: "cargo",
 	cargoEvalArgs: "",
 	rustInject: "",
 	cppRunner: "cling",
+	cppFileExtension: "cpp",
 	cppInject: "",
 	cppArgs: "",
 	cppUseMain: false,
@@ -208,11 +256,16 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	RPath: "Rscript",
 	RArgs: "",
 	REmbedPlots: true,
+	RFileExtension: "R",
 	rInject: "",
 	kotlinPath: "kotlinc",
 	kotlinArgs: "-script",
 	kotlinFileExtension: "kts",
 	kotlinInject: "",
+	swiftPath: "swift",
+	swiftArgs: "",
+	swiftFileExtension: "swift",
+	swiftInject: "",
 	runghcPath: "runghc",
 	ghcPath: "ghc",
 	ghciPath: "ghci",
@@ -239,11 +292,29 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	cInject: "",
 	rubyPath: "ruby",
 	rubyArgs: "",
+	rubyFileExtension: "rb",
 	rubyInject: "",
 	sqlPath: "psql",
 	sqlArgs: "-d <database> -U <user> -f",
 	sqlInject: "",
-
+	octavePath: "octave",
+	octaveArgs: "-q",
+	octaveFileExtension: "m",
+	octaveInject: "figure('visible','off')  # Necessary to embed plots",
+	maximaPath: "maxima",
+	maximaArgs: "-qb",
+	maximaFileExtension: "mx",
+	maximaInject: "",
+	applescriptPath: "osascript",
+	applescriptArgs: "",
+	applescriptFileExtension: "scpt",
+	applescriptInject: "",
+	zigPath: "zig",
+	zigArgs: "run",
+	zigInject: "",
+	ocamlPath: "ocaml",
+	ocamlArgs: "",
+	ocamlInject: "",
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
@@ -263,6 +334,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	javaInteractive: false,
 	powershellInteractive: false,
 	kotlinInteractive: false,
+	swiftInteractive: false,
 	mathematicaInteractive: false,
 	haskellInteractive: false,
 	scalaInteractive: false,
@@ -271,4 +343,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	racketInteractive: false,
 	rubyInteractive: false,
 	sqlInteractive: false,
+	octaveInteractive: false,
+	maximaInteractive: false,
+	applescriptInteractive: false,
+	zigInteractive: false,
+	ocamlInteractive: false,
 }

@@ -4,11 +4,85 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
-## [Unreleased]
+
+## [1.12.0]
+### Added
+- Dynamic path changes by adding %USERNAME% to the path (usable for python) (Thanks to @raffy8361)
+
+### Changed
+- Fix wrong code example in Readme (Thanks to @danielmeloalencar)
+- Fix file separator bug (Thanks to @nfiles)
+- Fix un-stoppable runtime environments (Thanks to @jamesbtan)
+
+
+## [1.11.1]
+### Changed
+- Fix the update; the previous version was not published correctly.
+
+
+## [1.11.0]
+### Added
+- Support for OCaml (Thanks to @nieomylnieja)
+- Support for Swift (Thanks to @ihomway)
+
+### Changed
+- Improved support for C compiler gcc (Thanks to @melo-afk)
+
+
+## [1.10.0]
+### Added
+- Support for zig (Thanks to @slar)
+- Support for enabling WSL Mode for the shell language only (Thanks to @mihai-vlc)
+
+### Changed
+- Update README.md
+
+
+## [1.9.1]
+### Changed
+- Fix bug produced by duplicate labeled code blocks (Thanks to @qiaogaojian)
+
+### Added
+- Option for better handling of logs (Thanks to @qiaogaojian)
+- Make labels work with code blocks with `run-` prefix (Thanks to @qiaogaojian)
+
+
+## [1.9.0]
+### Changed
+- Fix app://local deprecation (New minimal Obsidian version: v1.2.8) (Thanks to @mayurankv)
+- Fix Racket support (Thanks to @mayurankv)
+
+### Added
+- Support for Applescript (Thanks to @mayurankv)
+
+
+## [1.8.1]
+### Changed
+- Update version support for C/C++. Add Working draft for ISO C++ 2020 for the C++ language. (Thanks to @drsect0r)
+
+## [1.8.0]
+### Added
+- Support for Octave
+- Support for Maxima
+
+## [1.7.1]
+
+### Changed
+
+- Add more examples for magic commands to README.md
+- Pass environmental variables to the REPL executors
+- Allow language names that are not lower case
+
+## [1.7.0]
 
 ### Added
 
 - Support for SQL
+- add info percent sign batch (Thanks to @hannesdelbeke)
+
+### Changed
+- Remove ANSI escape codes from `stderr`
+- Add new executor for PowerShell that fixes problems with file encodings by encoding powershell scripts with latin-1 instead of windows-1252.K
 
 ## [1.6.2]
 
@@ -19,7 +93,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 
 - Fix wrong scala settings (Thanks to @scoopsdev)
--
 
 ## [1.6.1]
 

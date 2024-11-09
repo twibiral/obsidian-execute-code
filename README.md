@@ -1,4 +1,11 @@
 # Obsidian Execute Code Plugin
+<div align='right'>
+
+![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?color=8572db&labelColor=1e1e1e&label=Downloads&query=$['execute-code'].downloads&url=https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugin-stats.json) 
+![GitHub package.json version](https://img.shields.io/github/package-json/version/twibiral/obsidian-execute-code?color=8572db&labelColor=1e1e1e&label=Current%20Version) 
+![GitHub Release Date](https://img.shields.io/github/release-date/twibiral/obsidian-execute-code?color=8572db&labelColor=1e1e1e&label=Latest%20Release)
+
+</div>
 
 This plugin allows you to execute code snippets in code blocks in your notes. The plugin adds a 'run' button for code blocks in supported languages. Clicking them results in the code of the block being executed. After the execution the result of the execution is showed. An interactive input element is created when your code snippets reads expects user input.
 
@@ -7,17 +14,49 @@ The result is shown only after the execution is finished. It is not possible to 
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
 
-The following [languages are supported](#supported-programming-languages-): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell.
+<hr>
+
+> [!NOTE]
+> Advertisement on my behalf:
+> I am working on my master's thesis and looking for a PhD position in explainable AI or foundations of learning - if you have or know about an open position in that field, I would love to hear about it 😄
 
 
-Python and Rust support embedded plots. All languages support ["magic" commands](#magic-commands-) that help you to access paths in obsidian or show images in your notes.
+<hr></div>
+
+
+The following [languages are supported](#supported-programming-languages-): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell, Octave, Maxima, Zig and OCaml.
+
+
+Python, Rust, and Octave support embedded plots. All languages support ["magic" commands](#magic-commands-) that help you to access paths in obsidian or show images in your notes.
 
 You can create code blocks that are executed before or after each code block of the same language and define [global code injections](#global-code-injection-and-reusing-code-blocks-).
 
 Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent versions.
 
+[Here](#misc-) you can find some other tools and plugins that are compatible with this plugin and might be useful for you.
 
-[![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?color=1e1e1e&labelColor=8572db&label=Downloads&query=$['execute-code'].downloads&url=https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugin-stats.json&)](obsidian://show-plugin?id=execute-code)
+<br>
+<div align='center'>
+
+If you like this plugin and use it a lot, please consider supporting me in continuing the development of this plugin. You can also sponsor a new feature or language integration directly, if you want to speed-up the development for a specific feature you need.
+
+[![GitHub Sponsors](https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=white)](https://github.com/sponsors/twibiral)   [![Buy me a coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/timwibiral)
+
+</div>
+
+
+## Featured In
+
+| [![Video by I Versus AI](https://img.youtube.com/vi/eQz4eAW3ZDk/0.jpg)](https://www.youtube.com/watch?v=eQz4eAW3ZDk) | ![![Video by Michel's Science Speedrun](https://www.youtube.com/watch?v=w7vyavrMYqw)](https://img.youtube.com/vi/w7vyavrMYqw/0.jpg) | ![![Video by GlareDB](https://www.youtube.com/watch?v=lRq3mlvcyJw)](https://img.youtube.com/vi/lRq3mlvcyJw/0.jpg) | ![![Video by 노마드 코더 Nomad Coders](https://www.youtube.com/watch?v=qY1P_CmL8aQ)](https://img.youtube.com/vi/qY1P_CmL8aQ/0.jpg) |
+|---|---|---|---|
+| "Escape ChatGPT. Make your own Code Interpreter EASY" by _I Versus AI_ | "Obsidian & quarto integration" by _Michel's Science Speedrun_ | "Write SQL Queries in...Obsidian?" by _GlareDB_ | "인생 노트앱...드디어 찾았습니다..!" by _노마드 코더 Nomad Coders_|
+
+In blogs:
+- ["Using Obsidian: Coding Notes" by _Kera Cudmore_](https://www.codu.co/articles/using-obsidian-coding-notes-pqjyljkh)
+- ["Obsidian and Jupyter Notebooks" by _Brian Carey_](https://medium.com/@biscotty666/obsidian-and-jupyter-notebooks-5d90ab3eab4c)
+
+<small>Are you featuring this plugin in your content? Let me know and I will add it here.</small>
+
 
 ## Supported programming languages 💻
 
@@ -245,8 +284,12 @@ echo "Hello World!"
 <details>
 <summary>Batch</summary>
 
-- Requirements: Used to execute batch commands on Windows (also known as BAT or CMD). Default is command prompt, but can be set to your preferred shell in the settings.
-
+- **Requirements**: Used to execute batch commands on Windows (also known as BAT or CMD). Default is command prompt, but can be set to your preferred shell in the settings.
+- **Important**: <br>
+	The percent sign is used in batch files to represent command line parameters: e.g. %1, %2, ... <br>
+	Two percent signs in a batch file are treated like a single percent sign in a command: e.g. %%f <br>
+	When using variables in execute code, use 2 percent signs. More info [here](https://stackoverflow.com/questions/14509652/what-is-the-difference-between-and-in-a-cmd-file)<br>
+	
 ```batch
 ECHO Hello World!
 ```
@@ -392,6 +435,59 @@ puts "Hello, World!"
 ```
 </details>
 
+<details>
+<summary>Octave</summary>
+
+- Requirements: Octave is installed and the correct path is set in the settings.
+
+```octavia
+exp(i*pi)
+
+x = -10:0.1:10;
+plot (x, sin(x));
+```
+(Thanks to Michael M. Tung for the code example.)
+
+- Figures are set to invisible by default. They are store in a file and directly embedded in the note.
+
+</details>
+
+<details>
+<summary>Maxima</summary>
+
+- Requirements: Maxima is installed and the correct path is set in the settings.
+
+```maxima
+integrate(x,x);
+plot2d(sin(x), [x,0,%pi]);
+```
+(Thanks to Michael M. Tung for the code example.)
+
+- By default, plots are saved in a file and directly embedded in the note.
+
+</details>
+
+<details>
+<summary>OCaml</summary>
+
+- Requirements: OCaml is installed and the correct path is set in the settings.
+
+```ocaml
+print_endline "Hello, OCaml!"
+```
+</details>
+
+<details>
+<summary>Swift</summary>
+
+- Requirements: Swift is installed and the correct path is set in the settings.
+
+```swift
+print("Hello, world!")
+```
+</details>
+
+
 Squiggle: For Squiggle support take a look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle) by @jqhoogland.
 
 Support for the following is planned:
@@ -419,6 +515,44 @@ The following magic commands are supported:
 
 (`@show(...)` and `@html(...)` are only supported for JavaScript and Python yet.)
 (The old commands `@note` and `@vault` are still supported, but may be removed in the future.)
+
+Examples for the magic commands with Python:
+
+```python
+print("Vault path:", @vault_path)
+print("Vault url:", @vault_url)
+
+print("Note path:", @note_path)
+print("Note url:", @note_url)
+
+print("Note title:", @title)
+```
+
+```python
+@show("image.png")
+@show("image.png", 100, 100)
+@show("https://upload.wikimedia.org/wikipedia/commons/d/de/TestScreen_square.svg", 10%, 10%, "center")
+```
+
+```python
+@html("<h1>HTML Caption</h1>")
+@html('''
+<svg width="100%" height="100%" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <circle cx="300" cy="300" r="250" style="fill:peru;" />
+  <circle cx="200" cy="250" r="50" style="fill:black;" />
+  <circle cx="400" cy="250" r="50" style="fill:black;" />
+  <circle cx="190" cy="230" r="20" style="fill:white;" />
+  <circle cx="390" cy="230" r="20" style="fill:white;" />
+  <circle cx="250" cy="400" r="85" style="fill:saddlebrown;" />
+  <circle cx="350" cy="400" r="85" style="fill:saddlebrown;" />
+  <ellipse cx="300" cy="380" rx="50" ry="35" style="fill:black;" />
+  <ellipse cx="130" cy="100" rx="110" ry="70" style="fill:saddlebrown;"/>
+<ellipse cx="470" cy="100" rx="110" ry="70" style="fill:saddlebrown;" />
+</svg> 
+''')
+```
+
+Try it out yourself!
 
 ![Example how to use the magic commands.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/magic_example.png?raw=true)
 
@@ -521,7 +655,7 @@ Variables functions, etc. defined in one code block will be available in other c
 console.log(f)
 ```
 ```js
-let f = 3;
+var f = 3;
 ```
 ``````
 
@@ -536,9 +670,17 @@ undefined
 To manage the open runtimes for Notebook Mode, you can use the `Open Code Runtime Management` command in the command palette. From this sidebar window, you can stop kernels. **Note: force-stopping requires `taskkill` on Windows and `pkill` on Unix. 99% of systems should have these preinstalled: if yours doesn't, please [file an issue](https://github.com/twibiral/obsidian-execute-code/issues/new/choose)**
 
 
-## Style Settings 🎨
+## Misc 📦
+### Style Settings 🎨
 
-This plugin supports customising styles using the [Style Settings plugin](https://github.com/mgmeyers/obsidian-style-settings). It's possible to customise the color of code block outputs and errors.
+This plugin supports customising styles using the [Style Settings plugin](https://github.com/mgmeyers/obsidian-style-settings) 
+or the [Obsidian Code Styler plugin](https://github.com/mayurankv/Obsidian-Code-Styler).
+
+### Other Tools
+
+Take a look at the [Obsidian Tools python package](https://github.com/mfarragher/obsidiantools) to find some useful 
+tools for interacting with your vault.
+
 
 ## Installation 💾
 

@@ -1,6 +1,7 @@
 import {Notice} from "obsidian";
 import {Outputter} from "src/output/Outputter";
 import * as os from "os";
+import * as path from "path";
 import {LanguageId} from "src/main";
 import {EventEmitter} from "stream";
 
@@ -63,6 +64,6 @@ export default abstract class Executor extends EventEmitter {
 	protected getTempFile(ext: string) {
 		if (this.tempFileId === undefined)
 			this.tempFileId = Date.now().toString();
-		return `${os.tmpdir()}/temp_${this.tempFileId}.${ext}`;
+		return path.join(os.tmpdir(), `temp_${this.tempFileId}.${ext}`);
 	}
 }

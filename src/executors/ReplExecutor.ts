@@ -14,7 +14,7 @@ export default abstract class ReplExecutor extends AsyncExecutor {
     abstract setup(): Promise<void>;
     abstract removePrompts(output: string, source: "stdout" | "stderr"): string;
     
-    constructor(settings: ExecutorSettings, path: string, args: string[], file: string, language: LanguageId) {
+    protected constructor(settings: ExecutorSettings, path: string, args: string[], file: string, language: LanguageId) {
         super(file, language);
         
         this.settings = settings;
@@ -23,21 +23,26 @@ export default abstract class ReplExecutor extends AsyncExecutor {
             args.unshift("-e", path);
             path = "wsl";
         }
-        
-        this.process = spawn(path, args);
-        
+
+        // Replace %USERNAME% with actual username (if it exists)
+        if (path.includes("%USERNAME%") && process?.env?.USERNAME)
+            path = path.replace("%USERNAME%", process.env.USERNAME);
+
+		// Spawns a new REPL that is used to execute code.
+		// {env: process.env} is used to ensure that the environment variables are passed to the REPL.
+        this.process = spawn(path, args, {env: process.env});
+
         this.process.on("close", () => {
             this.emit("close");
             new Notice("Runtime exited");
             this.process = null;
         });
-        
-        this.process.on("error", (err) => {
-            this.notifyError(settings.pythonPath, args.join(" "), "", err, undefined, "Error launching Python process: " + err);
+        this.process.on("error", (err: any) => {
+            this.notifyError(settings.pythonPath, args.join(" "), "", err, undefined, "Error launching process: " + err);
             this.stop();
         });
         
-        this.setup();
+        this.setup().then(() => { /* Wait for the inheriting class to set up, then do nothing */ });
     }
     
     /**
@@ -52,11 +57,10 @@ export default abstract class ReplExecutor extends AsyncExecutor {
     run(code: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string): Promise<void> {
         outputter.queueBlock();
         
-        // TODO: Is handling for reject necessary?
-        return this.addJobToQueue((resolve, reject) => {
+        return this.addJobToQueue((resolve, _reject) => {
             if (this.process === null) return resolve();
 
-            const finishSigil = `SIGIL_BLOCK_DONE${Math.random()}_${Date.now()}_${code.length}`;
+            const finishSigil = `SIGIL_BLOCK_DONE_${Math.random()}_${Date.now()}_${code.length}`;
 
             outputter.startBlock();
 
@@ -101,7 +105,7 @@ export default abstract class ReplExecutor extends AsyncExecutor {
     }
     
     stop(): Promise<void> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, _reject) => {
             this.process.on("close", () => {
                 resolve();
             });            

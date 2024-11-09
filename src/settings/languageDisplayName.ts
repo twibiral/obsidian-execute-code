@@ -20,11 +20,17 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
 	batch: "Batch",
 	ts: "Typescript",
 	scala: "Scala",
+    swift: "Swift",
 	racket: "Racket",
 	c: "C",
 	fsharp: "F#",
 	ruby: "Ruby",
 	dart: "Dart",
 	lean: "Lean",
-	sql: "SQL"
+	sql: "SQL",
+	octave: "Octave",
+	maxima: "Maxima",
+    applescript: "Applescript",
+	zig: "Zig",
+	ocaml: "OCaml",
 } as const;

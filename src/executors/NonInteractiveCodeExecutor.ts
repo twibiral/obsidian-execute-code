@@ -5,9 +5,8 @@ import Executor from "./Executor";
 import {Outputter} from "src/output/Outputter";
 import {LanguageId} from "src/main";
 import { ExecutorSettings } from "../settings/Settings.js";
-import { sep } from "path";
-import { join } from "path/posix";
 import windowsPathToWsl from "../transforms/windowsPathToWsl.js";
+import { error } from "console";
 
 export default class NonInteractiveCodeExecutor extends Executor {
 	usesShell: boolean
@@ -38,29 +37,63 @@ export default class NonInteractiveCodeExecutor extends Executor {
 
 			fs.promises.writeFile(tempFileName, codeBlockContent).then(() => {
 				const args = cmdArgs ? cmdArgs.split(" ") : [];
-				
-				if (this.settings.wslMode) {
+
+				if (this.isWSLEnabled()) {
 					args.unshift("-e", cmd);
 					cmd = "wsl";
 					args.push(windowsPathToWsl(tempFileName));
 				} else {
-					args.push(tempFileName);	
+					args.push(tempFileName);
 				}
-				
-				const child = child_process.spawn(cmd, args, {env: process.env, shell: this.usesShell});
-				
-				this.handleChildOutput(child, outputter, tempFileName).then(() => {
-					this.tempFileId = undefined; // Reset the file id to use a new file next time
-				});
+
+
+				let child: child_process.ChildProcessWithoutNullStreams;
+
+				// check if compiled by gcc
+				if (cmd.endsWith("gcc") || cmd.endsWith("gcc.exe")) {
+					// remove .c from tempFileName and add .out for the compiled output and add output path to args
+					const tempFileNameWExe: string = tempFileName.slice(0, -2) + ".out";
+					args.push("-o", tempFileNameWExe);
+
+					// compile c file with gcc and handle possible output
+					const childGCC = child_process.spawn(cmd, args, {env: process.env, shell: this.usesShell});
+					this.handleChildOutput(childGCC, outputter, tempFileName);
+					childGCC.on('exit', (code) => {
+						if (code === 0) {
+							// executing the compiled file
+							child = child_process.spawn(tempFileNameWExe, { env: process.env, shell: this.usesShell });
+							this.handleChildOutput(child, outputter, tempFileNameWExe).then(() => {
+								this.tempFileId = undefined; // Reset the file id to use a new file next time
+							});
+						}
+					});
+				} else {
+					child = child_process.spawn(cmd, args, { env: process.env, shell: this.usesShell });
+					this.handleChildOutput(child, outputter, tempFileName).then(() => {
+						this.tempFileId = undefined; // Reset the file id to use a new file next time
+					});
+				}				
 
 				// We don't resolve the promise here - 'handleChildOutput' registers a listener
 				// For when the child_process closes, and will resolve the promise there
-				this.resolveRun = resolve;
+				this.resolveRun = resolve;	
 			}).catch((err) => {
 				this.notifyError(cmd, cmdArgs, tempFileName, err, outputter);
 				resolve();
 			});
 		});
+	}
+
+	private isWSLEnabled(): boolean {
+		if (this.settings.wslMode) {
+			return true;
+		}
+
+		if (this.language == 'shell' && this.settings.shellWSLMode) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

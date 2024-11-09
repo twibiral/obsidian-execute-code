@@ -9,6 +9,11 @@ export default class CExecutor extends ClingExecutor {
 	}
 
 	override run(codeBlockContent: string, outputter: Outputter, cmd: string, cmdArgs: string, ext: string) {
-		return super.run(codeBlockContent, outputter, cmd, `-x c ${cmdArgs}`, "cpp");
+		const install_path = this.settings[`clingPath`];
+		if (install_path.endsWith("cling") || install_path.endsWith("cling.exe")) {
+			return super.run(codeBlockContent, outputter, cmd, this.settings[`cArgs`], "cpp");
+		} else {
+			return super.run(codeBlockContent, outputter, cmd, this.settings[`cArgs`], "c");
+		}
 	}
 }
