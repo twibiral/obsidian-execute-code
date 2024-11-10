@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
+
+## [2.0.0]
+### Added
+- Persistent output blocks (Thanks to @chlohal and @twibiral)
+- Support for PHP (Thanks to @tlwt)
+
+
 ## [1.12.0]
 ### Added
 - Dynamic path changes by adding %USERNAME% to the path (usable for python) (Thanks to @raffy8361)

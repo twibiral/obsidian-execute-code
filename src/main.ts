@@ -1,6 +1,16 @@
-import {FileView, MarkdownRenderer, Plugin} from 'obsidian';
+import {
+	App, Component,
+	FileSystemAdapter,
+	FileView,
+	MarkdownRenderer,
+	MarkdownView,
+	Modal,
+	normalizePath,
+	Plugin,
+	TFile
+} from 'obsidian';
 
-import {Outputter, TOGGLE_HTML_SIGIL} from "./Outputter";
+import {Outputter, TOGGLE_HTML_SIGIL} from "./output/Outputter";
 import type {ExecutorSettings} from "./settings/Settings";
 import {DEFAULT_SETTINGS} from "./settings/Settings";
 import {SettingsTab} from "./settings/SettingsTab";
@@ -22,11 +32,12 @@ import ExecutorManagerView, {
 } from './ExecutorManagerView';
 
 import runAllCodeBlocks from './runAllCodeBlocks';
+import {ReleaseNoteModel} from "./ReleaseNoteModal";
 
 export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py"] as const;
 export const canonicalLanguages = ["js", "ts", "cs", "lean", "lua", "python", "cpp", "prolog", "shell", "groovy", "r",
 	"go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell", "scala", "swift", "racket", "fsharp", "c", "dart",
-	"ruby", "batch", "sql", "octave", "maxima", "applescript", "zig", "ocaml"] as const;
+	"ruby", "batch", "sql", "octave", "maxima", "applescript", "zig", "ocaml", "php"] as const;
 export const supportedLanguages = [...languageAliases, ...canonicalLanguages] as const;
 export type LanguageId = typeof canonicalLanguages[number];
 
@@ -35,6 +46,9 @@ const buttonText = "Run";
 export const runButtonClass = "run-code-button";
 const runButtonDisabledClass = "run-button-disabled";
 const hasButtonClass = "has-run-code-button";
+
+
+
 
 
 export default class ExecuteCodePlugin extends Plugin {
@@ -52,7 +66,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 		this.iterateOpenFilesAndAddRunButtons();
 		this.registerMarkdownPostProcessor((element, _context) => {
-			this.addRunButtons(element, _context.sourcePath);
+			this.addRunButtons(element, _context.sourcePath, this.app.workspace.getActiveViewOfType(MarkdownView));
 		});
 
 		// live preview renderers
@@ -79,6 +93,16 @@ export default class ExecuteCodePlugin extends Plugin {
 			name: "Run all Code Blocks in Current File",
 			callback: () => runAllCodeBlocks(this.app.workspace)
 		})
+
+		if (!this.settings.releaseNote2_0_0wasShowed) {
+			this.app.workspace.onLayoutReady(() => {
+				new ReleaseNoteModel(this.app).open();
+			})
+
+			// Set to true to prevent the release note from showing again
+			this.settings.releaseNote2_0_0wasShowed = true;
+			this.saveSettings();
+		}
 	}
 
 	/**
@@ -144,8 +168,8 @@ export default class ExecuteCodePlugin extends Plugin {
 	 */
 	private iterateOpenFilesAndAddRunButtons() {
 		this.app.workspace.iterateRootLeaves(leaf => {
-			if (leaf.view instanceof FileView) {
-				this.addRunButtons(leaf.view.contentEl, leaf.view.file.path);
+			if (leaf.view instanceof MarkdownView) {
+				this.addRunButtons(leaf.view.contentEl, leaf.view.file.path, leaf.view);
 			}
 		})
 	}
@@ -157,7 +181,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * @param element The parent element (i.e. the currently showed html page / note).
 	 * @param file An identifier for the currently showed note
 	 */
-	private addRunButtons(element: HTMLElement, file: string) {
+	private addRunButtons(element: HTMLElement, file: string, view: MarkdownView) {
 		Array.from(element.getElementsByTagName("code"))
 			.forEach((codeBlock: HTMLElement) => {
 				if (codeBlock.className.match(/^language-\{\w+/i)) {
@@ -182,7 +206,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				if (canonicalLanguage // if the language is supported
 					&& !parent.classList.contains(hasButtonClass)) { // & this block hasn't been buttonified already
-					const out = new Outputter(codeBlock, this.settings.allowInput);
+					const out = new Outputter(codeBlock, this.settings, view);
 					parent.classList.add(hasButtonClass);
 					const button = this.createRunButton();
 					pre.appendChild(button);
@@ -415,6 +439,12 @@ export default class ExecuteCodePlugin extends Plugin {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.ocamlPath, this.settings.ocamlArgs, "ocaml", language, file);
+			})
+		} else if (language === "php") {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.phpPath, this.settings.phpArgs, this.settings.phpFileExtension, language, file);
 			})
 		}
 

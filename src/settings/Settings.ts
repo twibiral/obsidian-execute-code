@@ -5,7 +5,9 @@ import {LanguageId} from "src/main";
  */
 export interface ExecutorSettings {
 	lastOpenLanguageTab: LanguageId | undefined
-	
+
+	releaseNote2_0_0wasShowed: boolean;
+	persistentOuput: boolean;
 	timeout: number;
 	allowInput: boolean;
 	wslMode: boolean;
@@ -107,6 +109,10 @@ export interface ExecutorSettings {
 	mathematicaArgs: string;
 	mathematicaFileExtension: string;
 	mathematicaInject: string;
+	phpPath: string;
+	phpArgs: string;
+	phpFileExtension: string;
+	phpInject: string;	
 	scalaPath: string;
 	scalaArgs: string;
 	scalaFileExtension: string;
@@ -173,6 +179,7 @@ export interface ExecutorSettings {
 	applescriptInteractive: boolean;
 	zigInteractive: boolean;
 	ocamlInteractive: boolean;
+	phpInteractive: boolean;
 }
 
 
@@ -181,7 +188,9 @@ export interface ExecutorSettings {
  */
 export const DEFAULT_SETTINGS: ExecutorSettings = {
 	lastOpenLanguageTab: undefined,
-	
+
+	releaseNote2_0_0wasShowed: false,
+	persistentOuput: false,
 	timeout: 10000,
 	allowInput: true,
 	wslMode: false,
@@ -315,6 +324,10 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	ocamlPath: "ocaml",
 	ocamlArgs: "",
 	ocamlInject: "",
+	phpPath: "php",
+	phpArgs: "",
+	phpFileExtension: "php",
+	phpInject: "",	
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
@@ -348,4 +361,5 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	applescriptInteractive: false,
 	zigInteractive: false,
 	ocamlInteractive: false,
+	phpInteractive: false,
 }
