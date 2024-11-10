@@ -1,4 +1,14 @@
-import {FileView, MarkdownRenderer, MarkdownView, Plugin} from 'obsidian';
+import {
+	App, Component,
+	FileSystemAdapter,
+	FileView,
+	MarkdownRenderer,
+	MarkdownView,
+	Modal,
+	normalizePath,
+	Plugin,
+	TFile
+} from 'obsidian';
 
 import {Outputter, TOGGLE_HTML_SIGIL} from "./output/Outputter";
 import type {ExecutorSettings} from "./settings/Settings";
@@ -22,6 +32,7 @@ import ExecutorManagerView, {
 } from './ExecutorManagerView';
 
 import runAllCodeBlocks from './runAllCodeBlocks';
+import {ReleaseNoteModel} from "./ReleaseNoteModal";
 
 export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py"] as const;
 export const canonicalLanguages = ["js", "ts", "cs", "lean", "lua", "python", "cpp", "prolog", "shell", "groovy", "r",
@@ -35,6 +46,9 @@ const buttonText = "Run";
 export const runButtonClass = "run-code-button";
 const runButtonDisabledClass = "run-button-disabled";
 const hasButtonClass = "has-run-code-button";
+
+
+
 
 
 export default class ExecuteCodePlugin extends Plugin {
@@ -79,6 +93,16 @@ export default class ExecuteCodePlugin extends Plugin {
 			name: "Run all Code Blocks in Current File",
 			callback: () => runAllCodeBlocks(this.app.workspace)
 		})
+
+		if (!this.settings.releaseNote2_0_0wasShowed) {
+			this.app.workspace.onLayoutReady(() => {
+				new ReleaseNoteModel(this.app).open();
+			})
+
+			// Set to true to prevent the release note from showing again
+			this.settings.releaseNote2_0_0wasShowed = true;
+			this.saveSettings();
+		}
 	}
 
 	/**
