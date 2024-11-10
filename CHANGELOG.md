@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
 
-## [Unreleased]
+## [2.0.0]
 ### Added
 - Persistent output blocks (Thanks to @chlohal and @twibiral)
 
