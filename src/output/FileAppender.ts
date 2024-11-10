@@ -94,7 +94,7 @@ export default class FileAppender {
                 this.outputPosition = editor.offsetToPos(index - 1);
             }
         } else if (addIfNotExist) {
-            editor.replaceRange(EXPECTED_SUFFIX + "\n```", this.codeBlockRange.to);
+            editor.replaceRange(EXPECTED_SUFFIX + "```\n", this.codeBlockRange.to);
             this.view.data = this.view.editor.getValue();
             //We need to recalculate the outputPosition because the insertion will've changed the lines.
             //The expected suffix ends with a newline, so the column will always be 0;
