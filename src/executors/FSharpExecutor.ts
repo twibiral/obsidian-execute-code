@@ -1,5 +1,5 @@
 import NonInteractiveCodeExecutor from './NonInteractiveCodeExecutor';
-import type {Outputter} from "src/Outputter";
+import type {Outputter} from "src/output/Outputter";
 import type {ExecutorSettings} from "src/settings/Settings";
 
 export default class FSharpExecutor extends NonInteractiveCodeExecutor {

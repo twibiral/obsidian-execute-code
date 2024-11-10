@@ -5,7 +5,9 @@ import {LanguageId} from "src/main";
  */
 export interface ExecutorSettings {
 	lastOpenLanguageTab: LanguageId | undefined
-	
+
+	releaseNote2_0_0wasShowed: boolean;
+	persistentOuput: boolean;
 	timeout: number;
 	allowInput: boolean;
 	wslMode: boolean;
@@ -186,7 +188,9 @@ export interface ExecutorSettings {
  */
 export const DEFAULT_SETTINGS: ExecutorSettings = {
 	lastOpenLanguageTab: undefined,
-	
+
+	releaseNote2_0_0wasShowed: false,
+	persistentOuput: false,
 	timeout: 10000,
 	allowInput: true,
 	wslMode: false,

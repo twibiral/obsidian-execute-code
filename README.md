@@ -14,31 +14,48 @@ The result is shown only after the execution is finished. It is not possible to 
 ![Video that shows how the plugin works.](https://github.com/twibiral/obsidian-execute-code/blob/master/images/execute_code_example.gif?raw=true)
 
 
-The following [languages are supported](#supported-programming-languages-): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, PHP, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell, Octave, Maxima, Zig and OCaml.
+<hr>
+
+> [!NOTE]
+> Advertisement on my behalf:
+> I am working on my master's thesis and looking for a PhD position in explainable AI or foundations of learning - if you have or know about an open position in that field, I would love to hear about it 😄
+
+
+<hr></div>
+
+
+The following [languages are supported](#supported-programming-languages-): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell, Octave, Maxima, Zig and OCaml.
 
 
 Python, Rust, and Octave support embedded plots. All languages support ["magic" commands](#magic-commands-) that help you to access paths in obsidian or show images in your notes.
 
 You can create code blocks that are executed before or after each code block of the same language and define [global code injections](#global-code-injection-and-reusing-code-blocks-).
 
+New: You can [persistent output](#persistent-output-experimental) to store the output of a code block in the note and export it to PDF.
+
 Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent versions.
 
-[Here](#misc-) you can find some other tools and plugins that might are compatible with this plugin and might be useful for you.
+[Here](#misc-) you can find some other tools and plugins that are compatible with this plugin and might be useful for you.
 
+<br>
 <div align='center'>
 
-[![Buy us a coffee](https://img.shields.io/badge/-buy_us_a%C2%A0coffee-gray?logo=buy-me-a-coffee)](https://www.buymeacoffee.com/timwibiral)
+If you like this plugin and use it a lot, please consider supporting me in continuing the development of this plugin. You can also sponsor a new feature or language integration directly, if you want to speed-up the development for a specific feature you need.
+
+[![GitHub Sponsors](https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=white)](https://github.com/sponsors/twibiral)   [![Buy me a coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/timwibiral)
+
 </div>
 
 
 ## Featured In
 
-| [![Video by I Versus AI](https://img.youtube.com/vi/eQz4eAW3ZDk/0.jpg)](https://www.youtube.com/watch?v=eQz4eAW3ZDk) | ![![Video by Michel's Science Speedrun](https://www.youtube.com/watch?v=w7vyavrMYqw)](https://img.youtube.com/vi/w7vyavrMYqw/0.jpg) |
-|---|---|
-| "Escape ChatGPT. Make your own Code Interpreter EASY" by _I Versus AI_ | "Obsidian & quarto integration" by _Michel's Science Speedrun_ |
+| [![Video by I Versus AI](https://img.youtube.com/vi/eQz4eAW3ZDk/0.jpg)](https://www.youtube.com/watch?v=eQz4eAW3ZDk) | ![![Video by Michel's Science Speedrun](https://www.youtube.com/watch?v=w7vyavrMYqw)](https://img.youtube.com/vi/w7vyavrMYqw/0.jpg) | ![![Video by GlareDB](https://www.youtube.com/watch?v=lRq3mlvcyJw)](https://img.youtube.com/vi/lRq3mlvcyJw/0.jpg) | ![![Video by 노마드 코더 Nomad Coders](https://www.youtube.com/watch?v=qY1P_CmL8aQ)](https://img.youtube.com/vi/qY1P_CmL8aQ/0.jpg) |
+|---|---|---|---|
+| "Escape ChatGPT. Make your own Code Interpreter EASY" by _I Versus AI_ | "Obsidian & quarto integration" by _Michel's Science Speedrun_ | "Write SQL Queries in...Obsidian?" by _GlareDB_ | "인생 노트앱...드디어 찾았습니다..!" by _노마드 코더 Nomad Coders_|
 
 In blogs:
 - ["Using Obsidian: Coding Notes" by _Kera Cudmore_](https://www.codu.co/articles/using-obsidian-coding-notes-pqjyljkh)
+- ["Obsidian and Jupyter Notebooks" by _Brian Carey_](https://medium.com/@biscotty666/obsidian-and-jupyter-notebooks-5d90ab3eab4c)
 
 <small>Are you featuring this plugin in your content? Let me know and I will add it here.</small>
 
@@ -667,6 +684,20 @@ undefined
 To manage the open runtimes for Notebook Mode, you can use the `Open Code Runtime Management` command in the command palette. From this sidebar window, you can stop kernels. **Note: force-stopping requires `taskkill` on Windows and `pkill` on Unix. 99% of systems should have these preinstalled: if yours doesn't, please [file an issue](https://github.com/twibiral/obsidian-execute-code/issues/new/choose)**
 
 
+### Persistent Output \[Experimental\]
+
+Since version 2.0.0, the plugin supports persistent output. This means that the output of a code block is 
+stored in the note and will be displayed when you open the note again. This is useful for long-running code blocks or 
+code blocks that produce a lot of output. The output is stored in the note as a comment and will be displayed in the 
+preview mode.
+
+To enable this feature, you have to enable the setting `Persistent Output` in the plugin settings.
+We recommend reopening open notes that contain code blocks after enabling this feature.
+
+This feature is still experimental and may not work as expected in all cases.
+We recommend that you disable this feature if you encounter any problems.
+
+
 ## Misc 📦
 ### Style Settings 🎨
 
@@ -686,7 +717,7 @@ In your vault go to Settings > Community plugins > Browse and search for "Execut
 or
 
 Follow [this link](https://obsidian.md/plugins?search=execute%20code#) and click "Open in Obsidian".
-	
+
 
 ## Locating Path Settings ( ex. JavaScript | Node )
 	
@@ -714,7 +745,6 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 
 ## Future Work 📑
 
-- Notebook Mode similar to Jupyter
 - Error warning when the execution fails (e.g. when python isn't installed)
 - Test if this plugin works in combination with dataview.
 

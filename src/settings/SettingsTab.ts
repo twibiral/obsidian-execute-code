@@ -80,6 +80,7 @@ export class SettingsTab extends PluginSettingTab {
 					}
 					await this.plugin.saveSettings();
 				}));
+
 		new Setting(containerEl)
 			.setName('Allow Input')
 			.setDesc('Whether or not to include a stdin input box when running blocks. In order to apply changes to this, Obsidian must be refreshed. ')
@@ -104,14 +105,26 @@ export class SettingsTab extends PluginSettingTab {
 					}));
 		}
 
+		// new Setting(containerEl)
+		// 	.setName('Only Current Log')
+		// 	.setDesc("Whether or not show print log only in current code block.")
+		// 	.addToggle(text => text
+		// 		.setValue(this.plugin.settings.onlyCurrentBlock)
+		// 		.onChange(async (value) => {
+		// 			console.log('Only Show Current Block Log set to: ' + value);
+		// 			this.plugin.settings.onlyCurrentBlock = value
+		// 			await this.plugin.saveSettings();
+		// 		}));
+
 		new Setting(containerEl)
-			.setName('Only Current Log')
-			.setDesc("Whether or not show print log only in current code block.")
+			.setName('[Experimental] Persistent Output')
+			.setDesc('If enabled, the output of the code block is written into the markdown file. This feature is ' +
+				'experimental and may not work as expected.')
 			.addToggle(text => text
-				.setValue(this.plugin.settings.onlyCurrentBlock)
+				.setValue(this.plugin.settings.persistentOuput)
 				.onChange(async (value) => {
-					console.log('Only Show Current Block Log set to: ' + value);
-					this.plugin.settings.onlyCurrentBlock = value
+					console.log('Allow Input set to: ' + value);
+					this.plugin.settings.persistentOuput = value
 					await this.plugin.saveSettings();
 				}));
 
