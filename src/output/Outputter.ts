@@ -70,19 +70,6 @@ export class Outputter extends EventEmitter {
 	}
 
 	/**
-	 * Restores the output log from a given string.
-	 * @param text The text to restore the output log from.
-	 */
-	restoreWrite(text: string) {
-		this.saveToFile.clearOutput();
-		console.log(this);
-		this.processSigilsAndWriteText(text);
-
-		this.closeInput();
-		// this.blockRunState = "INITIAL";
-	}
-
-	/**
 	 * Kills the code block.
 	 * To be overwritten in an executor's run method
 	 */
