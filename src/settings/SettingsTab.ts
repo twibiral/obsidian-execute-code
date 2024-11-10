@@ -15,6 +15,7 @@ import makeLeanSettings from "./per-lang/makeLeanSettings";
 import makeLuaSettings from "./per-lang/makeLuaSettings";
 import makeDartSettings from "./per-lang/makeDartSettings";
 import makeMathematicaSettings from "./per-lang/makeMathematicaSettings";
+import makePhpSettings from "./per-lang/makePhpSettings";
 import makePowershellSettings from "./per-lang/makePowershellSettings";
 import makePrologSettings from "./per-lang/makePrologSettings";
 import makePythonSettings from "./per-lang/makePythonSettings";
@@ -242,6 +243,9 @@ export class SettingsTab extends PluginSettingTab {
 
 		// ========== OCaml ============
 		makeOCamlSettings(this, this.makeContainerFor("ocaml"));
+
+		// ========== Ruby ============
+		makePhpSettings(this, this.makeContainerFor("php"));
 
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}

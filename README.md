@@ -438,6 +438,18 @@ puts "Hello, World!"
 </details>
 
 <details>
+<summary>PHP</summary>
+
+- Requirements: PHP is installed and the correct path is set in the settings.
+
+```php
+<?php
+echo "Hello, World!";
+?>
+```
+</details>
+
+<details>
 <summary>Octave</summary>
 
 - Requirements: Octave is installed and the correct path is set in the settings.
