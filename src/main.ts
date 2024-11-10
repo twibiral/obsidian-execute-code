@@ -182,7 +182,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				if (canonicalLanguage // if the language is supported
 					&& !parent.classList.contains(hasButtonClass)) { // & this block hasn't been buttonified already
-					const out = new Outputter(codeBlock, this.settings.allowInput, this.settings.persistentOuput, view);
+					const out = new Outputter(codeBlock, this.settings, view);
 					parent.classList.add(hasButtonClass);
 					const button = this.createRunButton();
 					pre.appendChild(button);

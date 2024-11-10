@@ -2,7 +2,8 @@ import {EventEmitter} from "events";
 import loadEllipses from "../svgs/loadEllipses";
 import loadSpinner from "../svgs/loadSpinner";
 import FileAppender from "./FileAppender";
-import {MarkdownView} from "obsidian";
+import {MarkdownView, Setting} from "obsidian";
+import {ExecutorSettings} from "../settings/Settings";
 
 export const TOGGLE_HTML_SIGIL = `TOGGLE_HTML_${Math.random().toString(16).substring(2)}`;
 
@@ -21,23 +22,23 @@ export class Outputter extends EventEmitter {
 	escapeHTML: boolean
 	hadPreviouslyPrinted: boolean;
 	inputState: "NOT_DOING" | "OPEN" | "CLOSED" | "INACTIVE";
-	persistentOutput: boolean;
 
 	blockRunState: "RUNNING" | "QUEUED" | "FINISHED" | "INITIAL";
 
 	saveToFile: FileAppender;
+	settings: ExecutorSettings;
 
 
-	constructor(codeBlock: HTMLElement, doInput: boolean, persistentOutput: boolean, view: MarkdownView) {
+	constructor(codeBlock: HTMLElement, settings: ExecutorSettings, view: MarkdownView) {
 		super();
+		this.settings = settings;
 
-		this.inputState = doInput ? "INACTIVE" : "NOT_DOING";
+		this.inputState = this.settings.allowInput ? "INACTIVE" : "NOT_DOING";
 		this.codeBlockElement = codeBlock;
 		this.hadPreviouslyPrinted = false;
 		this.escapeHTML = true;
 		this.htmlBuffer = "";
 		this.blockRunState = "INITIAL";
-		this.persistentOutput = persistentOutput;
 
 		this.saveToFile = new FileAppender(view, codeBlock.parentElement as HTMLPreElement);
 	}
@@ -331,7 +332,7 @@ export class Outputter extends EventEmitter {
 			// If we're escaping HTML, just append the text
 			element.appendChild(document.createTextNode(text));
 
-			if (this.persistentOutput) {
+			if (this.settings.persistentOuput) {
 				// Also append to file in separate code block
 				this.saveToFile.addOutput(text);
 			}
