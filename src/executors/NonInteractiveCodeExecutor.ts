@@ -2,7 +2,7 @@ import {Notice} from "obsidian";
 import * as fs from "fs";
 import * as child_process from "child_process";
 import Executor from "./Executor";
-import {Outputter} from "src/Outputter";
+import {Outputter} from "src/output/Outputter";
 import {LanguageId} from "src/main";
 import { ExecutorSettings } from "../settings/Settings.js";
 import windowsPathToWsl from "../transforms/windowsPathToWsl.js";

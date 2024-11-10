@@ -1,6 +1,6 @@
-import {FileView, MarkdownRenderer, Plugin} from 'obsidian';
+import {FileView, MarkdownRenderer, MarkdownView, Plugin} from 'obsidian';
 
-import {Outputter, TOGGLE_HTML_SIGIL} from "./Outputter";
+import {Outputter, TOGGLE_HTML_SIGIL} from "./output/Outputter";
 import type {ExecutorSettings} from "./settings/Settings";
 import {DEFAULT_SETTINGS} from "./settings/Settings";
 import {SettingsTab} from "./settings/SettingsTab";
@@ -52,7 +52,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 		this.iterateOpenFilesAndAddRunButtons();
 		this.registerMarkdownPostProcessor((element, _context) => {
-			this.addRunButtons(element, _context.sourcePath);
+			this.addRunButtons(element, _context.sourcePath, this.app.workspace.getActiveViewOfType(MarkdownView));
 		});
 
 		// live preview renderers
@@ -144,8 +144,8 @@ export default class ExecuteCodePlugin extends Plugin {
 	 */
 	private iterateOpenFilesAndAddRunButtons() {
 		this.app.workspace.iterateRootLeaves(leaf => {
-			if (leaf.view instanceof FileView) {
-				this.addRunButtons(leaf.view.contentEl, leaf.view.file.path);
+			if (leaf.view instanceof MarkdownView) {
+				this.addRunButtons(leaf.view.contentEl, leaf.view.file.path, leaf.view);
 			}
 		})
 	}
@@ -157,7 +157,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * @param element The parent element (i.e. the currently showed html page / note).
 	 * @param file An identifier for the currently showed note
 	 */
-	private addRunButtons(element: HTMLElement, file: string) {
+	private addRunButtons(element: HTMLElement, file: string, view: MarkdownView) {
 		Array.from(element.getElementsByTagName("code"))
 			.forEach((codeBlock: HTMLElement) => {
 				if (codeBlock.className.match(/^language-\{\w+/i)) {
@@ -182,7 +182,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				if (canonicalLanguage // if the language is supported
 					&& !parent.classList.contains(hasButtonClass)) { // & this block hasn't been buttonified already
-					const out = new Outputter(codeBlock, this.settings.allowInput);
+					const out = new Outputter(codeBlock, this.settings.allowInput, this.settings.persistentOuput, view);
 					parent.classList.add(hasButtonClass);
 					const button = this.createRunButton();
 					pre.appendChild(button);
