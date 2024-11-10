@@ -31,6 +31,8 @@ Python, Rust, and Octave support embedded plots. All languages support ["magic" 
 
 You can create code blocks that are executed before or after each code block of the same language and define [global code injections](#global-code-injection-and-reusing-code-blocks-).
 
+New: You can [persistent output](#persistent-output-experimental) to store the output of a code block in the note and export it to PDF.
+
 Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent versions.
 
 [Here](#misc-) you can find some other tools and plugins that are compatible with this plugin and might be useful for you.
@@ -670,6 +672,20 @@ undefined
 To manage the open runtimes for Notebook Mode, you can use the `Open Code Runtime Management` command in the command palette. From this sidebar window, you can stop kernels. **Note: force-stopping requires `taskkill` on Windows and `pkill` on Unix. 99% of systems should have these preinstalled: if yours doesn't, please [file an issue](https://github.com/twibiral/obsidian-execute-code/issues/new/choose)**
 
 
+### Persistent Output \[Experimental\]
+
+Since version 2.0.0, the plugin supports persistent output. This means that the output of a code block is 
+stored in the note and will be displayed when you open the note again. This is useful for long-running code blocks or 
+code blocks that produce a lot of output. The output is stored in the note as a comment and will be displayed in the 
+preview mode.
+
+To enable this feature, you have to enable the setting `Persistent Output` in the plugin settings.
+We recommend reopening open notes that contain code blocks after enabling this feature.
+
+This feature is still experimental and may not work as expected in all cases.
+We recommend that you disable this feature if you encounter any problems.
+
+
 ## Misc 📦
 ### Style Settings 🎨
 
@@ -689,7 +705,7 @@ In your vault go to Settings > Community plugins > Browse and search for "Execut
 or
 
 Follow [this link](https://obsidian.md/plugins?search=execute%20code#) and click "Open in Obsidian".
-	
+
 
 ## Locating Path Settings ( ex. JavaScript | Node )
 	
@@ -717,7 +733,6 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 
 ## Future Work 📑
 
-- Notebook Mode similar to Jupyter
 - Error warning when the execution fails (e.g. when python isn't installed)
 - Test if this plugin works in combination with dataview.
 

@@ -1,5 +1,5 @@
 import NonInteractiveCodeExecutor from "./NonInteractiveCodeExecutor";
-import {Outputter} from "../Outputter";
+import {Outputter} from "../output/Outputter";
 import * as fs from "fs";
 import * as child_process from "child_process";
 import windowsPathToWsl from "../transforms/windowsPathToWsl";

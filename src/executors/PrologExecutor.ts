@@ -1,6 +1,6 @@
 // @ts-ignore
 import * as prolog from "tau-prolog";
-import {Outputter} from "src/Outputter";
+import {Outputter} from "src/output/Outputter";
 import Executor from "./Executor";
 import {Notice} from "obsidian";
 import {ExecutorSettings} from "src/settings/Settings";

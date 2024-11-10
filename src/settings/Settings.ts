@@ -5,7 +5,8 @@ import {LanguageId} from "src/main";
  */
 export interface ExecutorSettings {
 	lastOpenLanguageTab: LanguageId | undefined
-	
+
+	persistentOuput: boolean;
 	timeout: number;
 	allowInput: boolean;
 	wslMode: boolean;
@@ -181,7 +182,8 @@ export interface ExecutorSettings {
  */
 export const DEFAULT_SETTINGS: ExecutorSettings = {
 	lastOpenLanguageTab: undefined,
-	
+
+	persistentOuput: false,
 	timeout: 10000,
 	allowInput: true,
 	wslMode: false,

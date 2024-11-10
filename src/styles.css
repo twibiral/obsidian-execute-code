@@ -216,3 +216,27 @@ input.interactive-stdin {
 	transform: translateX(0);
 	opacity: 1;
 }
+
+/* Hide code blocks with language-output only in markdown view using "markdown-preview-view"*/
+.markdown-preview-view pre.language-output {
+	display: none;
+}
+
+.markdown-rendered pre.language-output {
+	display: none;
+}
+
+/* Do not hide code block when exporting to PDF */
+@media print {
+	pre.language-output {
+		display: block;
+	}
+	/* Hide code blocks with language-output only in markdown view using "markdown-preview-view"*/
+	.markdown-preview-view pre.language-output {
+		display: block;
+	}
+
+	.markdown-rendered pre.language-output {
+		display: block;
+	}
+}
