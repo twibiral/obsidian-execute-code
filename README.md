@@ -31,6 +31,8 @@ Python, Rust, and Octave support embedded plots. All languages support ["magic" 
 
 You can create code blocks that are executed before or after each code block of the same language and define [global code injections](#global-code-injection-and-reusing-code-blocks-).
 
+New: You can [persistent output](#persistent-output-experimental) to store the output of a code block in the note and export it to PDF.
+
 Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent versions.
 
 [Here](#misc-) you can find some other tools and plugins that are compatible with this plugin and might be useful for you.
