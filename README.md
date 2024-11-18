@@ -54,6 +54,7 @@ If you like this plugin and use it a lot, please consider supporting me in conti
 | "Escape ChatGPT. Make your own Code Interpreter EASY" by _I Versus AI_ | "Obsidian & quarto integration" by _Michel's Science Speedrun_ | "Write SQL Queries in...Obsidian?" by _GlareDB_ | "인생 노트앱...드디어 찾았습니다..!" by _노마드 코더 Nomad Coders_|
 
 In blogs:
+- ["Why and how you should switch to Obsidian." by _Connero_](https://medium.com/@connero_44521/why-and-how-you-should-switch-to-obsidian-c857ae315afd)
 - ["Using Obsidian: Coding Notes" by _Kera Cudmore_](https://www.codu.co/articles/using-obsidian-coding-notes-pqjyljkh)
 - ["Obsidian and Jupyter Notebooks" by _Brian Carey_](https://medium.com/@biscotty666/obsidian-and-jupyter-notebooks-5d90ab3eab4c)
 
