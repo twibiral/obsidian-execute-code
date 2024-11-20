@@ -7,7 +7,7 @@
 
 </div>
 
-This plugin allows you to execute code snippets in code blocks in your notes. The plugin adds a 'run' button for code blocks in supported languages. Clicking them results in the code of the block being executed. After the execution the result of the execution is showed. An interactive input element is created when your code snippets reads expects user input.
+This plugin allows you to execute code snippets in code blocks in your notes. The plugin adds a 'run' button for code blocks in supported languages. Clicking them results in the code of the block being executed locally. After the execution the result of the execution is showed. An interactive input element is created when your code snippets reads expects user input.
 
 The result is shown only after the execution is finished. It is not possible to enter text on the command line into the executed program now.
 
