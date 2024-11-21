@@ -23,15 +23,15 @@ The result is shown only after the execution is finished. It is not possible to 
 
 <hr></div>
 
-
 The following [languages are supported](#supported-programming-languages-): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell, Octave, Maxima, Zig and OCaml.
 
+If you are new to MarkDown or Obsidian.md, you can go to the [Quickstart Guide](#quickstart-guide-) or take a look in to [some blogs and videos that feature this plugin](#featured-in)
 
 Python, Rust, and Octave support embedded plots. All languages support ["magic" commands](#magic-commands-) that help you to access paths in obsidian or show images in your notes.
 
 You can create code blocks that are executed before or after each code block of the same language and define [global code injections](#global-code-injection-and-reusing-code-blocks-).
 
-New: You can [persistent output](#persistent-output-experimental) to store the output of a code block in the note and export it to PDF.
+New: You can enable [persistent output](#persistent-output-experimental) to store the output of a code block in the note and export it to PDF.
 
 Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent versions.
 
@@ -709,6 +709,17 @@ or the [Obsidian Code Styler plugin](https://github.com/mayurankv/Obsidian-Code-
 
 Take a look at the [Obsidian Tools python package](https://github.com/mfarragher/obsidiantools) to find some useful 
 tools for interacting with your vault.
+
+
+## Quickstart Guide
+
+Start by checking if the plugin is installed and **activated**. Continue by creating a code block in your preferred language. Check above to see if the language is supported.
+
+Now you can switch from the preview mode to the rendered mode (where you can't edit the text anymore). Now, when you hover over the code block, you should see a button labeled "run". Click it!
+
+If it didn't work and a warning appears (that is not related to a bug in your code), you probably need to set the correct execution part for the language (e.g., "C://User/YourName/anaconda/python.exe" or something like that). You can find instructions about how to find the right path below.
+
+Now it works, great! Feel free to read or skim through the text above to learn more features you might like, for example persistent output or embedding of plots.
 
 
 ## Installation 💾
