@@ -6,8 +6,8 @@ import {MarkdownView} from "obsidian";
  * file path, and vault path of the currently opened / focused note.
  *
  * @param app The current app handle (this.app from ExecuteCodePlugin)
- * @returns { fileName: string; folder: string; filePath: string; vaultPath: string } A dictionary containing the
- * file name, folder path, file path, and vault path of the currently opened / focused note.
+ * @returns { fileName: string; folder: string; filePath: string; vaultPath: string; fileContent: string } A dictionary containing the
+ * file name, folder path, file path, vault pat, and file content of the currently opened / focused note.
  */
 export function getVaultVariables(app: App) {
 	const activeView = app.workspace.getActiveViewOfType(MarkdownView);
@@ -20,6 +20,7 @@ export function getVaultVariables(app: App) {
 	const folder = activeView.file.parent.path;
 	const fileName = activeView.file.name
 	const filePath = activeView.file.path
+	const fileContent = activeView.editor.getValue();
 
 	const theme = document.body.classList.contains("theme-light") ? "light" : "dark";
 
@@ -28,6 +29,7 @@ export function getVaultVariables(app: App) {
 		folder: folder,
 		fileName: fileName,
 		filePath: filePath,
-		theme: theme
+		theme: theme,
+		fileContent: fileContent
 	}
 }
