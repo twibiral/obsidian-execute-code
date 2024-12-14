@@ -25,7 +25,7 @@ const CURRENT_NOTE_REGEX = /@note/g;
 const CURRENT_NOTE_PATH_REGEX = /@note_path/g;
 const CURRENT_NOTE_URL_REGEX = /@note_url/g;
 const NOTE_TITLE_REGEX = /@title/g;
-const NOTE_CONTENT_REGEX = /@note_content/g;
+const NOTE_CONTENT_REGEX = /@content/g;
 const COLOR_THEME_REGEX = /@theme/g;
 
 // Regex that are only used by one language.
