@@ -25,6 +25,7 @@ const CURRENT_NOTE_REGEX = /@note/g;
 const CURRENT_NOTE_PATH_REGEX = /@note_path/g;
 const CURRENT_NOTE_URL_REGEX = /@note_url/g;
 const NOTE_TITLE_REGEX = /@title/g;
+const NOTE_CONTENT_REGEX = /@content/g;
 const COLOR_THEME_REGEX = /@theme/g;
 
 // Regex that are only used by one language.
@@ -78,6 +79,18 @@ export function insertNoteTitle(source: string, noteTitle: string): string {
 		t = noteTitle.split(".").slice(0, -1).join(".");
 
 	return source.replace(NOTE_TITLE_REGEX, `"${t}"`);
+}
+
+/**
+ * Parses the source code and replaces the NOTE_CONTENT_REGEX with the file content.
+ *
+ * @param source The source code to parse.
+ * @param content The content of the note.
+ * @returns The transformed source code.
+ */
+export function insertNoteContent(source: string, content: string): string {
+	const escaped_content = JSON.stringify(content)
+	return source.replace(NOTE_CONTENT_REGEX, `${escaped_content}`)
 }
 
 /**

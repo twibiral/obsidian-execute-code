@@ -1,4 +1,4 @@
-import {insertColorTheme, insertNotePath, insertNoteTitle, insertVaultPath} from "./Magic";
+import {insertColorTheme, insertNotePath, insertNoteTitle, insertVaultPath, insertNoteContent} from "./Magic";
 import {getVaultVariables} from "src/Vault";
 import {canonicalLanguages} from 'src/main';
 import type {App} from "obsidian";
@@ -43,6 +43,7 @@ export function transformMagicCommands(app: App, srcCode: string) {
 		ret = insertNotePath(ret, vars.filePath);
 		ret = insertNoteTitle(ret, vars.fileName);
 		ret = insertColorTheme(ret, vars.theme);
+		ret = insertNoteContent(ret, vars.fileContent);
 	} else {
 		console.warn(`Could not load all Vault variables! ${vars}`)
 	}
