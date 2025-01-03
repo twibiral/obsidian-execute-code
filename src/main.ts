@@ -358,6 +358,13 @@ export default class ExecuteCodePlugin extends Plugin {
 				this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, this.settings.csFileExtension, language, file);
 			});
 
+		} else if (language === "fsharp") {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
+				this.runCodeInShell(transformedCode, out, button, this.settings.fsharpPath, this.settings.fsharpArgs, this.settings.fsharpFileExtension, language, file);
+			});
+
 		} else if (language === "haskell") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
@@ -416,7 +423,7 @@ export default class ExecuteCodePlugin extends Plugin {
 				transformedCode = addInlinePlotsToMaxima(transformedCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.maximaPath, this.settings.maximaArgs, this.settings.maximaFileExtension, language, file);
 			})
-		}else if (language === "racket") {
+		} else if (language === "racket") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
