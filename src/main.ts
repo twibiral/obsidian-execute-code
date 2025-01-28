@@ -73,7 +73,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		supportedLanguages.forEach(l => {
 			console.debug(`Registering renderer for ${l}.`)
 			this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, _ctx) => {
-				await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, _ctx.sourcePath, null);
+				await MarkdownRenderer.render(this.app, '```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, _ctx.sourcePath, new Component());
 			});
 		});
 
@@ -206,7 +206,7 @@ export default class ExecuteCodePlugin extends Plugin {
 
 				if (canonicalLanguage // if the language is supported
 					&& !parent.classList.contains(hasButtonClass)) { // & this block hasn't been buttonified already
-					const out = new Outputter(codeBlock, this.settings, view);
+					const out = new Outputter(codeBlock, this.settings, view, this.app, file);
 					parent.classList.add(hasButtonClass);
 					const button = this.createRunButton();
 					pre.appendChild(button);
