@@ -4,6 +4,7 @@ import loadSpinner from "../svgs/loadSpinner";
 import FileAppender from "./FileAppender";
 import { App, Component, MarkdownRenderer, MarkdownView, normalizePath } from "obsidian";
 import { ExecutorSettings } from "../settings/Settings";
+import { ChildProcess } from "child_process";
 
 export const TOGGLE_HTML_SIGIL = `TOGGLE_HTML_${Math.random().toString(16).substring(2)}`;
 
@@ -28,6 +29,7 @@ export class Outputter extends EventEmitter {
 	saveToFile: FileAppender;
 	settings: ExecutorSettings;
 
+	runningSubprocesses = new Set<ChildProcess>();
 	app: App;
 	srcFile: string;
 
@@ -71,14 +73,14 @@ export class Outputter extends EventEmitter {
 		this.saveToFile.clearOutput();
 
 		// Kill code block
-		this.killBlock();
+		this.killBlock(this.runningSubprocesses);
 	}
 
 	/**
 	 * Kills the code block.
 	 * To be overwritten in an executor's run method
 	 */
-	killBlock() {}
+	killBlock(subprocesses?: Set<ChildProcess>) { }
 
 	/**
 	 * Hides the output and clears the log. Visually, restores the code block to its initial state.
@@ -237,7 +239,7 @@ export class Outputter extends EventEmitter {
 		this.loadStateIndicatorElement.classList.add("load-state-indicator");
 
 		// Kill code block on clicking load state indicator
-		this.loadStateIndicatorElement.addEventListener('click', () => this.killBlock());
+		this.loadStateIndicatorElement.addEventListener('click', () => this.killBlock(this.runningSubprocesses));
 
 		this.getParentElement().parentElement.appendChild(this.loadStateIndicatorElement);
 	}
@@ -410,7 +412,7 @@ export class Outputter extends EventEmitter {
 	 * @see {@link clear()}
 	 */
 	private makeOutputVisible() {
-        this.closeInput();
+		this.closeInput();
 		if (!this.clearButton) this.addClearButton();
 		if (!this.outputElement) this.addOutputElement();
 
