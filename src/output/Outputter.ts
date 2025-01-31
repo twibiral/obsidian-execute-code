@@ -2,7 +2,7 @@ import { EventEmitter } from "events";
 import loadEllipses from "../svgs/loadEllipses";
 import loadSpinner from "../svgs/loadSpinner";
 import FileAppender from "./FileAppender";
-import { App, Component, MarkdownRenderer, MarkdownView, normalizePath } from "obsidian";
+import { App, Component, MarkdownRenderer, MarkdownView, normalizePath, setIcon } from "obsidian";
 import { ExecutorSettings } from "../settings/Settings";
 import { ChildProcess } from "child_process";
 
@@ -28,6 +28,7 @@ export class Outputter extends EventEmitter {
 
 	saveToFile: FileAppender;
 	settings: ExecutorSettings;
+
 
 	runningSubprocesses = new Set<ChildProcess>();
 	app: App;
@@ -101,8 +102,22 @@ export class Outputter extends EventEmitter {
 
 	}
 
+
 	/**
-	 * Add a segment of rendered markdown as stdout data to the outputter
+	 * Add an icon to the outputter.
+	 * @param icon Name of the icon from the lucide library {@link https://lucide.dev/}
+	 * @param hoverTooltip Title to display on mouseover
+	 * @param styleClass CSS class for design tweaks
+	 * @returns HTMLAnchorElement to add a click listener, for instance
+	 */
+	writeIcon(icon: string, hoverTooltip?: string, styleClass?: string | string[]): HTMLAnchorElement {
+		const button: HTMLAnchorElement = this.lastPrintElem.createEl('a', { title: hoverTooltip, cls: styleClass });
+		setIcon(button, icon);
+		return button;
+	}
+
+	/**
+	 * Add a segment of rendered markdown to the outputter
 	 * @param markdown The Markdown source code to be rendered as HTML
 	 * @param addLineBreak whether to start a new line in stdout afterwards
 	 * @param relativeFile Path of the markdown file. Used to resolve relative internal links.
