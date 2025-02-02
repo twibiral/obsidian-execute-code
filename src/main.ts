@@ -202,14 +202,15 @@ export default class ExecuteCodePlugin extends Plugin {
 			supportedLanguages.find(lang => sanitizedClassList.contains(`language-${lang}`))
 		) as LanguageId;
 
-		if (canonicalLanguage // if the language is supported
-			&& !parent.classList.contains(hasButtonClass)) { // & this block hasn't been buttonified already
-			const out = new Outputter(codeBlock, this.settings, view, this.app, file);
-			parent.classList.add(hasButtonClass);
-			const button = this.createRunButton();
-			pre.appendChild(button);
-			this.addListenerToButton(canonicalLanguage, srcCode, button, out, file);
-		}
+		const isLanguageSupported: Boolean = canonicalLanguage !== undefined;
+		const hasBlockBeenButtonifiedAlready = parent.classList.contains(hasButtonClass);
+		if (!isLanguageSupported || hasBlockBeenButtonifiedAlready) return;
+
+		const out = new Outputter(codeBlock, this.settings, view, this.app, file);
+		parent.classList.add(hasButtonClass);
+		const button = this.createRunButton();
+		pre.appendChild(button);
+		this.addListenerToButton(canonicalLanguage, srcCode, button, out, file);
 	}
 
 	private sanitizeClassListOfCodeBlock(codeBlock: HTMLElement) {
