@@ -1,5 +1,5 @@
-import {TextFileView, Workspace} from "obsidian";
-import {runButtonClass} from "./main";
+import { TextFileView, Workspace } from "obsidian";
+import { runButtonClass } from './RunButton';
 
 export default function runAllCodeBlocks(workspace: Workspace) {
 	const lastActiveView = workspace.getMostRecentLeaf().view;
