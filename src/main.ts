@@ -239,7 +239,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		 * Handles the execution of code blocks based on the selected programming language.
 		   * Injects any required code, transforms the source if needed, and manages button state.
 		 * @param block Contains context needed for execution including source code, output handler, and UI elements
-		 */
+	 */
 	private async handleExecution(block: CodeBlockContext) {
 		const language: LanguageId = block.language;
 		const button: HTMLButtonElement = block.button;
@@ -255,9 +255,7 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language === "java") {
 			this.runCode(s.javaPath, s.javaArgs, s.javaFileExtension, block);
 		} else if (language === "python") {
-			if (s.pythonEmbedPlots)	// embed plots into html which shows them in the note
-				block.srcCode = addInlinePlotsToPython(block.srcCode, TOGGLE_HTML_SIGIL);
-			block.srcCode = addMagicToPython(block.srcCode);
+			block.srcCode = addMagicToPython(block.srcCode, s);
 			this.runCode(s.pythonPath, s.pythonArgs, s.pythonFileExtension, block);
 		} else if (language === "shell") {
 			this.runCodeInShell(s.shellPath, s.shellArgs, s.shellFileExtension, block);
@@ -290,7 +288,8 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if (language === "cs") {
 			this.runCodeInShell(s.csPath, s.csArgs, s.csFileExtension, block);
 		} else if (language === "haskell") {
-			this.runCodeInShell(s.useGhci ? s.ghciPath : s.runghcPath, s.useGhci ? "" : "-f " + s.ghcPath, "hs", block);
+			if (s.useGhci) this.runCodeInShell(s.ghciPath, "", "hs", block);
+			else this.runCodeInShell(s.runghcPath, "-f " + s.ghcPath, "hs", block);
 		} else if (language === "mathematica") {
 			this.runCodeInShell(s.mathematicaPath, s.mathematicaArgs, s.mathematicaFileExtension, block);
 		} else if (language === "scala") {
@@ -321,12 +320,10 @@ export default class ExecuteCodePlugin extends Plugin {
 			this.runCodeInShell(s.phpPath, s.phpArgs, s.phpFileExtension, block);
 		} else if (language === "latex") {
 			block.srcCode = modifyLatexCode(block.srcCode, s);
-			const outputPath = await retrieveFigurePath(block.srcCode, s.latexFigureTitlePattern, block.markdownFile, s);
-			if (!s.latexDoFilter) {
-				this.runCode(s.latexCompilerPath, s.latexCompilerArgs, outputPath, block);
-			} else {
-				this.runCode(s.latexTexfotPath, [s.latexTexfotArgs, s.latexCompilerPath, s.latexCompilerArgs].join(" "), outputPath, block);
-			}
+			const outputPath: string = await retrieveFigurePath(block.srcCode, s.latexFigureTitlePattern, block.markdownFile, s);
+			const invokeCompiler: string = [s.latexTexfotArgs, s.latexCompilerPath, s.latexCompilerArgs].join(" ");
+			if (!s.latexDoFilter) this.runCode(s.latexCompilerPath, s.latexCompilerArgs, outputPath, block);
+			else this.runCode(s.latexTexfotPath, invokeCompiler, outputPath, block);
 		}
 	}
 

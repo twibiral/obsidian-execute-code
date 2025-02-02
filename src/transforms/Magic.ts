@@ -14,6 +14,7 @@
 import * as os from "os";
 import {Platform} from 'obsidian';
 import { TOGGLE_HTML_SIGIL } from "src/output/Outputter";
+import { ExecutorSettings } from "src/settings/Settings";
 
 // Regex for all languages.
 const SHOW_REGEX = /@show\(["'](?<path>[^<>?*=!\n#()\[\]{}]+)["'](,\s*(?<width>\d+[\w%]+),?\s*(?<height>\d+[\w%]+))?(,\s*(?<align>left|center|right))?\)/g;
@@ -97,7 +98,10 @@ export function insertColorTheme(source: string, theme: string): string {
  * @param source The source code to parse.
  * @returns The transformed source code.
  */
-export function addMagicToPython(source: string): string {
+export function addMagicToPython(source: string, settings: ExecutorSettings): string {
+	if (settings.pythonEmbedPlots) {
+		source = addInlinePlotsToPython(source, TOGGLE_HTML_SIGIL);
+	}
 	source = pythonParseShowImage(source);
 	source = pythonParseHtmlFunction(source);
 	return source;
