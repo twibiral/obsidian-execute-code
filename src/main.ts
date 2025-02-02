@@ -178,36 +178,38 @@ export default class ExecuteCodePlugin extends Plugin {
 	 */
 	private addRunButtons(element: HTMLElement, file: string, view: MarkdownView) {
 		Array.from(element.getElementsByTagName("code"))
-			.forEach((codeBlock: HTMLElement) => {
-				if (codeBlock.className.match(/^language-\{\w+/i)) {
-					codeBlock.className = codeBlock.className.replace(/^language-\{(\w+)/i, "language-$1 {");
-					codeBlock.parentElement.className = codeBlock.className;
-				}
+			.forEach((codeBlock: HTMLElement) => this.addRunButton(codeBlock, file, view));
+	}
 
-				const language = codeBlock.className.toLowerCase();
+	private addRunButton(codeBlock: HTMLElement, file: string, view: MarkdownView) {
+		if (codeBlock.className.match(/^language-\{\w+/i)) {
+			codeBlock.className = codeBlock.className.replace(/^language-\{(\w+)/i, "language-$1 {");
+			codeBlock.parentElement.className = codeBlock.className;
+		}
 
-				if (!language || !language.contains("language-"))
-					return;
+		const language = codeBlock.className.toLowerCase();
 
-				const pre = codeBlock.parentElement as HTMLPreElement;
-				const parent = pre.parentElement as HTMLDivElement;
+		if (!language || !language.contains("language-"))
+			return;
 
-				const srcCode = codeBlock.getText();
-				let sanitizedClassList = this.sanitizeClassListOfCodeBlock(codeBlock);
+		const pre = codeBlock.parentElement as HTMLPreElement;
+		const parent = pre.parentElement as HTMLDivElement;
 
-				const canonicalLanguage = getLanguageAlias(
-					supportedLanguages.find(lang => sanitizedClassList.contains(`language-${lang}`))
-				) as LanguageId;
+		const srcCode = codeBlock.getText();
+		let sanitizedClassList = this.sanitizeClassListOfCodeBlock(codeBlock);
 
-				if (canonicalLanguage // if the language is supported
-					&& !parent.classList.contains(hasButtonClass)) { // & this block hasn't been buttonified already
-					const out = new Outputter(codeBlock, this.settings, view, this.app, file);
-					parent.classList.add(hasButtonClass);
-					const button = this.createRunButton();
-					pre.appendChild(button);
-					this.addListenerToButton(canonicalLanguage, srcCode, button, out, file);
-				}
-			});
+		const canonicalLanguage = getLanguageAlias(
+			supportedLanguages.find(lang => sanitizedClassList.contains(`language-${lang}`))
+		) as LanguageId;
+
+		if (canonicalLanguage // if the language is supported
+			&& !parent.classList.contains(hasButtonClass)) { // & this block hasn't been buttonified already
+			const out = new Outputter(codeBlock, this.settings, view, this.app, file);
+			parent.classList.add(hasButtonClass);
+			const button = this.createRunButton();
+			pre.appendChild(button);
+			this.addListenerToButton(canonicalLanguage, srcCode, button, out, file);
+		}
 	}
 
 	private sanitizeClassListOfCodeBlock(codeBlock: HTMLElement) {
