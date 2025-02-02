@@ -6,7 +6,7 @@ import type { ExecutorSettings } from './settings/Settings';
 import { CodeInjector } from './transforms/CodeInjector';
 import { retrieveFigurePath } from './transforms/LatexFigureName';
 import { modifyLatexCode } from './transforms/LatexTransformer';
-import { addMagicToJS, addMagicToPython, addInlinePlotsToR, addInlinePlotsToOctave, addInlinePlotsToMaxima } from './transforms/Magic';
+import * as macro from './transforms/Magic';
 import { getLanguageAlias } from './transforms/TransformCode';
 
 const buttonText = "Run";
@@ -40,9 +40,9 @@ async function handleExecution(block: CodeBlockContext) {
     block.srcCode = await new CodeInjector(app, s, language).injectCode(srcCode);
 
     switch (language) {
-        case "js": return runCode(s.nodePath, s.nodeArgs, s.jsFileExtension, block, { transform: (code) => addMagicToJS(code) });
+        case "js": return runCode(s.nodePath, s.nodeArgs, s.jsFileExtension, block, { transform: (code) => macro.expandJS(code) });
         case "java": return runCode(s.javaPath, s.javaArgs, s.javaFileExtension, block);
-        case "python": return runCode(s.pythonPath, s.pythonArgs, s.pythonFileExtension, block, { transform: (code) => addMagicToPython(code, s) });
+        case "python": return runCode(s.pythonPath, s.pythonArgs, s.pythonFileExtension, block, { transform: (code) => macro.expandPython(code, s) });
         case "shell": return runCode(s.shellPath, s.shellArgs, s.shellFileExtension, block, { shell: true });
         case "batch": return runCode(s.batchPath, s.batchArgs, s.batchFileExtension, block, { shell: true });
         case "powershell": return runCode(s.powershellPath, s.powershellArgs, s.powershellFileExtension, block, { shell: true });
@@ -53,7 +53,7 @@ async function handleExecution(block: CodeBlockContext) {
             break;
         case "groovy": return runCode(s.groovyPath, s.groovyArgs, s.groovyFileExtension, block, { shell: true });
         case "rust": return runCode(s.cargoPath, "eval" + s.cargoEvalArgs, s.rustFileExtension, block);
-        case "r": return runCode(s.RPath, s.RArgs, s.RFileExtension, block, { transform: (code) => addInlinePlotsToR(code) });
+        case "r": return runCode(s.RPath, s.RArgs, s.RFileExtension, block, { transform: (code) => macro.expandRPlots(code) });
         case "go": return runCode(s.golangPath, s.golangArgs, s.golangFileExtension, block);
         case "kotlin": return runCode(s.kotlinPath, s.kotlinArgs, s.kotlinFileExtension, block, { shell: true });
         case "ts": return runCode(s.tsPath, s.tsArgs, "ts", block, { shell: true });
@@ -69,8 +69,8 @@ async function handleExecution(block: CodeBlockContext) {
         case "c": return runCode(s.clingPath, s.clingArgs, "c", block, { shell: true });
         case "ruby": return runCode(s.rubyPath, s.rubyArgs, s.rubyFileExtension, block, { shell: true });
         case "sql": return runCode(s.sqlPath, s.sqlArgs, "sql", block, { shell: true });
-        case "octave": return runCode(s.octavePath, s.octaveArgs, s.octaveFileExtension, block, { shell: true, transform: (code) => addInlinePlotsToOctave(code) });
-        case "maxima": return runCode(s.maximaPath, s.maximaArgs, s.maximaFileExtension, block, { shell: true, transform: (code) => addInlinePlotsToMaxima(code) });
+        case "octave": return runCode(s.octavePath, s.octaveArgs, s.octaveFileExtension, block, { shell: true, transform: (code) => macro.expandOctavePlot(code) });
+        case "maxima": return runCode(s.maximaPath, s.maximaArgs, s.maximaFileExtension, block, { shell: true, transform: (code) => macro.expandMaximaPlot(code) });
         case "racket": return runCode(s.racketPath, s.racketArgs, s.racketFileExtension, block, { shell: true });
         case "applescript": return runCode(s.applescriptPath, s.applescriptArgs, s.applescriptFileExtension, block, { shell: true });
         case "zig": return runCode(s.zigPath, s.zigArgs, "zig", block, { shell: true });
