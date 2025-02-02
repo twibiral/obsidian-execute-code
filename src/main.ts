@@ -235,96 +235,97 @@ export default class ExecuteCodePlugin extends Plugin {
 		return sanitizedClassList.map(c => c.toLowerCase());
 	}
 
-/**
-	 * Handles the execution of code blocks based on the selected programming language.
- 	 * Injects any required code, transforms the source if needed, and manages button state.
-	 * @param block Contains context needed for execution including source code, output handler, and UI elements
-	 */
+	/**
+		 * Handles the execution of code blocks based on the selected programming language.
+		   * Injects any required code, transforms the source if needed, and manages button state.
+		 * @param block Contains context needed for execution including source code, output handler, and UI elements
+		 */
 	private async handleExecution(block: CodeBlockContext) {
 		const language: LanguageId = block.language;
 		const button: HTMLButtonElement = block.button;
 		const srcCode: string = block.srcCode;
+		const s: ExecutorSettings = this.settings;
 
 		button.className = runButtonDisabledClass;
-		block.srcCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
+		block.srcCode = await new CodeInjector(this.app, s, language).injectCode(srcCode);
 
 		if (language === "js") {
 			block.srcCode = addMagicToJS(block.srcCode);
-			this.runCode(this.settings.nodePath, this.settings.nodeArgs, this.settings.jsFileExtension, block);
+			this.runCode(s.nodePath, s.nodeArgs, s.jsFileExtension, block);
 		} else if (language === "java") {
-			this.runCode(this.settings.javaPath, this.settings.javaArgs, this.settings.javaFileExtension, block);
+			this.runCode(s.javaPath, s.javaArgs, s.javaFileExtension, block);
 		} else if (language === "python") {
-			if (this.settings.pythonEmbedPlots)	// embed plots into html which shows them in the note
+			if (s.pythonEmbedPlots)	// embed plots into html which shows them in the note
 				block.srcCode = addInlinePlotsToPython(block.srcCode, TOGGLE_HTML_SIGIL);
 			block.srcCode = addMagicToPython(block.srcCode);
-			this.runCode(this.settings.pythonPath, this.settings.pythonArgs, this.settings.pythonFileExtension, block);
+			this.runCode(s.pythonPath, s.pythonArgs, s.pythonFileExtension, block);
 		} else if (language === "shell") {
-			this.runCodeInShell(this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension, block);
+			this.runCodeInShell(s.shellPath, s.shellArgs, s.shellFileExtension, block);
 		} else if (language === "batch") {
-			this.runCodeInShell(this.settings.batchPath, this.settings.batchArgs, this.settings.batchFileExtension, block);
+			this.runCodeInShell(s.batchPath, s.batchArgs, s.batchFileExtension, block);
 		} else if (language === "powershell") {
-			this.runCodeInShell(this.settings.powershellPath, this.settings.powershellArgs, this.settings.powershellFileExtension, block);
+			this.runCodeInShell(s.powershellPath, s.powershellArgs, s.powershellFileExtension, block);
 		} else if (language === "cpp") {
-			this.runCode(this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, this.settings.cppFileExtension, block);
+			this.runCode(s.clingPath, `-std=${s.clingStd} ${s.clingArgs}`, s.cppFileExtension, block);
 		} else if (language === "prolog") {
 			this.runCode("", "", "", block);
 			button.className = runButtonClass;
 		} else if (language === "groovy") {
-			this.runCodeInShell(this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension, block);
+			this.runCodeInShell(s.groovyPath, s.groovyArgs, s.groovyFileExtension, block);
 		} else if (language === "rust") {
-			this.runCode(this.settings.cargoPath, "eval" + this.settings.cargoEvalArgs, this.settings.rustFileExtension, block);
+			this.runCode(s.cargoPath, "eval" + s.cargoEvalArgs, s.rustFileExtension, block);
 		} else if (language === "r") {
 			block.srcCode = addInlinePlotsToR(block.srcCode);
-			this.runCode(this.settings.RPath, this.settings.RArgs, this.settings.RFileExtension, block);
+			this.runCode(s.RPath, s.RArgs, s.RFileExtension, block);
 		} else if (language === "go") {
-			this.runCode(this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension, block);
+			this.runCode(s.golangPath, s.golangArgs, s.golangFileExtension, block);
 		} else if (language === "kotlin") {
-			this.runCodeInShell(this.settings.kotlinPath, this.settings.kotlinArgs, this.settings.kotlinFileExtension, block);
+			this.runCodeInShell(s.kotlinPath, s.kotlinArgs, s.kotlinFileExtension, block);
 		} else if (language === "ts") {
-			this.runCodeInShell(this.settings.tsPath, this.settings.tsArgs, "ts", block);
+			this.runCodeInShell(s.tsPath, s.tsArgs, "ts", block);
 		} else if (language === "lua") {
-			this.runCodeInShell(this.settings.luaPath, this.settings.luaArgs, this.settings.luaFileExtension, block);
+			this.runCodeInShell(s.luaPath, s.luaArgs, s.luaFileExtension, block);
 		} else if (language === "dart") {
-			this.runCodeInShell(this.settings.dartPath, this.settings.dartArgs, this.settings.dartFileExtension, block);
+			this.runCodeInShell(s.dartPath, s.dartArgs, s.dartFileExtension, block);
 		} else if (language === "cs") {
-			this.runCodeInShell(this.settings.csPath, this.settings.csArgs, this.settings.csFileExtension, block);
+			this.runCodeInShell(s.csPath, s.csArgs, s.csFileExtension, block);
 		} else if (language === "haskell") {
-			this.runCodeInShell(this.settings.useGhci ? this.settings.ghciPath : this.settings.runghcPath, this.settings.useGhci ? "" : "-f " + this.settings.ghcPath, "hs", block);
+			this.runCodeInShell(s.useGhci ? s.ghciPath : s.runghcPath, s.useGhci ? "" : "-f " + s.ghcPath, "hs", block);
 		} else if (language === "mathematica") {
-			this.runCodeInShell(this.settings.mathematicaPath, this.settings.mathematicaArgs, this.settings.mathematicaFileExtension, block);
+			this.runCodeInShell(s.mathematicaPath, s.mathematicaArgs, s.mathematicaFileExtension, block);
 		} else if (language === "scala") {
-			this.runCodeInShell(this.settings.scalaPath, this.settings.scalaArgs, this.settings.scalaFileExtension, block);
+			this.runCodeInShell(s.scalaPath, s.scalaArgs, s.scalaFileExtension, block);
 		} else if (language === "swift") {
-			this.runCodeInShell(this.settings.swiftPath, this.settings.swiftArgs, this.settings.swiftFileExtension, block);
+			this.runCodeInShell(s.swiftPath, s.swiftArgs, s.swiftFileExtension, block);
 		} else if (language === "c") {
-			this.runCodeInShell(this.settings.clingPath, this.settings.clingArgs, "c", block);
+			this.runCodeInShell(s.clingPath, s.clingArgs, "c", block);
 		} else if (language === "ruby") {
-			this.runCodeInShell(this.settings.rubyPath, this.settings.rubyArgs, this.settings.rubyFileExtension, block);
+			this.runCodeInShell(s.rubyPath, s.rubyArgs, s.rubyFileExtension, block);
 		} else if (language === "sql") {
-			this.runCodeInShell(this.settings.sqlPath, this.settings.sqlArgs, "sql", block);
+			this.runCodeInShell(s.sqlPath, s.sqlArgs, "sql", block);
 		} else if (language === "octave") {
 			block.srcCode = addInlinePlotsToOctave(block.srcCode);
-			this.runCodeInShell(this.settings.octavePath, this.settings.octaveArgs, this.settings.octaveFileExtension, block);
+			this.runCodeInShell(s.octavePath, s.octaveArgs, s.octaveFileExtension, block);
 		} else if (language === "maxima") {
 			block.srcCode = addInlinePlotsToMaxima(block.srcCode);
-			this.runCodeInShell(this.settings.maximaPath, this.settings.maximaArgs, this.settings.maximaFileExtension, block);
+			this.runCodeInShell(s.maximaPath, s.maximaArgs, s.maximaFileExtension, block);
 		} else if (language === "racket") {
-			this.runCodeInShell(this.settings.racketPath, this.settings.racketArgs, this.settings.racketFileExtension, block);
+			this.runCodeInShell(s.racketPath, s.racketArgs, s.racketFileExtension, block);
 		} else if (language === "applescript") {
-			this.runCodeInShell(this.settings.applescriptPath, this.settings.applescriptArgs, this.settings.applescriptFileExtension, block);
+			this.runCodeInShell(s.applescriptPath, s.applescriptArgs, s.applescriptFileExtension, block);
 		} else if (language === "zig") {
-			this.runCodeInShell(this.settings.zigPath, this.settings.zigArgs, "zig", block);
+			this.runCodeInShell(s.zigPath, s.zigArgs, "zig", block);
 		} else if (language === "ocaml") {
-			this.runCodeInShell(this.settings.ocamlPath, this.settings.ocamlArgs, "ocaml", block);
+			this.runCodeInShell(s.ocamlPath, s.ocamlArgs, "ocaml", block);
 		} else if (language === "php") {
-			this.runCodeInShell(this.settings.phpPath, this.settings.phpArgs, this.settings.phpFileExtension, block);
+			this.runCodeInShell(s.phpPath, s.phpArgs, s.phpFileExtension, block);
 		} else if (language === "latex") {
-			block.srcCode = modifyLatexCode(block.srcCode, this.settings);
-			const outputPath = await retrieveFigurePath(block.srcCode, this.settings.latexFigureTitlePattern, block.markdownFile, this.settings);
-			if (!this.settings.latexDoFilter) {
-				this.runCode(this.settings.latexCompilerPath, this.settings.latexCompilerArgs, outputPath, block);
+			block.srcCode = modifyLatexCode(block.srcCode, s);
+			const outputPath = await retrieveFigurePath(block.srcCode, s.latexFigureTitlePattern, block.markdownFile, s);
+			if (!s.latexDoFilter) {
+				this.runCode(s.latexCompilerPath, s.latexCompilerArgs, outputPath, block);
 			} else {
-				this.runCode(this.settings.latexTexfotPath, [this.settings.latexTexfotArgs, this.settings.latexCompilerPath, this.settings.latexCompilerArgs].join(" "), outputPath, block);
+				this.runCode(s.latexTexfotPath, [s.latexTexfotArgs, s.latexCompilerPath, s.latexCompilerArgs].join(" "), outputPath, block);
 			}
 		}
 	}
