@@ -58,15 +58,18 @@ button.clear-button {
 	z-index: 100;
 }
 
-pre:hover .run-code-button, pre:hover .clear-button {
+pre:hover .run-code-button,
+pre:hover .clear-button {
 	display: block;
 }
 
-pre:hover .run-button-disabled, pre:hover .clear-button-disabled {
+pre:hover .run-button-disabled,
+pre:hover .clear-button-disabled {
 	display: none;
 }
 
-.run-button-disabled, .clear-button-disabled {
+.run-button-disabled,
+.clear-button-disabled {
 	display: none;
 }
 
@@ -79,7 +82,7 @@ pre:hover code.language-output {
 }
 
 .use-custom-output-color code.language-output span.stdout {
-    color: var(--code-output-text-color) !important;
+	color: var(--code-output-text-color) !important;
 }
 
 :not(.use-custom-error-color) code.language-output span.stderr {
@@ -94,7 +97,8 @@ code.language-output hr {
 	margin: 0 0 1em;
 }
 
-.settings-code-input-box textarea, .settings-code-input-box input {
+.settings-code-input-box textarea,
+.settings-code-input-box input {
 	min-width: 400px;
 	min-height: 100px;
 	font-family: monospace;
@@ -152,7 +156,7 @@ input.interactive-stdin {
 	color: var(--icon-color-hover);
 }
 
-.manage-executors-view > div {
+.manage-executors-view>div {
 	position: relative;
 }
 

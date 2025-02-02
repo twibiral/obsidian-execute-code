@@ -1,21 +1,16 @@
 import {
-	App, Component,
-	FileSystemAdapter,
-	FileView,
+	Component,
 	MarkdownRenderer,
 	MarkdownView,
-	Modal,
-	normalizePath,
 	Plugin,
-	TFile
 } from 'obsidian';
 
-import {Outputter, TOGGLE_HTML_SIGIL} from "./output/Outputter";
-import type {ExecutorSettings} from "./settings/Settings";
-import {DEFAULT_SETTINGS} from "./settings/Settings";
-import {SettingsTab} from "./settings/SettingsTab";
-import {getLanguageAlias} from './transforms/TransformCode';
-import {CodeInjector} from "./transforms/CodeInjector";
+import { Outputter, TOGGLE_HTML_SIGIL } from "./output/Outputter";
+import type { ExecutorSettings } from "./settings/Settings";
+import { DEFAULT_SETTINGS } from "./settings/Settings";
+import { SettingsTab } from "./settings/SettingsTab";
+import { getLanguageAlias } from './transforms/TransformCode';
+import { CodeInjector } from "./transforms/CodeInjector";
 import {
 	addInlinePlotsToPython,
 	addInlinePlotsToR,
@@ -32,7 +27,7 @@ import ExecutorManagerView, {
 } from './ExecutorManagerView';
 
 import runAllCodeBlocks from './runAllCodeBlocks';
-import {ReleaseNoteModel} from "./ReleaseNoteModal";
+import { ReleaseNoteModel } from "./ReleaseNoteModal";
 
 export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py"] as const;
 export const canonicalLanguages = ["js", "ts", "cs", "lean", "lua", "python", "cpp", "prolog", "shell", "groovy", "r",
@@ -46,10 +41,6 @@ const buttonText = "Run";
 export const runButtonClass = "run-code-button";
 const runButtonDisabledClass = "run-button-disabled";
 const hasButtonClass = "has-run-code-button";
-
-
-
-
 
 export default class ExecuteCodePlugin extends Plugin {
 	settings: ExecutorSettings;
@@ -416,12 +407,12 @@ export default class ExecuteCodePlugin extends Plugin {
 				transformedCode = addInlinePlotsToMaxima(transformedCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.maximaPath, this.settings.maximaArgs, this.settings.maximaFileExtension, language, file);
 			})
-		}else if (language === "racket") {
+		} else if (language === "racket") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.racketPath, this.settings.racketArgs, this.settings.racketFileExtension, language, file);
-      })
+			})
 		} else if (language === "applescript") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
