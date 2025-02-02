@@ -165,10 +165,6 @@ input.interactive-stdin {
 	position: relative;
 }
 
-.has-run-code-button pre {
-	z-index: 1;
-}
-
 .load-state-indicator {
 	position: absolute;
 	top: 0.1em;
