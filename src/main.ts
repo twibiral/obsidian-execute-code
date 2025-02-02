@@ -236,10 +236,10 @@ export default class ExecuteCodePlugin extends Plugin {
 	}
 
 	/**
-		 * Handles the execution of code blocks based on the selected programming language.
-		   * Injects any required code, transforms the source if needed, and manages button state.
-		 * @param block Contains context needed for execution including source code, output handler, and UI elements
-	 */
+	 * Handles the execution of code blocks based on the selected programming language.
+	 * Injects any required code, transforms the source if needed, and manages button state.
+	 * @param block Contains context needed for execution including source code, output handler, and UI elements
+	*/
 	private async handleExecution(block: CodeBlockContext) {
 		const language: LanguageId = block.language;
 		const button: HTMLButtonElement = block.button;
@@ -250,80 +250,74 @@ export default class ExecuteCodePlugin extends Plugin {
 		block.srcCode = await new CodeInjector(this.app, s, language).injectCode(srcCode);
 
 		if (language === "js") {
-			block.srcCode = addMagicToJS(block.srcCode);
-			this.runCode(s.nodePath, s.nodeArgs, s.jsFileExtension, block);
+			this.runCode(s.nodePath, s.nodeArgs, s.jsFileExtension, block, { transform: (code) => addMagicToJS(code) });
 		} else if (language === "java") {
 			this.runCode(s.javaPath, s.javaArgs, s.javaFileExtension, block);
 		} else if (language === "python") {
-			block.srcCode = addMagicToPython(block.srcCode, s);
-			this.runCode(s.pythonPath, s.pythonArgs, s.pythonFileExtension, block);
+			this.runCode(s.pythonPath, s.pythonArgs, s.pythonFileExtension, block, { transform: (code) => addMagicToPython(code, s) });
 		} else if (language === "shell") {
-			this.runCodeInShell(s.shellPath, s.shellArgs, s.shellFileExtension, block);
+			this.runCode(s.shellPath, s.shellArgs, s.shellFileExtension, block, { shell: true });
 		} else if (language === "batch") {
-			this.runCodeInShell(s.batchPath, s.batchArgs, s.batchFileExtension, block);
+			this.runCode(s.batchPath, s.batchArgs, s.batchFileExtension, block, { shell: true });
 		} else if (language === "powershell") {
-			this.runCodeInShell(s.powershellPath, s.powershellArgs, s.powershellFileExtension, block);
+			this.runCode(s.powershellPath, s.powershellArgs, s.powershellFileExtension, block, { shell: true });
 		} else if (language === "cpp") {
 			this.runCode(s.clingPath, `-std=${s.clingStd} ${s.clingArgs}`, s.cppFileExtension, block);
 		} else if (language === "prolog") {
 			this.runCode("", "", "", block);
 			button.className = runButtonClass;
 		} else if (language === "groovy") {
-			this.runCodeInShell(s.groovyPath, s.groovyArgs, s.groovyFileExtension, block);
+			this.runCode(s.groovyPath, s.groovyArgs, s.groovyFileExtension, block, { shell: true });
 		} else if (language === "rust") {
 			this.runCode(s.cargoPath, "eval" + s.cargoEvalArgs, s.rustFileExtension, block);
 		} else if (language === "r") {
-			block.srcCode = addInlinePlotsToR(block.srcCode);
-			this.runCode(s.RPath, s.RArgs, s.RFileExtension, block);
+			this.runCode(s.RPath, s.RArgs, s.RFileExtension, block, { transform: (code) => addInlinePlotsToR(code) });
 		} else if (language === "go") {
 			this.runCode(s.golangPath, s.golangArgs, s.golangFileExtension, block);
 		} else if (language === "kotlin") {
-			this.runCodeInShell(s.kotlinPath, s.kotlinArgs, s.kotlinFileExtension, block);
+			this.runCode(s.kotlinPath, s.kotlinArgs, s.kotlinFileExtension, block, { shell: true });
 		} else if (language === "ts") {
-			this.runCodeInShell(s.tsPath, s.tsArgs, "ts", block);
+			this.runCode(s.tsPath, s.tsArgs, "ts", block, { shell: true });
 		} else if (language === "lua") {
-			this.runCodeInShell(s.luaPath, s.luaArgs, s.luaFileExtension, block);
+			this.runCode(s.luaPath, s.luaArgs, s.luaFileExtension, block, { shell: true });
 		} else if (language === "dart") {
-			this.runCodeInShell(s.dartPath, s.dartArgs, s.dartFileExtension, block);
+			this.runCode(s.dartPath, s.dartArgs, s.dartFileExtension, block, { shell: true });
 		} else if (language === "cs") {
-			this.runCodeInShell(s.csPath, s.csArgs, s.csFileExtension, block);
+			this.runCode(s.csPath, s.csArgs, s.csFileExtension, block, { shell: true });
 		} else if (language === "haskell") {
-			if (s.useGhci) this.runCodeInShell(s.ghciPath, "", "hs", block);
-			else this.runCodeInShell(s.runghcPath, "-f " + s.ghcPath, "hs", block);
+			if (s.useGhci) this.runCode(s.ghciPath, "", "hs", block, { shell: true });
+			else this.runCode(s.runghcPath, "-f " + s.ghcPath, "hs", block, { shell: true });
 		} else if (language === "mathematica") {
-			this.runCodeInShell(s.mathematicaPath, s.mathematicaArgs, s.mathematicaFileExtension, block);
+			this.runCode(s.mathematicaPath, s.mathematicaArgs, s.mathematicaFileExtension, block, { shell: true });
 		} else if (language === "scala") {
-			this.runCodeInShell(s.scalaPath, s.scalaArgs, s.scalaFileExtension, block);
+			this.runCode(s.scalaPath, s.scalaArgs, s.scalaFileExtension, block, { shell: true });
 		} else if (language === "swift") {
-			this.runCodeInShell(s.swiftPath, s.swiftArgs, s.swiftFileExtension, block);
+			this.runCode(s.swiftPath, s.swiftArgs, s.swiftFileExtension, block, { shell: true });
 		} else if (language === "c") {
-			this.runCodeInShell(s.clingPath, s.clingArgs, "c", block);
+			this.runCode(s.clingPath, s.clingArgs, "c", block, { shell: true });
 		} else if (language === "ruby") {
-			this.runCodeInShell(s.rubyPath, s.rubyArgs, s.rubyFileExtension, block);
+			this.runCode(s.rubyPath, s.rubyArgs, s.rubyFileExtension, block, { shell: true });
 		} else if (language === "sql") {
-			this.runCodeInShell(s.sqlPath, s.sqlArgs, "sql", block);
+			this.runCode(s.sqlPath, s.sqlArgs, "sql", block, { shell: true });
 		} else if (language === "octave") {
-			block.srcCode = addInlinePlotsToOctave(block.srcCode);
-			this.runCodeInShell(s.octavePath, s.octaveArgs, s.octaveFileExtension, block);
+			this.runCode(s.octavePath, s.octaveArgs, s.octaveFileExtension, block, { shell: true, transform: (code) => addInlinePlotsToOctave(code) });
 		} else if (language === "maxima") {
-			block.srcCode = addInlinePlotsToMaxima(block.srcCode);
-			this.runCodeInShell(s.maximaPath, s.maximaArgs, s.maximaFileExtension, block);
+			this.runCode(s.maximaPath, s.maximaArgs, s.maximaFileExtension, block, { shell: true, transform: (code) => addInlinePlotsToMaxima(code) });
 		} else if (language === "racket") {
-			this.runCodeInShell(s.racketPath, s.racketArgs, s.racketFileExtension, block);
+			this.runCode(s.racketPath, s.racketArgs, s.racketFileExtension, block, { shell: true });
 		} else if (language === "applescript") {
-			this.runCodeInShell(s.applescriptPath, s.applescriptArgs, s.applescriptFileExtension, block);
+			this.runCode(s.applescriptPath, s.applescriptArgs, s.applescriptFileExtension, block, { shell: true });
 		} else if (language === "zig") {
-			this.runCodeInShell(s.zigPath, s.zigArgs, "zig", block);
+			this.runCode(s.zigPath, s.zigArgs, "zig", block, { shell: true });
 		} else if (language === "ocaml") {
-			this.runCodeInShell(s.ocamlPath, s.ocamlArgs, "ocaml", block);
+			this.runCode(s.ocamlPath, s.ocamlArgs, "ocaml", block, { shell: true });
 		} else if (language === "php") {
-			this.runCodeInShell(s.phpPath, s.phpArgs, s.phpFileExtension, block);
+			this.runCode(s.phpPath, s.phpArgs, s.phpFileExtension, block, { shell: true });
 		} else if (language === "latex") {
-			block.srcCode = modifyLatexCode(block.srcCode, s);
 			const outputPath: string = await retrieveFigurePath(block.srcCode, s.latexFigureTitlePattern, block.markdownFile, s);
 			const invokeCompiler: string = [s.latexTexfotArgs, s.latexCompilerPath, s.latexCompilerArgs].join(" ");
-			if (!s.latexDoFilter) this.runCode(s.latexCompilerPath, s.latexCompilerArgs, outputPath, block);
-			else this.runCode(s.latexTexfotPath, invokeCompiler, outputPath, block);
+			if (!s.latexDoFilter) this.runCode(s.latexCompilerPath, s.latexCompilerArgs, outputPath, block, { transform: (code) => modifyLatexCode(code, s) });
+			else this.runCode(s.latexTexfotPath, invokeCompiler, outputPath, block, { transform: (code) => modifyLatexCode(code, s) });
 		}
 	}
 
@@ -350,30 +344,18 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * @param ext The file extension of the temporary file. Should correspond to the language of the code. (e.g. py, ...)
 	 * @param block Contains context needed for execution including source code, output handler, and UI elements
 	 */
-	private runCode(cmd: string, cmdArgs: string, ext: string, block: CodeBlockContext) {
-		const outputter: Outputter = block.outputter;
+	private runCode(cmd: string, cmdArgs: string, ext: string, block: CodeBlockContext, options?: { shell?: boolean, transform?: (code: string) => string }) {
+		const useShell: boolean = (options?.shell) ? options.shell : false;
+		if (options?.transform) block.srcCode = options.transform(block.srcCode);
+		if (!useShell) block.outputter.startBlock();
 
-		outputter.startBlock();
-		const executor = this.executors.getExecutorFor(block.markdownFile, block.language, false);
-		executor.run(block.srcCode, outputter, cmd, cmdArgs, ext).then(() => {
-			block.button.className = runButtonClass;
-			outputter.closeInput();
-			outputter.finishBlock();
-		});
-	}
-
-	/**
-	 * Executes the code with the given command and arguments. The code is written to a temporary file and then executed.
-	 * This is equal to {@link runCode} but the code is executed in a shell. This is necessary for some languages like groovy.
-	 * @param cmd The command that should be used to execute the code. (e.g. python, java, ...)
-	 * @param cmdArgs Additional arguments that should be passed to the command.
-	 * @param ext The file extension of the temporary file. Should correspond to the language of the code. (e.g. py, ...)
-	 * @param block Contains context needed for execution including source code, output handler, and UI elements
-	 */
-	private runCodeInShell(cmd: string, cmdArgs: string, ext: string, block: CodeBlockContext) {
-		const executor = this.executors.getExecutorFor(block.markdownFile, block.language, true);
+		const executor = this.executors.getExecutorFor(block.markdownFile, block.language, useShell);
 		executor.run(block.srcCode, block.outputter, cmd, cmdArgs, ext).then(() => {
 			block.button.className = runButtonClass;
+			if (!useShell) {
+				block.outputter.closeInput();
+				block.outputter.finishBlock();
+			}
 		});
 	}
 }
