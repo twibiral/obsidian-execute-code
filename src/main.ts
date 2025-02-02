@@ -1,8 +1,10 @@
 import {
+	App,
 	Component,
 	MarkdownRenderer,
 	MarkdownView,
 	Plugin,
+	Workspace,
 } from 'obsidian';
 
 import { Outputter, TOGGLE_HTML_SIGIL } from "./output/Outputter";
@@ -46,10 +48,17 @@ const hasButtonClass = "has-run-code-button";
 
 interface CodeBlockContext {
 	srcCode: string;
-	outputter: Outputter;
 	button: HTMLButtonElement;
 	language: LanguageId;
 	markdownFile: string;
+	outputter: Outputter;
+	executors: ExecutorContainer;
+}
+
+export interface PluginContext {
+	app: App;
+	settings: ExecutorSettings;
+	executors: ExecutorContainer;
 }
 
 export default class ExecuteCodePlugin extends Plugin {
@@ -65,9 +74,14 @@ export default class ExecuteCodePlugin extends Plugin {
 
 		this.executors = new ExecutorContainer(this);
 
-		this.iterateOpenFilesAndAddRunButtons();
+		const context: PluginContext = {
+			app: this.app,
+			settings: this.settings,
+			executors: this.executors,
+		}
+		iterateOpenFilesAndAddRunButtons(context);
 		this.registerMarkdownPostProcessor((element, _context) => {
-			this.addRunButtons(element, _context.sourcePath, this.app.workspace.getActiveViewOfType(MarkdownView));
+			addRunButtons(element, _context.sourcePath, this.app.workspace.getActiveViewOfType(MarkdownView), context);
 		});
 
 		// live preview renderers
@@ -163,174 +177,177 @@ export default class ExecuteCodePlugin extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
+}
 
-	/**
-	 * Adds run buttons to each open file. This is more robust and quicker than scanning
-	 * the entire document, even though it requires more iteration, because it doesn't
-	 * search the whole document.
-	 */
-	private iterateOpenFilesAndAddRunButtons() {
-		this.app.workspace.iterateRootLeaves(leaf => {
-			if (leaf.view instanceof MarkdownView) {
-				this.addRunButtons(leaf.view.contentEl, leaf.view.file.path, leaf.view);
-			}
-		})
-	}
-
-	/**
-	 * Add a button to each code block that allows the user to run the code. The button is only added if the code block
-	 * utilizes a language that is supported by this plugin.
-	 *
-	 * @param element The parent element (i.e. the currently showed html page / note).
-	 * @param file An identifier for the currently showed note
-	 */
-	private addRunButtons(element: HTMLElement, file: string, view: MarkdownView) {
-		Array.from(element.getElementsByTagName("code"))
-			.forEach((codeBlock: HTMLElement) => this.addRunButton(codeBlock, file, view));
-	}
-
-	private addRunButton(codeBlock: HTMLElement, file: string, view: MarkdownView) {
-		if (codeBlock.className.match(/^language-\{\w+/i)) {
-			codeBlock.className = codeBlock.className.replace(/^language-\{(\w+)/i, "language-$1 {");
-			codeBlock.parentElement.className = codeBlock.className;
+/**
+ * Adds run buttons to each open file. This is more robust and quicker than scanning
+ * the entire document, even though it requires more iteration, because it doesn't
+ * search the whole document.
+ */
+function iterateOpenFilesAndAddRunButtons(plugin: PluginContext) {
+	const workspace: Workspace = plugin.app.workspace;
+	workspace.iterateRootLeaves(leaf => {
+		if (leaf.view instanceof MarkdownView) {
+			addRunButtons(leaf.view.contentEl, leaf.view.file.path, leaf.view, plugin);
 		}
+	})
+}
 
-		const language = codeBlock.className.toLowerCase();
+/**
+ * Add a button to each code block that allows the user to run the code. The button is only added if the code block
+ * utilizes a language that is supported by this plugin.
+ *
+ * @param element The parent element (i.e. the currently showed html page / note).
+ * @param file An identifier for the currently showed note
+ */
+function addRunButtons(element: HTMLElement, file: string, view: MarkdownView, plugin: PluginContext) {
+	Array.from(element.getElementsByTagName("code"))
+		.forEach((codeBlock: HTMLElement) => addRunButton(codeBlock, file, view, plugin));
+}
 
-		if (!language || !language.contains("language-"))
-			return;
-
-		const pre = codeBlock.parentElement as HTMLPreElement;
-		const parent = pre.parentElement as HTMLDivElement;
-
-		const srcCode = codeBlock.getText();
-		let sanitizedClassList = this.sanitizeClassListOfCodeBlock(codeBlock);
-
-		const canonicalLanguage = getLanguageAlias(
-			supportedLanguages.find(lang => sanitizedClassList.contains(`language-${lang}`))
-		) as LanguageId;
-
-		const isLanguageSupported: Boolean = canonicalLanguage !== undefined;
-		const hasBlockBeenButtonifiedAlready = parent.classList.contains(hasButtonClass);
-		if (!isLanguageSupported || hasBlockBeenButtonifiedAlready) return;
-
-		const out = new Outputter(codeBlock, this.settings, view, this.app, file);
-		parent.classList.add(hasButtonClass);
-		const button = this.createRunButton();
-		pre.appendChild(button);
-
-		const block: CodeBlockContext = {
-			srcCode: srcCode,
-			outputter: out,
-			language: canonicalLanguage,
-			markdownFile: file,
-			button: button,
-		};
-
-		button.addEventListener("click", () => this.handleExecution(block));
+function addRunButton(codeBlock: HTMLElement, file: string, view: MarkdownView, plugin: PluginContext) {
+	if (codeBlock.className.match(/^language-\{\w+/i)) {
+		codeBlock.className = codeBlock.className.replace(/^language-\{(\w+)/i, "language-$1 {");
+		codeBlock.parentElement.className = codeBlock.className;
 	}
 
-	private sanitizeClassListOfCodeBlock(codeBlock: HTMLElement) {
-		let sanitizedClassList = Array.from(codeBlock.classList);
-		return sanitizedClassList.map(c => c.toLowerCase());
+	const language = codeBlock.className.toLowerCase();
+
+	if (!language || !language.contains("language-"))
+		return;
+
+	const pre = codeBlock.parentElement as HTMLPreElement;
+	const parent = pre.parentElement as HTMLDivElement;
+
+	const srcCode = codeBlock.getText();
+	let sanitizedClassList = sanitizeClassListOfCodeBlock(codeBlock);
+
+	const canonicalLanguage = getLanguageAlias(
+		supportedLanguages.find(lang => sanitizedClassList.contains(`language-${lang}`))
+	) as LanguageId;
+
+	const isLanguageSupported: Boolean = canonicalLanguage !== undefined;
+	const hasBlockBeenButtonifiedAlready = parent.classList.contains(hasButtonClass);
+	if (!isLanguageSupported || hasBlockBeenButtonifiedAlready) return;
+
+	const outputter = new Outputter(codeBlock, plugin.settings, view, plugin.app, file);
+	parent.classList.add(hasButtonClass);
+	const button = createRunButton();
+	pre.appendChild(button);
+
+	const block: CodeBlockContext = {
+		srcCode: srcCode,
+		language: canonicalLanguage,
+		markdownFile: file,
+		button: button,
+		outputter: outputter,
+		executors: plugin.executors,
+	};
+
+	button.addEventListener("click", () => handleExecution(block));
+}
+
+function sanitizeClassListOfCodeBlock(codeBlock: HTMLElement) {
+	let sanitizedClassList = Array.from(codeBlock.classList);
+	return sanitizedClassList.map(c => c.toLowerCase());
+}
+
+/**
+ * Handles the execution of code blocks based on the selected programming language.
+ * Injects any required code, transforms the source if needed, and manages button state.
+ * @param block Contains context needed for execution including source code, output handler, and UI elements
+ */
+async function handleExecution(block: CodeBlockContext) {
+	const language: LanguageId = block.language;
+	const button: HTMLButtonElement = block.button;
+	const srcCode: string = block.srcCode;
+	const app: App = block.outputter.app;
+	const s: ExecutorSettings = block.outputter.settings;
+
+	button.className = runButtonDisabledClass;
+	block.srcCode = await new CodeInjector(app, s, language).injectCode(srcCode);
+
+	switch (language) {
+		case "js": return runCode(s.nodePath, s.nodeArgs, s.jsFileExtension, block, { transform: (code) => addMagicToJS(code) });
+		case "java": return runCode(s.javaPath, s.javaArgs, s.javaFileExtension, block);
+		case "python": return runCode(s.pythonPath, s.pythonArgs, s.pythonFileExtension, block, { transform: (code) => addMagicToPython(code, s) });
+		case "shell": return runCode(s.shellPath, s.shellArgs, s.shellFileExtension, block, { shell: true });
+		case "batch": return runCode(s.batchPath, s.batchArgs, s.batchFileExtension, block, { shell: true });
+		case "powershell": return runCode(s.powershellPath, s.powershellArgs, s.powershellFileExtension, block, { shell: true });
+		case "cpp": return runCode(s.clingPath, `-std=${s.clingStd} ${s.clingArgs}`, s.cppFileExtension, block);
+		case "prolog":
+			runCode("", "", "", block);
+			button.className = runButtonClass;
+			break;
+		case "groovy": return runCode(s.groovyPath, s.groovyArgs, s.groovyFileExtension, block, { shell: true });
+		case "rust": return runCode(s.cargoPath, "eval" + s.cargoEvalArgs, s.rustFileExtension, block);
+		case "r": return runCode(s.RPath, s.RArgs, s.RFileExtension, block, { transform: (code) => addInlinePlotsToR(code) });
+		case "go": return runCode(s.golangPath, s.golangArgs, s.golangFileExtension, block);
+		case "kotlin": return runCode(s.kotlinPath, s.kotlinArgs, s.kotlinFileExtension, block, { shell: true });
+		case "ts": return runCode(s.tsPath, s.tsArgs, "ts", block, { shell: true });
+		case "lua": return runCode(s.luaPath, s.luaArgs, s.luaFileExtension, block, { shell: true });
+		case "dart": return runCode(s.dartPath, s.dartArgs, s.dartFileExtension, block, { shell: true });
+		case "cs": return runCode(s.csPath, s.csArgs, s.csFileExtension, block, { shell: true });
+		case "haskell": return (s.useGhci)
+			? runCode(s.ghciPath, "", "hs", block, { shell: true })
+			: runCode(s.runghcPath, "-f " + s.ghcPath, "hs", block, { shell: true });
+		case "mathematica": return runCode(s.mathematicaPath, s.mathematicaArgs, s.mathematicaFileExtension, block, { shell: true });
+		case "scala": return runCode(s.scalaPath, s.scalaArgs, s.scalaFileExtension, block, { shell: true });
+		case "swift": return runCode(s.swiftPath, s.swiftArgs, s.swiftFileExtension, block, { shell: true });
+		case "c": return runCode(s.clingPath, s.clingArgs, "c", block, { shell: true });
+		case "ruby": return runCode(s.rubyPath, s.rubyArgs, s.rubyFileExtension, block, { shell: true });
+		case "sql": return runCode(s.sqlPath, s.sqlArgs, "sql", block, { shell: true });
+		case "octave": return runCode(s.octavePath, s.octaveArgs, s.octaveFileExtension, block, { shell: true, transform: (code) => addInlinePlotsToOctave(code) });
+		case "maxima": return runCode(s.maximaPath, s.maximaArgs, s.maximaFileExtension, block, { shell: true, transform: (code) => addInlinePlotsToMaxima(code) });
+		case "racket": return runCode(s.racketPath, s.racketArgs, s.racketFileExtension, block, { shell: true });
+		case "applescript": return runCode(s.applescriptPath, s.applescriptArgs, s.applescriptFileExtension, block, { shell: true });
+		case "zig": return runCode(s.zigPath, s.zigArgs, "zig", block, { shell: true });
+		case "ocaml": return runCode(s.ocamlPath, s.ocamlArgs, "ocaml", block, { shell: true });
+		case "php": return runCode(s.phpPath, s.phpArgs, s.phpFileExtension, block, { shell: true });
+		case "latex":
+			const outputPath: string = await retrieveFigurePath(block.srcCode, s.latexFigureTitlePattern, block.markdownFile, s);
+			const invokeCompiler: string = [s.latexTexfotArgs, s.latexCompilerPath, s.latexCompilerArgs].join(" ");
+			return (!s.latexDoFilter)
+				? runCode(s.latexCompilerPath, s.latexCompilerArgs, outputPath, block, { transform: (code) => modifyLatexCode(code, s) })
+				: runCode(s.latexTexfotPath, invokeCompiler, outputPath, block, { transform: (code) => modifyLatexCode(code, s) });
+		default: break;
 	}
+}
 
-	/**
-	 * Handles the execution of code blocks based on the selected programming language.
-	 * Injects any required code, transforms the source if needed, and manages button state.
-	 * @param block Contains context needed for execution including source code, output handler, and UI elements
-	*/
-	private async handleExecution(block: CodeBlockContext) {
-		const language: LanguageId = block.language;
-		const button: HTMLButtonElement = block.button;
-		const srcCode: string = block.srcCode;
-		const s: ExecutorSettings = this.settings;
+/**
+ * Creates a new run button and returns it.
+ *
+ * @returns { HTMLButtonElement } The newly created run button.
+ */
+function createRunButton(): HTMLButtonElement {
+	console.debug("Add run button");
+	const button = document.createElement("button");
+	button.classList.add(runButtonClass);
+	button.setText(buttonText);
+	return button;
+}
 
-		button.className = runButtonDisabledClass;
-		block.srcCode = await new CodeInjector(this.app, s, language).injectCode(srcCode);
+/**
+ * Executes the code with the given command and arguments. The code is written to a temporary file and then executed.
+ * The output of the code is displayed in the output panel ({@link Outputter}).
+ * If the code execution fails, an error message is displayed and logged.
+ * After the code execution, the temporary file is deleted and the run button is re-enabled.
+ * @param cmd The command that should be used to execute the code. (e.g. python, java, ...)
+ * @param cmdArgs Additional arguments that should be passed to the command.
+ * @param ext The file extension of the temporary file. Should correspond to the language of the code. (e.g. py, ...)
+ * @param block Contains context needed for execution including source code, output handler, and UI elements
+ */
+function runCode(cmd: string, cmdArgs: string, ext: string, block: CodeBlockContext, options?: { shell?: boolean, transform?: (code: string) => string }) {
+	const useShell: boolean = (options?.shell) ? options.shell : false;
+	if (options?.transform) block.srcCode = options.transform(block.srcCode);
+	if (!useShell) block.outputter.startBlock();
 
-		switch (language) {
-			case "js": return this.runCode(s.nodePath, s.nodeArgs, s.jsFileExtension, block, { transform: (code) => addMagicToJS(code) });
-			case "java": return this.runCode(s.javaPath, s.javaArgs, s.javaFileExtension, block);
-			case "python": return this.runCode(s.pythonPath, s.pythonArgs, s.pythonFileExtension, block, { transform: (code) => addMagicToPython(code, s) });
-			case "shell": return this.runCode(s.shellPath, s.shellArgs, s.shellFileExtension, block, { shell: true });
-			case "batch": return this.runCode(s.batchPath, s.batchArgs, s.batchFileExtension, block, { shell: true });
-			case "powershell": return this.runCode(s.powershellPath, s.powershellArgs, s.powershellFileExtension, block, { shell: true });
-			case "cpp": return this.runCode(s.clingPath, `-std=${s.clingStd} ${s.clingArgs}`, s.cppFileExtension, block);
-			case "prolog":
-				this.runCode("", "", "", block);
-				button.className = runButtonClass;
-				break;
-			case "groovy": return this.runCode(s.groovyPath, s.groovyArgs, s.groovyFileExtension, block, { shell: true });
-			case "rust": return this.runCode(s.cargoPath, "eval" + s.cargoEvalArgs, s.rustFileExtension, block);
-			case "r": return this.runCode(s.RPath, s.RArgs, s.RFileExtension, block, { transform: (code) => addInlinePlotsToR(code) });
-			case "go": return this.runCode(s.golangPath, s.golangArgs, s.golangFileExtension, block);
-			case "kotlin": return this.runCode(s.kotlinPath, s.kotlinArgs, s.kotlinFileExtension, block, { shell: true });
-			case "ts": return this.runCode(s.tsPath, s.tsArgs, "ts", block, { shell: true });
-			case "lua": return this.runCode(s.luaPath, s.luaArgs, s.luaFileExtension, block, { shell: true });
-			case "dart": return this.runCode(s.dartPath, s.dartArgs, s.dartFileExtension, block, { shell: true });
-			case "cs": return this.runCode(s.csPath, s.csArgs, s.csFileExtension, block, { shell: true });
-			case "haskell": return (s.useGhci)
-				? this.runCode(s.ghciPath, "", "hs", block, { shell: true })
-				: this.runCode(s.runghcPath, "-f " + s.ghcPath, "hs", block, { shell: true });
-			case "mathematica": return this.runCode(s.mathematicaPath, s.mathematicaArgs, s.mathematicaFileExtension, block, { shell: true });
-			case "scala": return this.runCode(s.scalaPath, s.scalaArgs, s.scalaFileExtension, block, { shell: true });
-			case "swift": return this.runCode(s.swiftPath, s.swiftArgs, s.swiftFileExtension, block, { shell: true });
-			case "c": return this.runCode(s.clingPath, s.clingArgs, "c", block, { shell: true });
-			case "ruby": return this.runCode(s.rubyPath, s.rubyArgs, s.rubyFileExtension, block, { shell: true });
-			case "sql": return this.runCode(s.sqlPath, s.sqlArgs, "sql", block, { shell: true });
-			case "octave": return this.runCode(s.octavePath, s.octaveArgs, s.octaveFileExtension, block, { shell: true, transform: (code) => addInlinePlotsToOctave(code) });
-			case "maxima": return this.runCode(s.maximaPath, s.maximaArgs, s.maximaFileExtension, block, { shell: true, transform: (code) => addInlinePlotsToMaxima(code) });
-			case "racket": return this.runCode(s.racketPath, s.racketArgs, s.racketFileExtension, block, { shell: true });
-			case "applescript": return this.runCode(s.applescriptPath, s.applescriptArgs, s.applescriptFileExtension, block, { shell: true });
-			case "zig": return this.runCode(s.zigPath, s.zigArgs, "zig", block, { shell: true });
-			case "ocaml": return this.runCode(s.ocamlPath, s.ocamlArgs, "ocaml", block, { shell: true });
-			case "php": return this.runCode(s.phpPath, s.phpArgs, s.phpFileExtension, block, { shell: true });
-			case "latex":
-				const outputPath: string = await retrieveFigurePath(block.srcCode, s.latexFigureTitlePattern, block.markdownFile, s);
-				const invokeCompiler: string = [s.latexTexfotArgs, s.latexCompilerPath, s.latexCompilerArgs].join(" ");
-				return (!s.latexDoFilter)
-					? this.runCode(s.latexCompilerPath, s.latexCompilerArgs, outputPath, block, { transform: (code) => modifyLatexCode(code, s) })
-					: this.runCode(s.latexTexfotPath, invokeCompiler, outputPath, block, { transform: (code) => modifyLatexCode(code, s) });
-			default: break;
+	const executor = block.executors.getExecutorFor(block.markdownFile, block.language, useShell);
+	executor.run(block.srcCode, block.outputter, cmd, cmdArgs, ext).then(() => {
+		block.button.className = runButtonClass;
+		if (!useShell) {
+			block.outputter.closeInput();
+			block.outputter.finishBlock();
 		}
-	}
-
-	/**
-	 * Creates a new run button and returns it.
-	 *
-	 * @returns { HTMLButtonElement } The newly created run button.
-	 */
-	private createRunButton() {
-		console.debug("Add run button");
-		const button = document.createElement("button");
-		button.classList.add(runButtonClass);
-		button.setText(buttonText);
-		return button;
-	}
-
-	/**
-	 * Executes the code with the given command and arguments. The code is written to a temporary file and then executed.
-	 * The output of the code is displayed in the output panel ({@link Outputter}).
-	 * If the code execution fails, an error message is displayed and logged.
-	 * After the code execution, the temporary file is deleted and the run button is re-enabled.
-	 * @param cmd The command that should be used to execute the code. (e.g. python, java, ...)
-	 * @param cmdArgs Additional arguments that should be passed to the command.
-	 * @param ext The file extension of the temporary file. Should correspond to the language of the code. (e.g. py, ...)
-	 * @param block Contains context needed for execution including source code, output handler, and UI elements
-	 */
-	private runCode(cmd: string, cmdArgs: string, ext: string, block: CodeBlockContext, options?: { shell?: boolean, transform?: (code: string) => string }) {
-		const useShell: boolean = (options?.shell) ? options.shell : false;
-		if (options?.transform) block.srcCode = options.transform(block.srcCode);
-		if (!useShell) block.outputter.startBlock();
-
-		const executor = this.executors.getExecutorFor(block.markdownFile, block.language, useShell);
-		executor.run(block.srcCode, block.outputter, cmd, cmdArgs, ext).then(() => {
-			block.button.className = runButtonClass;
-			if (!useShell) {
-				block.outputter.closeInput();
-				block.outputter.finishBlock();
-			}
-		});
-	}
+	});
 }
