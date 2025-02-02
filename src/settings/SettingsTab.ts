@@ -1,6 +1,6 @@
-import {App, PluginSettingTab, Setting} from "obsidian";
-import ExecuteCodePlugin, {canonicalLanguages, LanguageId} from "src/main";
-import {DISPLAY_NAMES} from "./languageDisplayName";
+import { App, PluginSettingTab, Setting } from "obsidian";
+import ExecuteCodePlugin, { canonicalLanguages, LanguageId } from "src/main";
+import { DISPLAY_NAMES } from "./languageDisplayName";
 import makeCppSettings from "./per-lang/makeCppSettings";
 import makeCSettings from "./per-lang/makeCSettings.js";
 import makeCsSettings from "./per-lang/makeCsSettings";
@@ -28,7 +28,7 @@ import makeRacketSettings from "./per-lang/makeRacketSettings.js";
 import makeShellSettings from "./per-lang/makeShellSettings";
 import makeBatchSettings from "./per-lang/makeBatchSettings";
 import makeTsSettings from "./per-lang/makeTsSettings";
-import {ExecutorSettings} from "./Settings";
+import { ExecutorSettings } from "./Settings";
 import makeSQLSettings from "./per-lang/makeSQLSettings";
 import makeOctaviaSettings from "./per-lang/makeOctaveSettings";
 import makeMaximaSettings from "./per-lang/makeMaximaSettings";
@@ -61,14 +61,14 @@ export class SettingsTab extends PluginSettingTab {
 	 *  Builds the html page that is showed in the settings.
 	 */
 	display() {
-		const {containerEl} = this;
+		const { containerEl } = this;
 		containerEl.empty();
 
-		containerEl.createEl('h2', {text: 'Settings for the Code Execution Plugin.'});
+		containerEl.createEl('h2', { text: 'Settings for the Code Execution Plugin.' });
 
 
 		// ========== General ==========
-		containerEl.createEl('h3', {text: 'General Settings'});
+		containerEl.createEl('h3', { text: 'General Settings' });
 		new Setting(containerEl)
 			.setName('Timeout (in seconds)')
 			.setDesc('The time after which a program gets shut down automatically. This is to prevent infinite loops. ')
@@ -92,8 +92,8 @@ export class SettingsTab extends PluginSettingTab {
 					this.plugin.settings.allowInput = value
 					await this.plugin.saveSettings();
 				}));
-		
-		if(process.platform === "win32") {
+
+		if (process.platform === "win32") {
 			new Setting(containerEl)
 				.setName('WSL Mode')
 				.setDesc("Whether or not to run code in the Windows Subsystem for Linux. If you don't have WSL installed, don't turn this on!")
@@ -105,17 +105,6 @@ export class SettingsTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					}));
 		}
-
-		// new Setting(containerEl)
-		// 	.setName('Only Current Log')
-		// 	.setDesc("Whether or not show print log only in current code block.")
-		// 	.addToggle(text => text
-		// 		.setValue(this.plugin.settings.onlyCurrentBlock)
-		// 		.onChange(async (value) => {
-		// 			console.log('Only Show Current Block Log set to: ' + value);
-		// 			this.plugin.settings.onlyCurrentBlock = value
-		// 			await this.plugin.saveSettings();
-		// 		}));
 
 		new Setting(containerEl)
 			.setName('[Experimental] Persistent Output')
@@ -134,123 +123,55 @@ export class SettingsTab extends PluginSettingTab {
 		containerEl.createEl("hr");
 
 		new Setting(containerEl)
-		.setName("Language-Specific Settings")
-		.setDesc("Pick a language to edit its language-specific settings")
-		.addDropdown((dropdown) => dropdown
-			.addOptions(Object.fromEntries(
-				canonicalLanguages.map(lang => [lang, DISPLAY_NAMES[lang]])
-			))
-			.setValue(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0])
-			.onChange(async (value: LanguageId)=> {
-				this.focusContainer(value);
-				this.plugin.settings.lastOpenLanguageTab = value;
-				await this.plugin.saveSettings();
-			})
-		)
-		.settingEl.style.borderTop = "0";
+			.setName("Language-Specific Settings")
+			.setDesc("Pick a language to edit its language-specific settings")
+			.addDropdown((dropdown) => dropdown
+				.addOptions(Object.fromEntries(
+					canonicalLanguages.map(lang => [lang, DISPLAY_NAMES[lang]])
+				))
+				.setValue(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0])
+				.onChange(async (value: LanguageId) => {
+					this.focusContainer(value);
+					this.plugin.settings.lastOpenLanguageTab = value;
+					await this.plugin.saveSettings();
+				})
+			)
+			.settingEl.style.borderTop = "0";
 
-
-		// ========== JavaScript / Node ==========
-		makeJsSettings(this, this.makeContainerFor("js"));
-
-		// ========== TypeScript ==========
-		makeTsSettings(this, this.makeContainerFor("ts"));
-
-		// ========== Lean ==========
+		makeJsSettings(this, this.makeContainerFor("js")); // JavaScript / Node
+		makeTsSettings(this, this.makeContainerFor("ts")); // TypeScript
 		makeLeanSettings(this, this.makeContainerFor("lean"));
-
-		// ========== Lua ==========
 		makeLuaSettings(this, this.makeContainerFor("lua"));
-
-		// ========== Dart ==========
 		makeDartSettings(this, this.makeContainerFor("dart"));
-
-		// ========== CSharp ==========
-		makeCsSettings(this, this.makeContainerFor("cs"));
-
-		// ========== Java ==========
+		makeCsSettings(this, this.makeContainerFor("cs")); // CSharp
 		makeJavaSettings(this, this.makeContainerFor("java"));
-
-		// ========== Python ==========
 		makePythonSettings(this, this.makeContainerFor("python"));
-
-		// ========== Golang =========
-		makeGoSettings(this, this.makeContainerFor("go"));
-
-		// ========== Rust ===========
+		makeGoSettings(this, this.makeContainerFor("go")); // Golang
 		makeRustSettings(this, this.makeContainerFor("rust"));
-
-		// ========== C++ ===========
-		makeCppSettings(this, this.makeContainerFor("cpp"));
-
-		// ========== C ===========
+		makeCppSettings(this, this.makeContainerFor("cpp")); // C++
 		makeCSettings(this, this.makeContainerFor("c"));
-
-		// ========== Batch ==========
 		makeBatchSettings(this, this.makeContainerFor("batch"));
-		// ========== Shell ==========
 		makeShellSettings(this, this.makeContainerFor("shell"));
-
-		// ========== Powershell ==========
 		makePowershellSettings(this, this.makeContainerFor("powershell"));
-
-		// ========== Prolog ==========
 		makePrologSettings(this, this.makeContainerFor("prolog"));
-
-		// ========== Groovy ==========
 		makeGroovySettings(this, this.makeContainerFor("groovy"));
-
-		// ========== R ==========
 		makeRSettings(this, this.makeContainerFor("r"));
-
-		// ========== Kotlin ==========
 		makeKotlinSettings(this, this.makeContainerFor("kotlin"));
-
-		// ========== Mathematica ==========
 		makeMathematicaSettings(this, this.makeContainerFor("mathematica"));
-
-		// ========== Haskell ===========
 		makeHaskellSettings(this, this.makeContainerFor("haskell"));
-
-		// ========== Scala ===========
 		makeScalaSettings(this, this.makeContainerFor("scala"));
-
-		// ========== Swift ===========
 		makeSwiftSettings(this, this.makeContainerFor("swift"));
-
-		// ========== Racket ===========
 		makeRacketSettings(this, this.makeContainerFor("racket"));
-
-		// ========== FSharp ===========
 		makeFSharpSettings(this, this.makeContainerFor("fsharp"));
-
-		// ========== Ruby ============
 		makeRubySettings(this, this.makeContainerFor("ruby"));
-
-		// ========== SQL ============
 		makeSQLSettings(this, this.makeContainerFor("sql"));
-
-		// ========== Octavia ============
 		makeOctaviaSettings(this, this.makeContainerFor("octave"));
-
-		// ========== Maxima ============
 		makeMaximaSettings(this, this.makeContainerFor("maxima"));
-
-		// ========== Applescript ============
 		makeApplescriptSettings(this, this.makeContainerFor("applescript"));
-
-		// ========== Zig ============
 		makeZigSettings(this, this.makeContainerFor("zig"));
-
-		// ========== OCaml ============
 		makeOCamlSettings(this, this.makeContainerFor("ocaml"));
-
-		// ========== Php ============
 		makePhpSettings(this, this.makeContainerFor("php"));
-		
-		// ========== LaTeX ============
 		makeLatexSettings(this, this.makeContainerFor("latex"));
-		
 
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}
@@ -266,10 +187,10 @@ export class SettingsTab extends PluginSettingTab {
 	}
 
 	private focusContainer(language: LanguageId) {
-		if(this.activeLanguageContainer)
+		if (this.activeLanguageContainer)
 			this.activeLanguageContainer.style.display = "none";
 
-		if(language in this.languageContainers) {
+		if (language in this.languageContainers) {
 			this.activeLanguageContainer = this.languageContainers[language];
 			this.activeLanguageContainer.style.display = "block";
 		}
