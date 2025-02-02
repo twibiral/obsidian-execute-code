@@ -11,6 +11,7 @@ import makeHaskellSettings from "./per-lang/makeHaskellSettings";
 import makeJavaSettings from "./per-lang/makeJavaSettings";
 import makeJsSettings from "./per-lang/makeJsSettings";
 import makeKotlinSettings from "./per-lang/makeKotlinSettings";
+import makeLatexSettings from "./per-lang/makeLatexSettings";
 import makeLeanSettings from "./per-lang/makeLeanSettings";
 import makeLuaSettings from "./per-lang/makeLuaSettings";
 import makeDartSettings from "./per-lang/makeDartSettings";
@@ -244,8 +245,12 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== OCaml ============
 		makeOCamlSettings(this, this.makeContainerFor("ocaml"));
 
-		// ========== Ruby ============
+		// ========== Php ============
 		makePhpSettings(this, this.makeContainerFor("php"));
+		
+		// ========== LaTeX ============
+		makeLatexSettings(this, this.makeContainerFor("latex"));
+		
 
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}

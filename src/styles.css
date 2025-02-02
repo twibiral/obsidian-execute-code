@@ -230,6 +230,7 @@ input.interactive-stdin {
 	pre.language-output {
 		display: block;
 	}
+
 	/* Hide code blocks with language-output only in markdown view using "markdown-preview-view"*/
 	.markdown-preview-view pre.language-output {
 		display: block;
@@ -238,4 +239,38 @@ input.interactive-stdin {
 	.markdown-rendered pre.language-output {
 		display: block;
 	}
+}
+
+/* Center LaTeX vector graphics, confine to text width */
+.center-latex-figures img[src*="/figure%20"][src$=".svg"],
+.center-latex-figures img[src*="/figure%20"][src*=".svg?"],
+.center-latex-figures .stdout img[src*=".svg?"] {
+	display: block;
+	margin: auto;
+	max-width: 100%;
+}
+
+/* Invert LaTeX vector graphics in dark mode */
+.theme-dark.invert-latex-figures img[src*="/figure%20"][src$=".svg"],
+.theme-dark.invert-latex-figures img[src*="/figure%20"][src*=".svg?"],
+.theme-dark.invert-latex-figures .stdout img[src*=".svg?"] {
+	filter: invert(1);
+}
+
+/* Allow descriptions in LaTeX settings to be selected and copied. */
+.selectable-description-text {
+	-moz-user-select: text;
+	-khtml-user-select: text;
+	-webkit-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
+}
+
+.insert-figure-icon {
+	margin-left: 0.5em;
+}
+
+/* Try to keep description of cmd arguments in LaTeX settings on the same line. */
+code.selectable-description-text {
+	white-space: nowrap;
 }

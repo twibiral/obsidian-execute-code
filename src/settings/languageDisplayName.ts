@@ -9,6 +9,7 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
     java: "Java",
     js: "Javascript",
     kotlin: "Kotlin",
+    latex: "LaTeX",
     lua: "Lua",
     mathematica: "Mathematica",
     php: "PHP",

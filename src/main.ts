@@ -19,6 +19,8 @@ import {
 	addInlinePlotsToOctave,
 	addInlinePlotsToMaxima
 } from "./transforms/Magic";
+import { modifyLatexCode, applyLatexBodyClasses } from "./transforms/LatexTransformer"
+import { retrieveFigurePath } from './transforms/LatexFigureName';
 
 import ExecutorContainer from './ExecutorContainer';
 import ExecutorManagerView, {
@@ -29,8 +31,8 @@ import ExecutorManagerView, {
 import runAllCodeBlocks from './runAllCodeBlocks';
 import { ReleaseNoteModel } from "./ReleaseNoteModal";
 
-export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py"] as const;
-export const canonicalLanguages = ["js", "ts", "cs", "lean", "lua", "python", "cpp", "prolog", "shell", "groovy", "r",
+export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py", "tex"] as const;
+export const canonicalLanguages = ["js", "ts", "cs", "latex", "lean", "lua", "python", "cpp", "prolog", "shell", "groovy", "r",
 	"go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell", "scala", "swift", "racket", "fsharp", "c", "dart",
 	"ruby", "batch", "sql", "octave", "maxima", "applescript", "zig", "ocaml", "php"] as const;
 export const supportedLanguages = [...languageAliases, ...canonicalLanguages] as const;
@@ -94,6 +96,8 @@ export default class ExecuteCodePlugin extends Plugin {
 			this.settings.releaseNote2_0_0wasShowed = true;
 			this.saveSettings();
 		}
+
+		applyLatexBodyClasses(this.app, this.settings);
 	}
 
 	/**
@@ -437,8 +441,19 @@ export default class ExecuteCodePlugin extends Plugin {
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.phpPath, this.settings.phpArgs, this.settings.phpFileExtension, language, file);
 			})
+		} else if (language === "latex") {
+			button.addEventListener("click", async () => {
+				button.className = runButtonDisabledClass;
+				let transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
+				transformedCode = modifyLatexCode(transformedCode, this.settings);
+				const outputPath = await retrieveFigurePath(srcCode, this.settings.latexFigureTitlePattern, file, this.settings);
+				if (!this.settings.latexDoFilter) {
+					this.runCode(transformedCode, out, button, this.settings.latexCompilerPath, this.settings.latexCompilerArgs, outputPath, language, file);
+				} else {
+					this.runCode(transformedCode, out, button, this.settings.latexTexfotPath, [this.settings.latexTexfotArgs, this.settings.latexCompilerPath, this.settings.latexCompilerArgs].join(" "), outputPath, language, file);
+				}
+			});
 		}
-
 	}
 
 	/**
