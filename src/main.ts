@@ -46,9 +46,9 @@ export default class ExecuteCodePlugin extends Plugin {
 			settings: this.settings,
 			executors: this.executors,
 		}
-		runButton.iterateOpenFilesAndAddRunButtons(context);
+		runButton.addInOpenFiles(context);
 		this.registerMarkdownPostProcessor((element, _context) => {
-			runButton.addRunButtons(element, _context.sourcePath, this.app.workspace.getActiveViewOfType(MarkdownView), context);
+			runButton.addToAllCodeBlocks(element, _context.sourcePath, this.app.workspace.getActiveViewOfType(MarkdownView), context);
 		});
 
 		// live preview renderers
@@ -99,17 +99,17 @@ export default class ExecuteCodePlugin extends Plugin {
 				const pre = codeBlock.parentElement as HTMLPreElement;
 				const parent = pre.parentElement as HTMLDivElement;
 
-				if (parent.hasClass(runButton.hasButtonClass)) {
-					parent.removeClass(runButton.hasButtonClass);
+				if (parent.hasClass(runButton.codeBlockHasButtonClass)) {
+					parent.removeClass(runButton.codeBlockHasButtonClass);
 				}
 			});
 
 		document
-			.querySelectorAll("." + runButton.runButtonClass)
+			.querySelectorAll("." + runButton.buttonClass)
 			.forEach((button: HTMLButtonElement) => button.remove());
 
 		document
-			.querySelectorAll("." + runButton.runButtonDisabledClass)
+			.querySelectorAll("." + runButton.disabledClass)
 			.forEach((button: HTMLButtonElement) => button.remove());
 
 		document

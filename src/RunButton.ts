@@ -11,9 +11,9 @@ import { getLanguageAlias } from './transforms/TransformCode';
 
 const buttonText = "Run";
 
-export const runButtonClass = "run-code-button";
-export const runButtonDisabledClass = "run-button-disabled";
-export const hasButtonClass = "has-run-code-button";
+export const buttonClass: string = "run-code-button";
+export const disabledClass: string = "run-button-disabled";
+export const codeBlockHasButtonClass: string = "has-run-code-button";
 
 interface CodeBlockContext {
     srcCode: string;
@@ -36,7 +36,7 @@ async function handleExecution(block: CodeBlockContext) {
     const app: App = block.outputter.app;
     const s: ExecutorSettings = block.outputter.settings;
 
-    button.className = runButtonDisabledClass;
+    button.className = disabledClass;
     block.srcCode = await new CodeInjector(app, s, language).injectCode(srcCode);
 
     switch (language) {
@@ -49,7 +49,7 @@ async function handleExecution(block: CodeBlockContext) {
         case "cpp": return runCode(s.clingPath, `-std=${s.clingStd} ${s.clingArgs}`, s.cppFileExtension, block);
         case "prolog":
             runCode("", "", "", block);
-            button.className = runButtonClass;
+            button.className = buttonClass;
             break;
         case "groovy": return runCode(s.groovyPath, s.groovyArgs, s.groovyFileExtension, block, { shell: true });
         case "rust": return runCode(s.cargoPath, "eval" + s.cargoEvalArgs, s.rustFileExtension, block);
@@ -87,15 +87,15 @@ async function handleExecution(block: CodeBlockContext) {
 }
 
 /**
- * Adds run buttons to each open file. This is more robust and quicker than scanning
- * the entire document, even though it requires more iteration, because it doesn't
- * search the whole document.
+ * Adds run buttons to code blocks in all currently open Markdown files.
+ * More efficient than scanning entire documents since it only processes visible content.
+ * @param plugin Contains context needed for execution.
  */
-export function iterateOpenFilesAndAddRunButtons(plugin: PluginContext) {
+export function addInOpenFiles(plugin: PluginContext) {
     const workspace: Workspace = plugin.app.workspace;
     workspace.iterateRootLeaves(leaf => {
         if (leaf.view instanceof MarkdownView) {
-            addRunButtons(leaf.view.contentEl, leaf.view.file.path, leaf.view, plugin);
+            addToAllCodeBlocks(leaf.view.contentEl, leaf.view.file.path, leaf.view, plugin);
         }
     });
 }
@@ -103,16 +103,24 @@ export function iterateOpenFilesAndAddRunButtons(plugin: PluginContext) {
 /**
  * Add a button to each code block that allows the user to run the code. The button is only added if the code block
  * utilizes a language that is supported by this plugin.
- *
  * @param element The parent element (i.e. the currently showed html page / note).
  * @param file An identifier for the currently showed note
- */
-export function addRunButtons(element: HTMLElement, file: string, view: MarkdownView, plugin: PluginContext) {
+ * @param view The current markdown view
+ * @param plugin Contains context needed for execution.
+*/
+export function addToAllCodeBlocks(element: HTMLElement, file: string, view: MarkdownView, plugin: PluginContext) {
     Array.from(element.getElementsByTagName("code"))
-        .forEach((codeBlock: HTMLElement) => addRunButton(codeBlock, file, view, plugin));
+        .forEach((codeBlock: HTMLElement) => addToCodeBlock(codeBlock, file, view, plugin));
 }
 
-function addRunButton(codeBlock: HTMLElement, file: string, view: MarkdownView, plugin: PluginContext) {
+/**
+ * Processes a code block to add execution capabilities. Ensures buttons aren't duplicated on already processed blocks.
+ * @param codeBlock The code block element to process
+ * @param file Path to the current markdown file
+ * @param view The current markdown view
+ * @param plugin Contains context needed for execution.
+ */
+function addToCodeBlock(codeBlock: HTMLElement, file: string, view: MarkdownView, plugin: PluginContext) {
     if (codeBlock.className.match(/^language-\{\w+/i)) {
         codeBlock.className = codeBlock.className.replace(/^language-\{(\w+)/i, "language-$1 {");
         codeBlock.parentElement.className = codeBlock.className;
@@ -134,12 +142,12 @@ function addRunButton(codeBlock: HTMLElement, file: string, view: MarkdownView, 
     ) as LanguageId;
 
     const isLanguageSupported: Boolean = canonicalLanguage !== undefined;
-    const hasBlockBeenButtonifiedAlready = parent.classList.contains(hasButtonClass);
+    const hasBlockBeenButtonifiedAlready = parent.classList.contains(codeBlockHasButtonClass);
     if (!isLanguageSupported || hasBlockBeenButtonifiedAlready) return;
 
     const outputter = new Outputter(codeBlock, plugin.settings, view, plugin.app, file);
-    parent.classList.add(hasButtonClass);
-    const button = createRunButton();
+    parent.classList.add(codeBlockHasButtonClass);
+    const button = createButton();
     pre.appendChild(button);
 
     const block: CodeBlockContext = {
@@ -154,6 +162,11 @@ function addRunButton(codeBlock: HTMLElement, file: string, view: MarkdownView, 
     button.addEventListener("click", () => handleExecution(block));
 }
 
+/**
+ * Normalizes language class names to ensure consistent processing.
+ * @param codeBlock - The code block element whose classes need to be sanitized
+ * @returns Array of normalized class names
+ */
 function sanitizeClassListOfCodeBlock(codeBlock: HTMLElement) {
     let sanitizedClassList = Array.from(codeBlock.classList);
     return sanitizedClassList.map(c => c.toLowerCase());
@@ -161,13 +174,11 @@ function sanitizeClassListOfCodeBlock(codeBlock: HTMLElement) {
 
 /**
  * Creates a new run button and returns it.
- *
- * @returns { HTMLButtonElement } The newly created run button.
  */
-function createRunButton(): HTMLButtonElement {
+function createButton(): HTMLButtonElement {
     console.debug("Add run button");
     const button = document.createElement("button");
-    button.classList.add(runButtonClass);
+    button.classList.add(buttonClass);
     button.setText(buttonText);
     return button;
 }
@@ -189,7 +200,7 @@ function runCode(cmd: string, cmdArgs: string, ext: string, block: CodeBlockCont
 
     const executor = block.executors.getExecutorFor(block.markdownFile, block.language, useShell);
     executor.run(block.srcCode, block.outputter, cmd, cmdArgs, ext).then(() => {
-        block.button.className = runButtonClass;
+        block.button.className = buttonClass;
         if (!useShell) {
             block.outputter.closeInput();
             block.outputter.finishBlock();
