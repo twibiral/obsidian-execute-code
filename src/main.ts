@@ -249,75 +249,50 @@ export default class ExecuteCodePlugin extends Plugin {
 		button.className = runButtonDisabledClass;
 		block.srcCode = await new CodeInjector(this.app, s, language).injectCode(srcCode);
 
-		if (language === "js") {
-			this.runCode(s.nodePath, s.nodeArgs, s.jsFileExtension, block, { transform: (code) => addMagicToJS(code) });
-		} else if (language === "java") {
-			this.runCode(s.javaPath, s.javaArgs, s.javaFileExtension, block);
-		} else if (language === "python") {
-			this.runCode(s.pythonPath, s.pythonArgs, s.pythonFileExtension, block, { transform: (code) => addMagicToPython(code, s) });
-		} else if (language === "shell") {
-			this.runCode(s.shellPath, s.shellArgs, s.shellFileExtension, block, { shell: true });
-		} else if (language === "batch") {
-			this.runCode(s.batchPath, s.batchArgs, s.batchFileExtension, block, { shell: true });
-		} else if (language === "powershell") {
-			this.runCode(s.powershellPath, s.powershellArgs, s.powershellFileExtension, block, { shell: true });
-		} else if (language === "cpp") {
-			this.runCode(s.clingPath, `-std=${s.clingStd} ${s.clingArgs}`, s.cppFileExtension, block);
-		} else if (language === "prolog") {
-			this.runCode("", "", "", block);
-			button.className = runButtonClass;
-		} else if (language === "groovy") {
-			this.runCode(s.groovyPath, s.groovyArgs, s.groovyFileExtension, block, { shell: true });
-		} else if (language === "rust") {
-			this.runCode(s.cargoPath, "eval" + s.cargoEvalArgs, s.rustFileExtension, block);
-		} else if (language === "r") {
-			this.runCode(s.RPath, s.RArgs, s.RFileExtension, block, { transform: (code) => addInlinePlotsToR(code) });
-		} else if (language === "go") {
-			this.runCode(s.golangPath, s.golangArgs, s.golangFileExtension, block);
-		} else if (language === "kotlin") {
-			this.runCode(s.kotlinPath, s.kotlinArgs, s.kotlinFileExtension, block, { shell: true });
-		} else if (language === "ts") {
-			this.runCode(s.tsPath, s.tsArgs, "ts", block, { shell: true });
-		} else if (language === "lua") {
-			this.runCode(s.luaPath, s.luaArgs, s.luaFileExtension, block, { shell: true });
-		} else if (language === "dart") {
-			this.runCode(s.dartPath, s.dartArgs, s.dartFileExtension, block, { shell: true });
-		} else if (language === "cs") {
-			this.runCode(s.csPath, s.csArgs, s.csFileExtension, block, { shell: true });
-		} else if (language === "haskell") {
-			if (s.useGhci) this.runCode(s.ghciPath, "", "hs", block, { shell: true });
-			else this.runCode(s.runghcPath, "-f " + s.ghcPath, "hs", block, { shell: true });
-		} else if (language === "mathematica") {
-			this.runCode(s.mathematicaPath, s.mathematicaArgs, s.mathematicaFileExtension, block, { shell: true });
-		} else if (language === "scala") {
-			this.runCode(s.scalaPath, s.scalaArgs, s.scalaFileExtension, block, { shell: true });
-		} else if (language === "swift") {
-			this.runCode(s.swiftPath, s.swiftArgs, s.swiftFileExtension, block, { shell: true });
-		} else if (language === "c") {
-			this.runCode(s.clingPath, s.clingArgs, "c", block, { shell: true });
-		} else if (language === "ruby") {
-			this.runCode(s.rubyPath, s.rubyArgs, s.rubyFileExtension, block, { shell: true });
-		} else if (language === "sql") {
-			this.runCode(s.sqlPath, s.sqlArgs, "sql", block, { shell: true });
-		} else if (language === "octave") {
-			this.runCode(s.octavePath, s.octaveArgs, s.octaveFileExtension, block, { shell: true, transform: (code) => addInlinePlotsToOctave(code) });
-		} else if (language === "maxima") {
-			this.runCode(s.maximaPath, s.maximaArgs, s.maximaFileExtension, block, { shell: true, transform: (code) => addInlinePlotsToMaxima(code) });
-		} else if (language === "racket") {
-			this.runCode(s.racketPath, s.racketArgs, s.racketFileExtension, block, { shell: true });
-		} else if (language === "applescript") {
-			this.runCode(s.applescriptPath, s.applescriptArgs, s.applescriptFileExtension, block, { shell: true });
-		} else if (language === "zig") {
-			this.runCode(s.zigPath, s.zigArgs, "zig", block, { shell: true });
-		} else if (language === "ocaml") {
-			this.runCode(s.ocamlPath, s.ocamlArgs, "ocaml", block, { shell: true });
-		} else if (language === "php") {
-			this.runCode(s.phpPath, s.phpArgs, s.phpFileExtension, block, { shell: true });
-		} else if (language === "latex") {
-			const outputPath: string = await retrieveFigurePath(block.srcCode, s.latexFigureTitlePattern, block.markdownFile, s);
-			const invokeCompiler: string = [s.latexTexfotArgs, s.latexCompilerPath, s.latexCompilerArgs].join(" ");
-			if (!s.latexDoFilter) this.runCode(s.latexCompilerPath, s.latexCompilerArgs, outputPath, block, { transform: (code) => modifyLatexCode(code, s) });
-			else this.runCode(s.latexTexfotPath, invokeCompiler, outputPath, block, { transform: (code) => modifyLatexCode(code, s) });
+		switch (language) {
+			case "js": return this.runCode(s.nodePath, s.nodeArgs, s.jsFileExtension, block, { transform: (code) => addMagicToJS(code) });
+			case "java": return this.runCode(s.javaPath, s.javaArgs, s.javaFileExtension, block);
+			case "python": return this.runCode(s.pythonPath, s.pythonArgs, s.pythonFileExtension, block, { transform: (code) => addMagicToPython(code, s) });
+			case "shell": return this.runCode(s.shellPath, s.shellArgs, s.shellFileExtension, block, { shell: true });
+			case "batch": return this.runCode(s.batchPath, s.batchArgs, s.batchFileExtension, block, { shell: true });
+			case "powershell": return this.runCode(s.powershellPath, s.powershellArgs, s.powershellFileExtension, block, { shell: true });
+			case "cpp": return this.runCode(s.clingPath, `-std=${s.clingStd} ${s.clingArgs}`, s.cppFileExtension, block);
+			case "prolog":
+				this.runCode("", "", "", block);
+				button.className = runButtonClass;
+				break;
+			case "groovy": return this.runCode(s.groovyPath, s.groovyArgs, s.groovyFileExtension, block, { shell: true });
+			case "rust": return this.runCode(s.cargoPath, "eval" + s.cargoEvalArgs, s.rustFileExtension, block);
+			case "r": return this.runCode(s.RPath, s.RArgs, s.RFileExtension, block, { transform: (code) => addInlinePlotsToR(code) });
+			case "go": return this.runCode(s.golangPath, s.golangArgs, s.golangFileExtension, block);
+			case "kotlin": return this.runCode(s.kotlinPath, s.kotlinArgs, s.kotlinFileExtension, block, { shell: true });
+			case "ts": return this.runCode(s.tsPath, s.tsArgs, "ts", block, { shell: true });
+			case "lua": return this.runCode(s.luaPath, s.luaArgs, s.luaFileExtension, block, { shell: true });
+			case "dart": return this.runCode(s.dartPath, s.dartArgs, s.dartFileExtension, block, { shell: true });
+			case "cs": return this.runCode(s.csPath, s.csArgs, s.csFileExtension, block, { shell: true });
+			case "haskell": return (s.useGhci)
+				? this.runCode(s.ghciPath, "", "hs", block, { shell: true })
+				: this.runCode(s.runghcPath, "-f " + s.ghcPath, "hs", block, { shell: true });
+			case "mathematica": return this.runCode(s.mathematicaPath, s.mathematicaArgs, s.mathematicaFileExtension, block, { shell: true });
+			case "scala": return this.runCode(s.scalaPath, s.scalaArgs, s.scalaFileExtension, block, { shell: true });
+			case "swift": return this.runCode(s.swiftPath, s.swiftArgs, s.swiftFileExtension, block, { shell: true });
+			case "c": return this.runCode(s.clingPath, s.clingArgs, "c", block, { shell: true });
+			case "ruby": return this.runCode(s.rubyPath, s.rubyArgs, s.rubyFileExtension, block, { shell: true });
+			case "sql": return this.runCode(s.sqlPath, s.sqlArgs, "sql", block, { shell: true });
+			case "octave": return this.runCode(s.octavePath, s.octaveArgs, s.octaveFileExtension, block, { shell: true, transform: (code) => addInlinePlotsToOctave(code) });
+			case "maxima": return this.runCode(s.maximaPath, s.maximaArgs, s.maximaFileExtension, block, { shell: true, transform: (code) => addInlinePlotsToMaxima(code) });
+			case "racket": return this.runCode(s.racketPath, s.racketArgs, s.racketFileExtension, block, { shell: true });
+			case "applescript": return this.runCode(s.applescriptPath, s.applescriptArgs, s.applescriptFileExtension, block, { shell: true });
+			case "zig": return this.runCode(s.zigPath, s.zigArgs, "zig", block, { shell: true });
+			case "ocaml": return this.runCode(s.ocamlPath, s.ocamlArgs, "ocaml", block, { shell: true });
+			case "php": return this.runCode(s.phpPath, s.phpArgs, s.phpFileExtension, block, { shell: true });
+			case "latex":
+				const outputPath: string = await retrieveFigurePath(block.srcCode, s.latexFigureTitlePattern, block.markdownFile, s);
+				const invokeCompiler: string = [s.latexTexfotArgs, s.latexCompilerPath, s.latexCompilerArgs].join(" ");
+				return (!s.latexDoFilter)
+					? this.runCode(s.latexCompilerPath, s.latexCompilerArgs, outputPath, block, { transform: (code) => modifyLatexCode(code, s) })
+					: this.runCode(s.latexTexfotPath, invokeCompiler, outputPath, block, { transform: (code) => modifyLatexCode(code, s) });
+			default: break;
 		}
 	}
 
