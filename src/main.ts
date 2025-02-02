@@ -44,6 +44,14 @@ export const runButtonClass = "run-code-button";
 const runButtonDisabledClass = "run-button-disabled";
 const hasButtonClass = "has-run-code-button";
 
+interface CodeBlockContext {
+	srcCode: string;
+	outputter: Outputter;
+	button: HTMLButtonElement;
+	language: LanguageId;
+	markdownFile: string;
+}
+
 export default class ExecuteCodePlugin extends Plugin {
 	settings: ExecutorSettings;
 	executors: ExecutorContainer;
@@ -210,7 +218,16 @@ export default class ExecuteCodePlugin extends Plugin {
 		parent.classList.add(hasButtonClass);
 		const button = this.createRunButton();
 		pre.appendChild(button);
-		button.addEventListener("click", () => this.handleExecution(canonicalLanguage, srcCode, button, out, file));
+
+		const block: CodeBlockContext = {
+			srcCode: srcCode,
+			outputter: out,
+			language: canonicalLanguage,
+			markdownFile: file,
+			button: button,
+		};
+
+		button.addEventListener("click", () => this.handleExecution(block));
 	}
 
 	private sanitizeClassListOfCodeBlock(codeBlock: HTMLElement) {
@@ -218,96 +235,96 @@ export default class ExecuteCodePlugin extends Plugin {
 		return sanitizedClassList.map(c => c.toLowerCase());
 	}
 
-	/**
+/**
 	 * Handles the execution of code blocks based on the selected programming language.
  	 * Injects any required code, transforms the source if needed, and manages button state.
-	 * @param language The programming language used in the code block.
-	 * @param srcCode The code in the code block.
-	 * @param button The button element to which the listener is added.
-	 * @param out The {@link Outputter} object that is used to display the output of the code.
-	 * @param file The file that the code originates in
+	 * @param block Contains context needed for execution including source code, output handler, and UI elements
 	 */
-	private async handleExecution(language: LanguageId, srcCode: string, button: HTMLButtonElement, out: Outputter, file: string) {
+	private async handleExecution(block: CodeBlockContext) {
+		const language: LanguageId = block.language;
+		const button: HTMLButtonElement = block.button;
+		const srcCode: string = block.srcCode;
+
 		button.className = runButtonDisabledClass;
-		let transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
+		block.srcCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 
 		if (language === "js") {
-			transformedCode = addMagicToJS(transformedCode);
-			this.runCode(transformedCode, out, button, this.settings.nodePath, this.settings.nodeArgs, this.settings.jsFileExtension, language, file);
+			block.srcCode = addMagicToJS(block.srcCode);
+			this.runCode(this.settings.nodePath, this.settings.nodeArgs, this.settings.jsFileExtension, block);
 		} else if (language === "java") {
-			this.runCode(transformedCode, out, button, this.settings.javaPath, this.settings.javaArgs, this.settings.javaFileExtension, language, file);
+			this.runCode(this.settings.javaPath, this.settings.javaArgs, this.settings.javaFileExtension, block);
 		} else if (language === "python") {
 			if (this.settings.pythonEmbedPlots)	// embed plots into html which shows them in the note
-				transformedCode = addInlinePlotsToPython(transformedCode, TOGGLE_HTML_SIGIL);
-			transformedCode = addMagicToPython(transformedCode);
-			this.runCode(transformedCode, out, button, this.settings.pythonPath, this.settings.pythonArgs, this.settings.pythonFileExtension, language, file);
+				block.srcCode = addInlinePlotsToPython(block.srcCode, TOGGLE_HTML_SIGIL);
+			block.srcCode = addMagicToPython(block.srcCode);
+			this.runCode(this.settings.pythonPath, this.settings.pythonArgs, this.settings.pythonFileExtension, block);
 		} else if (language === "shell") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension, language, file);
+			this.runCodeInShell(this.settings.shellPath, this.settings.shellArgs, this.settings.shellFileExtension, block);
 		} else if (language === "batch") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.batchPath, this.settings.batchArgs, this.settings.batchFileExtension, language, file);
+			this.runCodeInShell(this.settings.batchPath, this.settings.batchArgs, this.settings.batchFileExtension, block);
 		} else if (language === "powershell") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.powershellPath, this.settings.powershellArgs, this.settings.powershellFileExtension, language, file);
+			this.runCodeInShell(this.settings.powershellPath, this.settings.powershellArgs, this.settings.powershellFileExtension, block);
 		} else if (language === "cpp") {
-			this.runCode(transformedCode, out, button, this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, this.settings.cppFileExtension, language, file);
+			this.runCode(this.settings.clingPath, `-std=${this.settings.clingStd} ${this.settings.clingArgs}`, this.settings.cppFileExtension, block);
 		} else if (language === "prolog") {
-			this.runCode(transformedCode, out, button, "", "", "", language, file);
+			this.runCode("", "", "", block);
 			button.className = runButtonClass;
 		} else if (language === "groovy") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension, language, file);
+			this.runCodeInShell(this.settings.groovyPath, this.settings.groovyArgs, this.settings.groovyFileExtension, block);
 		} else if (language === "rust") {
-			this.runCode(transformedCode, out, button, this.settings.cargoPath, "eval" + this.settings.cargoEvalArgs, this.settings.rustFileExtension, language, file);
+			this.runCode(this.settings.cargoPath, "eval" + this.settings.cargoEvalArgs, this.settings.rustFileExtension, block);
 		} else if (language === "r") {
-			transformedCode = addInlinePlotsToR(transformedCode);
-			this.runCode(transformedCode, out, button, this.settings.RPath, this.settings.RArgs, this.settings.RFileExtension, language, file);
+			block.srcCode = addInlinePlotsToR(block.srcCode);
+			this.runCode(this.settings.RPath, this.settings.RArgs, this.settings.RFileExtension, block);
 		} else if (language === "go") {
-			this.runCode(transformedCode, out, button, this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension, language, file);
+			this.runCode(this.settings.golangPath, this.settings.golangArgs, this.settings.golangFileExtension, block);
 		} else if (language === "kotlin") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.kotlinPath, this.settings.kotlinArgs, this.settings.kotlinFileExtension, language, file);
+			this.runCodeInShell(this.settings.kotlinPath, this.settings.kotlinArgs, this.settings.kotlinFileExtension, block);
 		} else if (language === "ts") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.tsPath, this.settings.tsArgs, "ts", language, file);
+			this.runCodeInShell(this.settings.tsPath, this.settings.tsArgs, "ts", block);
 		} else if (language === "lua") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.luaPath, this.settings.luaArgs, this.settings.luaFileExtension, language, file);
+			this.runCodeInShell(this.settings.luaPath, this.settings.luaArgs, this.settings.luaFileExtension, block);
 		} else if (language === "dart") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.dartPath, this.settings.dartArgs, this.settings.dartFileExtension, language, file);
+			this.runCodeInShell(this.settings.dartPath, this.settings.dartArgs, this.settings.dartFileExtension, block);
 		} else if (language === "cs") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.csPath, this.settings.csArgs, this.settings.csFileExtension, language, file);
+			this.runCodeInShell(this.settings.csPath, this.settings.csArgs, this.settings.csFileExtension, block);
 		} else if (language === "haskell") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.useGhci ? this.settings.ghciPath : this.settings.runghcPath, this.settings.useGhci ? "" : "-f " + this.settings.ghcPath, "hs", language, file);
+			this.runCodeInShell(this.settings.useGhci ? this.settings.ghciPath : this.settings.runghcPath, this.settings.useGhci ? "" : "-f " + this.settings.ghcPath, "hs", block);
 		} else if (language === "mathematica") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.mathematicaPath, this.settings.mathematicaArgs, this.settings.mathematicaFileExtension, language, file);
+			this.runCodeInShell(this.settings.mathematicaPath, this.settings.mathematicaArgs, this.settings.mathematicaFileExtension, block);
 		} else if (language === "scala") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.scalaPath, this.settings.scalaArgs, this.settings.scalaFileExtension, language, file);
+			this.runCodeInShell(this.settings.scalaPath, this.settings.scalaArgs, this.settings.scalaFileExtension, block);
 		} else if (language === "swift") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.swiftPath, this.settings.swiftArgs, this.settings.swiftFileExtension, language, file);
+			this.runCodeInShell(this.settings.swiftPath, this.settings.swiftArgs, this.settings.swiftFileExtension, block);
 		} else if (language === "c") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.clingPath, this.settings.clingArgs, "c", language, file);
+			this.runCodeInShell(this.settings.clingPath, this.settings.clingArgs, "c", block);
 		} else if (language === "ruby") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.rubyPath, this.settings.rubyArgs, this.settings.rubyFileExtension, language, file);
+			this.runCodeInShell(this.settings.rubyPath, this.settings.rubyArgs, this.settings.rubyFileExtension, block);
 		} else if (language === "sql") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.sqlPath, this.settings.sqlArgs, "sql", language, file);
+			this.runCodeInShell(this.settings.sqlPath, this.settings.sqlArgs, "sql", block);
 		} else if (language === "octave") {
-			transformedCode = addInlinePlotsToOctave(transformedCode);
-			this.runCodeInShell(transformedCode, out, button, this.settings.octavePath, this.settings.octaveArgs, this.settings.octaveFileExtension, language, file);
+			block.srcCode = addInlinePlotsToOctave(block.srcCode);
+			this.runCodeInShell(this.settings.octavePath, this.settings.octaveArgs, this.settings.octaveFileExtension, block);
 		} else if (language === "maxima") {
-			transformedCode = addInlinePlotsToMaxima(transformedCode);
-			this.runCodeInShell(transformedCode, out, button, this.settings.maximaPath, this.settings.maximaArgs, this.settings.maximaFileExtension, language, file);
+			block.srcCode = addInlinePlotsToMaxima(block.srcCode);
+			this.runCodeInShell(this.settings.maximaPath, this.settings.maximaArgs, this.settings.maximaFileExtension, block);
 		} else if (language === "racket") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.racketPath, this.settings.racketArgs, this.settings.racketFileExtension, language, file);
+			this.runCodeInShell(this.settings.racketPath, this.settings.racketArgs, this.settings.racketFileExtension, block);
 		} else if (language === "applescript") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.applescriptPath, this.settings.applescriptArgs, this.settings.applescriptFileExtension, language, file);
+			this.runCodeInShell(this.settings.applescriptPath, this.settings.applescriptArgs, this.settings.applescriptFileExtension, block);
 		} else if (language === "zig") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.zigPath, this.settings.zigArgs, "zig", language, file);
+			this.runCodeInShell(this.settings.zigPath, this.settings.zigArgs, "zig", block);
 		} else if (language === "ocaml") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.ocamlPath, this.settings.ocamlArgs, "ocaml", language, file);
+			this.runCodeInShell(this.settings.ocamlPath, this.settings.ocamlArgs, "ocaml", block);
 		} else if (language === "php") {
-			this.runCodeInShell(transformedCode, out, button, this.settings.phpPath, this.settings.phpArgs, this.settings.phpFileExtension, language, file);
+			this.runCodeInShell(this.settings.phpPath, this.settings.phpArgs, this.settings.phpFileExtension, block);
 		} else if (language === "latex") {
-			transformedCode = modifyLatexCode(transformedCode, this.settings);
-			const outputPath = await retrieveFigurePath(srcCode, this.settings.latexFigureTitlePattern, file, this.settings);
+			block.srcCode = modifyLatexCode(block.srcCode, this.settings);
+			const outputPath = await retrieveFigurePath(block.srcCode, this.settings.latexFigureTitlePattern, block.markdownFile, this.settings);
 			if (!this.settings.latexDoFilter) {
-				this.runCode(transformedCode, out, button, this.settings.latexCompilerPath, this.settings.latexCompilerArgs, outputPath, language, file);
+				this.runCode(this.settings.latexCompilerPath, this.settings.latexCompilerArgs, outputPath, block);
 			} else {
-				this.runCode(transformedCode, out, button, this.settings.latexTexfotPath, [this.settings.latexTexfotArgs, this.settings.latexCompilerPath, this.settings.latexCompilerArgs].join(" "), outputPath, language, file);
+				this.runCode(this.settings.latexTexfotPath, [this.settings.latexTexfotArgs, this.settings.latexCompilerPath, this.settings.latexCompilerArgs].join(" "), outputPath, block);
 			}
 		}
 	}
@@ -330,21 +347,18 @@ export default class ExecuteCodePlugin extends Plugin {
 	 * The output of the code is displayed in the output panel ({@link Outputter}).
 	 * If the code execution fails, an error message is displayed and logged.
 	 * After the code execution, the temporary file is deleted and the run button is re-enabled.
-	 *
-	 * @param codeBlockContent The content of the code block that should be executed.
-	 * @param outputter The {@link Outputter} that should be used to display the output of the code.
-	 * @param button The button that was clicked to execute the code. Is re-enabled after the code execution.
 	 * @param cmd The command that should be used to execute the code. (e.g. python, java, ...)
 	 * @param cmdArgs Additional arguments that should be passed to the command.
 	 * @param ext The file extension of the temporary file. Should correspond to the language of the code. (e.g. py, ...)
-	 * @param language The canonical ID of the language being run
-	 * @param file The address of the file which the code originates from
+	 * @param block Contains context needed for execution including source code, output handler, and UI elements
 	 */
-	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {
+	private runCode(cmd: string, cmdArgs: string, ext: string, block: CodeBlockContext) {
+		const outputter: Outputter = block.outputter;
+
 		outputter.startBlock();
-		const executor = this.executors.getExecutorFor(file, language, false);
-		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
-			button.className = runButtonClass;
+		const executor = this.executors.getExecutorFor(block.markdownFile, block.language, false);
+		executor.run(block.srcCode, outputter, cmd, cmdArgs, ext).then(() => {
+			block.button.className = runButtonClass;
 			outputter.closeInput();
 			outputter.finishBlock();
 		});
@@ -353,20 +367,15 @@ export default class ExecuteCodePlugin extends Plugin {
 	/**
 	 * Executes the code with the given command and arguments. The code is written to a temporary file and then executed.
 	 * This is equal to {@link runCode} but the code is executed in a shell. This is necessary for some languages like groovy.
-	 *
-	 * @param codeBlockContent The content of the code block that should be executed.
-	 * @param outputter The {@link Outputter} that should be used to display the output of the code.
-	 * @param button The button that was clicked to execute the code. Is re-enabled after the code execution.
 	 * @param cmd The command that should be used to execute the code. (e.g. python, java, ...)
 	 * @param cmdArgs Additional arguments that should be passed to the command.
 	 * @param ext The file extension of the temporary file. Should correspond to the language of the code. (e.g. py, ...)
-	 * @param language The canonical ID of the language being run
-	 * @param file The address of the file which the code originates from
+	 * @param block Contains context needed for execution including source code, output handler, and UI elements
 	 */
-	private runCodeInShell(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {
-		const executor = this.executors.getExecutorFor(file, language, true);
-		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
-			button.className = runButtonClass;
+	private runCodeInShell(cmd: string, cmdArgs: string, ext: string, block: CodeBlockContext) {
+		const executor = this.executors.getExecutorFor(block.markdownFile, block.language, true);
+		executor.run(block.srcCode, block.outputter, cmd, cmdArgs, ext).then(() => {
+			block.button.className = runButtonClass;
 		});
 	}
 }
