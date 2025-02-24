@@ -10,6 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - LaTeX: Generated graphics are saved as attachment to your vault
 - LaTeX: Option to crop PDF to content to remove excess whitespace
 - LaTeX: Option to adopt Obsidian's font settings for PDF generation
+- New magic command @content (Thanks to @ChiIIBiII)
+
+### Changed
+- Fix typo in settings (Thanks to @Judro)
+- Fix F# support (Thanks to @SasaCetkovic)
 
 ## [2.0.0]
 ### Added
