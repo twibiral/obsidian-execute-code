@@ -12,8 +12,9 @@
  */
 
 import * as os from "os";
-import {Platform} from 'obsidian';
+import { Platform } from 'obsidian';
 import { TOGGLE_HTML_SIGIL } from "src/output/Outputter";
+import { ExecutorSettings } from "src/settings/Settings";
 
 // Regex for all languages.
 const SHOW_REGEX = /@show\(["'](?<path>[^<>?*=!\n#()\[\]{}]+)["'](,\s*(?<width>\d+[\w%]+),?\s*(?<height>\d+[\w%]+))?(,\s*(?<align>left|center|right))?\)/g;
@@ -25,6 +26,7 @@ const CURRENT_NOTE_REGEX = /@note/g;
 const CURRENT_NOTE_PATH_REGEX = /@note_path/g;
 const CURRENT_NOTE_URL_REGEX = /@note_url/g;
 const NOTE_TITLE_REGEX = /@title/g;
+const NOTE_CONTENT_REGEX = /@content/g;
 const COLOR_THEME_REGEX = /@theme/g;
 
 // Regex that are only used by one language.
@@ -40,7 +42,7 @@ const MAXIMA_PLOT_REGEX = /^plot2d\s*\(.*\[.+\]\)\s*[$;]/gm;
  * @param vaultPath The path of the vault.
  * @returns The transformed source code.
  */
-export function insertVaultPath(source: string, vaultPath: string): string {
+export function expandVaultPath(source: string, vaultPath: string): string {
 	source = source.replace(VAULT_PATH_REGEX, `"${vaultPath.replace(/\\/g, "/")}"`);
 	source = source.replace(VAULT_URL_REGEX, `"${Platform.resourcePathPrefix + vaultPath.replace(/\\/g, "/")}"`);
 	source = source.replace(VAULT_REGEX, `"${Platform.resourcePathPrefix + vaultPath.replace(/\\/g, "/")}"`);
@@ -56,7 +58,7 @@ export function insertVaultPath(source: string, vaultPath: string): string {
  * @param notePath The path of the vault.
  * @returns The transformed source code.
  */
-export function insertNotePath(source: string, notePath: string): string {
+export function expandNotePath(source: string, notePath: string): string {
 	source = source.replace(CURRENT_NOTE_PATH_REGEX, `"${notePath.replace(/\\/g, "/")}"`);
 	source = source.replace(CURRENT_NOTE_URL_REGEX, `"${Platform.resourcePathPrefix + notePath.replace(/\\/g, "/")}"`);
 	source = source.replace(CURRENT_NOTE_REGEX, `"${Platform.resourcePathPrefix + notePath.replace(/\\/g, "/")}"`);
@@ -66,18 +68,30 @@ export function insertNotePath(source: string, notePath: string): string {
 
 
 /**
- * Parses the source code for the @vault command and replaces it with the vault path.
+ * Parses the source code for the @title command and replaces it with the vault path.
  *
  * @param source The source code to parse.
  * @param noteTitle The path of the vault.
  * @returns The transformed source code.
  */
-export function insertNoteTitle(source: string, noteTitle: string): string {
+export function expandNoteTitle(source: string, noteTitle: string): string {
 	let t = "";
 	if (noteTitle.contains("."))
 		t = noteTitle.split(".").slice(0, -1).join(".");
 
 	return source.replace(NOTE_TITLE_REGEX, `"${t}"`);
+}
+
+/**
+ * Parses the source code and replaces the NOTE_CONTENT_REGEX with the file content.
+ *
+ * @param source The source code to parse.
+ * @param content The content of the note.
+ * @returns The transformed source code.
+ */
+export function insertNoteContent(source: string, content: string): string {
+	const escaped_content = JSON.stringify(content)
+	return source.replace(NOTE_CONTENT_REGEX, `${escaped_content}`)
 }
 
 /**
@@ -87,7 +101,7 @@ export function insertNoteTitle(source: string, noteTitle: string): string {
  * @param noteTitle The current colour theme.
  * @returns The transformed source code.
  */
-export function insertColorTheme(source: string, theme: string): string {
+export function expandColorTheme(source: string, theme: string): string {
 	return source.replace(COLOR_THEME_REGEX, `"${theme}"`);
 }
 
@@ -97,9 +111,12 @@ export function insertColorTheme(source: string, theme: string): string {
  * @param source The source code to parse.
  * @returns The transformed source code.
  */
-export function addMagicToPython(source: string): string {
-	source = pythonParseShowImage(source);
-	source = pythonParseHtmlFunction(source);
+export function expandPython(source: string, settings: ExecutorSettings): string {
+	if (settings.pythonEmbedPlots) {
+		source = expandPythonPlots(source, TOGGLE_HTML_SIGIL);
+	}
+	source = expandPythonShowImage(source);
+	source = expandPythonHtmlMacro(source);
 	return source;
 }
 
@@ -110,9 +127,9 @@ export function addMagicToPython(source: string): string {
  * @param source The source code to parse.
  * @returns The transformed source code.
  */
-export function addMagicToJS(source: string): string {
-	source = jsParseShowImage(source);
-	source = jsParseHtmlFunction(source);
+export function expandJS(source: string): string {
+	source = expandJsShowImage(source);
+	source = expandJsHtmlMacro(source);
 	return source;
 }
 
@@ -125,7 +142,7 @@ export function addMagicToJS(source: string): string {
  * @param toggleHtmlSigil The meta-command to allow and disallow HTML
  * @returns The transformed source code.
  */
-export function addInlinePlotsToPython(source: string, toggleHtmlSigil: string): string {
+export function expandPythonPlots(source: string, toggleHtmlSigil: string): string {
 	const showPlot = `import io; import sys; __obsidian_execute_code_temp_pyplot_var__=io.BytesIO(); plt.plot(); plt.savefig(__obsidian_execute_code_temp_pyplot_var__, format='svg'); plt.close(); sys.stdout.write(${JSON.stringify(toggleHtmlSigil)}); sys.stdout.flush(); sys.stdout.buffer.write(__obsidian_execute_code_temp_pyplot_var__.getvalue()); sys.stdout.flush(); sys.stdout.write(${JSON.stringify(toggleHtmlSigil)}); sys.stdout.flush()`;
 	return source.replace(PYTHON_PLOT_REGEX, showPlot);
 }
@@ -138,7 +155,7 @@ export function addInlinePlotsToPython(source: string, toggleHtmlSigil: string):
  * @param source The source code to parse.
  * @returns The transformed source code.
  */
-export function addInlinePlotsToR(source: string): string {
+export function expandRPlots(source: string): string {
 	const matches = source.matchAll(R_PLOT_REGEX);
 	for (const match of matches) {
 		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/");
@@ -155,7 +172,7 @@ export function addInlinePlotsToR(source: string): string {
  * Parses the PYTHON code for the @show command and replaces it with the image.
  * @param source The source code to parse.
  */
-function pythonParseShowImage(source: string): string {
+function expandPythonShowImage(source: string): string {
 	const matches = source.matchAll(SHOW_REGEX);
 	for (const match of matches) {
 		const imagePath = match.groups.path;
@@ -163,7 +180,7 @@ function pythonParseShowImage(source: string): string {
 		const height = match.groups.height;
 		const alignment = match.groups.align;
 
-		const image = buildMagicShowImage(imagePath.replace(/\\/g, "\\\\"), width, height, alignment);
+		const image = expandShowImage(imagePath.replace(/\\/g, "\\\\"), width, height, alignment);
 		source = source.replace(match[0], "print(\'" + TOGGLE_HTML_SIGIL + image + TOGGLE_HTML_SIGIL + "\')");
 	}
 
@@ -174,15 +191,15 @@ function pythonParseShowImage(source: string): string {
  * Parses the PYTHON code for the @html command and surrounds it with the toggle-escaoe token.
  * @param source 
  */
-function pythonParseHtmlFunction(source: string): string {
+function expandPythonHtmlMacro(source: string): string {
 	const matches = source.matchAll(HTML_REGEX);
-	for(const match of matches) {
+	for (const match of matches) {
 		const html = match.groups.html;
-		
+
 		const toggle = JSON.stringify(TOGGLE_HTML_SIGIL);
-		
+
 		source = source.replace(match[0], `print(${toggle}); print(${html}); print(${toggle})`)
-	}	
+	}
 	return source;
 }
 
@@ -191,7 +208,7 @@ function pythonParseHtmlFunction(source: string): string {
  * Parses the JAVASCRIPT code for the @show command and replaces it with the image.
  * @param source The source code to parse.
  */
-function jsParseShowImage(source: string): string {
+function expandJsShowImage(source: string): string {
 	const matches = source.matchAll(SHOW_REGEX);
 	for (const match of matches) {
 		const imagePath = match.groups.path;
@@ -199,7 +216,7 @@ function jsParseShowImage(source: string): string {
 		const height = match.groups.height;
 		const alignment = match.groups.align;
 
-		const image = buildMagicShowImage(imagePath.replace(/\\/g, "\\\\"), width, height, alignment);
+		const image = expandShowImage(imagePath.replace(/\\/g, "\\\\"), width, height, alignment);
 
 		source = source.replace(match[0], "console.log(\'" + TOGGLE_HTML_SIGIL + image + TOGGLE_HTML_SIGIL + "\')");
 		console.log(source);
@@ -208,7 +225,7 @@ function jsParseShowImage(source: string): string {
 	return source;
 }
 
-function jsParseHtmlFunction(source: string): string {
+function expandJsHtmlMacro(source: string): string {
 	const matches = source.matchAll(HTML_REGEX);
 	for (const match of matches) {
 		const html = match.groups.html;
@@ -230,7 +247,7 @@ function jsParseHtmlFunction(source: string): string {
  * @param height The image height.
  * @param alignment The image alignment.
  */
-function buildMagicShowImage(imagePath: string, width: string = "0", height: string = "0", alignment: string = "center"): string {
+function expandShowImage(imagePath: string, width: string = "0", height: string = "0", alignment: string = "center"): string {
 	if (imagePath.contains("+")) {
 		let splittedPath = imagePath.replace(/['"]/g, "").split("+");
 		splittedPath = splittedPath.map(element => element.trim())
@@ -243,7 +260,7 @@ function buildMagicShowImage(imagePath: string, width: string = "0", height: str
 	return `<img src="${imagePath}" width="${width}" height="${height}" align="${alignment}" alt="Image found at path ${imagePath}." />`;
 }
 
-export function addInlinePlotsToOctave(source: string): string {
+export function expandOctavePlot(source: string): string {
 	const matches = source.matchAll(OCTAVE_PLOT_REGEX);
 	for (const match of matches) {
 		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/");
@@ -255,7 +272,7 @@ export function addInlinePlotsToOctave(source: string): string {
 	return source;
 }
 
-export function addInlinePlotsToMaxima(source: string): string {
+export function expandMaximaPlot(source: string): string {
 	const matches = source.matchAll(MAXIMA_PLOT_REGEX);
 	for (const match of matches) {
 		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/");

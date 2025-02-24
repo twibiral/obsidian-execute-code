@@ -7,7 +7,7 @@
 
 </div>
 
-This plugin allows you to execute code snippets in code blocks in your notes. The plugin adds a 'run' button for code blocks in supported languages. Clicking them results in the code of the block being executed locally. After the execution the result of the execution is showed. An interactive input element is created when your code snippets reads expects user input.
+This plugin allows you to execute code snippets in code blocks in your notes. The plugin adds a 'run' button for code blocks in supported languages. Clicking them results in the code of the block being executed locally. After the execution the result of the execution is shown. An interactive input element is created when your code snippets reads expects user input.
 
 The result is shown only after the execution is finished. It is not possible to enter text on the command line into the executed program now.
 
@@ -16,11 +16,11 @@ The result is shown only after the execution is finished. It is not possible to 
 
 <hr></div>
 
-The following [languages are supported](#supported-programming-languages-): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell, Octave, Maxima, Zig and OCaml.
+The following [languages are supported](#supported-programming-languages-): C, C++, CSharp, Dart, F#, Golang, Groovy, Haskell, Java, JavaScript, Kotlin, Lean, Lua, Maxima, OCaml, Octave, Prolog, Python, R, Racket, Ruby, Rust, Scala, Shell (including Batch & Powershell), SQL, TypeScript, Wolfram Mathematica, Zig.
 
 If you are new to MarkDown or Obsidian.md, you can go to the [Quickstart Guide](#quickstart-guide-) or take a look in to [some blogs and videos that feature this plugin](#featured-in)
 
-Python, Rust, and Octave support embedded plots. All languages support ["magic" commands](#magic-commands-) that help you to access paths in obsidian or show images in your notes.
+Python, R, and Octave support embedded plots. All languages support ["magic" commands](#magic-commands-) that help you to access paths in obsidian or show images in your notes.
 
 You can create code blocks that are executed before or after each code block of the same language and define [global code injections](#global-code-injection-and-reusing-code-blocks-).
 
@@ -33,7 +33,7 @@ Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent v
 <br>
 <div align='center'>
 
-If you like this plugin and use it a lot, please consider supporting me in continuing the development of this plugin. You can also sponsor a new feature or language integration directly, if you want to speed-up the development for a specific feature you need.
+If you like this plugin and use it a lot, please consider supporting me in continuing the development of this plugin. You can also sponsor a new feature or language integration directly, if you want to speed up the development for a specific feature you need.
 
 [![GitHub Sponsors](https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=white)](https://github.com/sponsors/twibiral)   [![Buy me a coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/timwibiral)
 
@@ -76,34 +76,12 @@ hello("Bob")
 <details>
 <summary>TypeScript</summary>
 
-- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`. (`-g` means global install)
-- Problems: If you use your global node.js installation and it doesn't work try to set your `ts-node` path in the settings to `npx ts-node` instead of `ts-node`.
+- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`. (`-g` means global installation)
+- Problems: If you use your global node.js installation, and it doesn't work try to set your `ts-node` path in the settings to `npx ts-node` instead of `ts-node`.
 
 ```ts  
 let message: string = 'Hello, World!';
 console.log(message);  
-```
-</details>
-
-<details>
-<summary>CSharp</summary>
-
-- Requirements: install dotnet core sdk and run in command line `dotnet tool install -g dotnet-script`, then config dotnet-script fullpath.
-
-```cs 
-Console.WriteLine("Hello, World!");  
-```  
-</details>
-
-<details>
-<summary>Dart</summary>
-
-- Requirements: dart sdk is installed and the correct path is set in the settings.
-
-```dart
-void main() {
-  print("Hello World");
-}
 ```
 </details>
 
@@ -121,7 +99,7 @@ if __name__ == "__main__":
 ```
 
 - By default, Python runs in Notebook Mode. You can turn this off in the settings.
-- Plots with matplotlib/seaborn are embedded in the note by default. You can turn this off in the settings.
+- Plots with matplotlib/seaborn are embedded in the note by default. You can turn this off in the settings. Note that plots are only embedded when `plt.show()` is called.
 
 ```python
 import seaborn as sns
@@ -156,43 +134,6 @@ hello("Bob")
 y = c(12, 15, 28, 17, 18)
 x = 1:length(y)
 plot(x, y, type="l")
-```
-</details>
-
-<details>
-<summary>Java</summary>
-
-- Requirements: Java **11 or higher** is installed and the correct path is set in the settings.
-
-```java
-public class HelloWorld {
-	public static void main(String[] args) {
-		System.out.println("Hello World!");
-	}
-}
-```
-</details>
-
-<details>
-<summary>Lua</summary>
-
-- Requirements: install lua and config lua path.
-
-```lua
-print('Hello, World!')
-```
-</details>
-
-<details>
-<summary>Lean</summary>
-
-- Requirements: install lean and config lean path.
-
-```lean
-def main : IO Unit :=
-  IO.println s!"Hello, World!"
-
-#eval main
 ```
 </details>
 
@@ -252,6 +193,172 @@ int main() {
 </details>
 
 <details>
+<summary>Java</summary>
+
+- Requirements: Java **11 or higher** is installed and the correct path is set in the settings.
+
+```java
+public class HelloWorld {
+	public static void main(String[] args) {
+		System.out.println("Hello World!");
+	}
+}
+```
+</details>
+
+<details>
+<summary>SQL</summary>
+- Requirements: Have some SQL database installed and the correct path is set in the settings. The default is set to PostgreSQL (`psql`).
+- Make sure you adapt the settings to your database (`-d mydatabase -U myuser -f`)The default is set to .
+```sql
+SELECT * FROM table_name;
+```
+</details>
+
+<details>
+<summary>LaTeX</summary>
+
+## LaTeX
+
+Requirements: LaTeX distribution like [MiKTeX](https://miktex.org/) or [TeX Live](https://www.tug.org/texlive/) is installed and the correct paths are set in the settings.
+
+### Minimal example
+
+Injects default document class. Consider setting *Crop to content*.
+
+```latex
+\begin{document}
+Hello World!
+\end{document}
+```
+
+<p align="center"><img src="images/figure_minimal_example.svg" alt="Minimal example" /></p>
+
+
+### Name output file
+
+Set filename with `\title{…}`. Adds prefix `figure ` to avoid file name collisions, group all generated files, and for appearance CSS selectors. Click run again will overwrite the file, and refresh its embeddings in the active view.
+
+```
+![[figure time of day.svg]]
+```
+```latex
+\documentclass[border=2pt]{standalone} \title{time of day}
+\usepackage{datetime2}
+\begin{document}
+The time is \DTMcurrenttime.
+\end{document}
+```
+
+<p align="center"><img src="images/figure_time_of_day.svg" alt="Time of day" /></p>
+
+### Include attachments
+
+Include files relative to the vault's attachment folder. Consider [listings](http://mirrors.ctan.org/macros/latex/contrib/listings/listings.pdf) for source code listings, [markdown](http://mirrors.ctan.org/macros/generic/markdown/markdown.html) for inputting markdown files as LaTeX code, and `\input{…}` to paste plaintext or LaTeX source files.
+Layout with [graphbox](http://mirrors.ctan.org/macros/latex/contrib/graphbox/graphbox.pdf) for vertical alignment, or [tabularray](http://mirrors.ctan.org/macros/latex/contrib/tabularray/tabularray.pdf) for more complex alignment.
+
+```latex
+\documentclass{standalone} \title{include_attachments}
+\usepackage{graphicx}
+\begin{document}
+\includegraphics{figure time of day.pdf} \quad
+\includegraphics{figure time of day.pdf}
+\end{document}
+```
+
+<p align="center"><img src="images/figure_include_attachments.svg" alt="Include attachments" /></p>
+
+### Automatically reruns to get cross-references right.
+
+For instance reference a label that appears later in the document. The plugin detects `LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.` during compilation and reruns until resolved.
+
+```latex
+\documentclass{article} \title{sum of two poisson distribution}
+\usepackage{mathtools,amsfonts}
+\begin{document}
+As seen in \eqref{eq:poisson}, we use convolutions of probability distributions for two independent poisson distributed random variables.
+\begin{align*} \MoveEqLeft
+\mathbb{P}(X + Y = k) = \sum_{m = 0}^\infty \mathbb{P}(X = m)\, \mathbb{P}(X = m - k) \tag{1}\label{eq:poisson} \\&
+= \sum_{m = 0}^k \frac{\lambda^m\, e^{-\lambda}}{m!} \cdot \frac{\mu^{k - m}\, e^{-\mu}}{(k - m)!} = \ldots 
+\end{align*} 
+\end{document}
+```
+
+<p align="center"><img src="images/figure_sum_of_two_poisson_distributions.svg" alt="Sum of two poisson distributions" /></p>
+
+Not all rerun requirements are easy to detect. Consider adding the package [lastpage](http://mirrors.ctan.org/macros/latex/contrib/lastpage/lastpage.pdf) to force a rerun, by creating an unresolved reference.
+
+```latex
+\documentclass{article} \title{rerun sidenotes table}
+\usepackage{sidenotes,tabularray,lipsum,lastpage}
+\begin{document} \SetTblrInner{hlines}
+\sidenotetext{This is a marginal note.} \lipsum[1][1-3] 
+\begin{table*}
+\begin{tblr}[tall, caption={Expand table into page margins}]{X}
+    \lipsum[3][1-4]
+\end{tblr}
+\end{table*}
+\end{document}
+```
+
+<p align="center"><img src="images/figure_sidenotes_comparison.svg" alt="Sum of two poisson distributions" /></p>
+
+Explore [more LaTeX examples](https://antonpusch.de/latex), consult [package documentations](https://texdoc.org/), or learn about [LuaLaTeX](http://mirrors.ctan.org/obsolete/info/luatex/lualatex-doc/lualatex-doc.pdf).
+
+</details>
+
+
+
+<details>
+<summary>More supported languages...</summary>
+<details>
+<summary>CSharp</summary>
+
+- Requirements: install dotnet core sdk and run in command line `dotnet tool install -g dotnet-script`, then config dotnet-script fullpath.
+
+```cs 
+Console.WriteLine("Hello, World!");  
+```  
+</details>
+
+<details>
+<summary>Dart</summary>
+
+- Requirements: dart sdk is installed and the correct path is set in the settings.
+
+```dart
+void main() {
+  print("Hello World");
+}
+```
+</details>
+
+<details>
+<summary>Lua</summary>
+
+- Requirements: install lua and config lua path.
+
+```lua
+print('Hello, World!')
+```
+</details>
+
+<details>
+<summary>Lean</summary>
+
+- Requirements: install lean and config lean path.
+
+```lean
+def main : IO Unit :=
+  IO.println s!"Hello, World!"
+
+#eval main
+```
+</details>
+
+
+
+<details>
 <summary>Shell</summary>
 
 - Requirements: Set the path to your preferred shell in the settings. Default is Bash. (Only on Linux and macOS)
@@ -266,7 +373,7 @@ ls -la
 <summary>Powershell</summary>
 
 - Requirements: Used to execute shell commands on Windows. Default is Powershell but can be set to your preferred shell in the settings.
-- On MacOS: You probably need to change the command to use from `powershell` to `pwsh` in the plugin settings. Make sure you set the right path.
+- On macOS: You probably need to change the command to use from `powershell` to `pwsh` in the plugin settings. Make sure you set the right path.
 
 ```powershell
 echo "Hello World!"
@@ -494,16 +601,11 @@ print_endline "Hello, OCaml!"
 print("Hello, world!")
 ```
 </details>
-
+</details>
 
 Squiggle: For Squiggle support take a look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle) by @jqhoogland.
 
-Support for the following is planned:
 
-- Matlab
-- Julia Lang
-
-Open for suggestions.
 
 ## Magic Commands 🪄
 
@@ -520,6 +622,7 @@ The following magic commands are supported:
 - `@show(ImagePath, Width, Height)`: Displays an image at the given path in the note.
 - `@show(ImagePath, Width, Height, Alignment[center|left|right])`: Displays an image at the given path in the note.
 - `@html(HtmlSource)`: Displays HTML in the note
+- `@content`: Inserts the html content of the note in the code block. ([Here you find a nice example for the usage of this command.](https://github.com/twibiral/obsidian-execute-code/pull/390))
 
 (`@show(...)` and `@html(...)` are only supported for JavaScript and Python yet.)
 (The old commands `@note` and `@vault` are still supported, but may be removed in the future.)
@@ -610,9 +713,9 @@ This code block is added before each python block you define below in the note a
 
 `post` blocks work the same way, but the code in post blocks is executed _after_ your other code blocks.
 
-Pre/Post blocks will only apply to code blocks defined below them, and will only apply to code blocks from the same language.
+Pre-/post-blocks will only apply to code blocks defined below them, and will only apply to code blocks from the same language.
 
-You can also have a pre and post block at the same time by specifying `{pre, post}`
+You can also have a pre- and post-block at the same time by specifying `{pre, post}`
 
 Note, the `pre`/`post` arguments are special in that you don't need to explicitly state a key/value pair, however you can do so if you wish:
 
@@ -620,7 +723,7 @@ Note, the `pre`/`post` arguments are special in that you don't need to explicitl
 
 ### Labelled Code Blocks
 
-You can label specific code blocks with the `label='string'` argument, then import them explicitly in other blocks with the `import='string'` or `import=['string1', 'string2', ...]` argument so they aren't automatically imported as with pre / post blocks:
+You can label specific code blocks with the `label='string'` argument, then import them explicitly in other blocks with the `import='string'` or `import=['string1', 'string2', ...]` argument so they aren't automatically imported as with pre-/post-blocks:
 
 `````
 ```python {label='block 1'}
@@ -688,7 +791,7 @@ preview mode.
 To enable this feature, you have to enable the setting `Persistent Output` in the plugin settings.
 We recommend reopening open notes that contain code blocks after enabling this feature.
 
-This feature is still experimental and may not work as expected in all cases.
+⚠ This feature is still experimental and may not work as expected in all cases!
 We recommend that you disable this feature if you encounter any problems.
 
 
@@ -745,19 +848,14 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 
 - On Linux, Snap/Flatpak/AppImage installations of Obsidian run in an isolated environment. As such, they will not have access to any of your installed programs. If you are on Linux, make sure to install the `.deb` version of Obsidian. If your distro isn't compatible with `.deb` files, you may see issues.
 - Missing when `run` button after switching the theme: Try to close and reopen your notes and wait for a few minutes. It seems like obsidian doesn't call the postprocessors after the theme switch.
-- Pre- / Post-blocks may not be executed if the file contains duplicate code blocks.
+- Pre-/Post-blocks may not be executed if the file contains duplicate code blocks.
 - In Python, Embed Plots may not be off while Notebook Mode is on
-
-## Future Work 📑
-
-- Error warning when the execution fails (e.g. when python isn't installed)
-- Test if this plugin works in combination with dataview.
 
 ## Contribution 🤝
 
-All contributions are welcome. Just create a merge request or email me: tim.wibiral(at)uni-ulm.de
+All contributions are welcome. Just create a merge request or email me: contact(at)tim-wibiral.de
 
-The bullet points in Future Work are a good starting point if you want to help.
+The [open issues](https://github.com/twibiral/obsidian-execute-code/issues) are a good starting point to find something to work on. Some are marked as ["good first issue"](https://github.com/twibiral/obsidian-execute-code/labels/good%20first%20issue) and are easier to solve.
 
 ## Contributors ♥
 

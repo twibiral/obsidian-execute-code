@@ -1,12 +1,11 @@
-import {LanguageId} from "src/main";
+import { LanguageId } from "src/main";
 
 /**
  * Interface that contains all the settings for the extension.
  */
 export interface ExecutorSettings {
-	lastOpenLanguageTab: LanguageId | undefined
-
-	releaseNote2_0_0wasShowed: boolean;
+	lastOpenLanguageTab: LanguageId | undefined;
+	releaseNote2_1_0wasShowed: boolean;
 	persistentOuput: boolean;
 	timeout: number;
 	allowInput: boolean;
@@ -20,6 +19,36 @@ export interface ExecutorSettings {
 	tsPath: string;
 	tsArgs: string;
 	tsInject: string;
+	latexCompilerPath: string;
+	latexCompilerArgs: string;
+	latexDoFilter: boolean;
+	latexTexfotPath: string;
+	latexTexfotArgs: string;
+	latexDocumentclass: string;
+	latexAdaptFont: '' | 'obsidian' | 'system';
+	latexKeepLog: boolean;
+	latexSubprocessesUseShell: boolean;
+	latexMaxFigures: number;
+	latexFigureTitlePattern: string;
+	latexDoCrop: boolean;
+	latexCropPath: string;
+	latexCropArgs: string;
+	latexCropNoStandalone: boolean;
+	latexCropNoPagenum: boolean;
+	latexSaveSvg: '' | 'poppler' | 'inkscape';
+	latexSvgPath: string;
+	latexSvgArgs: string;
+	latexInkscapePath: string;
+	latexInkscapeArgs: string;
+	latexSavePdf: boolean;
+	latexSavePng: boolean;
+	latexPngPath: string;
+	latexPngArgs: string;
+	latexOutputEmbeddings: boolean;
+	latexInvertFigures: boolean;
+	latexCenterFigures: boolean;
+
+	latexInject: string;
 	leanPath: string;
 	leanArgs: string;
 	leanInject: string;
@@ -112,7 +141,7 @@ export interface ExecutorSettings {
 	phpPath: string;
 	phpArgs: string;
 	phpFileExtension: string;
-	phpInject: string;	
+	phpInject: string;
 	scalaPath: string;
 	scalaArgs: string;
 	scalaFileExtension: string;
@@ -149,6 +178,7 @@ export interface ExecutorSettings {
 	jsInteractive: boolean;
 	tsInteractive: boolean;
 	csInteractive: boolean;
+	latexInteractive: boolean;
 	leanInteractive: boolean;
 	luaInteractive: boolean;
 	dartInteractive: boolean;
@@ -189,7 +219,7 @@ export interface ExecutorSettings {
 export const DEFAULT_SETTINGS: ExecutorSettings = {
 	lastOpenLanguageTab: undefined,
 
-	releaseNote2_0_0wasShowed: false,
+	releaseNote2_1_0wasShowed: false,
 	persistentOuput: false,
 	timeout: 10000,
 	allowInput: true,
@@ -203,6 +233,35 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	tsPath: "ts-node",
 	tsArgs: "",
 	tsInject: "",
+	latexCompilerPath: "lualatex",
+	latexCompilerArgs: "-interaction=nonstopmode",
+	latexDoFilter: true,
+	latexTexfotPath: "texfot",
+	latexTexfotArgs: "--quiet",
+	latexDocumentclass: "article",
+	latexAdaptFont: "obsidian",
+	latexKeepLog: false,
+	latexSubprocessesUseShell: false,
+	latexMaxFigures: 10,
+	latexFigureTitlePattern: /[^\n][^%`]*\\title\s*\{(?<name>[^\}]*)\}/.source,
+	latexDoCrop: false,
+	latexCropPath: "pdfcrop",
+	latexCropArgs: "--quiet",
+	latexCropNoStandalone: true,
+	latexCropNoPagenum: true,
+	latexSaveSvg: "poppler",
+	latexSvgPath: "pdftocairo",
+	latexSvgArgs: "-svg",
+	latexInkscapePath: "inkscape",
+	latexInkscapeArgs: '--pages=all --export-plain-svg',
+	latexSavePdf: true,
+	latexSavePng: false,
+	latexPngPath: "pdftocairo",
+	latexPngArgs: "-singlefile -png",
+	latexOutputEmbeddings: true,
+	latexInvertFigures: true,
+	latexCenterFigures: true,
+	latexInject: "",
 	leanPath: "lean",
 	leanArgs: "",
 	leanInject: "",
@@ -293,7 +352,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	racketFileExtension: "rkt",
 	racketInject: "#lang racket",
 	fsharpPath: "dotnet",
-	fsharpArgs: "",
+	fsharpArgs: "fsi",
 	fsharpInject: "",
 	fsharpFileExtension: "fsx",
 	cArgs: "",
@@ -327,10 +386,11 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	phpPath: "php",
 	phpArgs: "",
 	phpFileExtension: "php",
-	phpInject: "",	
+	phpInject: "",
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
+	latexInteractive: false,
 	leanInteractive: false,
 	luaInteractive: false,
 	dartInteractive: false,
