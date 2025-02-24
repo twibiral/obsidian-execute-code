@@ -112,7 +112,7 @@ export interface ExecutorSettings {
 	phpPath: string;
 	phpArgs: string;
 	phpFileExtension: string;
-	phpInject: string;	
+	phpInject: string;
 	scalaPath: string;
 	scalaArgs: string;
 	scalaFileExtension: string;
@@ -293,7 +293,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	racketFileExtension: "rkt",
 	racketInject: "#lang racket",
 	fsharpPath: "dotnet",
-	fsharpArgs: "",
+	fsharpArgs: "fsi",
 	fsharpInject: "",
 	fsharpFileExtension: "fsx",
 	cArgs: "",
@@ -327,7 +327,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	phpPath: "php",
 	phpArgs: "",
 	phpFileExtension: "php",
-	phpInject: "",	
+	phpInject: "",
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,

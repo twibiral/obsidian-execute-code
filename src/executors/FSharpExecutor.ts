@@ -8,6 +8,6 @@ export default class FSharpExecutor extends NonInteractiveCodeExecutor {
 	}
 
 	override run(codeBlockContent: string, outputter: Outputter, cmd: string, args: string, ext: string) {
-		return super.run(codeBlockContent, outputter, cmd, `fsi ${args}`, "cpp");
+		return super.run(codeBlockContent, outputter, cmd, args, ext);
 	}
 }
