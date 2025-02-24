@@ -69,7 +69,7 @@ async function insertEmbedding(pastePosition: 'above' | 'below', doReplace: bool
         const identifier: RegExp = r.parse(identifierSrc);
         if (!identifier) return;
 
-        const codeBlocks: RegExpExecArray[] = findMatchingCodeBlocks(content, /(la)?tex/, identifier, figure.link(), doReplace);
+        const codeBlocks: RegExpMatchArray[] = findMatchingCodeBlocks(content, /(la)?tex/, identifier, figure.link(), doReplace);
         if (codeBlocks.length === 0) return false;
 
         codeBlocks.forEach(async (block: RegExpExecArray) => {
@@ -83,7 +83,7 @@ async function insertEmbedding(pastePosition: 'above' | 'below', doReplace: bool
 }
 
 /** Locates LaTeX code blocks containing the specified figure identifier and their surrounding embeddings */
-function findMatchingCodeBlocks(content: string, language: RegExp, identifier: RegExp, link: string, doReplace?: boolean): RegExpExecArray[] {
+function findMatchingCodeBlocks(content: string, language: RegExp, identifier: RegExp, link: string, doReplace?: boolean): RegExpMatchArray[] {
     const alreadyLinked: RegExp = r.group(r.escape(link));
     const codeblock: RegExp = r.concat(
         /```(run-)?/, r.group(language), /[\s\n]/,
@@ -104,7 +104,7 @@ function findMatchingCodeBlocks(content: string, language: RegExp, identifier: R
         (doReplace) ? r.optional(next) : null,
     ), 'g');
 
-    const matches: RegExpExecArray[] = Array.from(content.matchAll(blocksWithEmbeds));
+    const matches: RegExpMatchArray[] = Array.from(content.matchAll(blocksWithEmbeds));
     console.debug(`Searching markdown for`, blocksWithEmbeds, `resulted in `, matches.length, `codeblock(s)`, matches.map(match => match.groups));
     return matches;
 }
