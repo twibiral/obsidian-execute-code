@@ -16,11 +16,11 @@ The result is shown only after the execution is finished. It is not possible to 
 
 <hr></div>
 
-The following [languages are supported](#supported-programming-languages-): C, CPP, Dart, Golang, Groovy, Kotlin, Java, JavaScript, TypeScript, Lean, Lua, CSharp, Prolog, Rust, Python, R, Ruby, Wolfram Mathematica, Haskell, Scala, Racket, F#, Batch, Shell & Powershell, Octave, Maxima, Zig and OCaml.
+The following [languages are supported](#supported-programming-languages-): C, C++, CSharp, Dart, F#, Golang, Groovy, Haskell, Java, JavaScript, Kotlin, Lean, Lua, Maxima, OCaml, Octave, Prolog, Python, R, Racket, Ruby, Rust, Scala, Shell (including Batch & Powershell), SQL, TypeScript, Wolfram Mathematica, Zig.
 
 If you are new to MarkDown or Obsidian.md, you can go to the [Quickstart Guide](#quickstart-guide-) or take a look in to [some blogs and videos that feature this plugin](#featured-in)
 
-Python, Rust, and Octave support embedded plots. All languages support ["magic" commands](#magic-commands-) that help you to access paths in obsidian or show images in your notes.
+Python, R, and Octave support embedded plots. All languages support ["magic" commands](#magic-commands-) that help you to access paths in obsidian or show images in your notes.
 
 You can create code blocks that are executed before or after each code block of the same language and define [global code injections](#global-code-injection-and-reusing-code-blocks-).
 
@@ -54,7 +54,7 @@ In blogs:
 <small>Are you featuring this plugin in your content? Let me know and I will add it here.</small>
 
 
-## Supported programming, typesetting languages 💻
+## Supported programming languages 💻
 
 <details>
 <summary>JavaScript</summary>
@@ -86,28 +86,6 @@ console.log(message);
 </details>
 
 <details>
-<summary>CSharp</summary>
-
-- Requirements: install dotnet core sdk and run in command line `dotnet tool install -g dotnet-script`, then config dotnet-script fullpath.
-
-```cs 
-Console.WriteLine("Hello, World!");  
-```  
-</details>
-
-<details>
-<summary>Dart</summary>
-
-- Requirements: dart sdk is installed and the correct path is set in the settings.
-
-```dart
-void main() {
-  print("Hello World");
-}
-```
-</details>
-
-<details>
 <summary>Python</summary>
 
 - Requirements: Python is installed and the correct path is set in the settings.
@@ -121,7 +99,7 @@ if __name__ == "__main__":
 ```
 
 - By default, Python runs in Notebook Mode. You can turn this off in the settings.
-- Plots with matplotlib/seaborn are embedded in the note by default. You can turn this off in the settings.
+- Plots with matplotlib/seaborn are embedded in the note by default. You can turn this off in the settings. Note that plots are only embedded when `plt.show()` is called.
 
 ```python
 import seaborn as sns
@@ -160,6 +138,61 @@ plot(x, y, type="l")
 </details>
 
 <details>
+<summary>C++</summary>
+
+- Requirements: [Cling](https://github.com/root-project/cling) is installed and correct path is set in the settings.
+- Code will be executed line-by-line without needing a main function.
+
+```cpp
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+void hello(string name) {
+	cout << "Hello " << name << "!\n";
+}
+
+hello("Alice);
+```
+
+- Main functions can be used as an entrypoint by toggling the option in settings.
+
+```cpp
+#include <iostream>
+
+void main() {
+	std::cout << "Hello, World!" << std::endl;
+}
+```
+</details>
+
+<details>
+<summary>C</summary>
+
+- Requirements: [Cling](https://github.com/root-project/cling) is installed and correct path is set in the settings.
+- Code will be executed line-by-line without needing a main function.
+
+```c
+#include <stdio.h>
+
+printf("Hello, World!");
+```
+
+- Main functions can be used as an entrypoint by toggling the option in settings.
+
+```c
+#include <stdio.h>
+
+int main() {
+	printf("Hello, World!");
+	return 0;
+}
+```
+
+</details>
+
+<details>
 <summary>Java</summary>
 
 - Requirements: Java **11 or higher** is installed and the correct path is set in the settings.
@@ -170,6 +203,15 @@ public class HelloWorld {
 		System.out.println("Hello World!");
 	}
 }
+```
+</details>
+
+<details>
+<summary>SQL</summary>
+- Requirements: Have some SQL database installed and the correct path is set in the settings. The default is set to PostgreSQL (`psql`).
+- Make sure you adapt the settings to your database (`-d mydatabase -U myuser -f`)The default is set to .
+```sql
+SELECT * FROM table_name;
 ```
 </details>
 
@@ -265,6 +307,32 @@ Explore [more LaTeX examples](https://antonpusch.de/latex), consult [package doc
 
 </details>
 
+
+
+<details>
+<summary>More supported languages...</summary>
+<details>
+<summary>CSharp</summary>
+
+- Requirements: install dotnet core sdk and run in command line `dotnet tool install -g dotnet-script`, then config dotnet-script fullpath.
+
+```cs 
+Console.WriteLine("Hello, World!");  
+```  
+</details>
+
+<details>
+<summary>Dart</summary>
+
+- Requirements: dart sdk is installed and the correct path is set in the settings.
+
+```dart
+void main() {
+  print("Hello World");
+}
+```
+</details>
+
 <details>
 <summary>Lua</summary>
 
@@ -288,60 +356,7 @@ def main : IO Unit :=
 ```
 </details>
 
-<details>
-<summary>C++</summary>
 
-- Requirements: [Cling](https://github.com/root-project/cling) is installed and correct path is set in the settings.
-- Code will be executed line-by-line without needing a main function.
-
-```cpp
-#include <iostream>
-#include <string>
-
-using namespace std;
-
-void hello(string name) {
-	cout << "Hello " << name << "!\n";
-}
-
-hello("Alice);
-```
-
-- Main functions can be used as an entrypoint by toggling the option in settings.
-
-```cpp
-#include <iostream>
-
-void main() {
-	std::cout << "Hello, World!" << std::endl;
-}
-```
-</details>
-
-<details>
-<summary>C</summary>
-
-- Requirements: [Cling](https://github.com/root-project/cling) is installed and correct path is set in the settings.
-- Code will be executed line-by-line without needing a main function.
-
-```c
-#include <stdio.h>
-
-printf("Hello, World!");
-```
-
-- Main functions can be used as an entrypoint by toggling the option in settings.
-
-```c
-#include <stdio.h>
-
-int main() {
-	printf("Hello, World!");
-	return 0;
-}
-```
-
-</details>
 
 <details>
 <summary>Shell</summary>
@@ -586,16 +601,11 @@ print_endline "Hello, OCaml!"
 print("Hello, world!")
 ```
 </details>
-
+</details>
 
 Squiggle: For Squiggle support take a look at the [Obsidian Squiggle plugin](https://github.com/jqhoogland/obsidian-squiggle) by @jqhoogland.
 
-Support for the following is planned:
 
-- Matlab
-- Julia Lang
-
-Open for suggestions.
 
 ## Magic Commands 🪄
 
@@ -612,6 +622,7 @@ The following magic commands are supported:
 - `@show(ImagePath, Width, Height)`: Displays an image at the given path in the note.
 - `@show(ImagePath, Width, Height, Alignment[center|left|right])`: Displays an image at the given path in the note.
 - `@html(HtmlSource)`: Displays HTML in the note
+- `@content`: Inserts the html content of the note in the code block. ([Here you find a nice example for the usage of this command.](https://github.com/twibiral/obsidian-execute-code/pull/390))
 
 (`@show(...)` and `@html(...)` are only supported for JavaScript and Python yet.)
 (The old commands `@note` and `@vault` are still supported, but may be removed in the future.)
