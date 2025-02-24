@@ -25,7 +25,7 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
 				await tab.plugin.saveSettings();
 			}));
 	new Setting(containerEl)
-		.setName('Rungch path')
+		.setName('Runghc path')
 		.setDesc('The path to your runghc installation.')
 		.addText(text => text
 			.setValue(tab.plugin.settings.runghcPath)
