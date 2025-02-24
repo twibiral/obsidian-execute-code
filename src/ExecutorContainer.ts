@@ -9,6 +9,7 @@ import ExecuteCodePlugin, {LanguageId} from "./main";
 import RExecutor from "./executors/RExecutor.js";
 import CExecutor from "./executors/CExecutor";
 import FSharpExecutor from "./executors/FSharpExecutor";
+import LatexExecutor from "./executors/LatexExecutor";
 
 const interactiveExecutors: Partial<Record<LanguageId, any>> = {
 	"js": NodeJSExecutor,
@@ -20,7 +21,8 @@ const nonInteractiveExecutors: Partial<Record<LanguageId, any>> = {
 	"prolog": PrologExecutor,
 	"cpp": CppExecutor,
 	"c": CExecutor,
-	"fsharp": FSharpExecutor
+	"fsharp": FSharpExecutor,
+	"latex" : LatexExecutor,
 };
 
 export default class ExecutorContainer extends EventEmitter implements Iterable<Executor> {

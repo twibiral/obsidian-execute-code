@@ -58,15 +58,18 @@ button.clear-button {
 	z-index: 100;
 }
 
-pre:hover .run-code-button, pre:hover .clear-button {
+pre:hover .run-code-button,
+pre:hover .clear-button {
 	display: block;
 }
 
-pre:hover .run-button-disabled, pre:hover .clear-button-disabled {
+pre:hover .run-button-disabled,
+pre:hover .clear-button-disabled {
 	display: none;
 }
 
-.run-button-disabled, .clear-button-disabled {
+.run-button-disabled,
+.clear-button-disabled {
 	display: none;
 }
 
@@ -79,7 +82,7 @@ pre:hover code.language-output {
 }
 
 .use-custom-output-color code.language-output span.stdout {
-    color: var(--code-output-text-color) !important;
+	color: var(--code-output-text-color) !important;
 }
 
 :not(.use-custom-error-color) code.language-output span.stderr {
@@ -94,7 +97,8 @@ code.language-output hr {
 	margin: 0 0 1em;
 }
 
-.settings-code-input-box textarea, .settings-code-input-box input {
+.settings-code-input-box textarea,
+.settings-code-input-box input {
 	min-width: 400px;
 	min-height: 100px;
 	font-family: monospace;
@@ -152,7 +156,7 @@ input.interactive-stdin {
 	color: var(--icon-color-hover);
 }
 
-.manage-executors-view > div {
+.manage-executors-view>div {
 	position: relative;
 }
 
@@ -163,10 +167,6 @@ input.interactive-stdin {
 
 .has-run-code-button {
 	position: relative;
-}
-
-.has-run-code-button pre {
-	z-index: 1;
 }
 
 .load-state-indicator {
@@ -194,7 +194,6 @@ input.interactive-stdin {
 
 .load-state-indicator.visible {
 	transform: translateX(0);
-	transform: translateX(var(--folding-offset, 0));
 	opacity: 1;
 	pointer-events: all;
 }
@@ -231,6 +230,7 @@ input.interactive-stdin {
 	pre.language-output {
 		display: block;
 	}
+
 	/* Hide code blocks with language-output only in markdown view using "markdown-preview-view"*/
 	.markdown-preview-view pre.language-output {
 		display: block;
@@ -239,4 +239,38 @@ input.interactive-stdin {
 	.markdown-rendered pre.language-output {
 		display: block;
 	}
+}
+
+/* Center LaTeX vector graphics, confine to text width */
+.center-latex-figures img[src*="/figure%20"][src$=".svg"],
+.center-latex-figures img[src*="/figure%20"][src*=".svg?"],
+.center-latex-figures .stdout img[src*=".svg?"] {
+	display: block;
+	margin: auto;
+	max-width: 100%;
+}
+
+/* Invert LaTeX vector graphics in dark mode */
+.theme-dark.invert-latex-figures img[src*="/figure%20"][src$=".svg"],
+.theme-dark.invert-latex-figures img[src*="/figure%20"][src*=".svg?"],
+.theme-dark.invert-latex-figures .stdout img[src*=".svg?"] {
+	filter: invert(1);
+}
+
+/* Allow descriptions in LaTeX settings to be selected and copied. */
+.selectable-description-text {
+	-moz-user-select: text;
+	-khtml-user-select: text;
+	-webkit-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
+}
+
+.insert-figure-icon {
+	margin-left: 0.5em;
+}
+
+/* Try to keep description of cmd arguments in LaTeX settings on the same line. */
+code.selectable-description-text {
+	white-space: nowrap;
 }

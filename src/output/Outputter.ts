@@ -1,9 +1,10 @@
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 import loadEllipses from "../svgs/loadEllipses";
 import loadSpinner from "../svgs/loadSpinner";
 import FileAppender from "./FileAppender";
-import {MarkdownView, Setting} from "obsidian";
-import {ExecutorSettings} from "../settings/Settings";
+import { App, Component, MarkdownRenderer, MarkdownView, normalizePath, setIcon } from "obsidian";
+import { ExecutorSettings } from "../settings/Settings";
+import { ChildProcess } from "child_process";
 
 export const TOGGLE_HTML_SIGIL = `TOGGLE_HTML_${Math.random().toString(16).substring(2)}`;
 
@@ -29,9 +30,15 @@ export class Outputter extends EventEmitter {
 	settings: ExecutorSettings;
 
 
-	constructor(codeBlock: HTMLElement, settings: ExecutorSettings, view: MarkdownView) {
+	runningSubprocesses = new Set<ChildProcess>();
+	app: App;
+	srcFile: string;
+
+	constructor(codeBlock: HTMLElement, settings: ExecutorSettings, view: MarkdownView, app: App, srcFile: string) {
 		super();
 		this.settings = settings;
+		this.app = app;
+		this.srcFile = srcFile;
 
 		this.inputState = this.settings.allowInput ? "INACTIVE" : "NOT_DOING";
 		this.codeBlockElement = codeBlock;
@@ -67,14 +74,14 @@ export class Outputter extends EventEmitter {
 		this.saveToFile.clearOutput();
 
 		// Kill code block
-		this.killBlock();
+		this.killBlock(this.runningSubprocesses);
 	}
 
 	/**
 	 * Kills the code block.
 	 * To be overwritten in an executor's run method
 	 */
-	killBlock() {}
+	killBlock(subprocesses?: Set<ChildProcess>) { }
 
 	/**
 	 * Hides the output and clears the log. Visually, restores the code block to its initial state.
@@ -93,6 +100,38 @@ export class Outputter extends EventEmitter {
 	write(text: string) {
 		this.processSigilsAndWriteText(text);
 
+	}
+
+
+	/**
+	 * Add an icon to the outputter.
+	 * @param icon Name of the icon from the lucide library {@link https://lucide.dev/}
+	 * @param hoverTooltip Title to display on mouseover
+	 * @param styleClass CSS class for design tweaks
+	 * @returns HTMLAnchorElement to add a click listener, for instance
+	 */
+	writeIcon(icon: string, hoverTooltip?: string, styleClass?: string | string[]): HTMLAnchorElement {
+		const button: HTMLAnchorElement = this.lastPrintElem.createEl('a', { title: hoverTooltip, cls: styleClass });
+		setIcon(button, icon);
+		return button;
+	}
+
+	/**
+	 * Add a segment of rendered markdown to the outputter
+	 * @param markdown The Markdown source code to be rendered as HTML
+	 * @param addLineBreak whether to start a new line in stdout afterwards
+	 * @param relativeFile Path of the markdown file. Used to resolve relative internal links.
+	 */
+	async writeMarkdown(markdown: string, addLineBreak?: boolean, relativeFile = this.srcFile) {
+		if (relativeFile !== this.srcFile) {
+			relativeFile = normalizePath(relativeFile);
+		}
+		const renderedEl = document.createElement("div");
+		await MarkdownRenderer.render(this.app, markdown, renderedEl, relativeFile, new Component());
+		for (const child of Array.from(renderedEl.children)) {
+			this.write(TOGGLE_HTML_SIGIL + child.innerHTML + TOGGLE_HTML_SIGIL);
+		}
+		if (addLineBreak) this.write(`\n`);
 	}
 
 	/**
@@ -167,9 +206,9 @@ export class Outputter extends EventEmitter {
 	 * Mark the block as running
 	 */
 	startBlock() {
-		if(!this.loadStateIndicatorElement) this.addLoadStateIndicator();
+		if (!this.loadStateIndicatorElement) this.addLoadStateIndicator();
 		setTimeout(() => {
-			if(this.blockRunState !== "FINISHED")
+			if (this.blockRunState !== "FINISHED")
 				this.loadStateIndicatorElement.classList.add("visible");
 		}, 100);
 
@@ -215,7 +254,7 @@ export class Outputter extends EventEmitter {
 		this.loadStateIndicatorElement.classList.add("load-state-indicator");
 
 		// Kill code block on clicking load state indicator
-		this.loadStateIndicatorElement.addEventListener('click', () => this.killBlock());
+		this.loadStateIndicatorElement.addEventListener('click', () => this.killBlock(this.runningSubprocesses));
 
 		this.getParentElement().parentElement.appendChild(this.loadStateIndicatorElement);
 	}
@@ -328,7 +367,7 @@ export class Outputter extends EventEmitter {
 	 * @param text text to append
 	 */
 	private escapeAwareAppend(element: HTMLElement, text: string) {
-		if(this.escapeHTML) {
+		if (this.escapeHTML) {
 			// If we're escaping HTML, just append the text
 			element.appendChild(document.createTextNode(text));
 
@@ -348,7 +387,7 @@ export class Outputter extends EventEmitter {
 	 * @param element element to append to
 	 */
 	private writeHTMLBuffer(element: HTMLElement) {
-		if(this.htmlBuffer !== "") {
+		if (this.htmlBuffer !== "") {
 			this.makeOutputVisible();
 
 			const content = document.createElement("div");
@@ -388,7 +427,7 @@ export class Outputter extends EventEmitter {
 	 * @see {@link clear()}
 	 */
 	private makeOutputVisible() {
-        this.closeInput();
+		this.closeInput();
 		if (!this.clearButton) this.addClearButton();
 		if (!this.outputElement) this.addOutputElement();
 

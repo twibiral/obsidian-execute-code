@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="72"
+   height="10.666667"
+   viewBox="0 0 72 10.666667"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath1">
+      <path
+         d="M 0,0 H 595.276 V 841.89 H 0 Z"
+         transform="matrix(1,0,0,-1,-148.712,707.12502)"
+         id="path1" />
+    </clipPath>
+  </defs>
+  <g
+     id="g1">
+    <g
+       id="g2">
+      <text
+         xml:space="preserve"
+         transform="matrix(1.3333333,0,0,1.3333333,-0.384,10.5)"
+         clip-path="url(#clipPath1)"
+         id="text1"><tspan
+           style="font-variant:normal;font-weight:normal;font-size:9.96264px;font-family:'Segoe UI';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           x="0"
+           dx="0 0 0 0 0 2.7297633 -0.38854295"
+           y="0"
+           id="tspan1">HelloWorld!</tspan></text>
+    </g>
+  </g>
+</svg>

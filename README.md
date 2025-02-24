@@ -54,7 +54,7 @@ In blogs:
 <small>Are you featuring this plugin in your content? Let me know and I will add it here.</small>
 
 
-## Supported programming languages 💻
+## Supported programming, typesetting languages 💻
 
 <details>
 <summary>JavaScript</summary>
@@ -171,6 +171,98 @@ public class HelloWorld {
 	}
 }
 ```
+</details>
+
+<details>
+<summary>LaTeX</summary>
+
+## LaTeX
+
+Requirements: LaTeX distribution like [MiKTeX](https://miktex.org/) or [TeX Live](https://www.tug.org/texlive/) is installed and the correct paths are set in the settings.
+
+### Minimal example
+
+Injects default document class. Consider setting *Crop to content*.
+
+```latex
+\begin{document}
+Hello World!
+\end{document}
+```
+
+<p align="center"><img src="images/figure_minimal_example.svg" alt="Minimal example" /></p>
+
+
+### Name output file
+
+Set filename with `\title{…}`. Adds prefix `figure ` to avoid file name collisions, group all generated files, and for appearance CSS selectors. Click run again will overwrite the file, and refresh its embeddings in the active view.
+
+```
+![[figure time of day.svg]]
+```
+```latex
+\documentclass[border=2pt]{standalone} \title{time of day}
+\usepackage{datetime2}
+\begin{document}
+The time is \DTMcurrenttime.
+\end{document}
+```
+
+<p align="center"><img src="images/figure_time_of_day.svg" alt="Time of day" /></p>
+
+### Include attachments
+
+Include files relative to the vault's attachment folder. Consider [listings](http://mirrors.ctan.org/macros/latex/contrib/listings/listings.pdf) for source code listings, [markdown](http://mirrors.ctan.org/macros/generic/markdown/markdown.html) for inputting markdown files as LaTeX code, and `\input{…}` to paste plaintext or LaTeX source files.
+Layout with [graphbox](http://mirrors.ctan.org/macros/latex/contrib/graphbox/graphbox.pdf) for vertical alignment, or [tabularray](http://mirrors.ctan.org/macros/latex/contrib/tabularray/tabularray.pdf) for more complex alignment.
+
+```latex
+\documentclass{standalone} \title{include_attachments}
+\usepackage{graphicx}
+\begin{document}
+\includegraphics{figure time of day.pdf} \quad
+\includegraphics{figure time of day.pdf}
+\end{document}
+```
+
+<p align="center"><img src="images/figure_include_attachments.svg" alt="Include attachments" /></p>
+
+### Automatically reruns to get cross-references right.
+
+For instance reference a label that appears later in the document. The plugin detects `LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.` during compilation and reruns until resolved.
+
+```latex
+\documentclass{article} \title{sum of two poisson distribution}
+\usepackage{mathtools,amsfonts}
+\begin{document}
+As seen in \eqref{eq:poisson}, we use convolutions of probability distributions for two independent poisson distributed random variables.
+\begin{align*} \MoveEqLeft
+\mathbb{P}(X + Y = k) = \sum_{m = 0}^\infty \mathbb{P}(X = m)\, \mathbb{P}(X = m - k) \tag{1}\label{eq:poisson} \\&
+= \sum_{m = 0}^k \frac{\lambda^m\, e^{-\lambda}}{m!} \cdot \frac{\mu^{k - m}\, e^{-\mu}}{(k - m)!} = \ldots 
+\end{align*} 
+\end{document}
+```
+
+<p align="center"><img src="images/figure_sum_of_two_poisson_distributions.svg" alt="Sum of two poisson distributions" /></p>
+
+Not all rerun requirements are easy to detect. Consider adding the package [lastpage](http://mirrors.ctan.org/macros/latex/contrib/lastpage/lastpage.pdf) to force a rerun, by creating an unresolved reference.
+
+```latex
+\documentclass{article} \title{rerun sidenotes table}
+\usepackage{sidenotes,tabularray,lipsum,lastpage}
+\begin{document} \SetTblrInner{hlines}
+\sidenotetext{This is a marginal note.} \lipsum[1][1-3] 
+\begin{table*}
+\begin{tblr}[tall, caption={Expand table into page margins}]{X}
+    \lipsum[3][1-4]
+\end{tblr}
+\end{table*}
+\end{document}
+```
+
+<p align="center"><img src="images/figure_sidenotes_comparison.svg" alt="Sum of two poisson distributions" /></p>
+
+Explore [more LaTeX examples](https://antonpusch.de/latex), consult [package documentations](https://texdoc.org/), or learn about [LuaLaTeX](http://mirrors.ctan.org/obsolete/info/luatex/lualatex-doc/lualatex-doc.pdf).
+
 </details>
 
 <details>

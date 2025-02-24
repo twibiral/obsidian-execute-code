@@ -4,7 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
-
+## [Unreleased]
+### Added
+- Support for LaTeX with image conversion to PDF, SVG, PNG (Thanks to @yetenol)
+- LaTeX: Generated graphics are saved as attachment to your vault
+- LaTeX: Option to crop PDF to content to remove excess whitespace
+- LaTeX: Option to adopt Obsidian's font settings for PDF generation
 
 ## [2.0.0]
 ### Added
