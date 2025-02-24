@@ -76,13 +76,13 @@ export default class ExecuteCodePlugin extends Plugin {
 			callback: () => runAllCodeBlocks(this.app.workspace)
 		})
 
-		if (!this.settings.releaseNote2_0_0wasShowed) {
+		if (!this.settings.releaseNote2_1_0wasShowed) {
 			this.app.workspace.onLayoutReady(() => {
 				new ReleaseNoteModel(this.app).open();
 			})
 
 			// Set to true to prevent the release note from showing again
-			this.settings.releaseNote2_0_0wasShowed = true;
+			this.settings.releaseNote2_1_0wasShowed = true;
 			this.saveSettings();
 		}
 
