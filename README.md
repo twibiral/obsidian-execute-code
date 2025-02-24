@@ -7,7 +7,7 @@
 
 </div>
 
-This plugin allows you to execute code snippets in code blocks in your notes. The plugin adds a 'run' button for code blocks in supported languages. Clicking them results in the code of the block being executed locally. After the execution the result of the execution is showed. An interactive input element is created when your code snippets reads expects user input.
+This plugin allows you to execute code snippets in code blocks in your notes. The plugin adds a 'run' button for code blocks in supported languages. Clicking them results in the code of the block being executed locally. After the execution the result of the execution is shown. An interactive input element is created when your code snippets reads expects user input.
 
 The result is shown only after the execution is finished. It is not possible to enter text on the command line into the executed program now.
 
@@ -33,7 +33,7 @@ Take a look at the [changelog](CHANGELOG.md) to see what has changed in recent v
 <br>
 <div align='center'>
 
-If you like this plugin and use it a lot, please consider supporting me in continuing the development of this plugin. You can also sponsor a new feature or language integration directly, if you want to speed-up the development for a specific feature you need.
+If you like this plugin and use it a lot, please consider supporting me in continuing the development of this plugin. You can also sponsor a new feature or language integration directly, if you want to speed up the development for a specific feature you need.
 
 [![GitHub Sponsors](https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=white)](https://github.com/sponsors/twibiral)   [![Buy me a coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/timwibiral)
 
@@ -76,8 +76,8 @@ hello("Bob")
 <details>
 <summary>TypeScript</summary>
 
-- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`. (`-g` means global install)
-- Problems: If you use your global node.js installation and it doesn't work try to set your `ts-node` path in the settings to `npx ts-node` instead of `ts-node`.
+- Requirements: Node.js installed then run in command line `npm install typescript -g` and `npm install ts-node -g`. (`-g` means global installation)
+- Problems: If you use your global node.js installation, and it doesn't work try to set your `ts-node` path in the settings to `npx ts-node` instead of `ts-node`.
 
 ```ts  
 let message: string = 'Hello, World!';
@@ -373,7 +373,7 @@ ls -la
 <summary>Powershell</summary>
 
 - Requirements: Used to execute shell commands on Windows. Default is Powershell but can be set to your preferred shell in the settings.
-- On MacOS: You probably need to change the command to use from `powershell` to `pwsh` in the plugin settings. Make sure you set the right path.
+- On macOS: You probably need to change the command to use from `powershell` to `pwsh` in the plugin settings. Make sure you set the right path.
 
 ```powershell
 echo "Hello World!"
@@ -713,9 +713,9 @@ This code block is added before each python block you define below in the note a
 
 `post` blocks work the same way, but the code in post blocks is executed _after_ your other code blocks.
 
-Pre/Post blocks will only apply to code blocks defined below them, and will only apply to code blocks from the same language.
+Pre-/post-blocks will only apply to code blocks defined below them, and will only apply to code blocks from the same language.
 
-You can also have a pre and post block at the same time by specifying `{pre, post}`
+You can also have a pre- and post-block at the same time by specifying `{pre, post}`
 
 Note, the `pre`/`post` arguments are special in that you don't need to explicitly state a key/value pair, however you can do so if you wish:
 
@@ -723,7 +723,7 @@ Note, the `pre`/`post` arguments are special in that you don't need to explicitl
 
 ### Labelled Code Blocks
 
-You can label specific code blocks with the `label='string'` argument, then import them explicitly in other blocks with the `import='string'` or `import=['string1', 'string2', ...]` argument so they aren't automatically imported as with pre / post blocks:
+You can label specific code blocks with the `label='string'` argument, then import them explicitly in other blocks with the `import='string'` or `import=['string1', 'string2', ...]` argument so they aren't automatically imported as with pre-/post-blocks:
 
 `````
 ```python {label='block 1'}
@@ -791,7 +791,7 @@ preview mode.
 To enable this feature, you have to enable the setting `Persistent Output` in the plugin settings.
 We recommend reopening open notes that contain code blocks after enabling this feature.
 
-This feature is still experimental and may not work as expected in all cases.
+⚠ This feature is still experimental and may not work as expected in all cases!
 We recommend that you disable this feature if you encounter any problems.
 
 
@@ -848,19 +848,14 @@ Do not execute code from sources you don't know or code you don't understand. Ex
 
 - On Linux, Snap/Flatpak/AppImage installations of Obsidian run in an isolated environment. As such, they will not have access to any of your installed programs. If you are on Linux, make sure to install the `.deb` version of Obsidian. If your distro isn't compatible with `.deb` files, you may see issues.
 - Missing when `run` button after switching the theme: Try to close and reopen your notes and wait for a few minutes. It seems like obsidian doesn't call the postprocessors after the theme switch.
-- Pre- / Post-blocks may not be executed if the file contains duplicate code blocks.
+- Pre-/Post-blocks may not be executed if the file contains duplicate code blocks.
 - In Python, Embed Plots may not be off while Notebook Mode is on
-
-## Future Work 📑
-
-- Error warning when the execution fails (e.g. when python isn't installed)
-- Test if this plugin works in combination with dataview.
 
 ## Contribution 🤝
 
-All contributions are welcome. Just create a merge request or email me: tim.wibiral(at)uni-ulm.de
+All contributions are welcome. Just create a merge request or email me: contact(at)tim-wibiral.de
 
-The bullet points in Future Work are a good starting point if you want to help.
+The [open issues](https://github.com/twibiral/obsidian-execute-code/issues) are a good starting point to find something to work on. Some are marked as ["good first issue"](https://github.com/twibiral/obsidian-execute-code/labels/good%20first%20issue) and are easier to solve.
 
 ## Contributors ♥
 
