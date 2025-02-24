@@ -148,7 +148,7 @@ plt.show()
 <summary>R</summary>
 
 - Requirements: R is installed and the correct path is set in the settings.
-
+- For cool additional features for R try out [the Ridian plugin](https://github.com/MichelNivard/Ridian)
 ```r
 hello <- function(name){
 	print(paste("Hello", name, sep = " "))
