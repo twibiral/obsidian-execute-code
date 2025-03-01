@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 ### Changed
-- Fix the vault link generation for macOS
+- Fix the vault and image link generation for macOS
 
 
 ## [2.1.0]
