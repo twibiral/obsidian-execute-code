@@ -43,9 +43,12 @@ const MAXIMA_PLOT_REGEX = /^plot2d\s*\(.*\[.+\]\)\s*[$;]/gm;
  * @returns The transformed source code.
  */
 export function expandVaultPath(source: string, vaultPath: string): string {
+	// Remove the leading slash (if it is there) and replace all backslashes with forward slashes.
+	let vaultPathClean = vaultPath.replace(/\\/g, "/").replace(/^\//, "");
+
 	source = source.replace(VAULT_PATH_REGEX, `"${vaultPath.replace(/\\/g, "/")}"`);
-	source = source.replace(VAULT_URL_REGEX, `"${Platform.resourcePathPrefix + vaultPath.replace(/\\/g, "/")}"`);
-	source = source.replace(VAULT_REGEX, `"${Platform.resourcePathPrefix + vaultPath.replace(/\\/g, "/")}"`);
+	source = source.replace(VAULT_URL_REGEX, `"${Platform.resourcePathPrefix + vaultPathClean}"`);
+	source = source.replace(VAULT_REGEX, `"${Platform.resourcePathPrefix + vaultPathClean}"`);
 
 	return source;
 }
