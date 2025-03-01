@@ -1,7 +1,7 @@
 {
 	"id": "execute-code",
 	"name": "Execute Code",
-	"version": "2.1.0",
+	"version": "2.1.1",
 	"minAppVersion": "1.7.2",
 	"description": "Allows you to execute code snippets within a note. Support C, C++, Python, R, JavaScript, TypeScript, LaTeX, SQL, and many more.",
 	"author": "twibiral",
