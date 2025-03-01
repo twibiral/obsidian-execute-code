@@ -62,9 +62,12 @@ export function expandVaultPath(source: string, vaultPath: string): string {
  * @returns The transformed source code.
  */
 export function expandNotePath(source: string, notePath: string): string {
+	// Remove the leading slash (if it is there) and replace all backslashes with forward slashes.
+	let notePathClean = notePath.replace(/\\/g, "/").replace(/^\//, "");
+
 	source = source.replace(CURRENT_NOTE_PATH_REGEX, `"${notePath.replace(/\\/g, "/")}"`);
-	source = source.replace(CURRENT_NOTE_URL_REGEX, `"${Platform.resourcePathPrefix + notePath.replace(/\\/g, "/")}"`);
-	source = source.replace(CURRENT_NOTE_REGEX, `"${Platform.resourcePathPrefix + notePath.replace(/\\/g, "/")}"`);
+	source = source.replace(CURRENT_NOTE_URL_REGEX, `"${Platform.resourcePathPrefix + notePathClean}"`);
+	source = source.replace(CURRENT_NOTE_REGEX, `"${Platform.resourcePathPrefix + notePathClean}"`);
 
 	return source;
 }
@@ -161,7 +164,7 @@ export function expandPythonPlots(source: string, toggleHtmlSigil: string): stri
 export function expandRPlots(source: string): string {
 	const matches = source.matchAll(R_PLOT_REGEX);
 	for (const match of matches) {
-		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/");
+		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/").replace(/^\//, "");
 		const substitute = `png("${tempFile}"); ${match[0]}; dev.off(); cat('${TOGGLE_HTML_SIGIL}<img src="${Platform.resourcePathPrefix + tempFile}" align="center">${TOGGLE_HTML_SIGIL}')`;
 
 		source = source.replace(match[0], substitute);
@@ -219,7 +222,7 @@ function expandJsShowImage(source: string): string {
 		const height = match.groups.height;
 		const alignment = match.groups.align;
 
-		const image = expandShowImage(imagePath.replace(/\\/g, "\\\\"), width, height, alignment);
+		const image = expandShowImage(imagePath.replace(/\\/g, "\\\\").replace(/^\//, ""), width, height, alignment);
 
 		source = source.replace(match[0], "console.log(\'" + TOGGLE_HTML_SIGIL + image + TOGGLE_HTML_SIGIL + "\')");
 		console.log(source);
@@ -266,7 +269,7 @@ function expandShowImage(imagePath: string, width: string = "0", height: string 
 export function expandOctavePlot(source: string): string {
 	const matches = source.matchAll(OCTAVE_PLOT_REGEX);
 	for (const match of matches) {
-		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/");
+		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/").replace(/^\//, "");
 		const substitute = `${match[0]}; print -dpng ${tempFile}; disp('${TOGGLE_HTML_SIGIL}<img src="${Platform.resourcePathPrefix + tempFile}" align="center">${TOGGLE_HTML_SIGIL}');`;
 
 		source = source.replace(match[0], substitute);
@@ -278,7 +281,7 @@ export function expandOctavePlot(source: string): string {
 export function expandMaximaPlot(source: string): string {
 	const matches = source.matchAll(MAXIMA_PLOT_REGEX);
 	for (const match of matches) {
-		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/");
+		const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/").replace(/^\//, "");
 		const updated_plot_call = match[0].substring(0, match[0].lastIndexOf(')')) + `, [png_file, "${tempFile}"])`;
 		const substitute = `${updated_plot_call}; print ('${TOGGLE_HTML_SIGIL}<img src="${Platform.resourcePathPrefix + tempFile}" align="center">${TOGGLE_HTML_SIGIL}');`;
 
