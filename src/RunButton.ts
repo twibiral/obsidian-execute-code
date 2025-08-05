@@ -17,7 +17,8 @@ export const codeBlockHasButtonClass: string = "has-run-code-button";
 
 interface CodeBlockContext {
     srcCode: string;
-    button: HTMLButtonElement;
+	injectedCode: string,
+	button: HTMLButtonElement;
     language: LanguageId;
     markdownFile: string;
     outputter: Outputter;
@@ -37,7 +38,7 @@ async function handleExecution(block: CodeBlockContext) {
     const s: ExecutorSettings = block.outputter.settings;
 
     button.className = disabledClass;
-    block.srcCode = await new CodeInjector(app, s, language).injectCode(srcCode);
+    block.injectedCode = await new CodeInjector(app, s, language).injectCode(srcCode);
 
     switch (language) {
         case "js": return runCode(s.nodePath, s.nodeArgs, s.jsFileExtension, block, { transform: (code) => macro.expandJS(code) });
@@ -77,7 +78,7 @@ async function handleExecution(block: CodeBlockContext) {
         case "ocaml": return runCode(s.ocamlPath, s.ocamlArgs, "ocaml", block, { shell: true });
         case "php": return runCode(s.phpPath, s.phpArgs, s.phpFileExtension, block, { shell: true });
         case "latex":
-            const outputPath: string = await retrieveFigurePath(block.srcCode, s.latexFigureTitlePattern, block.markdownFile, s);
+            const outputPath: string = await retrieveFigurePath(block.injectedCode, s.latexFigureTitlePattern, block.markdownFile, s);
             const invokeCompiler: string = [s.latexTexfotArgs, s.latexCompilerPath, s.latexCompilerArgs].join(" ");
             return (!s.latexDoFilter)
                 ? runCode(s.latexCompilerPath, s.latexCompilerArgs, outputPath, block, { transform: (code) => modifyLatexCode(code, s) })
@@ -151,7 +152,8 @@ function addToCodeBlock(codeBlock: HTMLElement, file: string, view: MarkdownView
     pre.appendChild(button);
 
     const block: CodeBlockContext = {
-        srcCode: srcCode,
+	    srcCode: srcCode,
+	    injectedCode: "",
         language: canonicalLanguage,
         markdownFile: file,
         button: button,
@@ -195,11 +197,11 @@ function createButton(): HTMLButtonElement {
  */
 function runCode(cmd: string, cmdArgs: string, ext: string, block: CodeBlockContext, options?: { shell?: boolean; transform?: (code: string) => string; }) {
     const useShell: boolean = (options?.shell) ? options.shell : false;
-    if (options?.transform) block.srcCode = options.transform(block.srcCode);
+    if (options?.transform) block.injectedCode = options.transform(block.injectedCode);
     if (!useShell) block.outputter.startBlock();
 
     const executor = block.executors.getExecutorFor(block.markdownFile, block.language, useShell);
-    executor.run(block.srcCode, block.outputter, cmd, cmdArgs, ext).then(() => {
+    executor.run(block.injectedCode, block.outputter, cmd, cmdArgs, ext).then(() => {
         block.button.className = buttonClass;
         if (!useShell) {
             block.outputter.closeInput();
