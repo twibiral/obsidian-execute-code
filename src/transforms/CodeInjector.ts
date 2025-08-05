@@ -53,9 +53,10 @@ export class CodeInjector {
 
 		const realLanguage = /[^-]*$/.exec(language)[0];
 		const globalInject = this.settings[`${realLanguage}Inject` as keyof ExecutorSettings];
+		const globalInjectPost = this.settings[`${realLanguage}InjectPost` as keyof ExecutorSettings];
 		let injectedCode = `${this.namedImportSrcCode}\n${srcCode}`;
 		if (!this.mainArgs.ignore)
-			injectedCode = `${globalInject}\n${this.prependSrcCode}\n${injectedCode}\n${this.appendSrcCode}`;
+			injectedCode = `${globalInject}\n${this.prependSrcCode}\n${injectedCode}\n${this.appendSrcCode}\n${globalInjectPost}`;
 		else {
 			// Handle single ignore
 			if (!Array.isArray(this.mainArgs.ignore) && this.mainArgs.ignore !== "all")

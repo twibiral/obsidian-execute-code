@@ -222,5 +222,21 @@ export class SettingsTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					});
 			});
+
+		new Setting(containerEl)
+			.setName(`Inject post ${languageAlt} code`)
+			.setDesc(`Code to add to the bottom of every ${languageAlt} code block before running.`)
+			.setClass('settings-code-input-box')
+			.addTextArea(textarea => {
+				// @ts-ignore
+				const val = this.plugin.settings[`${language}InjectPost` as keyof ExecutorSettings as string]
+				return textarea
+					.setValue(val)
+					.onChange(async (value) => {
+						(this.plugin.settings[`${language}InjectPost` as keyof ExecutorSettings] as string) = value;
+						console.log(`${language} inject post set to ${value}`);
+						await this.plugin.saveSettings();
+					});
+			});
 	}
 }
