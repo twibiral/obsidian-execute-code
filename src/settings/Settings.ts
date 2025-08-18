@@ -142,6 +142,11 @@ export interface ExecutorSettings {
 	phpArgs: string;
 	phpFileExtension: string;
 	phpInject: string;
+	juliaPath: string;
+	juliaArgs: string;
+	juliaFileExtension: string;
+	juliaEmbedPlots: boolean;
+	juliaInject: string;
 	scalaPath: string;
 	scalaArgs: string;
 	scalaFileExtension: string;
@@ -210,6 +215,7 @@ export interface ExecutorSettings {
 	zigInteractive: boolean;
 	ocamlInteractive: boolean;
 	phpInteractive: boolean;
+	juliaInteractive: boolean;
 }
 
 
@@ -387,6 +393,11 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	phpArgs: "",
 	phpFileExtension: "php",
 	phpInject: "",
+	juliaPath: "julia",
+	juliaArgs: "",
+	juliaEmbedPlots: true,
+	juliaFileExtension: "jl",
+	juliaInject: "",
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
@@ -422,4 +433,5 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	zigInteractive: false,
 	ocamlInteractive: false,
 	phpInteractive: false,
+	juliaInteractive: true,
 }

@@ -10,11 +10,13 @@ import RExecutor from "./executors/RExecutor.js";
 import CExecutor from "./executors/CExecutor";
 import FSharpExecutor from "./executors/FSharpExecutor";
 import LatexExecutor from "./executors/LatexExecutor";
+import JuliaExecutor from "./executors/JuliaExecutor";
 
 const interactiveExecutors: Partial<Record<LanguageId, any>> = {
 	"js": NodeJSExecutor,
 	"python": PythonExecutor,
-	"r": RExecutor
+	"r": RExecutor,
+	"julia": JuliaExecutor
 };
 
 const nonInteractiveExecutors: Partial<Record<LanguageId, any>> = {

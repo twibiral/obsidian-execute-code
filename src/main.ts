@@ -18,7 +18,7 @@ import * as runButton from './RunButton';
 export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py", "tex"] as const;
 export const canonicalLanguages = ["js", "ts", "cs", "latex", "lean", "lua", "python", "cpp", "prolog", "shell", "groovy", "r",
 	"go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell", "scala", "swift", "racket", "fsharp", "c", "dart",
-	"ruby", "batch", "sql", "octave", "maxima", "applescript", "zig", "ocaml", "php"] as const;
+	"ruby", "batch", "sql", "octave", "maxima", "applescript", "zig", "ocaml", "php", "julia"] as const;
 export const supportedLanguages = [...languageAliases, ...canonicalLanguages] as const;
 export type LanguageId = typeof canonicalLanguages[number];
 

@@ -16,11 +16,11 @@ The result is shown only after the execution is finished. It is not possible to 
 
 <hr></div>
 
-The following [languages are supported](#supported-programming-languages-): C, C++, CSharp, Dart, F#, Golang, Groovy, Haskell, Java, JavaScript, Kotlin, Lean, Lua, Maxima, OCaml, Octave, Prolog, Python, R, Racket, Ruby, Rust, Scala, Shell (including Batch & Powershell), SQL, TypeScript, Wolfram Mathematica, Zig.
+The following [languages are supported](#supported-programming-languages-): C, C++, CSharp, Dart, F#, Golang, Groovy, Haskell, Java, JavaScript, Julia, Kotlin, Lean, Lua, Maxima, OCaml, Octave, Prolog, Python, R, Racket, Ruby, Rust, Scala, Shell (including Batch & Powershell), SQL, TypeScript, Wolfram Mathematica, Zig.
 
 If you are new to MarkDown or Obsidian.md, you can go to the [Quickstart Guide](#quickstart-guide-) or take a look in to [some blogs and videos that feature this plugin](#featured-in)
 
-Python, R, and Octave support embedded plots. All languages support ["magic" commands](#magic-commands-) that help you to access paths in obsidian or show images in your notes.
+Python, R, Julia, and Octave support embedded plots. All languages support ["magic" commands](#magic-commands-) that help you to access paths in obsidian or show images in your notes.
 
 You can create code blocks that are executed before or after each code block of the same language and define [global code injections](#global-code-injection-and-reusing-code-blocks-).
 
@@ -135,6 +135,38 @@ y = c(12, 15, 28, 17, 18)
 x = 1:length(y)
 plot(x, y, type="l")
 ```
+</details>
+
+<details>
+<summary>Julia</summary>
+
+- Requirements: Julia is installed and the correct path is set in the settings. Recommend using [juliaup](https://julialang.org/install/).
+```julia
+println("Hello, world!")
+```
+- By default, Julia runs in Notebook Mode. You can turn this off in the settings.
+- Plots with Plots.jl are embedded in the note by default. You can turn this off in the settings. Note that plots are only embedded when `display(current())` is called.
+```julia
+using Plots
+x = range(0, 10, length=100); y = sin.(x); plot(x, y)
+display(current())
+```
+- Note: the `ans` output from the last expression is always printed; this is a limitation of interacting with Julia over `stdin`. You can put expressions on the same line separated by semicolons (though the last expression's result will be printed unless you make it `nothing`), and you can also enclose the statements in a `begin ... end` block:
+```julia
+using Plots
+begin
+  x = range(0, 10, length=100)
+  y = sin.(x)
+  plot(x, y)
+end
+display(current())
+```
+- Note: you will have to manually load the Plots package the first time (or any other package you use). You may want to put these in a separate block that you only execute on the first use:
+```julia
+import Pkg
+Pkg.add("Plots")
+```
+
 </details>
 
 <details>
@@ -757,7 +789,7 @@ print('should not run any pre blocks or global injects')
 
 ### Notebook Mode
 
-A few languages (currently JS and Python) support *Notebook Mode*. If a language is using Notebook Mode (configurable in Settings), then all code blocks in a given file will execute in the same environment.
+A few languages (currently JS, Python, and Julia) support *Notebook Mode*. If a language is using Notebook Mode (configurable in Settings), then all code blocks in a given file will execute in the same environment.
 
 Variables functions, etc. defined in one code block will be available in other code blocks. Code blocks are executed on demand; the order of code blocks in the file does not affect the order in which they are executed:
 

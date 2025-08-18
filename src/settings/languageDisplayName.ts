@@ -8,6 +8,7 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
     haskell: "Haskell",
     java: "Java",
     js: "Javascript",
+    julia: "Julia",
     kotlin: "Kotlin",
     latex: "LaTeX",
     lua: "Lua",

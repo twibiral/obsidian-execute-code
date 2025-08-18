@@ -76,6 +76,7 @@ async function handleExecution(block: CodeBlockContext) {
         case "zig": return runCode(s.zigPath, s.zigArgs, "zig", block, { shell: true });
         case "ocaml": return runCode(s.ocamlPath, s.ocamlArgs, "ocaml", block, { shell: true });
         case "php": return runCode(s.phpPath, s.phpArgs, s.phpFileExtension, block, { shell: true });
+        case "julia": return runCode(s.juliaPath, s.juliaArgs,s.juliaFileExtension, block, {transform: (code) => macro.expandJuliaPlot(code,s) }); 
         case "latex":
             const outputPath: string = await retrieveFigurePath(block.srcCode, s.latexFigureTitlePattern, block.markdownFile, s);
             const invokeCompiler: string = [s.latexTexfotArgs, s.latexCompilerPath, s.latexCompilerArgs].join(" ");

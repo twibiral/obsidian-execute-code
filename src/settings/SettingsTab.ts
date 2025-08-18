@@ -10,6 +10,7 @@ import makeGroovySettings from "./per-lang/makeGroovySettings";
 import makeHaskellSettings from "./per-lang/makeHaskellSettings";
 import makeJavaSettings from "./per-lang/makeJavaSettings";
 import makeJsSettings from "./per-lang/makeJsSettings";
+import makeJuliaSettings from "./per-lang/makeJuliaSettings";
 import makeKotlinSettings from "./per-lang/makeKotlinSettings";
 import makeLatexSettings from "./per-lang/makeLatexSettings";
 import makeLeanSettings from "./per-lang/makeLeanSettings";
@@ -172,6 +173,7 @@ export class SettingsTab extends PluginSettingTab {
 		makeOCamlSettings(this, this.makeContainerFor("ocaml"));
 		makePhpSettings(this, this.makeContainerFor("php"));
 		makeLatexSettings(this, this.makeContainerFor("latex"));
+		makeJuliaSettings(this,this.makeContainerFor("julia"));
 
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}

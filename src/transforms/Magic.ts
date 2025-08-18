@@ -34,6 +34,7 @@ const PYTHON_PLOT_REGEX = /^(plt|matplotlib.pyplot|pyplot)\.show\(\)/gm;
 const R_PLOT_REGEX = /^plot\(.*\)/gm;
 const OCTAVE_PLOT_REGEX = /^plot\s*\(.*\);/gm;
 const MAXIMA_PLOT_REGEX = /^plot2d\s*\(.*\[.+\]\)\s*[$;]/gm;
+const JULIA_PLOT_REGEX = /^display\(current\(\)\)/gm;
 
 /**
  * Parses the source code for the @vault command and replaces it with the vault path.
@@ -288,6 +289,20 @@ export function expandMaximaPlot(source: string): string {
 		source = source.replace(match[0], substitute);
 	}
 
+	return source;
+}
+
+
+export function expandJuliaPlot(source: string, settings: ExecutorSettings): string {
+	if (settings.juliaEmbedPlots) {   
+		const matches = source.matchAll(JULIA_PLOT_REGEX);   //replacing display(current())
+		for (const match of matches) {
+			const tempFile = `${os.tmpdir()}/temp_${Date.now()}.png`.replace(/\\/g, "/").replace(/^\//, "");
+			const substitute = `savefig("${tempFile}"); println(${JSON.stringify(`${TOGGLE_HTML_SIGIL}<img src="${Platform.resourcePathPrefix + tempFile}" align="center">${TOGGLE_HTML_SIGIL}`)})`;
+
+			source = source.replace(match[0], substitute);
+		}
+	}
 	return source;
 }
 
