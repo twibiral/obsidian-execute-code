@@ -208,8 +208,10 @@ export class Outputter extends EventEmitter {
 	startBlock() {
 		if (!this.loadStateIndicatorElement) this.addLoadStateIndicator();
 		setTimeout(() => {
-			if (this.blockRunState !== "FINISHED")
+			if (this.blockRunState !== "FINISHED") {
 				this.loadStateIndicatorElement.classList.add("visible");
+				this.loadStateIndicatorElement.style.visibility = "visible";
+			}
 		}, 100);
 
 
@@ -227,8 +229,10 @@ export class Outputter extends EventEmitter {
 	queueBlock() {
 		if (!this.loadStateIndicatorElement) this.addLoadStateIndicator();
 		setTimeout(() => {
-			if (this.blockRunState !== "FINISHED")
+			if (this.blockRunState !== "FINISHED") {
 				this.loadStateIndicatorElement.classList.add("visible");
+				this.loadStateIndicatorElement.style.visibility = "visible";
+			}
 		}, 100);
 
 		this.loadStateIndicatorElement.empty();
@@ -243,6 +247,7 @@ export class Outputter extends EventEmitter {
 	finishBlock() {
 		if (this.loadStateIndicatorElement) {
 			this.loadStateIndicatorElement.classList.remove("visible");
+			this.loadStateIndicatorElement.style.visibility = "hidden";
 		}
 
 		this.blockRunState = "FINISHED";
