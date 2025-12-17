@@ -46,7 +46,10 @@ async function handleExecution(block: CodeBlockContext) {
         case "shell": return runCode(s.shellPath, s.shellArgs, s.shellFileExtension, block, { shell: true });
         case "batch": return runCode(s.batchPath, s.batchArgs, s.batchFileExtension, block, { shell: true });
         case "powershell": return runCode(s.powershellPath, s.powershellArgs, s.powershellFileExtension, block, { shell: true });
-        case "cpp": return runCode(s.clingPath, `-std=${s.clingStd} ${s.clingArgs}`, s.cppFileExtension, block);
+        case "cpp":
+            runCode(s.gppPath, `-std=${s.gppStd} ${s.gppArgs}`, s.cppFileExtension, block);
+            button.className = buttonClass;
+            break;
         case "prolog":
             runCode("", "", "", block);
             button.className = buttonClass;
@@ -66,7 +69,10 @@ async function handleExecution(block: CodeBlockContext) {
         case "mathematica": return runCode(s.mathematicaPath, s.mathematicaArgs, s.mathematicaFileExtension, block, { shell: true });
         case "scala": return runCode(s.scalaPath, s.scalaArgs, s.scalaFileExtension, block, { shell: true });
         case "swift": return runCode(s.swiftPath, s.swiftArgs, s.swiftFileExtension, block, { shell: true });
-        case "c": return runCode(s.clingPath, s.clingArgs, "c", block, { shell: true });
+        case "c":
+            runCode(s.gppPath, s.gppArgs, "c", block, { shell: true });
+            button.className = buttonClass;
+            break;
         case "ruby": return runCode(s.rubyPath, s.rubyArgs, s.rubyFileExtension, block, { shell: true });
         case "sql": return runCode(s.sqlPath, s.sqlArgs, "sql", block, { shell: true });
         case "octave": return runCode(s.octavePath, s.octaveArgs, s.octaveFileExtension, block, { shell: true, transform: (code) => macro.expandOctavePlot(code) });
@@ -198,12 +204,17 @@ function runCode(cmd: string, cmdArgs: string, ext: string, block: CodeBlockCont
     if (options?.transform) block.srcCode = options.transform(block.srcCode);
     if (!useShell) block.outputter.startBlock();
 
+    console.log("RunButton: Starting executor for", block.language);
     const executor = block.executors.getExecutorFor(block.markdownFile, block.language, useShell);
     executor.run(block.srcCode, block.outputter, cmd, cmdArgs, ext).then(() => {
+        console.log("RunButton: Executor finished, resetting button state");
         block.button.className = buttonClass;
         if (!useShell) {
             block.outputter.closeInput();
             block.outputter.finishBlock();
         }
+    }).catch((err) => {
+        console.error("RunButton: Executor error", err);
+        block.button.className = buttonClass;
     });
 }
