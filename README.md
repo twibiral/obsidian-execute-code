@@ -4,6 +4,8 @@
 
 ### maintainers: feel free to submit PRs as you see fit for gcc or other languages. I am interested in maintaining this fork. 
 
+### this is not published on the obsidian store. you will have to git clone it into your .obsidian/plugins directory manually.
+
 # IMPORTANT NOTE
 if you're running obsidian in a sandboxed environment (ie: that of flatpak or snap store's on linux), a hack to workaround execution of external programs is to create a script with execution privleges that directly calls your compiler / interpreter such as: 
 
@@ -884,5 +886,6 @@ The [open issues](https://github.com/twibiral/obsidian-execute-code/issues) are 
 </a>
 
 <sub>Made with [contrib.rocks](https://contrib.rocks).</sub>
+
 
 
