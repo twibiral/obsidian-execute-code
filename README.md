@@ -1,4 +1,24 @@
 # Obsidian Execute Code Plugin
+
+## NOTE: THIS IS A FORK OF https://github.com/twibiral/obsidian-execute-code. THIS IS NOT MY ORIGINAL CODE. THE ORIGINAL MAINTAINER HAS STOPPED UPDATING THEIR REPOSITORY. THIS REPO AS OF DECEMBER 2025 ONLY INTRODUCES THE G++ COMPILER FOR CPP FILES INSTEAD OF CLING. USE AT YOUR OWN DISCRETION
+
+### maintainers: feel free to submit PRs as you see fit for gcc or other languages. I am interested in maintaining this fork. 
+
+# IMPORTANT NOTE
+if you're running obsidian in a sandboxed environment (ie: that of flatpak or snap store's on linux), a hack to workaround execution of external programs is to create a script with execution privleges that directly calls your compiler / interpreter such as: 
+
+
+``` g++_execution_script
+flatpak-spawn --host /usr/bin/g++ "$@"
+```
+
+...and in the menu which specifies the path to the interpreter / compiler to use:
+~/path/to/execution/script rather than directly calling the program itself.
+
+
+have fun :) --raccoonhands
+
+
 <div align='right'>
 
 ![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?color=8572db&labelColor=1e1e1e&label=Downloads&query=$['execute-code'].downloads&url=https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugin-stats.json) 
@@ -864,4 +884,5 @@ The [open issues](https://github.com/twibiral/obsidian-execute-code/issues) are 
 </a>
 
 <sub>Made with [contrib.rocks](https://contrib.rocks).</sub>
+
 
