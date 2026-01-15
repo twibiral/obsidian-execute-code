@@ -8,10 +8,7 @@ export default class NodeJSExecutor extends ReplExecutor {
 	process: ChildProcessWithoutNullStreams
 
 	constructor(settings: ExecutorSettings, file: string) {
-		const args = settings.nodeArgs ? settings.nodeArgs.split(" ") : [];
-
-		args.unshift(`-e`, `require("repl").start({prompt: "", preview: false, ignoreUndefined: true}).on("exit", ()=>process.exit())`);
-
+		const args = settings.nodeArgs ? settings.nodeArgs.split(" ").filter(arg => arg.length > 0) : [];
 		super(settings, settings.nodePath, args, file, "js");
 	}
 

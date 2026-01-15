@@ -11,7 +11,7 @@ export default class RExecutor extends ReplExecutor {
 
 	constructor(settings: ExecutorSettings, file: string) {
 		//use empty array for empty string, instead of [""]
-		const args = settings.RArgs ? settings.RArgs.split(" ") : [];
+		const args = settings.RArgs ? settings.RArgs.split(" ").filter(arg => arg.length > 0) : [];
 		
 		let conArgName = `notebook_connection_${Math.random().toString(16).substring(2)}`;
 

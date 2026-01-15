@@ -35,7 +35,7 @@ export default class PowerShellOnWindowsExecutor extends NonInteractiveCodeExecu
 			const tempFileName = this.getTempFile(ext);
 
 			fs.promises.writeFile(tempFileName, codeBlockContent, this.settings.powershellEncoding).then(() => {
-				const args = cmdArgs ? cmdArgs.split(" ") : [];
+				const args = cmdArgs ? cmdArgs.split(" ").filter(arg => arg.length > 0) : [];
 
 				if (this.settings.wslMode) {
 					args.unshift("-e", cmd);

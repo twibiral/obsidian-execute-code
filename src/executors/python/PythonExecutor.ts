@@ -27,7 +27,7 @@ export default class PythonExecutor extends ReplExecutor {
 
 	constructor(settings: ExecutorSettings, file: string) {
 
-		const args = settings.pythonArgs ? settings.pythonArgs.split(" ") : [];
+		const args = settings.pythonArgs ? settings.pythonArgs.split(" ").filter(arg => arg.length > 0) : [];
 
 		args.unshift("-i");
 		

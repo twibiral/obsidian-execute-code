@@ -36,7 +36,7 @@ export default class NonInteractiveCodeExecutor extends Executor {
 			const tempFileName = this.getTempFile(ext);
 
 			fs.promises.writeFile(tempFileName, codeBlockContent).then(() => {
-				const args = cmdArgs ? cmdArgs.split(" ") : [];
+				const args = cmdArgs ? cmdArgs.split(" ").filter(arg => arg.length > 0) : [];
 
 				if (this.isWSLEnabled()) {
 					args.unshift("-e", cmd);

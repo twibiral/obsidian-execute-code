@@ -93,7 +93,7 @@ export default class LaTeXExecutor extends NonInteractiveCodeExecutor {
     private async compileAndRerun(compilerPath: string, args: string, exec: ExecutionContext): Promise<string> {
         for (let attempt = 0; attempt <= MAX_COMPILER_RERUNS; attempt++) {
             const isLastAttempt = attempt == MAX_COMPILER_RERUNS;
-            const result = await this.runChildProcess(compilerPath, args.split(' '), 'o.pdf', exec, { skipWriteFileLink: true, outFileArg: "", doDetectRerun: !isLastAttempt });
+            const result = await this.runChildProcess(compilerPath, args.split(' ').filter(arg => arg.length > 0), 'o.pdf', exec, { skipWriteFileLink: true, outFileArg: "", doDetectRerun: !isLastAttempt });
             const hasRequestedRerun = result === undefined;
             if (!hasRequestedRerun) return result;
         }
