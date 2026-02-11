@@ -67,6 +67,7 @@ async function handleExecution(block: CodeBlockContext) {
         case "scala": return runCode(s.scalaPath, s.scalaArgs, s.scalaFileExtension, block, { shell: true });
         case "swift": return runCode(s.swiftPath, s.swiftArgs, s.swiftFileExtension, block, { shell: true });
         case "c": return runCode(s.clingPath, s.clingArgs, "c", block, { shell: true });
+		case "fsharp": return runCode(s.fsharpPath, s.fsharpArgs, s.fsharpFileExtension, block, { shell: true });
         case "ruby": return runCode(s.rubyPath, s.rubyArgs, s.rubyFileExtension, block, { shell: true });
         case "sql": return runCode(s.sqlPath, s.sqlArgs, "sql", block, { shell: true });
         case "octave": return runCode(s.octavePath, s.octaveArgs, s.octaveFileExtension, block, { shell: true, transform: (code) => macro.expandOctavePlot(code) });
