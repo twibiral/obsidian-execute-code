@@ -115,6 +115,9 @@ export interface ExecutorSettings {
 	clingPath: string;
 	clingArgs: string;
 	clingStd: string;
+    gppPath: string;
+    gppArgs: string;
+    gppStd: string;
 	rustFileExtension: string,
 	RPath: string;
 	RArgs: string;
@@ -320,6 +323,9 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	clingPath: "cling",
 	clingArgs: "",
 	clingStd: "c++17",
+    gppPath: "g++",
+    gppArgs: "",
+    gppStd: "c++17",
 	rustFileExtension: "rs",
 	RPath: "Rscript",
 	RArgs: "",

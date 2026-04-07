@@ -1,3 +1,5 @@
+// i think we should have Cling-executor and g++executor instead of remove cling like 
+// https://github.com/raccoonhands1/obsidian-execute-code-enhanced
 import NonInteractiveCodeExecutor from './NonInteractiveCodeExecutor';
 import * as child_process from "child_process";
 import type {ChildProcessWithoutNullStreams} from "child_process";

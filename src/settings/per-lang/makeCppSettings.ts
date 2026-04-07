@@ -5,7 +5,7 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
     containerEl.createEl('h3', { text: 'C++ Settings' });
     new Setting(containerEl)
         .setName('Cling path')
-        .setDesc('The path to your Cling installation.')
+        .setDesc('The path to your gcc/Cling installation.')
         .addText(text => text
             .setValue(tab.plugin.settings.clingPath)
             .onChange(async (value) => {
@@ -15,7 +15,7 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 await tab.plugin.saveSettings();
             }));
     new Setting(containerEl)
-        .setName('Cling arguments for C++')
+        .setName('gcc/Cling arguments for C++')
         .addText(text => text
             .setValue(tab.plugin.settings.cppArgs)
             .onChange(async (value) => {
@@ -24,7 +24,7 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 await tab.plugin.saveSettings();
             }));
     new Setting(containerEl)
-        .setName('Cling std')
+        .setName('gcc/Cling std')
         .addDropdown(dropdown => dropdown
 			.addOption('c++98', 'C++ 98')
             .addOption('c++11', 'C++ 11')
@@ -34,7 +34,7 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
             .setValue(tab.plugin.settings.clingStd)
             .onChange(async (value) => {
                 tab.plugin.settings.clingStd = value;
-                console.log('Cling std set to: ' + value);
+                console.log('gcc/Cling std set to: ' + value);
                 await tab.plugin.saveSettings();
             }));
     new Setting(containerEl)
