@@ -142,6 +142,14 @@ export interface ExecutorSettings {
 	phpArgs: string;
 	phpFileExtension: string;
 	phpInject: string;
+	tclPath: string;
+	tclArgs: string;
+	tclFileExtension: string;
+	tclInject: string;
+	tkPath: string;
+	tkArgs: string;
+	tkFileExtension: string;
+	tkInject: string;
 	scalaPath: string;
 	scalaArgs: string;
 	scalaFileExtension: string;
@@ -210,8 +218,22 @@ export interface ExecutorSettings {
 	zigInteractive: boolean;
 	ocamlInteractive: boolean;
 	phpInteractive: boolean;
+	tclInteractive: boolean;
+	tkInteractive: boolean;
 }
 
+
+const TCL_UTF8_RELOAD = (tail: string) =>
+	`if {![info exists ::ec_utf8_pass]} {\n` +
+	`    set ::ec_utf8_pass 1\n` +
+	`    if {$tcl_platform(platform) eq "windows"} {\n` +
+	`        catch {encoding system utf-8}\n` +
+	`        catch {fconfigure stdout -encoding utf-8}\n` +
+	`        catch {fconfigure stdin -encoding utf-8}\n` +
+	`    }\n` +
+	`    source -encoding utf-8 [info script]\n` +
+	`    ${tail}\n` +
+	`}`;
 
 /**
  * The default settings for the extensions as implementation of the ExecutorSettings interface.
@@ -387,6 +409,14 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	phpArgs: "",
 	phpFileExtension: "php",
 	phpInject: "",
+	tclPath: "tclsh",
+	tclArgs: "",
+	tclFileExtension: "tcl",
+	tclInject: TCL_UTF8_RELOAD("exit"),
+	tkPath: "wish",
+	tkArgs: "",
+	tkFileExtension: "tcl",
+	tkInject: TCL_UTF8_RELOAD("vwait forever"),
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
@@ -422,4 +452,6 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	zigInteractive: false,
 	ocamlInteractive: false,
 	phpInteractive: false,
+	tclInteractive: false,
+	tkInteractive: false,
 }

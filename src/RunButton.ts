@@ -76,6 +76,8 @@ async function handleExecution(block: CodeBlockContext) {
         case "zig": return runCode(s.zigPath, s.zigArgs, "zig", block, { shell: true });
         case "ocaml": return runCode(s.ocamlPath, s.ocamlArgs, "ocaml", block, { shell: true });
         case "php": return runCode(s.phpPath, s.phpArgs, s.phpFileExtension, block, { shell: true });
+        case "tcl": return runCode(s.tclPath, s.tclArgs, s.tclFileExtension, block, { shell: true });
+        case "tk": return runCode(s.tkPath, s.tkArgs, s.tkFileExtension, block, { shell: true });
         case "latex":
             const outputPath: string = await retrieveFigurePath(block.srcCode, s.latexFigureTitlePattern, block.markdownFile, s);
             const invokeCompiler: string = [s.latexTexfotArgs, s.latexCompilerPath, s.latexCompilerArgs].join(" ");
@@ -159,7 +161,17 @@ function addToCodeBlock(codeBlock: HTMLElement, file: string, view: MarkdownView
         executors: plugin.executors,
     };
 
-    button.addEventListener("click", () => handleExecution(block));
+    button.addEventListener("click", async () => {
+        try {
+            await handleExecution(block);
+        } catch (err) {
+            // Upstream leaves async errors silent; surface them and re-enable the button
+            const msg = err instanceof Error ? err.message : String(err);
+            console.error("Execute Code: error while running block", err);
+            block.outputter.writeErr("Error while starting execution: " + msg);
+            block.button.className = buttonClass;
+        }
+    });
 }
 
 /**
