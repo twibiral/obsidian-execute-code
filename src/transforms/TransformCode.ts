@@ -20,8 +20,10 @@ export function getLanguageAlias(language: string | undefined): LanguageId | und
 		case "py": return "python";
 		case "wolfram": return "mathematica";
 		case "nb": return "mathematica";
-		case "wl": "mathematica";
+		case "wl": return "mathematica";
 		case "hs": return "haskell";
+		case "tclsh": return "tcl";
+		case "wish": return "tk";
 	}
 	if ((canonicalLanguages as readonly string[]).includes(language))
 		return language as LanguageId;

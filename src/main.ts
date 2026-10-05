@@ -15,10 +15,10 @@ import runAllCodeBlocks from './runAllCodeBlocks';
 import { ReleaseNoteModel } from "./ReleaseNoteModal";
 import * as runButton from './RunButton';
 
-export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py", "tex"] as const;
+export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py", "tex", "tclsh", "wish"] as const;
 export const canonicalLanguages = ["js", "ts", "cs", "latex", "lean", "lua", "python", "cpp", "prolog", "shell", "groovy", "r",
 	"go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell", "scala", "swift", "racket", "fsharp", "c", "dart",
-	"ruby", "batch", "sql", "octave", "maxima", "applescript", "zig", "ocaml", "php"] as const;
+	"ruby", "batch", "sql", "octave", "maxima", "applescript", "zig", "ocaml", "php", "tcl", "tk"] as const;
 export const supportedLanguages = [...languageAliases, ...canonicalLanguages] as const;
 export type LanguageId = typeof canonicalLanguages[number];
 

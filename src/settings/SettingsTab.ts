@@ -36,6 +36,8 @@ import makeApplescriptSettings from "./per-lang/makeApplescriptSettings";
 import makeZigSettings from "./per-lang/makeZigSettings";
 import makeOCamlSettings from "./per-lang/makeOCamlSettings";
 import makeSwiftSettings from "./per-lang/makeSwiftSettings";
+import makeTclSettings from "./per-lang/makeTclSettings";
+import makeTkSettings from "./per-lang/makeTkSettings";
 
 
 /**
@@ -171,6 +173,8 @@ export class SettingsTab extends PluginSettingTab {
 		makeZigSettings(this, this.makeContainerFor("zig"));
 		makeOCamlSettings(this, this.makeContainerFor("ocaml"));
 		makePhpSettings(this, this.makeContainerFor("php"));
+		makeTclSettings(this, this.makeContainerFor("tcl"));
+		makeTkSettings(this, this.makeContainerFor("tk"));
 		makeLatexSettings(this, this.makeContainerFor("latex"));
 
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
